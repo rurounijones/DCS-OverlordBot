@@ -1,10 +1,21 @@
-# DCS-SimpleRadioStandalone
-An open source Stand alone Radio for DCS integrating with all clickable cockpits and FC3 Aircraft
+# DCS-SimpleRadioStandalone Overlord Branch
 
-Read More Here: http://forums.eagle.ru/showthread.php?t=169387 
+The purpose of this branch is to try and integrate Simple Radio with Microsoft
+Cognitive Services [Speech Services](https://azure.microsoft.com/en-gb/services/cognitive-services/directory/speech/) 
 
-Download: https://github.com/ciribob/DCS-SimpleRadioStandalone/releases/latest
+The aim is to enable a Voice Recognition bot to be able to parse and respond 
+to radio calls sent via SRS. For example to act as an AWACS Controller.
 
-Donate if you want to so I can purchase Hardware for testing :) 
+Other parts of this project can be found at:
 
-[![](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JY35DDAQ938TN)
+* https://gitlab.com/overlord-bot/tac-scribe/tree/implementation - Writes DCS
+  game data to PostGIS enabled database
+
+* https://gitlab.com/overlord-bot/bot-proof-of-concept - Listens to Mic and
+  responds to bogey dope command using data in TacScribe PostGIS database
+
+## Goals
+
+* First goal: Have voice from SRS routed to the cognitive speech service
+    and start parsing it for intents
+
