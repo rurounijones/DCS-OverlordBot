@@ -19,7 +19,6 @@ using WPFCustomMessageBox;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio
 {
-
     internal class AudioPreview
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
@@ -302,7 +301,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio
                     var pcmBytes = new byte[pcmShort.Length * 2];
                     Buffer.BlockCopy(pcmShort, 0, pcmBytes, 0, pcmBytes.Length);
 
-   //                 _buffBufferedWaveProvider.AddSamples(pcmBytes, 0, pcmBytes.Length);
+   //                 _requestBufferedWaveProvider.AddSamples(pcmBytes, 0, pcmBytes.Length);
                     //encode as opus bytes
                     int len;
                     //need to get framing right for opus - 

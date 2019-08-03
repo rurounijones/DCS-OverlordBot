@@ -1,6 +1,9 @@
-﻿using Microsoft.CognitiveServices.Speech;
+﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.LuisModels;
+using Microsoft.CognitiveServices.Speech;
 using Microsoft.CognitiveServices.Speech.Audio;
 using NAudio.Wave;
+using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
 
@@ -10,7 +13,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
     {
         // Creates an instance of a speech config with specified subscription key and service region.
         // Replace with your own subscription key and service region (e.g., "westus").
-        private static readonly SpeechConfig _speechConfig = SpeechConfig.FromSubscription("YourSubscriptionKey", "YourRegion");
+        private static readonly SpeechConfig _speechConfig = SpeechConfig.FromSubscription("YourSubscription", "YourRegion");
 
         private readonly BufferedWaveProviderStreamReader _streamReader;
         private readonly SpeechRecognizer _recognizer;
@@ -31,18 +34,26 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
             var stopRecognition = new TaskCompletionSource<int>();
 
             // Subscribes to events.
-            _recognizer.Recognizing += (s, e) =>
-            {
-                Console.WriteLine($"RECOGNIZING: Text={e.Result.Text}");
-            };
+           // _recognizer.Recognizing += (s, e) =>
+            //{
+               // Console.WriteLine($"RECOGNIZING: Text={e.Result.Text}");
+           // };
 
             _recognizer.Recognized += (s, e) =>
             {
                 if (e.Result.Reason == ResultReason.RecognizedSpeech)
                 {
                     Console.WriteLine($"RECOGNIZED: {e.Result.Text}");
-                    string data = Task.Run(() => LuisService.ParseIntent(e.Result.Text)).Result;
-                    Console.WriteLine($"INTENT: {data}");
+                    string luisJson = Task.Run(() => LuisService.ParseIntent(e.Result.Text)).Result;
+
+                    Console.WriteLine($"INTENT: {luisJson}");
+                    LuisResponse luisResponse = JsonConvert.DeserializeObject<LuisResponse>(luisJson);
+                    if(luisResponse.TopScoringIntent["intent"] == "RequestBogeyDope")
+                    {
+                        string response = Task.Run(() => RequestBogeyDope.Process(luisResponse)).Result;
+                        Console.WriteLine($"RESPONSE: {response}");
+
+                    }
                 }
                 else if (e.Result.Reason == ResultReason.NoMatch)
                 {

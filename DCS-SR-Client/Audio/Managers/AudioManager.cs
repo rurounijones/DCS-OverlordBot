@@ -614,8 +614,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
                 bot = new BotAudioProvider();
                 _botsBufferedAudio[audio.ClientGuid] = bot;
             }
-            client.AddClientAudioSamples(audio);
-            recorder.AddClientAudioSamples(audio);
+            // client.AddClientAudioSamples(audio);
+            // recorder.AddClientAudioSamples(audio);
             bot.AddClientAudioSamples(audio);
         }
 

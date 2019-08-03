@@ -12,7 +12,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
             var client = new HttpClient();
             var queryString = HttpUtility.ParseQueryString(string.Empty);
 
-            var luisAppId = "YourAppId";
+            var luisAppId = "YourLuisAppId";
             var endpointKey = "YourEndPointKey";
 
             // The request header contains your subscription key
