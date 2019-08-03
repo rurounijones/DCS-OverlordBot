@@ -1,14 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Utility;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.DSP;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
 using FragLabs.Audio.Codecs;
+using Microsoft.CognitiveServices.Speech;
+using Microsoft.CognitiveServices.Speech.Audio;
+using Microsoft.CognitiveServices.Speech.Intent;
 using NAudio.CoreAudioApi;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
@@ -59,47 +64,29 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio
         {
             try
             {
-                _settings = SettingsStore.Instance;
-                _waveOut = new WasapiOut(speakers, AudioClientShareMode.Shared, true, 40);
 
+                // Contains a 16 bit PCM, sampling rate 16k and 1 channel
                 _buffBufferedWaveProvider =
                     new BufferedWaveProvider(new WaveFormat(AudioManager.INPUT_SAMPLE_RATE, 16, 1));
-                _buffBufferedWaveProvider.ReadFully = true;
+                _buffBufferedWaveProvider.ReadFully = false;
                 _buffBufferedWaveProvider.DiscardOnBufferOverflow = true;
 
-                RadioFilter filter = new RadioFilter(_buffBufferedWaveProvider.ToSampleProvider());
+                // START A NEW THREAD THAT LISTENS TO THE 16 BIT, 16000 SAMPLE RATE, MONO CHANNEL AUDIOBUFFERS
 
-                //add final volume boost to all mixed audio
-                _volumeSampleProvider = new VolumeSampleProviderWithPeak(filter,
-                    (peak => SpeakerMax = (float) VolumeConversionHelper.ConvertFloatToDB(peak)));
-                _volumeSampleProvider.Volume = SpeakerBoost;
+                // Creates an instance of a speech config with specified subscription key
+                // and service region. Note that in contrast to other services supported by
+                // the Cognitive Services Speech SDK, the Language Understanding service
+                // requires a specific subscription key from https://www.luis.ai/.
+                // The Language Understanding service calls the required key 'endpoint key'.
+                // Once you've obtained it, replace with below with your own Language Understanding subscription key
+                // and service region (e.g., "westus").
+                // The default language is "en-us".
+                var luisConfig = SpeechConfig.FromSubscription("cdf044178ef94f3e86ff37d6967cb507", "westus");
 
-                if (speakers.AudioClient.MixFormat.Channels == 1)
-                {
-                    if (_volumeSampleProvider.WaveFormat.Channels == 2)
-                    {
-                        _waveOut.Init(_volumeSampleProvider.ToMono());
-                    }
-                    else
-                    {
-                        //already mono
-                        _waveOut.Init(_volumeSampleProvider);
-                    }
-                }
-                else
-                {
-                    if (_volumeSampleProvider.WaveFormat.Channels == 1)
-                    {
-                        _waveOut.Init(_volumeSampleProvider.ToStereo());
-                    }
-                    else
-                    {
-                        //already stereo
-                        _waveOut.Init(_volumeSampleProvider);
-                    }
-                }
+                var audioInput = AudioConfig.FromStreamInput(new RadioStreamReader(_buffBufferedWaveProvider));
+                var listener = new RadioListener(new IntentRecognizer(luisConfig, audioInput));
+                Task.Run(() => listener.StartListeningAsync());
 
-                _waveOut.Play();
             }
             catch (Exception ex)
             {
