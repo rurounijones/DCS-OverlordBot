@@ -1,5 +1,7 @@
-﻿using Microsoft.CognitiveServices.Speech;
+﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents;
+using Microsoft.CognitiveServices.Speech;
 using Microsoft.CognitiveServices.Speech.Intent;
+using NAudio.Wave;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +16,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
 
         IntentRecognizer _recognizer;
 
-        public RadioListener(IntentRecognizer recognizer)
+        public RadioListener(IntentRecognizer recognizer, BufferedWaveProvider responseBuffer)
         {
             _recognizer = recognizer;
 
@@ -24,6 +26,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
 
         public async Task StartListeningAsync()
         {
+            // Since transmissions over STS are PTT we shouldn't really need keyword listening.
+            // But keep this here just in case.
+
+            // Creates an instance of a keyword recognition model. Update this to
+            // point to the location of your keyword recognition model.
+            //var keywordModel = KeywordRecognitionModel.FromFile("Overlord/overlord.table");
+            // The phrase your keyword recognition model triggers on.
+            //var keyword = "overlord";
+
             Console.WriteLine($"Started listening Async");
 
             // The TaskCompletionSource to stop recognition.
@@ -43,12 +54,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
 
                     string luisData = e.Result.Properties.GetProperty(PropertyId.LanguageUnderstandingServiceResponse_JsonResult);
 
-                    //switch (e.Result.IntentId)
-                    //{
-                    //    case "requestBogeyDope":
-                    //        await RequestBogeyDope.Process(luisData);
-                    //        break;
-                    //}
+                    switch (e.Result.IntentId)
+                    {
+                        case "requestBogeyDope":
+                            var response = await RequestBogeyDope.Process(luisData);
+                            Console.WriteLine(response);
+                            break;
+                    }
                 }
                 else if (e.Result.Reason == ResultReason.RecognizedSpeech)
                 {
@@ -96,11 +108,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
             Console.WriteLine("Starting continuous recognition");
             await _recognizer.StartContinuousRecognitionAsync().ConfigureAwait(false);
 
+            // Starts continuous recognition. Uses StopContinuousRecognitionAsync() to stop recognition.
+            //Console.WriteLine("Starting Keyword recognition");
+            //await _recognizer.StartKeywordRecognitionAsync(keywordModel).ConfigureAwait(false);
+
             // Waits for completion.
             // Use Task.WaitAny to keep the task rooted.
             Task.WaitAny(new[] { stopRecognition.Task });
 
-            // Stops recognition.
+            // Stops recognition. Change this if using Keyword
             await _recognizer.StopContinuousRecognitionAsync().ConfigureAwait(false);
         }
     }

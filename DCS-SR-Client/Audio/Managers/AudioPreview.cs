@@ -30,8 +30,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio
         private WasapiOut _waveOut;
 
         private VolumeSampleProviderWithPeak _volumeSampleProvider;
-        private BufferedWaveProvider _buffBufferedWaveProvider;
-
+        private BufferedWaveProvider _requestBufferedWaveProvider;
+        private BufferedWaveProvider _responseBufferedWaveProvider;
+        
         public float MicBoost { get; set; } = 1.0f;
 
         private float _speakerBoost = 1.0f;
@@ -64,12 +65,19 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio
         {
             try
             {
+                _requestBufferedWaveProvider =
+                    new BufferedWaveProvider(new WaveFormat(AudioManager.INPUT_SAMPLE_RATE, 16, 1))
+                    {
+                        ReadFully = false,
+                        DiscardOnBufferOverflow = true
+                    };
 
-                // Contains a 16 bit PCM, sampling rate 16k and 1 channel
-                _buffBufferedWaveProvider =
-                    new BufferedWaveProvider(new WaveFormat(AudioManager.INPUT_SAMPLE_RATE, 16, 1));
-                _buffBufferedWaveProvider.ReadFully = false;
-                _buffBufferedWaveProvider.DiscardOnBufferOverflow = true;
+                _responseBufferedWaveProvider =
+                    new BufferedWaveProvider(new WaveFormat(AudioManager.INPUT_SAMPLE_RATE, 16, 1))
+                    {
+                        ReadFully = false,
+                        DiscardOnBufferOverflow = true
+                    };
 
                 // START A NEW THREAD THAT LISTENS TO THE 16 BIT, 16000 SAMPLE RATE, MONO CHANNEL AUDIOBUFFERS
 
@@ -81,11 +89,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio
                 // Once you've obtained it, replace with below with your own Language Understanding subscription key
                 // and service region (e.g., "westus").
                 // The default language is "en-us".
-                var luisConfig = SpeechConfig.FromSubscription("cdf044178ef94f3e86ff37d6967cb507", "westus");
+                var luisConfig = SpeechConfig.FromSubscription("FILL_ME_IN", "FILL_ME_IN");
 
-                var audioInput = AudioConfig.FromStreamInput(new RadioStreamReader(_buffBufferedWaveProvider));
-                var listener = new RadioListener(new IntentRecognizer(luisConfig, audioInput));
-                Task.Run(() => listener.StartListeningAsync());
+                var audioInput = AudioConfig.FromStreamInput(new RadioStreamReader(_requestBufferedWaveProvider));
+                var listener = new RadioListener(new IntentRecognizer(luisConfig, audioInput), _responseBufferedWaveProvider);
+                Task.Run(() => listener.StartListeningAsync());            
 
             }
             catch (Exception ex)
@@ -263,7 +271,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio
                     var pcmBytes = new byte[pcmShort.Length * 2];
                     Buffer.BlockCopy(pcmShort, 0, pcmBytes, 0, pcmBytes.Length);
 
-   //                 _buffBufferedWaveProvider.AddSamples(pcmBytes, 0, pcmBytes.Length);
+   //                 _requestBufferedWaveProvider.AddSamples(pcmBytes, 0, pcmBytes.Length);
                     //encode as opus bytes
                     int len;
                     //need to get framing right for opus - 
@@ -280,7 +288,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio
                         //now decode
                         var decodedBytes = _decoder.Decode(encoded, len, out decodedLength);
 
-                        _buffBufferedWaveProvider.AddSamples(decodedBytes, 0, decodedLength);
+                        _requestBufferedWaveProvider.AddSamples(decodedBytes, 0, decodedLength);
 
                         //_waveFile.Write(decodedBytes, 0,decodedLength);
                        // _waveFile.Flush();
