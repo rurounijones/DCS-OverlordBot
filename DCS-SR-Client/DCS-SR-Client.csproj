@@ -211,6 +211,7 @@
     <Compile Include="Audio\Models\ClientAudio.cs" />
     <Compile Include="Audio\Providers\ClientAudioProvider.cs" />
     <Compile Include="Audio\Models\JitterBufferAudio.cs" />
+    <Compile Include="Audio\Providers\IntentAudioProvider.cs" />
     <Compile Include="Audio\Providers\JitterBufferProviderInterface.cs" />
     <Compile Include="Audio\Providers\VolumeSampleProviderWithPeak.cs" />
     <Compile Include="Audio\Utility\SpeexWrapper.cs" />

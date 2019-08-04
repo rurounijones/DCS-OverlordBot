@@ -4,11 +4,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Utility;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.DSP;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Input;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
@@ -16,6 +18,9 @@ using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network;
 using Easy.MessageHub;
 using FragLabs.Audio.Codecs;
+using Microsoft.CognitiveServices.Speech;
+using Microsoft.CognitiveServices.Speech.Audio;
+using Microsoft.CognitiveServices.Speech.Intent;
 using NAudio.CoreAudioApi;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
@@ -74,6 +79,21 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
 
         private readonly SettingsStore _settings = SettingsStore.Instance;
         private Preprocessor _speex;
+
+        // Overlord
+
+        private static readonly SpeechConfig _luisConfig = SpeechConfig.FromSubscription("cdf044178ef94f3e86ff37d6967cb507", "westus");
+
+        private readonly ConcurrentDictionary<int, IntentAudioProvider> _intentsBufferedAudio =
+            new ConcurrentDictionary<int, IntentAudioProvider>();
+
+        // An audio buffer for each radio to be listened to by the Intent.
+        private readonly ConcurrentDictionary<int, BufferedWaveProvider> _radioBuffers =
+            new ConcurrentDictionary<int, BufferedWaveProvider>();
+
+        // An audio buffer for each radio to be listened to by the Intent.
+        private readonly ConcurrentDictionary<int, RadioListener> _radioListeners =
+            new ConcurrentDictionary<int, RadioListener>();
 
         public AudioManager(ConcurrentDictionary<string, SRClient> clientsList)
         {
@@ -575,6 +595,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
 
         public void AddClientAudio(ClientAudio audio)
         {
+            //AddSpeakerAudio(audio);
+            AddIntentAudio(audio);
+        }
+
+
+        public void AddSpeakerAudio(ClientAudio audio)
+        {
             //sort out effects!
 
             //16bit PCM Audio
@@ -594,6 +621,42 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
             }
 
             client.AddClientAudioSamples(audio);
+        }
+
+        public void AddIntentAudio(ClientAudio audio)
+        {
+            //sort out effects!
+
+            //16bit PCM Audio
+            //TODO: Clean  - remove if we havent received audio in a while?
+            // If we have recieved audio, create a new buffered audio and read it
+            IntentAudioProvider intentProvider = null;
+            if (_intentsBufferedAudio.ContainsKey(audio.ReceivedRadio))
+            {
+                intentProvider = _intentsBufferedAudio[audio.ReceivedRadio];
+            }
+            else
+            {
+                intentProvider = new IntentAudioProvider();
+                _intentsBufferedAudio[audio.ReceivedRadio] = intentProvider;
+            }
+
+            // Create the Radio Buffers if needed
+            if (_radioBuffers.ContainsKey(audio.ReceivedRadio) == false)
+            {
+                _radioBuffers[audio.ReceivedRadio] = new BufferedWaveProvider(new WaveFormat(INPUT_SAMPLE_RATE, 16, 1));
+            }
+
+            // CreateRadio listeners if needed
+            if (_radioListeners.ContainsKey(audio.ReceivedRadio) == false)
+            {
+                var audioInput = AudioConfig.FromStreamInput(new RadioStreamReader(_radioBuffers[audio.ReceivedRadio]));
+                _radioListeners[audio.ReceivedRadio] = new RadioListener(new IntentRecognizer(_luisConfig, audioInput), null);
+                Task.Run(() => _radioListeners[audio.ReceivedRadio].StartListeningAsync());
+            }
+
+            // JONES: Intercept here to add IntentListeners for each radio
+            intentProvider.AddClientAudioSamples(audio, _radioBuffers[audio.ReceivedRadio]);
         }
 
         private void RemoveClientBuffer(SRClient srClient)
