@@ -225,7 +225,9 @@
     <Compile Include="Overlord\LuisModels\LuisEntity.cs" />
     <Compile Include="Overlord\LuisModels\LuisResponse.cs" />
     <Compile Include="Overlord\RadioListener.cs" />
+    <Compile Include="Overlord\RadioStreamWriter.cs" />
     <Compile Include="Overlord\RadioStreamReader.cs" />
+    <Compile Include="Overlord\Speaker.cs" />
     <Compile Include="Settings\SynchedServerSettings.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

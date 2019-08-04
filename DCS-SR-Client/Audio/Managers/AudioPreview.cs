@@ -65,21 +65,24 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio
         {
             try
             {
+
+                WaveFormat pcm = new WaveFormat(AudioManager.INPUT_SAMPLE_RATE, 16, 1);
+
                 _requestBufferedWaveProvider =
-                    new BufferedWaveProvider(new WaveFormat(AudioManager.INPUT_SAMPLE_RATE, 16, 1))
+                    new BufferedWaveProvider(pcm)
                     {
                         ReadFully = false,
                         DiscardOnBufferOverflow = true
                     };
 
                 _responseBufferedWaveProvider =
-                    new BufferedWaveProvider(new WaveFormat(AudioManager.INPUT_SAMPLE_RATE, 16, 1))
+                    new BufferedWaveProvider(pcm)
                     {
-                        ReadFully = false,
+                        ReadFully = true,
                         DiscardOnBufferOverflow = true
                     };
-
-                // START A NEW THREAD THAT LISTENS TO THE 16 BIT, 16000 SAMPLE RATE, MONO CHANNEL AUDIOBUFFERS
+                // So far our Bogey Dope calls take less than 10 seconds sooo...
+                _responseBufferedWaveProvider.BufferLength = pcm.AverageBytesPerSecond * 10;
 
                 // Creates an instance of a speech config with specified subscription key
                 // and service region. Note that in contrast to other services supported by
@@ -89,11 +92,53 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio
                 // Once you've obtained it, replace with below with your own Language Understanding subscription key
                 // and service region (e.g., "westus").
                 // The default language is "en-us".
-                var luisConfig = SpeechConfig.FromSubscription("FILL_ME_IN", "FILL_ME_IN");
+                var luisConfig = SpeechConfig.FromSubscription("cdf044178ef94f3e86ff37d6967cb507", "westus");
 
                 var audioInput = AudioConfig.FromStreamInput(new RadioStreamReader(_requestBufferedWaveProvider));
                 var listener = new RadioListener(new IntentRecognizer(luisConfig, audioInput), _responseBufferedWaveProvider);
-                Task.Run(() => listener.StartListeningAsync());            
+                Task.Run(() => listener.StartListeningAsync());
+
+
+                // Start the output processing!
+
+                _settings = SettingsStore.Instance;
+                _waveOut = new WasapiOut(speakers, AudioClientShareMode.Shared, true, 40);
+
+                RadioFilter filter = new RadioFilter(_responseBufferedWaveProvider.ToSampleProvider());
+
+                //add final volume boost to all mixed audio
+                _volumeSampleProvider = new VolumeSampleProviderWithPeak(filter,
+                    (peak => SpeakerMax = (float)VolumeConversionHelper.ConvertFloatToDB(peak)))
+                {
+                    Volume = SpeakerBoost
+                };
+
+                if (speakers.AudioClient.MixFormat.Channels == 1)
+                {
+                    if (_volumeSampleProvider.WaveFormat.Channels == 2)
+                    {
+                        _waveOut.Init(_volumeSampleProvider.ToMono());
+                    }
+                    else
+                    {
+                        //already mono
+                        _waveOut.Init(_volumeSampleProvider);
+                    }
+                }
+                else
+                {
+                    if (_volumeSampleProvider.WaveFormat.Channels == 1)
+                    {
+                        _waveOut.Init(_volumeSampleProvider.ToStereo());
+                    }
+                    else
+                    {
+                        //already stereo
+                        _waveOut.Init(_volumeSampleProvider);
+                    }
+                }
+
+                _waveOut.Play();
 
             }
             catch (Exception ex)
@@ -229,26 +274,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio
 
                 try
                 {
-                    //volume boost pre
-//                    for (var i = 0; i < pcmShort.Length; i++)
-//                    {
-//                        //clipping tests thanks to Coug4r
-//                        if (_settings.GetClientSetting(SettingsKeys.RadioEffects).BoolValue)
-//                        {
-//                            if (pcmShort[i] > 4000)
-//                            {
-//                                pcmShort[i] = 4000;
-//                            }
-//                            else if (pcmShort[i] < -4000)
-//                            {
-//                                pcmShort[i] = -4000;
-//                            }
-//                        }
-//
-//                        // n.b. no clipping test going on here
-//                        //pcmShort[i] = (short) (pcmShort[i] * MicBoost);
-//                    }
-
                     //process with Speex
                     _speex.Process(new ArraySegment<short>(pcmShort));
 

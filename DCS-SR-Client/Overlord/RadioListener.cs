@@ -15,6 +15,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
     {
 
         IntentRecognizer _recognizer;
+        Speaker _speaker;
 
         public RadioListener(IntentRecognizer recognizer, BufferedWaveProvider responseBuffer)
         {
@@ -22,6 +23,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
 
             var model = LanguageUnderstandingModel.FromAppId("2414f770-d586-4707-8e0b-93ce0738c5bf");
             _recognizer.AddIntent(model, "RequestBogeyDope", "requestBogeyDope");
+
+            _speaker = new Speaker(responseBuffer);
         }
 
         public async Task StartListeningAsync()
@@ -58,7 +61,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
                     {
                         case "requestBogeyDope":
                             var response = await RequestBogeyDope.Process(luisData);
-                            Console.WriteLine(response);
+                            await _speaker.SendResponse(response);
                             break;
                     }
                 }
