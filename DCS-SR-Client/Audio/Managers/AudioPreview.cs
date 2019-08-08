@@ -17,12 +17,16 @@ using WPFCustomMessageBox;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio
 {
+
     internal class AudioPreview
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private BufferedWaveProvider _playBuffer;
         private WaveIn _waveIn;
         private WasapiOut _waveOut;
+
+        //https://trac.ffmpeg.org/wiki/audio%20types
+        private static readonly WaveFormat PCM_MONO_16K_S16LE = new WaveFormat(16000, 1);
 
         private VolumeSampleProviderWithPeak _volumeSampleProvider;
         private BufferedWaveProvider _buffBufferedWaveProvider;
@@ -63,7 +67,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio
                 _waveOut = new WasapiOut(speakers, AudioClientShareMode.Shared, true, 40);
 
                 _buffBufferedWaveProvider =
-                    new BufferedWaveProvider(new WaveFormat(AudioManager.INPUT_SAMPLE_RATE, 16, 1));
+                    new BufferedWaveProvider(PCM_MONO_16K_S16LE);
                 _buffBufferedWaveProvider.ReadFully = true;
                 _buffBufferedWaveProvider.DiscardOnBufferOverflow = true;
 
@@ -128,7 +132,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio
 
                 _waveIn.NumberOfBuffers = 2;
                 _waveIn.DataAvailable += _waveIn_DataAvailable;
-                _waveIn.WaveFormat = new WaveFormat(AudioManager.INPUT_SAMPLE_RATE, 16, 1);
+                _waveIn.WaveFormat = PCM_MONO_16K_S16LE;
 
                 //debug wave file
                 //_waveFile = new WaveFileWriter(@"C:\Temp\Test-Preview.wav", _waveIn.WaveFormat);
