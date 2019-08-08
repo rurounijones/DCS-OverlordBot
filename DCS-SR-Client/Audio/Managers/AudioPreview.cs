@@ -29,7 +29,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio
         private static readonly WaveFormat PCM_MONO_16K_S16LE = new WaveFormat(16000, 1);
 
         private VolumeSampleProviderWithPeak _volumeSampleProvider;
-        private BufferedWaveProvider _buffBufferedWaveProvider;
+        private BufferedWaveProvider _previewAudioBufferedWaveProvider;
 
         public float MicBoost { get; set; } = 1.0f;
 
@@ -66,12 +66,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio
                 _settings = SettingsStore.Instance;
                 _waveOut = new WasapiOut(speakers, AudioClientShareMode.Shared, true, 40);
 
-                _buffBufferedWaveProvider =
+                _previewAudioBufferedWaveProvider =
                     new BufferedWaveProvider(PCM_MONO_16K_S16LE);
-                _buffBufferedWaveProvider.ReadFully = true;
-                _buffBufferedWaveProvider.DiscardOnBufferOverflow = true;
+                _previewAudioBufferedWaveProvider.ReadFully = true;
+                _previewAudioBufferedWaveProvider.DiscardOnBufferOverflow = true;
 
-                RadioFilter filter = new RadioFilter(_buffBufferedWaveProvider.ToSampleProvider());
+                RadioFilter filter = new RadioFilter(_previewAudioBufferedWaveProvider.ToSampleProvider());
 
                 //add final volume boost to all mixed audio
                 _volumeSampleProvider = new VolumeSampleProviderWithPeak(filter,
@@ -297,7 +297,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio
                         //now decode
                         var decodedBytes = _decoder.Decode(encoded, len, out decodedLength);
 
-                        _buffBufferedWaveProvider.AddSamples(decodedBytes, 0, decodedLength);
+                        _previewAudioBufferedWaveProvider.AddSamples(decodedBytes, 0, decodedLength);
 
                         //_waveFile.Write(decodedBytes, 0,decodedLength);
                        // _waveFile.Flush();
