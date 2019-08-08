@@ -30,6 +30,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio
 
         private VolumeSampleProviderWithPeak _volumeSampleProvider;
         private BufferedWaveProvider _previewAudioBufferedWaveProvider;
+        private BufferedWaveProvider _overlordSpeechRecognizerAudioBufferedWaveProvider;
 
         public float MicBoost { get; set; } = 1.0f;
 
@@ -70,6 +71,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio
                     new BufferedWaveProvider(PCM_MONO_16K_S16LE);
                 _previewAudioBufferedWaveProvider.ReadFully = true;
                 _previewAudioBufferedWaveProvider.DiscardOnBufferOverflow = true;
+
+                _overlordSpeechRecognizerAudioBufferedWaveProvider = new BufferedWaveProvider(PCM_MONO_16K_S16LE);
+                _overlordSpeechRecognizerAudioBufferedWaveProvider.ReadFully = false;
+                _overlordSpeechRecognizerAudioBufferedWaveProvider.DiscardOnBufferOverflow = true;
 
                 RadioFilter filter = new RadioFilter(_previewAudioBufferedWaveProvider.ToSampleProvider());
 
@@ -298,9 +303,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio
                         var decodedBytes = _decoder.Decode(encoded, len, out decodedLength);
 
                         _previewAudioBufferedWaveProvider.AddSamples(decodedBytes, 0, decodedLength);
+                        _overlordSpeechRecognizerAudioBufferedWaveProvider.AddSamples(decodedBytes, 0, decodedLength);
 
                         //_waveFile.Write(decodedBytes, 0,decodedLength);
-                       // _waveFile.Flush();
+                        // _waveFile.Flush();
                     }
                     else
                     {
