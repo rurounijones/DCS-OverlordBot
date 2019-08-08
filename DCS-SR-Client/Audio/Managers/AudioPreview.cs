@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Utility;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.DSP;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
@@ -30,7 +32,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio
 
         private VolumeSampleProviderWithPeak _volumeSampleProvider;
         private BufferedWaveProvider _previewAudioBufferedWaveProvider;
-        private BufferedWaveProvider _overlordSpeechRecognizerAudioBufferedWaveProvider;
 
         public float MicBoost { get; set; } = 1.0f;
 
@@ -43,6 +44,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio
         private readonly Queue<byte> _micInputQueue = new Queue<byte>(AudioManager.SEGMENT_FRAMES * 3);
         private WaveFileWriter _waveFile;
         private SettingsStore _settings;
+
+        // Overlord 
+        private BufferedWaveProvider _overlordSpeechRecognizerAudioBufferedWaveProvider;
+        private SpeechRecognitionListener _overlordSpeechRecognitionListener;
 
         public float SpeakerBoost
         {
@@ -148,6 +153,18 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio
             {
                 Logger.Error(ex, "Error starting audio Input - Quitting! " + ex.Message);
                 ShowInputError();
+
+                Environment.Exit(1);
+            }
+
+            try
+            {
+                _overlordSpeechRecognitionListener = new SpeechRecognitionListener(_overlordSpeechRecognizerAudioBufferedWaveProvider);
+                Task.Run(() => _overlordSpeechRecognitionListener.StartListeningAsync());
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Error starting Speech Recognition output - Quitting! " + ex.Message);
 
                 Environment.Exit(1);
             }
