@@ -198,6 +198,7 @@
     <Compile Include="Network\Models\DCSLosCheckRequest.cs" />
     <Compile Include="Network\Models\DCSLosCheckResult.cs" />
     <Compile Include="Overlord\SpeechRecognition\BufferedWaveProviderStreamReader.cs" />
+    <Compile Include="Overlord\SpeechRecognition\RecorderAudioProvider.cs" />
     <Compile Include="Overlord\SpeechRecognition\SpeechRecognitionListener.cs" />
     <Compile Include="Settings\SynchedServerSettings.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

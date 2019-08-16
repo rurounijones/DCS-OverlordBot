@@ -44,6 +44,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
         private readonly ConcurrentDictionary<string, ClientAudioProvider> _clientsBufferedAudio =
             new ConcurrentDictionary<string, ClientAudioProvider>();
 
+        private readonly ConcurrentDictionary<string, RecorderAudioProvider> _recordersBufferedAudio =
+            new ConcurrentDictionary<string, RecorderAudioProvider>();
+
         private readonly ConcurrentDictionary<string, SRClient> _clientsList;
         private MixingSampleProvider _clientAudioMixer;
 
@@ -550,7 +553,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
             _clientAudioMixer = null;
           
             _clientsBufferedAudio.Clear();
-          
+            _recordersBufferedAudio.Clear();
+
             _encoder?.Dispose();
             _encoder = null;
        
@@ -581,9 +585,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
             //TODO: Clean  - remove if we havent received audio in a while?
             // If we have recieved audio, create a new buffered audio and read it
             ClientAudioProvider client = null;
+            RecorderAudioProvider recorder = null;
             if (_clientsBufferedAudio.ContainsKey(audio.ClientGuid))
             {
                 client = _clientsBufferedAudio[audio.ClientGuid];
+                recorder = _recordersBufferedAudio[audio.ClientGuid];
             }
             else
             {
@@ -591,9 +597,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
                 _clientsBufferedAudio[audio.ClientGuid] = client;
 
                 _clientAudioMixer.AddMixerInput(client.SampleProvider);
-            }
 
+                recorder = new RecorderAudioProvider();
+                _recordersBufferedAudio[audio.ClientGuid] = recorder;
+            }
             client.AddClientAudioSamples(audio);
+            recorder.AddClientAudioSamples(audio);
         }
 
         private void RemoveClientBuffer(SRClient srClient)
