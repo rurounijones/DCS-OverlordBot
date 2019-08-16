@@ -28,7 +28,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio
         private WasapiOut _waveOut;
 
         //https://trac.ffmpeg.org/wiki/audio%20types
-        private static readonly WaveFormat PCM_MONO_16K_S16LE = new WaveFormat(16000, 1);
+        public static readonly WaveFormat PCM_MONO_16K_S16LE = new WaveFormat(16000, 1);
 
         private VolumeSampleProviderWithPeak _volumeSampleProvider;
         private BufferedWaveProvider _previewAudioBufferedWaveProvider;

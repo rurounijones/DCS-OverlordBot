@@ -17,17 +17,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
 {
     public class ClientAudioProvider : AudioProvider
     {
-        public static readonly int SILENCE_PAD = 300;
-
         private readonly Random _random = new Random();
 
-        private int _lastReceivedOn = -1;
         private OnlineFilter[] _filters;
 
         private readonly BiQuadFilter _highPassFilter;
         private readonly BiQuadFilter _lowPassFilter;
-
-        private OpusDecoder _decoder;
         
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
@@ -43,33 +38,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
                 new JitterBufferProviderInterface(new WaveFormat(AudioManager.INPUT_SAMPLE_RATE, 2));
 
             SampleProvider = new Pcm16BitToSampleProvider(JitterBufferProviderInterface);
-            
-            _decoder = OpusDecoder.Create(AudioManager.INPUT_SAMPLE_RATE, 1);
-            _decoder.ForwardErrorCorrection = false;
 
             _highPassFilter = BiQuadFilter.HighPassFilter(AudioManager.INPUT_SAMPLE_RATE, 520, 0.97f);
             _lowPassFilter = BiQuadFilter.LowPassFilter(AudioManager.INPUT_SAMPLE_RATE, 4130, 2.0f);
-
-
         }
 
         public JitterBufferProviderInterface JitterBufferProviderInterface { get; }
         public Pcm16BitToSampleProvider SampleProvider { get; }
-
-        public long LastUpdate { get; private set; }
-
-        //is it a new transmission?
-        public bool LikelyNewTransmission()
-        {
-            //400 ms since last update
-            long now = DateTime.Now.Ticks;
-            if ((now - LastUpdate) > 4000000) //400 ms since last update
-            {
-                return true;
-            }
-
-            return false;
-        }
 
         public void AddClientAudioSamples(ClientAudio audio)
         {

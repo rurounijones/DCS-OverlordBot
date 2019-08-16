@@ -1,7 +1,9 @@
 ﻿using System;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.UI;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
+using FragLabs.Audio.Codecs;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio
 {
@@ -9,9 +11,35 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio
     {
         protected readonly Settings.SettingsStore _settings;
 
+        public static readonly int SILENCE_PAD = 300;
+
+        public OpusDecoder _decoder { get; protected set; }
+
+        // Timestamp of the last update
+        public long LastUpdate { get; protected set; }
+
+        // ID of the radio that last transmission was recieved on
+        public int _lastReceivedOn { get; protected set; }  = -1;
+
         public AudioProvider()
         {
+            _decoder = OpusDecoder.Create(AudioManager.INPUT_SAMPLE_RATE, 1);
+            _decoder.ForwardErrorCorrection = false;
+
             _settings = Settings.SettingsStore.Instance;
+        }
+
+        //is it a new transmission?
+        public bool LikelyNewTransmission()
+        {
+            //400 ms since last update
+            long now = DateTime.Now.Ticks;
+            if ((now - LastUpdate) > 4000000) //400 ms since last update
+            {
+                return true;
+            }
+
+            return false;
         }
 
 

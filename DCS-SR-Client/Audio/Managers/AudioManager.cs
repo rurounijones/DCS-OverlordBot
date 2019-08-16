@@ -9,6 +9,7 @@ using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Utility;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.DSP;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Input;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
@@ -46,6 +47,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
 
         private readonly ConcurrentDictionary<string, RecorderAudioProvider> _recordersBufferedAudio =
             new ConcurrentDictionary<string, RecorderAudioProvider>();
+
+        private readonly ConcurrentDictionary<string, BotAudioProvider> _botsBufferedAudio =
+            new ConcurrentDictionary<string, BotAudioProvider>();
 
         private readonly ConcurrentDictionary<string, SRClient> _clientsList;
         private MixingSampleProvider _clientAudioMixer;
@@ -397,6 +401,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
                     _cachedAudioEffects[(int) CachedAudioEffect.AudioEffectTypes.RADIO_RX].AudioEffectBytes,
                     transmitOnRadio);
             }
+
+            foreach (var item in _botsBufferedAudio.Values)
+            {
+                item.EndTransmission(transmitOnRadio);
+            }
         }
 
         public void PlaySoundEffectEndTransmit(int transmitOnRadio, float volume)
@@ -586,23 +595,28 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
             // If we have recieved audio, create a new buffered audio and read it
             ClientAudioProvider client = null;
             RecorderAudioProvider recorder = null;
+            BotAudioProvider bot = null;
             if (_clientsBufferedAudio.ContainsKey(audio.ClientGuid))
             {
                 client = _clientsBufferedAudio[audio.ClientGuid];
                 recorder = _recordersBufferedAudio[audio.ClientGuid];
+                bot = _botsBufferedAudio[audio.ClientGuid];
             }
             else
             {
                 client = new ClientAudioProvider();
                 _clientsBufferedAudio[audio.ClientGuid] = client;
-
                 _clientAudioMixer.AddMixerInput(client.SampleProvider);
 
                 recorder = new RecorderAudioProvider();
                 _recordersBufferedAudio[audio.ClientGuid] = recorder;
+
+                bot = new BotAudioProvider();
+                _botsBufferedAudio[audio.ClientGuid] = bot;
             }
             client.AddClientAudioSamples(audio);
             recorder.AddClientAudioSamples(audio);
+            bot.AddClientAudioSamples(audio);
         }
 
         private void RemoveClientBuffer(SRClient srClient)
