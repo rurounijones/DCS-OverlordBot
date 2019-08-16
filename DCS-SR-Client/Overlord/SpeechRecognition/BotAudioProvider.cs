@@ -12,9 +12,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
     public class BotAudioProvider : AudioProvider
     {
         BufferedWaveProvider _SpeechAudioProvider;
-        SpeechRecognitionListener _speechRecognitionListener;
+        public SpeechRecognitionListener _speechRecognitionListener { get; set; }
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
+        
         public BotAudioProvider()
         {
             _SpeechAudioProvider = new BufferedWaveProvider(AudioPreview.PCM_MONO_16K_S16LE)
@@ -66,6 +66,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
                 var pcmAudio = ConversionHelpers.ShortArrayToByteArray(audio.PcmAudioShort);
                 _SpeechAudioProvider.AddSamples(pcmAudio, 0, pcmAudio.Length);
+                _speechRecognitionListener.lastReceivedRadio = audio.ReceivedRadio;
             }
             else
             {

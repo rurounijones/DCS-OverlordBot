@@ -179,93 +179,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
                 Environment.Exit(1);
             }
 
-            if (micOutput != null) // && micOutput !=speakers
-            {
-                //TODO handle case when they're the same?
+            _tcpVoiceHandler = new TCPVoiceHandler(_clientsList, guid, ipAddress, port, _decoder, this, inputManager, voipConnectCallback);
+            var voiceSenderThread = new Thread(_tcpVoiceHandler.Listen);
 
-                try
-                {
-                    _micWaveOut = new WasapiOut(micOutput, AudioClientShareMode.Shared, true, 40);
-
-                    _micWaveOutBuffer = new BufferedWaveProvider(new WaveFormat(AudioManager.INPUT_SAMPLE_RATE, 16, 1));
-                    _micWaveOutBuffer.ReadFully = true;
-                    _micWaveOutBuffer.DiscardOnBufferOverflow = true;
-
-                    var sampleProvider = _micWaveOutBuffer.ToSampleProvider();
-
-                    if (micOutput.AudioClient.MixFormat.Channels == 1)
-                    {
-                        if (sampleProvider.WaveFormat.Channels == 2)
-                        {
-                            _micWaveOut.Init(sampleProvider.ToMono());
-                        }
-                        else
-                        {
-                            //already mono
-                            _micWaveOut.Init(sampleProvider);
-                        }
-                    }
-                    else
-                    {
-                        if (sampleProvider.WaveFormat.Channels == 1)
-                        {
-                            _micWaveOut.Init(sampleProvider.ToStereo());
-                        }
-                        else
-                        {
-                            //already stereo
-                            _micWaveOut.Init(sampleProvider);
-                        }
-                    }
-
-                    _micWaveOut.Play();
-                }
-                catch (Exception ex)
-                {
-                    Logger.Error(ex, "Error starting mic audio Output - Quitting! " + ex.Message);
-
-                    ShowOutputError("Problem Initialising Mic Audio Output!");
-                
-
-                    Environment.Exit(1);
-                }
-            }
-
-
-            if (mic != -1)
-            {
-                try
-                {
-                    _waveIn = new WaveIn(WaveCallbackInfo.FunctionCallback())
-                    {
-                        BufferMilliseconds = INPUT_AUDIO_LENGTH_MS,
-                        DeviceNumber = mic,
-                    };
-
-                    _waveIn.NumberOfBuffers = 2;
-                    _waveIn.DataAvailable += _waveIn_DataAvailable;
-                    _waveIn.WaveFormat = new WaveFormat(INPUT_SAMPLE_RATE, 16, 1);
-
-                    _tcpVoiceHandler =
-                        new TCPVoiceHandler(_clientsList, guid, ipAddress, port, _decoder, this, inputManager, voipConnectCallback);
-                    var voiceSenderThread = new Thread(_tcpVoiceHandler.Listen);
-
-                    voiceSenderThread.Start();
-
-                    _waveIn.StartRecording();
-
-
-                    MessageHub.Instance.Subscribe<SRClient>(RemoveClientBuffer);
-                }
-                catch (Exception ex)
-                {
-                    Logger.Error(ex, "Error starting audio Input - Quitting! " + ex.Message);
-
-                    ShowInputError("Problem initialising Audio Input!");
-
-                    Environment.Exit(1);
-                }
-            }
+            voiceSenderThread.Start();
         }
         
         private void ShowInputError(string message)
@@ -612,10 +529,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
                 _recordersBufferedAudio[audio.ClientGuid] = recorder;
 
                 bot = new BotAudioProvider();
+                bot._speechRecognitionListener._voiceHandler = _tcpVoiceHandler;
                 _botsBufferedAudio[audio.ClientGuid] = bot;
             }
-            // client.AddClientAudioSamples(audio);
-            // recorder.AddClientAudioSamples(audio);
+            //client.AddClientAudioSamples(audio);
+            //recorder.AddClientAudioSamples(audio);
             bot.AddClientAudioSamples(audio);
         }
 

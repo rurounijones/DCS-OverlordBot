@@ -99,7 +99,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network
              * AUDIO SEGMENT
              */
 
-            // Copy segment after length headers
             Buffer.BlockCopy(AudioPart1Bytes, 0, combinedBytes, 6, AudioPart1Bytes.Length);
 
             /**

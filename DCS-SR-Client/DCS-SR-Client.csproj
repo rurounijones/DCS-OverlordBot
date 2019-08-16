@@ -219,6 +219,8 @@
     <Compile Include="Network\Models\CombinedRadioState.cs" />
     <Compile Include="Network\Models\DCSLosCheckRequest.cs" />
     <Compile Include="Network\Models\DCSLosCheckResult.cs" />
+    <Compile Include="Overlord\SpeechOutput\RadioStreamWriter.cs" />
+    <Compile Include="Overlord\SpeechOutput\Speaker.cs" />
     <Compile Include="Overlord\SpeechRecognition\BotAudioProvider.cs" />
     <Compile Include="Overlord\SpeechRecognition\BufferedWaveProviderStreamReader.cs" />
     <Compile Include="Overlord\SpeechRecognition\LuisService.cs" />

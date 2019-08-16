@@ -27,7 +27,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
         {
             string responseText;
 
-            if (luisResponse.CompositeEntities == null || luisResponse.CompositeEntities.Count == 0)
+            if (luisResponse.Entities.Find(x => x.Type == "awacs_callsign") == null ||
+                (luisResponse.Entities.Find(x => x.Type == "defined_group") == null && luisResponse.Entities.Find(x => x.Type == "learned_group") == null) ||
+                luisResponse.Entities.Find(x => x.Role == "flight") == null || luisResponse.Entities.Find(x => x.Role == "element") == null)
             {
                 responseText = "Last transmitter, I could not recognise your call-sign.";
             }
@@ -62,7 +64,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
 
         private static async Task<Sender> GetSender(LuisResponse response)
         {
-            var group = response.Entities.Find(x => x.Type == "defined_group").Resolution.Values[0];
+            string group;
+            group = response.Entities.Find(x => x.Type == "defined_group").Resolution.Values[0];
+            if (group == null)
+            {
+                group = response.Entities.Find(x => x.Type == "learned_group").Entity;
+
+            }
             var flight = Int32.Parse(response.Entities.Find(x => x.Role == "flight").Resolution.Value);
             var plane = Int32.Parse(response.Entities.Find(x => x.Role == "element").Resolution.Value);
 

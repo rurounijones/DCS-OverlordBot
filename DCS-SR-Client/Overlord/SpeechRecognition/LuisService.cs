@@ -12,8 +12,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
             var client = new HttpClient();
             var queryString = HttpUtility.ParseQueryString(string.Empty);
 
-            var luisAppId = "YourLuisAppId";
-            var endpointKey = "YourEndPointKey";
+            var luisAppId = "YourAppId";
+            var endpointKey = "YourEndpointKey";
 
             // The request header contains your subscription key
             client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", endpointKey);
