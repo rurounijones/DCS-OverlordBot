@@ -40,7 +40,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
             {
                 if (e.Result.Reason == ResultReason.RecognizedSpeech)
                 {
-                    Console.WriteLine($"RECOGNIZED: Text={e.Result.Text}");
+                    Console.WriteLine($"RECOGNIZED: {e.Result.Text}");
+                    string data = Task.Run(() => LuisService.ParseIntent(e.Result.Text)).Result;
+                    Console.WriteLine($"INTENT: {data}");
                 }
                 else if (e.Result.Reason == ResultReason.NoMatch)
                 {
