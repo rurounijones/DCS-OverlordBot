@@ -11,14 +11,23 @@ using System.Threading.Tasks;
 using FragLabs.Audio.Codecs;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers;
 using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 {
     public class SpeechRecognitionListener
     {
+        const string SUBSCRIPTION_KEY = "YourSubscriptionKey";
+        const string REGION = "YourRegion";
+
+        // Authorization token expires every 10 minutes. Renew it every 9 minutes.
+        private static TimeSpan RefreshTokenDuration = TimeSpan.FromMinutes(9);
+
+
         // Creates an instance of a speech config with specified subscription key and service region.
         // Replace with your own subscription key and service region (e.g., "westus").
-        private static readonly SpeechConfig _speechConfig = SpeechConfig.FromSubscription("YourSubscription", "YourRegion");
+        private SpeechConfig _speechConfig;
 
         private readonly BufferedWaveProviderStreamReader _streamReader;
         private readonly SpeechRecognizer _recognizer;
@@ -31,8 +40,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
         public SpeechRecognitionListener(BufferedWaveProvider bufferedWaveProvider)
         {
+
+            var authorizationToken = Task.Run(() => GetToken()).Result;
+
+             _speechConfig = SpeechConfig.FromAuthorizationToken(authorizationToken, REGION);
+
             // If you are using Custom Speech endpoint
-            _speechConfig.EndpointId = "YourEndPointId";
+            _speechConfig.EndpointId = "YourEndpointId";
 
            _encoder = OpusEncoder.Create(AudioManager.INPUT_SAMPLE_RATE, 1, FragLabs.Audio.Codecs.Opus.Application.Voip);
            _encoder.ForwardErrorCorrection = false;
@@ -40,12 +54,56 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
             _streamReader = new BufferedWaveProviderStreamReader(bufferedWaveProvider);
             _audioConfig = AudioConfig.FromStreamInput(_streamReader, AudioStreamFormat.GetWaveFormatPCM(16000, 16, 1));
+
             _recognizer = new SpeechRecognizer(_speechConfig, _audioConfig);
+        }
+
+        // Gets an authorization token by sending a POST request to the token service.
+        public static async Task<string> GetToken()
+        {
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", SUBSCRIPTION_KEY);
+                UriBuilder uriBuilder = new UriBuilder("https://" + REGION + ".api.cognitive.microsoft.com/sts/v1.0/issueToken");
+
+                using (var result = await client.PostAsync(uriBuilder.Uri.AbsoluteUri, null))
+                {
+                    Console.WriteLine("Token Uri: {0}", uriBuilder.Uri.AbsoluteUri);
+                    if (result.IsSuccessStatusCode)
+                    {
+                        return await result.Content.ReadAsStringAsync();
+                    }
+                    else
+                    {
+                        throw new HttpRequestException($"Cannot get token from {uriBuilder.ToString()}. Error: {result.StatusCode}");
+                    }
+                }
+            }
+        }
+
+        // Renews authorization token periodically until cancellationToken is cancelled.
+        public static Task StartTokenRenewTask(CancellationToken cancellationToken, SpeechRecognizer recognizer)
+        {
+            return Task.Run(async () =>
+            {
+                while (!cancellationToken.IsCancellationRequested)
+                {
+                    await Task.Delay(RefreshTokenDuration, cancellationToken);
+
+                    if (!cancellationToken.IsCancellationRequested)
+                    {
+                        recognizer.AuthorizationToken = await GetToken();
+                    }
+                }
+            });
         }
 
         public async Task StartListeningAsync()
         {
             var stopRecognition = new TaskCompletionSource<int>();
+            CancellationTokenSource source = new CancellationTokenSource();
+
+            var tokenRenewTask = StartTokenRenewTask(source.Token, _recognizer);
 
             _recognizer.Recognized += (s, e) =>
             {
