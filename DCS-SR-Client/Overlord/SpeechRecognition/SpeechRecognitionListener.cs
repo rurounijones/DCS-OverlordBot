@@ -18,8 +18,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 {
     public class SpeechRecognitionListener
     {
-        const string SUBSCRIPTION_KEY = "YourSubscriptionKey";
-        const string REGION = "YourRegion";
 
         // Authorization token expires every 10 minutes. Renew it every 9 minutes.
         private static TimeSpan RefreshTokenDuration = TimeSpan.FromMinutes(9);
@@ -43,10 +41,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
             var authorizationToken = Task.Run(() => GetToken()).Result;
 
-             _speechConfig = SpeechConfig.FromAuthorizationToken(authorizationToken, REGION);
+             _speechConfig = SpeechConfig.FromAuthorizationToken(authorizationToken, Constants.SPEECH_REGION);
 
             // If you are using Custom Speech endpoint
-            _speechConfig.EndpointId = "YourEndpointId";
+            _speechConfig.EndpointId = Constants.SPEECH_CUSTOM_ENDPOINT_ID;
 
            _encoder = OpusEncoder.Create(AudioManager.INPUT_SAMPLE_RATE, 1, FragLabs.Audio.Codecs.Opus.Application.Voip);
            _encoder.ForwardErrorCorrection = false;
@@ -63,8 +61,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
         {
             using (var client = new HttpClient())
             {
-                client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", SUBSCRIPTION_KEY);
-                UriBuilder uriBuilder = new UriBuilder("https://" + REGION + ".api.cognitive.microsoft.com/sts/v1.0/issueToken");
+                client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", Constants.SPEECH_SUBSCRIPTION_KEY);
+                UriBuilder uriBuilder = new UriBuilder("https://" + Constants.SPEECH_REGION + ".api.cognitive.microsoft.com/sts/v1.0/issueToken");
 
                 using (var result = await client.PostAsync(uriBuilder.Uri.AbsoluteUri, null))
                 {

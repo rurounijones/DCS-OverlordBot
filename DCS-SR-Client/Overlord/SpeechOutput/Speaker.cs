@@ -10,7 +10,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechOutput
 {
     class Speaker
     {
-        private static SpeechConfig _speechConfig = SpeechConfig.FromSubscription("YourSubscription", "YourRegion");
+        private static SpeechConfig _speechConfig = SpeechConfig.FromSubscription(Constants.SPEECH_SUBSCRIPTION_KEY, Constants.SPEECH_REGION);
 
         private static RadioStreamWriter _streamWriter = new RadioStreamWriter(null);
         private static AudioConfig _audioConfig = AudioConfig.FromStreamOutput(_streamWriter);
