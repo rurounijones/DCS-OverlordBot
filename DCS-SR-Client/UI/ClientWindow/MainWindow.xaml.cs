@@ -470,193 +470,18 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
         private void InitAudioInput()
         {
-            Logger.Info("Audio Input - Saved ID " +
-                        _settings.GetClientSetting(SettingsKeys.AudioInputDeviceId).StringValue);
-
-            for (var i = 0; i < WaveIn.DeviceCount; i++)
-            {
-                //first time round
-                if (i == 0)
-                {
-                    Mic.SelectedIndex = 0;
-                }
-
-                var item = WaveIn.GetCapabilities(i);
-                Mic.Items.Add(new AudioDeviceListItem()
-                {
-                    Text = item.ProductName,
-                    Value = item
-                });
-
-                Logger.Info("Audio Input - " + item.ProductName + " " + item.ProductGuid.ToString() + " - Name GUID" +
-                            item.NameGuid + " - CHN:" + item.Channels);
-
-                if (item.ProductName.Trim().StartsWith(_settings.GetClientSetting(SettingsKeys.AudioInputDeviceId).StringValue.Trim()))
-                {
-                    Mic.SelectedIndex = i;
-                    Logger.Info("Audio Input - Found Saved ");
-                }
-            }
-
-            // No microphone is available - users can still connect/listen, but audio input controls are disabled and sending is prevented
-            if (WaveIn.DeviceCount == 0 || Mic.SelectedIndex < 0)
-            {
-                Logger.Info("Audio Input - No audio input devices available, disabling mic preview");
-
-                _clientStateSingleton.MicrophoneAvailable = false;
-
-                Preview.IsEnabled = false;
-
-                Preview.ToolTip = ToolTips.NoMicAvailable;
-                StartStop.ToolTip = ToolTips.NoMicAvailable;
-                Mic.ToolTip = ToolTips.NoMicAvailable;
-                Mic_VU.ToolTip = ToolTips.NoMicAvailable;
-            }
-            else
-            {
-                Logger.Info("Audio Input - " + WaveIn.DeviceCount + " audio input devices available, configuring as usual");
-
-                _clientStateSingleton.MicrophoneAvailable = true;
-
-                Preview.IsEnabled = true;
-
-                Preview.ToolTip = null;
-                StartStop.ToolTip = null;
-                Mic.ToolTip = null;
-                Mic_VU.ToolTip = null;
-            }
         }
 
         private void InitAudioOutput()
         {
-            Logger.Info("Audio Output - Saved ID " +
-                        _settings.GetClientSetting(SettingsKeys.AudioOutputDeviceId).RawValue);
-
-            var enumerator = new MMDeviceEnumerator();
-            outputDeviceList = enumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
-            var i = 0;
-            foreach (var device in outputDeviceList)
-            {
-
-                try
-                {
-                    Logger.Info("Audio Output - " + device.DeviceFriendlyName + " " + device.ID + " CHN:" +
-                                device.AudioClient.MixFormat.Channels + " Rate:" +
-                                device.AudioClient.MixFormat.SampleRate.ToString());
-
-                    Speakers.Items.Add(new AudioDeviceListItem()
-                    {
-                        Text = device.FriendlyName,
-                        Value = device
-                    });
-
-                    //first time round the loop, select first item
-                    if (i == 0)
-                    {
-                        Speakers.SelectedIndex = 0;
-                    }
-
-                    if (device.ID == _settings.GetClientSetting(SettingsKeys.AudioOutputDeviceId).RawValue)
-                    {
-                        Speakers.SelectedIndex = i; //this one
-                    }
-
-                    i++;
-                }
-                catch (Exception e)
-                {
-                    Logger.Error(e,"Audio Output - Error processing device - device skipped");
-                }
-              
-            }
         }
 
         private void InitMicAudioOutput()
         {
-            Logger.Info("Mic Audio Output - Saved ID " +
-                        _settings.GetClientSetting(SettingsKeys.MicAudioOutputDeviceId).RawValue);
-
-            var i = 0;
-
-            MicOutput.Items.Add(new AudioDeviceListItem()
-            {
-                Text = "NO MIC OUTPUT / PASSTHROUGH",
-                Value = null
-            });
-            foreach (var device in outputDeviceList)
-            {
-                try
-                {
-                    
-                    Logger.Info("Mic Audio Output - " + device.DeviceFriendlyName + " " + device.ID + " CHN:" +
-                            device.AudioClient.MixFormat.Channels + " Rate:" +
-                            device.AudioClient.MixFormat.SampleRate.ToString());
-
-                    MicOutput.Items.Add(new AudioDeviceListItem()
-                    {
-                        Text = device.FriendlyName,
-                        Value = device
-                    });
-
-
-                    //first time round the loop, select first item
-                    if (i == 0)
-                {
-                    MicOutput.SelectedIndex = 0;
-                }
-
-                if (device.ID == _settings.GetClientSetting(SettingsKeys.MicAudioOutputDeviceId).RawValue)
-                {
-                    MicOutput.SelectedIndex = i; //this one
-                }
-
-                i++;
-
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e, "Audio Output - Error processing device - device skipped");
-            }
-        }
         }
 
         private void UpdateClientCount_VUMeters(object sender, EventArgs e)
         {
-            int clientCountIngame = 0;
-
-            foreach (KeyValuePair<string, SRClient> kvp in _clients)
-            {
-                if (kvp.Value.IsIngame())
-                {
-                    clientCountIngame++;
-                }
-            }
-
-            ClientCount.Content = $"{_clients.Count} ({clientCountIngame} ingame)";
-
-            if (_audioPreview != null)
-            {
-                // Only update mic volume output if an audio input device is available - sometimes the value can still change, leaving the user with the impression their mic is working after all
-                if (_clientStateSingleton.MicrophoneAvailable)
-                {
-                    Mic_VU.Value = _audioPreview.MicMax;
-                }
-                Speaker_VU.Value = _audioPreview.SpeakerMax;
-            }
-            else if (_audioManager != null)
-            {
-                // Only update mic volume output if an audio input device is available - sometimes the value can still change, leaving the user with the impression their mic is working after all
-                if (_clientStateSingleton.MicrophoneAvailable)
-                {
-                    Mic_VU.Value = _audioManager.MicMax;
-                }
-                Speaker_VU.Value = _audioManager.SpeakerMax;
-            }
-            else
-            {
-                Mic_VU.Value = -100;
-                Speaker_VU.Value = -100;
-            }
         }
 
         private void RedrawUITick(object sender, EventArgs e)
@@ -873,31 +698,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
         private void SaveSelectedInputAndOutput()
         {
-
-            var output = outputDeviceList[Speakers.SelectedIndex];
-
-          
-            //save app settings
-            // Only save selected microphone if one is actually available, resulting in a crash otherwise
-            if (_clientStateSingleton.MicrophoneAvailable)
-            {
-                _settings.SetClientSetting(SettingsKeys.AudioInputDeviceId, ((WaveInCapabilities)((AudioDeviceListItem)Mic.SelectedItem).Value).ProductName);
-            }
-
-            _settings.SetClientSetting(SettingsKeys.AudioOutputDeviceId, output.ID);
-
-            //check if we have optional output
-            if (MicOutput.SelectedIndex - 1 >= 0)
-            {
-                var micOutput = outputDeviceList[MicOutput.SelectedIndex - 1];
-                //save settings
-                _settings.SetClientSetting(SettingsKeys.MicAudioOutputDeviceId, micOutput.ID);
-            }
-            else
-            {
-                //save settings as none
-                _settings.SetClientSetting(SettingsKeys.MicAudioOutputDeviceId, "");
-            }
         }
 
         private void ConnectCallback(bool result, bool connectionError, string connection)
@@ -915,16 +715,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                     try
                     {
 
-                        var inputId = Mic.SelectedIndex;
-                        var output = outputDeviceList[Speakers.SelectedIndex];
-
-                        //check if we have optional output
-                        MMDevice micOutput = null;
-                        if (MicOutput.SelectedIndex - 1 >= 0)
-                        {
-                            micOutput = outputDeviceList[MicOutput.SelectedIndex - 1];
-                        }
-
                         StartStop.Content = "Disconnect";
                         StartStop.IsEnabled = true;
 
@@ -932,22 +722,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                         ServerConnectionStatus.Source = Images.IconConnected;
                         VOIPConnectionStatus.Source = Images.IconDisconnected;
 
-                        if (_settings.GetClientSetting(SettingsKeys.PlayConnectionSounds).BoolValue)
-                        {
-                            try
-                            {
-                                Sounds.BeepConnected.Play();
-                            }
-                            catch (Exception ex)
-                            {
-                                Logger.Warn(ex, "Failed to play connect sound");
-                            }
-                        }
-
                         _settings.SetClientSetting(SettingsKeys.LastServer, ServerIp.Text);
 
-                        _audioManager.StartEncoding(inputId, output, _guid, InputManager,
-                            _resolvedIp, _port, micOutput, VOIPConnectCallback);
+                        _audioManager.StartEncoding(-1, null, _guid, InputManager,
+                            _resolvedIp, _port, null, VOIPConnectCallback);
                     }
                     catch (Exception ex)
                     {
