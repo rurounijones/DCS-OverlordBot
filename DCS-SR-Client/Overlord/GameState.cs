@@ -8,7 +8,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
 {
     class GameState
     {
-        private static string connectionString = $"Host=192.168.1.27;Port=5432;Database=tac_scribe;Username=tac_scribe;Password=tac_scribe;";
+        private static string connectionString = $"Host={Constants.TAC_SCRIBE_HOST};Port={Constants.TAC_SCRIBE_PORT};Database={Constants.TAC_SCRIBE_DATABASE};" +
+                                                 $"Username={Constants.TAC_SCRIBE_USERNAME};Password={Constants.TAC_SCRIBE_PASSWORD};sslmode=Require";
+
         private static NpgsqlConnection Database = new NpgsqlConnection(connectionString);
 
 
