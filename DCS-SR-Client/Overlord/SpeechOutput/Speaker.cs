@@ -14,31 +14,32 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechOutput
 
         private static RadioStreamWriter _streamWriter = new RadioStreamWriter(null);
         private static AudioConfig _audioConfig = AudioConfig.FromStreamOutput(_streamWriter);
-        private static SpeechSynthesizer _synthesizer = new SpeechSynthesizer(_speechConfig, _audioConfig);
-
         
         public static async Task<byte[]> CreateResponse(string text)
         {
-            using (var textresult = await _synthesizer.SpeakTextAsync(text))
+            using (var synthesizer = new SpeechSynthesizer(_speechConfig, _audioConfig))
             {
-                if (textresult.Reason == ResultReason.SynthesizingAudioCompleted)
+                using (var textresult = await synthesizer.SpeakTextAsync(text))
                 {
-                    Console.WriteLine($"Speech synthesized to speaker for text [{text}]");
-                    return textresult.AudioData;
-                }
-                else if (textresult.Reason == ResultReason.Canceled)
-                {
-                    var cancellation = SpeechSynthesisCancellationDetails.FromResult(textresult);
-                    Console.WriteLine($"CANCELED: Reason={cancellation.Reason}");
-
-                    if (cancellation.Reason == CancellationReason.Error)
+                    if (textresult.Reason == ResultReason.SynthesizingAudioCompleted)
                     {
-                        Console.WriteLine($"CANCELED: ErrorCode={cancellation.ErrorCode}");
-                        Console.WriteLine($"CANCELED: ErrorDetails=[{cancellation.ErrorDetails}]");
-                        Console.WriteLine($"CANCELED: Did you update the subscription info?");
+                        Console.WriteLine($"Speech synthesized to speaker for text [{text}]");
+                        return textresult.AudioData;
                     }
+                    else if (textresult.Reason == ResultReason.Canceled)
+                    {
+                        var cancellation = SpeechSynthesisCancellationDetails.FromResult(textresult);
+                        Console.WriteLine($"CANCELED: Reason={cancellation.Reason}");
+
+                        if (cancellation.Reason == CancellationReason.Error)
+                        {
+                            Console.WriteLine($"CANCELED: ErrorCode={cancellation.ErrorCode}");
+                            Console.WriteLine($"CANCELED: ErrorDetails=[{cancellation.ErrorDetails}]");
+                            Console.WriteLine($"CANCELED: Did you update the subscription info?");
+                        }
+                    }
+                    return null;
                 }
-                return null;
             }
         }
     }
