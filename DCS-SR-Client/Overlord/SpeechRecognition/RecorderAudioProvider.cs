@@ -80,8 +80,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
             _decoder.Dispose();
             _decoder = null;
 
-            _waveFileWriter.Close();
-            _waveFileWriter.Dispose();
+            if (_waveFileWriter != null)
+            {
+                _waveFileWriter.Close();
+                _waveFileWriter.Dispose();
+            }
         }
 
     }
