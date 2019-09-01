@@ -48,8 +48,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
         private readonly ConcurrentDictionary<string, RecorderAudioProvider> _recordersBufferedAudio =
             new ConcurrentDictionary<string, RecorderAudioProvider>();
 
-        private readonly ConcurrentDictionary<string, BotAudioProvider> _botsBufferedAudio =
-            new ConcurrentDictionary<string, BotAudioProvider>();
+        private readonly ConcurrentDictionary<int, BotAudioProvider> _botsBufferedAudio =
+            new ConcurrentDictionary<int, BotAudioProvider>();
 
         private readonly ConcurrentDictionary<string, SRClient> _clientsList;
         private MixingSampleProvider _clientAudioMixer;
@@ -188,25 +188,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
 
         public void PlaySoundEffectStartReceive(int transmitOnRadio, bool encrypted, float volume)
         {
-            if (_settings.GetClientSetting(SettingsKeys.RadioRxEffects_Start).BoolValue)
-            {
-                var _effectsBuffer = _effectsOutputBuffer[transmitOnRadio];
-
-                if (encrypted && (_settings.GetClientSetting(SettingsKeys.RadioEncryptionEffects).BoolValue))
-                {
-                    _effectsBuffer.VolumeSampleProvider.Volume = volume;
-                    _effectsBuffer.AddAudioSamples(
-                        _cachedAudioEffects[(int) CachedAudioEffect.AudioEffectTypes.KY_58_RX].AudioEffectBytes,
-                        transmitOnRadio);
-                }
-                else
-                {
-                    _effectsBuffer.VolumeSampleProvider.Volume = volume;
-                    _effectsBuffer.AddAudioSamples(
-                        _cachedAudioEffects[(int) CachedAudioEffect.AudioEffectTypes.RADIO_TX].AudioEffectBytes,
-                        transmitOnRadio);
-                }
-            }
         }
 
         public void PlaySoundEffectStartTransmit(int transmitOnRadio, bool encrypted, float volume)
@@ -252,15 +233,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
         public void AddClientAudio(ClientAudio audio)
         {
             BotAudioProvider bot = null;
-            if (_botsBufferedAudio.ContainsKey(audio.ClientGuid))
+            if (_botsBufferedAudio.ContainsKey(audio.ReceivedRadio))
             {
-                bot = _botsBufferedAudio[audio.ClientGuid];
+                bot = _botsBufferedAudio[audio.ReceivedRadio];
             }
             else
             {
                 bot = new BotAudioProvider();
                 bot._speechRecognitionListener._voiceHandler = _tcpVoiceHandler;
-                _botsBufferedAudio[audio.ClientGuid] = bot;
+                _botsBufferedAudio[audio.ReceivedRadio] = bot;
             }
             bot.AddClientAudioSamples(audio);
         }

@@ -22,7 +22,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
         // Authorization token expires every 10 minutes. Renew it every 9 minutes.
         private static TimeSpan RefreshTokenDuration = TimeSpan.FromMinutes(9);
 
-
         // Creates an instance of a speech config with specified subscription key and service region.
         // Replace with your own subscription key and service region (e.g., "westus").
         private SpeechConfig _speechConfig;
@@ -112,7 +111,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
                     Console.WriteLine($"INTENT: {luisJson}");
                     LuisResponse luisResponse = JsonConvert.DeserializeObject<LuisResponse>(luisJson);
-                    if(luisResponse.TopScoringIntent["intent"] == "RequestBogeyDope")
+                    if(luisResponse.Query != null && luisResponse.TopScoringIntent["intent"] == "RequestBogeyDope")
                     {
                         string response = Task.Run(() => RequestBogeyDope.Process(luisResponse)).Result;
                         Console.WriteLine($"RESPONSE: {response}");

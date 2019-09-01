@@ -433,8 +433,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
                                 if (radioReceivingPriorities.Count > 0)
                                 {
-                                  
-
                                         //ALL GOOD!
                                         //create marker for bytes
                                         for (int i = 0; i < radioReceivingPriorities.Count; i++)
@@ -445,7 +443,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                                             var audio = new ClientAudio
                                             {
                                                 ClientGuid = udpVoicePacket.Guid,
-                                               EncodedAudio = udpVoicePacket.AudioPart1Bytes,
+                                                EncodedAudio = udpVoicePacket.AudioPart1Bytes,
                                                 //Convert to Shorts!
                                                 ReceiveTime = DateTime.Now.Ticks,
                                                 Frequency = destinationRadio.Frequency,
@@ -461,29 +459,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                                                 LineOfSightLoss = destinationRadio.LineOfSightLoss, // Loss of 1.0 or greater is total loss
                                                 PacketNumber = udpVoicePacket.PacketNumber
                                             };
-
-                                            //handle effects
-                                            var radioState = RadioReceivingState[audio.ReceivedRadio];
-
-                                            if (!isSimultaneousTransmission && (radioState == null || radioState.PlayedEndOfTransmission ||
-                                                !radioState.IsReceiving))
-                                            {
-                                                var decrytable = audio.Decryptable || (audio.Encryption == 0);
-
-                                                //mark that we have decrpyted encrypted audio for sound effects
-                                                if (decrytable && (audio.Encryption > 0))
-                                                {
-                                                    _audioManager.PlaySoundEffectStartReceive(audio.ReceivedRadio,
-                                                        true,
-                                                        audio.Volume);
-                                                }
-                                                else
-                                                {
-                                                    _audioManager.PlaySoundEffectStartReceive(audio.ReceivedRadio,
-                                                        false,
-                                                        audio.Volume);
-                                                }
-                                            }
 
                                             RadioReceivingState[audio.ReceivedRadio] = new RadioReceivingState
                                             {
