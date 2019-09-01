@@ -194,14 +194,17 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
         {
         }
 
-
         public void PlaySoundEffectEndReceive(int transmitOnRadio, float volume)
         {
+            if (_botsBufferedAudio.ContainsKey(transmitOnRadio))
+            {
+                _botsBufferedAudio[transmitOnRadio].EndTransmission();
+            }
         }
 
         public void PlaySoundEffectEndTransmit(int transmitOnRadio, float volume)
         {
-         }
+        }
 
         public void StopEncoding()
         {

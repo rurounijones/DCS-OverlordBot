@@ -61,7 +61,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                     audio.PcmAudioShort = newAudio;
                 }
 
-                _lastReceivedOn = audio.ReceivedRadio;
                 LastUpdate = DateTime.Now.Ticks;
 
                 var pcmAudio = ConversionHelpers.ShortArrayToByteArray(audio.PcmAudioShort);
@@ -74,13 +73,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
             }
         }
 
-        public void EndTransmission(int radio)
+        public void EndTransmission()
         {
-            var silence = new byte[(AudioManager.INPUT_SAMPLE_RATE / 1000) * 2000];
-            if (radio == _lastReceivedOn)
-            {
-                _SpeechAudioProvider.AddSamples(silence, 0, silence.Length);
-            }
+            var silence = new byte[AudioManager.INPUT_SAMPLE_RATE / 1000 * 2000];
+            _SpeechAudioProvider.AddSamples(silence, 0, silence.Length);
         }
 
         //destructor to clear up opus
