@@ -9,7 +9,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
     class GameState
     {
         private static string connectionString = $"Host={Constants.TAC_SCRIBE_HOST};Port={Constants.TAC_SCRIBE_PORT};Database={Constants.TAC_SCRIBE_DATABASE};" +
-                                                 $"Username={Constants.TAC_SCRIBE_USERNAME};Password={Constants.TAC_SCRIBE_PASSWORD};sslmode=Require";
+                                                 $"Username={Constants.TAC_SCRIBE_USERNAME};Password={Constants.TAC_SCRIBE_PASSWORD};"; // sslmode=Require";
 
         private static NpgsqlConnection Database = new NpgsqlConnection(connectionString);
 
@@ -22,7 +22,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
             }
             DbDataReader dbDataReader;
 
-            String command = @"SELECT id FROM public.units WHERE pilot LIKE '" + $"%{group.ToUpper()} {flight}-{plane}%'";
+            String command = @"SELECT id FROM public.units WHERE pilot ILIKE '" + $"%{group} {flight}%{plane} |%'";
 
             using (var cmd = new NpgsqlCommand(command, Database))
             {
@@ -52,7 +52,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
             FROM public.units AS bogey CROSS JOIN LATERAL
               (SELECT requester.position, requester.coalition
                 FROM public.units AS requester
-                WHERE requester.pilot LIKE '" + $"%{group.ToUpper()} {flight}-{plane}%" + @"'
+                WHERE requester.pilot ILIKE '" + $"%{group} {flight}%{plane} |%" + @"'
               ) as request
             WHERE NOT bogey.coalition = request.coalition
             AND bogey.type LIKE 'Air+%'
