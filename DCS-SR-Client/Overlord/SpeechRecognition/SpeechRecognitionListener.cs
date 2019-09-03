@@ -13,11 +13,13 @@ using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
+using NLog;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 {
     public class SpeechRecognitionListener
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         // Authorization token expires every 10 minutes. Renew it every 9 minutes.
         private static TimeSpan RefreshTokenDuration = TimeSpan.FromMinutes(9);
@@ -106,14 +108,17 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
             {
                 if (e.Result.Reason == ResultReason.RecognizedSpeech)
                 {
+                    Logger.Debug($"RECOGNIZED: {e.Result.Text}");
                     Console.WriteLine($"RECOGNIZED: {e.Result.Text}");
                     string luisJson = Task.Run(() => LuisService.ParseIntent(e.Result.Text)).Result;
 
+                    Logger.Debug($"INTENT: {luisJson}");
                     Console.WriteLine($"INTENT: {luisJson}");
                     LuisResponse luisResponse = JsonConvert.DeserializeObject<LuisResponse>(luisJson);
                     if(luisResponse.Query != null && luisResponse.TopScoringIntent["intent"] == "RequestBogeyDope")
                     {
                         string response = Task.Run(() => RequestBogeyDope.Process(luisResponse)).Result;
+                        Logger.Debug($"RESPONSE: {response}");
                         Console.WriteLine($"RESPONSE: {response}");
                         byte[] audioResponse = Task.Run(() => Speaker.CreateResponse(response)).Result;
                         if (audioResponse != null)
@@ -124,16 +129,21 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                 }
                 else if (e.Result.Reason == ResultReason.NoMatch)
                 {
+                    Logger.Debug($"NOMATCH: Speech could not be recognized.");
                     Console.WriteLine($"NOMATCH: Speech could not be recognized.");
                 }
             };
 
             _recognizer.Canceled += (s, e) =>
             {
+                Logger.Debug($"CANCELED: Reason={e.Reason}");
                 Console.WriteLine($"CANCELED: Reason={e.Reason}");
 
                 if (e.Reason == CancellationReason.Error)
                 {
+                    Logger.Debug($"CANCELED: ErrorCode={e.ErrorCode}");
+                    Logger.Debug($"CANCELED: ErrorDetails={e.ErrorDetails}");
+
                     Console.WriteLine($"CANCELED: ErrorCode={e.ErrorCode}");
                     Console.WriteLine($"CANCELED: ErrorDetails={e.ErrorDetails}");
                     Console.WriteLine($"CANCELED: Did you update the subscription info?");
@@ -144,11 +154,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
             _recognizer.SessionStarted += (s, e) =>
             {
+                Logger.Debug("\nSession started event.");
                 Console.WriteLine("\nSession started event.");
             };
 
             _recognizer.SessionStopped += (s, e) =>
             {
+                Logger.Debug("\nSession stopped event.");
+                Logger.Debug("\nStop recognition.");
+
                 Console.WriteLine("\nSession stopped event.");
                 Console.WriteLine("\nStop recognition.");
                 stopRecognition.TrySetResult(0);
@@ -209,7 +223,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                 }
                 else
                 {
-                    Console.WriteLine($"Invalid Bytes for Encoding - {length} should be {AudioManager.SEGMENT_FRAMES} ");
+                    Logger.Debug($"Invalid Bytes for Encoding - {length} should be {AudioManager.SEGMENT_FRAMES}");
+                    Console.WriteLine($"Invalid Bytes for Encoding - {length} should be {AudioManager.SEGMENT_FRAMES}");
                 }
             }
         }
