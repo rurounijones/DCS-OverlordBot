@@ -20,5 +20,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
         public const string TAC_SCRIBE_DATABASE = "";
         public const string TAC_SCRIBE_USERNAME = "";
         public const string TAC_SCRIBE_PASSWORD = "";
+        public const bool TAC_SCRIBE_FORCE_SSL = false;
     }
 }
