@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
-using System.Reflection;
-using System.Threading;
 using System.Windows;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using NLog;
-using NLog.Config;
-using NLog.Targets;
 
 namespace DCS_SR_Client
 {
@@ -48,8 +43,6 @@ namespace DCS_SR_Client
 
                 Environment.Exit(1);
             }
-
-            SetupLogging();
 
 #if !DEBUG
             if (IsClientRunning())
@@ -96,53 +89,6 @@ namespace DCS_SR_Client
 
             return false;
         }
-
-        private void SetupLogging()
-        {
-            string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            string logFilePath = Path.Combine(baseDirectory, "clientlog.txt");
-            string oldLogFilePath = Path.Combine(baseDirectory, "clientlog.old.txt");
-
-            FileInfo logFileInfo = new FileInfo(logFilePath);
-            // Cleanup logfile if > 100MB, keep one old file copy
-            if (logFileInfo.Exists && logFileInfo.Length >= 104857600)
-            {
-                if (File.Exists(oldLogFilePath))
-                {
-                    try
-                    {
-                        File.Delete(oldLogFilePath);
-                    }
-                    catch (Exception) { }
-                }
-
-                try
-                {
-                    File.Move(logFilePath, oldLogFilePath);
-                }
-                catch (Exception) { }
-            }
-
-            var config = new LoggingConfiguration();
-
-            var fileTarget = new FileTarget();
-            config.AddTarget("file", fileTarget);
-
-            fileTarget.FileName = "${basedir}/clientlog.txt";
-            fileTarget.Layout =
-                @"${longdate} | ${logger} | ${message} ${exception:format=toString,Data:maxInnerExceptionLevel=1}";
-
-#if DEBUG
-            config.LoggingRules.Add(new LoggingRule("*", LogLevel.Debug, fileTarget));
-#else
-            config.LoggingRules.Add( new LoggingRule("*", LogLevel.Info, fileTarget));
-#endif
-
-            LogManager.Configuration = config;
-
-            loggingReady = true;
-        }
-
 
         private void InitNotificationIcon()
         {
