@@ -191,12 +191,6 @@
                                Height="26"
                                HorizontalAlignment="Center"
                                Margin="5,0,5,0" />
-                        <Label HorizontalAlignment="Center" HorizontalContentAlignment="Center" Content="Game" />
-                        <Image x:Name="GameConnectionStatus"
-                               Source="/SR-ClientRadio;component/status-disconnected.png"
-                               Height="26"
-                               HorizontalAlignment="Center" 
-                               Margin="5,0,0,0" />
                     </StackPanel>
                 </StackPanel>
             </GroupBox>

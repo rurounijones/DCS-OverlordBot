@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime;
 using System.Windows;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Threading;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio;
@@ -19,19 +16,14 @@ using Ciribob.DCS.SimpleRadio.Standalone.Client.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Preferences;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.Favourites;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Utils;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
-using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network;
-using Ciribob.DCS.SimpleRadio.Standalone.Overlay;
 using MahApps.Metro.Controls;
 using NAudio.CoreAudioApi;
-using NAudio.Wave;
 using NLog;
 using WPFCustomMessageBox;
-using InputBinding = Ciribob.DCS.SimpleRadio.Standalone.Client.Settings.InputBinding;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 {
@@ -99,8 +91,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             Left = _settings.GetPositionSetting(SettingsKeys.ClientX).DoubleValue;
             Top = _settings.GetPositionSetting(SettingsKeys.ClientY).DoubleValue;
 
-           
-
             Title = Title + " - " + UpdaterChecker.VERSION;
 
             CheckWindowVisibility();
@@ -123,11 +113,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
             InitSettingsScreen();
 
-            InitAudioInput();
-
-            InitAudioOutput();
-            InitMicAudioOutput();
-
             _connectCommand = new DelegateCommand(Connect, () => ServerAddress != null);
             FavouriteServersViewModel = new FavouriteServersViewModel(new CsvFavouriteServerStore());
 
@@ -137,13 +122,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
             UpdaterChecker.CheckForUpdate(_settings.GetClientSetting(SettingsKeys.CheckForBetaUpdates).BoolValue);
 
-            _updateTimer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(100)};
-            _updateTimer.Tick += UpdateClientCount_VUMeters;
-            _updateTimer.Start();
-
             _redrawUITimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
             _redrawUITimer.Tick += RedrawUITick;
             _redrawUITimer.Start();
+
+            Connect();
         }
 
         private void CheckWindowVisibility()
@@ -296,22 +279,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
         public ICommand ConnectCommand => _connectCommand;
 
-        private void InitAudioInput()
-        {
-        }
-
-        private void InitAudioOutput()
-        {
-        }
-
-        private void InitMicAudioOutput()
-        {
-        }
-
-        private void UpdateClientCount_VUMeters(object sender, EventArgs e)
-        {
-        }
-
         private void RedrawUITick(object sender, EventArgs e)
         {
             bool isGameGuiConnected = _clientStateSingleton.IsGameGuiConnected;
@@ -330,19 +297,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             {
                 ExternalAWACSModePassword.IsEnabled = false;
                 ExternalAWACSModeName.IsEnabled = false;
-            }
-
-            if (isGameGuiConnected && isGameExportConnected)
-            {
-                GameConnectionStatus.Source = Images.IconConnected;
-            }
-            else if (isGameGuiConnected || isGameGuiConnected)
-            {
-                GameConnectionStatus.Source = Images.IconDisconnectedGame;
-            }
-            else
-            {
-                GameConnectionStatus.Source = Images.IconDisconnected;
             }
         }
 
@@ -910,7 +864,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
         private void ConnectExternalAWACSMode_OnClick(object sender, RoutedEventArgs e)
         {
-            if (_client == null || 
+            ConnectExternalAwacsMode();
+        }
+
+        private void ConnectExternalAwacsMode()
+        {
+            if (_client == null ||
                 !_clientStateSingleton.IsConnected ||
                 !_serverSettings.GetSettingAsBool(Common.Setting.ServerSettingsKeys.EXTERNAL_AWACS_MODE) ||
                 (!_clientStateSingleton.InExternalAWACSMode &&
