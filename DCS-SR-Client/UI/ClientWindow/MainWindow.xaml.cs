@@ -44,7 +44,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
         public delegate void ToggleOverlayCallback(bool uiButton);
 
-        private readonly AudioManager _audioManager;
+        private AudioManager _audioManager;
 
         private readonly ConcurrentDictionary<string, SRClient> _clients = new ConcurrentDictionary<string, SRClient>();
 
@@ -143,15 +143,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             Mic_VU.Value = -100;
 
             ExternalAWACSModeName.Text = _settings.GetClientSetting(SettingsKeys.LastSeenName).StringValue;
-
-            _audioManager = new AudioManager(_clients);
-            _audioManager.SpeakerBoost = VolumeConversionHelper.ConvertVolumeSliderToScale((float) SpeakerBoost.Value);
-
-
-            if ((SpeakerBoostLabel != null) && (SpeakerBoost != null))
-            {
-                SpeakerBoostLabel.Content = VolumeConversionHelper.ConvertLinearDiffToDB(_audioManager.SpeakerBoost);
-            }
 
             UpdaterChecker.CheckForUpdate(_settings.GetClientSetting(SettingsKeys.CheckForBetaUpdates).BoolValue);
 
@@ -561,6 +552,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             {
                 SaveSelectedInputAndOutput();
 
+                _audioManager = new AudioManager(_clients);
+                _audioManager.SpeakerBoost = VolumeConversionHelper.ConvertVolumeSliderToScale((float)SpeakerBoost.Value);
+
                 try
                 {
                     //process hostname
@@ -581,13 +575,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                         Speakers.IsEnabled = false;
                         MicOutput.IsEnabled = false;
                         Preview.IsEnabled = false;
-
-                        if (_audioPreview != null)
-                        {
-                            Preview.Content = "Audio Preview";
-                            _audioPreview.StopEncoding();
-                            _audioPreview = null;
-                        }
                     }
                     else
                     {
@@ -681,6 +668,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             try
             {
                 _audioManager.StopEncoding();
+                _audioManager = null;
             }
             catch (Exception ex)
             {
