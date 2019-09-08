@@ -141,7 +141,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                         _tcpClient.NoDelay = true;
 
                         CallOnMain(true);
-                        ClientSyncLoop();
+                        bool stop = ClientSyncLoop();
+                        if (stop == false) {
+                            connectionError = true;
+                        }
                     }
                     else
                     {
@@ -235,7 +238,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             }
         }
 
-        private void ClientSyncLoop()
+        private bool ClientSyncLoop()
         {
             //clear the clients list
             _clients.Clear();
@@ -460,6 +463,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
             //clear the clients list
             _clients.Clear();
+            return _stop;
         }
 
         private void ShowVersionMistmatchWarning(string serverVersion)

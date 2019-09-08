@@ -467,6 +467,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
             _clientStateSingleton.DcsPlayerRadioInfo.Reset();
             _clientStateSingleton.DcsPlayerSideInfo.Reset();
+
+            if( connectionError == true)
+            {
+                Connect();
+            }
         }
 
         private void SaveSelectedInputAndOutput()
