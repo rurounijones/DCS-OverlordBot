@@ -289,8 +289,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             _stopFlag.Cancel();
             _pingStop.Cancel();
 
-            _inputManager.StopPtt();
-
             StopTimer();
         }
 
