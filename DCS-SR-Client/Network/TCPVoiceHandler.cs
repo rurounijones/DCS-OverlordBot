@@ -118,51 +118,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             decoderThread.Start();
 
             var settings = SettingsStore.Instance;
-            _inputManager.StartDetectPtt(pressed =>
-            {
-                var radios = _clientStateSingleton.DcsPlayerRadioInfo;
-
-                var radioSwitchPtt = _settings.GetClientSetting(SettingsKeys.RadioSwitchIsPTT).BoolValue;
-
-                var ptt = false;
-                foreach (var inputBindState in pressed)
-                {
-                    if (inputBindState.IsActive)
-                    {
-                        //radio switch?
-                        if ((int) inputBindState.MainDevice.InputBind >= (int) InputBinding.Intercom &&
-                            (int) inputBindState.MainDevice.InputBind <= (int) InputBinding.Switch10)
-                        {
-                            //gives you radio id if you minus 100
-                            var radioId = (int) inputBindState.MainDevice.InputBind - 100;
-
-                            if (radioId < _clientStateSingleton.DcsPlayerRadioInfo.radios.Length)
-                            {
-                                var clientRadio = _clientStateSingleton.DcsPlayerRadioInfo.radios[radioId];
-
-                                if (clientRadio.modulation != RadioInformation.Modulation.DISABLED &&
-                                    radios.control == DCSPlayerRadioInfo.RadioSwitchControls.HOTAS)
-                                {
-                                    radios.selected = (short) radioId;
-                                }
-
-                                //turn on PTT
-                                if (radioSwitchPtt)
-                                {
-                                    ptt = true;
-                                }
-                            }
-                        }
-                        else if (inputBindState.MainDevice.InputBind == InputBinding.Ptt)
-                        {
-                            ptt = true;
-                        }
-                    }
-                }
-
-                //if length is zero - no keybinds or no PTT pressed set to false
-                _ptt = ptt;
-            });
 
             StartTimer();
 

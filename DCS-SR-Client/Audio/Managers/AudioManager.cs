@@ -56,18 +56,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
 
         private OpusDecoder _decoder;
 
-        //buffer for effects
-        //plays in parallel with radio output buffer
-        private RadioAudioProvider[] _effectsOutputBuffer;
-
         private OpusEncoder _encoder;
 
-        private float _speakerBoost = 1.0f;
         private TCPVoiceHandler _tcpVoiceHandler;
         private VolumeSampleProviderWithPeak _volumeSampleProvider;
-
-        private WaveIn _waveIn;
-        private WasapiOut _waveOut;
 
         public float MicMax { get; set; } = -100;
         public float SpeakerMax { get; set; } = -100;
@@ -89,19 +81,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
         }
 
         public float MicBoost { get; set; } = 1.0f;
-
-        public float SpeakerBoost
-        {
-            get { return _speakerBoost; }
-            set
-            {
-                _speakerBoost = value;
-                if (_volumeSampleProvider != null)
-                {
-                    _volumeSampleProvider.Volume = value;
-                }
-            }
-        }
 
         public void StartEncoding(int mic, MMDevice speakers, string guid, InputDeviceManager inputManager,
             IPAddress ipAddress, int port, MMDevice micOutput, VOIPConnectCallback voipConnectCallback)
@@ -227,8 +206,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
 
             SpeakerMax = -100;
             MicMax = -100;
-
-            _effectsOutputBuffer = null;
 
             MessageHub.Instance.ClearSubscriptions();
         }

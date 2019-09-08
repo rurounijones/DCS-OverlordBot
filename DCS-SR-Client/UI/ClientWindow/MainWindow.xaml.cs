@@ -123,8 +123,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
             InitSettingsScreen();
 
-            InitInput();
-
             InitAudioInput();
 
             InitAudioOutput();
@@ -135,17 +133,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
             InitDefaultAddress();
 
-        
-            SpeakerBoost.Value = _settings.GetClientSetting(SettingsKeys.SpeakerBoost).DoubleValue;
-
-            Speaker_VU.Value = -100;
-            Mic_VU.Value = -100;
-
             ExternalAWACSModeName.Text = _settings.GetClientSetting(SettingsKeys.LastSeenName).StringValue;
 
             UpdaterChecker.CheckForUpdate(_settings.GetClientSetting(SettingsKeys.CheckForBetaUpdates).BoolValue);
-
-            InitFlowDocument();
 
             _updateTimer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(100)};
             _updateTimer.Tick += UpdateClientCount_VUMeters;
@@ -263,18 +253,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             }
         }
 
-        private void InitFlowDocument()
-        {
-            //make hyperlinks work
-            var hyperlinks = WPFElementHelper.GetVisuals(AboutFlowDocument).OfType<Hyperlink>();
-            foreach (var link in hyperlinks)
-                link.RequestNavigate += new System.Windows.Navigation.RequestNavigateEventHandler((sender, args) =>
-                {
-                    Process.Start(new ProcessStartInfo(args.Uri.AbsoluteUri));
-                    args.Handled = true;
-                });
-        }
-
         private void InitDefaultAddress()
         {
             // legacy setting migration
@@ -287,144 +265,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             }
 
             ServerAddress = FavouriteServersViewModel.DefaultServerAddress;
-        }
-
-        private void InitInput()
-        {
-            InputManager = new InputDeviceManager(this, ToggleOverlay);
-
-            Radio1.InputName = "Radio 1";
-            Radio1.ControlInputBinding = InputBinding.Switch1;
-            Radio1.InputDeviceManager = InputManager;
-
-            Radio2.InputName = "Radio 2";
-            Radio2.ControlInputBinding = InputBinding.Switch2;
-            Radio2.InputDeviceManager = InputManager;
-
-            Radio3.InputName = "Radio 3";
-            Radio3.ControlInputBinding = InputBinding.Switch3;
-            Radio3.InputDeviceManager = InputManager;
-
-            PTT.InputName = "Push To Talk - PTT";
-            PTT.ControlInputBinding = InputBinding.Ptt;
-            PTT.InputDeviceManager = InputManager;
-
-            Intercom.InputName = "Intercom Select";
-            Intercom.ControlInputBinding = InputBinding.Intercom;
-            Intercom.InputDeviceManager = InputManager;
-
-            RadioOverlay.InputName = "Overlay Toggle";
-            RadioOverlay.ControlInputBinding = InputBinding.OverlayToggle;
-            RadioOverlay.InputDeviceManager = InputManager;
-
-            Radio4.InputName = "Radio 4";
-            Radio4.ControlInputBinding = InputBinding.Switch4;
-            Radio4.InputDeviceManager = InputManager;
-
-            Radio5.InputName = "Radio 5";
-            Radio5.ControlInputBinding = InputBinding.Switch5;
-            Radio5.InputDeviceManager = InputManager;
-
-            Radio6.InputName = "Radio 6";
-            Radio6.ControlInputBinding = InputBinding.Switch6;
-            Radio6.InputDeviceManager = InputManager;
-
-            Radio7.InputName = "Radio 7";
-            Radio7.ControlInputBinding = InputBinding.Switch7;
-            Radio7.InputDeviceManager = InputManager;
-
-            Radio8.InputName = "Radio 8";
-            Radio8.ControlInputBinding = InputBinding.Switch8;
-            Radio8.InputDeviceManager = InputManager;
-
-            Radio9.InputName = "Radio 9";
-            Radio9.ControlInputBinding = InputBinding.Switch9;
-            Radio9.InputDeviceManager = InputManager;
-
-            Radio10.InputName = "Radio 10";
-            Radio10.ControlInputBinding = InputBinding.Switch10;
-            Radio10.InputDeviceManager = InputManager;
-
-            Up100.InputName = "Up 100MHz";
-            Up100.ControlInputBinding = InputBinding.Up100;
-            Up100.InputDeviceManager = InputManager;
-
-            Up10.InputName = "Up 10MHz";
-            Up10.ControlInputBinding = InputBinding.Up10;
-            Up10.InputDeviceManager = InputManager;
-
-            Up1.InputName = "Up 1MHz";
-            Up1.ControlInputBinding = InputBinding.Up1;
-            Up1.InputDeviceManager = InputManager;
-
-            Up01.InputName = "Up 0.1MHz";
-            Up01.ControlInputBinding = InputBinding.Up01;
-            Up01.InputDeviceManager = InputManager;
-
-            Up001.InputName = "Up 0.01MHz";
-            Up001.ControlInputBinding = InputBinding.Up001;
-            Up001.InputDeviceManager = InputManager;
-
-            Up0001.InputName = "Up 0.001MHz";
-            Up0001.ControlInputBinding = InputBinding.Up0001;
-            Up0001.InputDeviceManager = InputManager;
-
-
-            Down100.InputName = "Down 100MHz";
-            Down100.ControlInputBinding = InputBinding.Down100;
-            Down100.InputDeviceManager = InputManager;
-
-            Down10.InputName = "Down 10MHz";
-            Down10.ControlInputBinding = InputBinding.Down10;
-            Down10.InputDeviceManager = InputManager;
-
-            Down1.InputName = "Down 1MHz";
-            Down1.ControlInputBinding = InputBinding.Down1;
-            Down1.InputDeviceManager = InputManager;
-
-            Down01.InputName = "Down 0.1MHz";
-            Down01.ControlInputBinding = InputBinding.Down01;
-            Down01.InputDeviceManager = InputManager;
-
-            Down001.InputName = "Down 0.01MHz";
-            Down001.ControlInputBinding = InputBinding.Down001;
-            Down001.InputDeviceManager = InputManager;
-
-            Down0001.InputName = "Down 0.001MHz";
-            Down0001.ControlInputBinding = InputBinding.Down0001;
-            Down0001.InputDeviceManager = InputManager;
-
-            ToggleGuard.InputName = "Toggle Guard";
-            ToggleGuard.ControlInputBinding = InputBinding.ToggleGuard;
-            ToggleGuard.InputDeviceManager = InputManager;
-
-            NextRadio.InputName = "Select Next Radio";
-            NextRadio.ControlInputBinding = InputBinding.NextRadio;
-            NextRadio.InputDeviceManager = InputManager;
-
-            PreviousRadio.InputName = "Select Previous Radio";
-            PreviousRadio.ControlInputBinding = InputBinding.PreviousRadio;
-            PreviousRadio.InputDeviceManager = InputManager;
-
-            ToggleEncryption.InputName = "Toggle Encryption";
-            ToggleEncryption.ControlInputBinding = InputBinding.ToggleEncryption;
-            ToggleEncryption.InputDeviceManager = InputManager;
-
-            EncryptionKeyIncrease.InputName = "Encryption Key Up";
-            EncryptionKeyIncrease.ControlInputBinding = InputBinding.EncryptionKeyIncrease;
-            EncryptionKeyIncrease.InputDeviceManager = InputManager;
-
-            EncryptionKeyDecrease.InputName = "Encryption Key Down";
-            EncryptionKeyDecrease.ControlInputBinding = InputBinding.EncryptionKeyDecrease;
-            EncryptionKeyDecrease.InputDeviceManager = InputManager;
-
-            RadioChannelUp.InputName = "Radio Channel Up";
-            RadioChannelUp.ControlInputBinding = InputBinding.RadioChannelUp;
-            RadioChannelUp.InputDeviceManager = InputManager;
-
-            RadioChannelDown.InputName = "Radio Channel Down";
-            RadioChannelDown.ControlInputBinding = InputBinding.RadioChannelDown;
-            RadioChannelDown.InputDeviceManager = InputManager;
         }
 
         private void InitToolTips()
@@ -550,7 +390,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                 SaveSelectedInputAndOutput();
 
                 _audioManager = new AudioManager(_clients);
-                _audioManager.SpeakerBoost = VolumeConversionHelper.ConvertVolumeSliderToScale((float)SpeakerBoost.Value);
 
                 try
                 {
@@ -568,10 +407,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
                         StartStop.Content = "Connecting...";
                         StartStop.IsEnabled = false;
-                        Mic.IsEnabled = false;
-                        Speakers.IsEnabled = false;
-                        MicOutput.IsEnabled = false;
-                        Preview.IsEnabled = false;
                     }
                     else
                     {
@@ -639,10 +474,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
             StartStop.Content = "Connect";
             StartStop.IsEnabled = true;
-            Mic.IsEnabled = true;
-            Speakers.IsEnabled = true;
-            MicOutput.IsEnabled = true;
-            Preview.IsEnabled = true;
             _clientStateSingleton.IsConnected = false;
             ToggleServerSettings.IsEnabled = false;
 
@@ -664,8 +495,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
             try
             {
-                _audioManager.StopEncoding();
-                _audioManager = null;
+                if (_audioManager != null)
+                {
+                    _audioManager.StopEncoding();
+                    _audioManager = null;
+                }
             }
             catch (Exception ex)
             {
@@ -799,46 +633,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             base.OnStateChanged(e);
         }
 
-        private void PreviewAudio(object sender, RoutedEventArgs e)
-        {
-            if (_audioPreview == null)
-            {
-                if (!_clientStateSingleton.MicrophoneAvailable)
-                {
-                    Logger.Info("Unable to preview audio, no valid audio input device available or selected");
-                    return;
-                }
-
-                //get device
-                try
-                {
-                    var inputId = Mic.SelectedIndex;
-                    var output = outputDeviceList[Speakers.SelectedIndex];
-
-                    SaveSelectedInputAndOutput();
-
-
-                    _audioPreview = new AudioPreview();
-                    _audioPreview.SpeakerBoost = VolumeConversionHelper.ConvertVolumeSliderToScale((float)SpeakerBoost.Value); 
-                    _audioPreview.StartPreview(inputId, output);
-                  
-                    Preview.Content = "Stop Preview";
-                }
-                catch (Exception ex)
-                {
-                    Logger.Error(ex,
-                        "Unable to preview audio - likely output device error - Pick another. Error:" + ex.Message);
-
-                }
-            }
-            else
-            {
-                Preview.Content = "Audio Preview";
-                _audioPreview.StopEncoding();
-                _audioPreview = null;
-            }
-        }
-
         private void UpdateUICallback()
         {
             if (_clientStateSingleton.IsConnected)
@@ -863,29 +657,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                 ExternalAWACSModeNameLabel.IsEnabled = false;
                 ConnectExternalAWACSMode.IsEnabled = false;
                 ConnectExternalAWACSMode.Content = "Connect External AWACS MODE (EAM)";
-            }
-        }
-
-        private void SpeakerBoost_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            var convertedValue = VolumeConversionHelper.ConvertVolumeSliderToScale((float) SpeakerBoost.Value);
-
-            if (_audioPreview != null)
-            {
-                _audioPreview.SpeakerBoost = convertedValue;
-            }
-            if (_audioManager != null)
-            {
-                _audioManager.SpeakerBoost = convertedValue;
-            }
-
-            _settings.SetClientSetting(SettingsKeys.SpeakerBoost,
-                SpeakerBoost.Value.ToString(CultureInfo.InvariantCulture));
-
-
-            if ((SpeakerBoostLabel != null) && (SpeakerBoost != null))
-            {
-                SpeakerBoostLabel.Content = VolumeConversionHelper.ConvertLinearDiffToDB(convertedValue);
             }
         }
 
