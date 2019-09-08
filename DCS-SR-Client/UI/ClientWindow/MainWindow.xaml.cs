@@ -52,7 +52,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
         private readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private AudioPreview _audioPreview;
         private ClientSync _client;
-        private DCSAutoConnectListener _dcsAutoConnectListener;
         private int _port = 5002;
 
         private Overlay.RadioOverlayWindow _radioOverlayWindow;
@@ -147,8 +146,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             UpdaterChecker.CheckForUpdate(_settings.GetClientSetting(SettingsKeys.CheckForBetaUpdates).BoolValue);
 
             InitFlowDocument();
-
-            _dcsAutoConnectListener = new DCSAutoConnectListener(AutoConnect);
 
             _updateTimer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(100)};
             _updateTimer.Tick += UpdateClientCount_VUMeters;
@@ -790,9 +787,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
             _awacsRadioOverlay?.Close();
             _awacsRadioOverlay = null;
-
-            _dcsAutoConnectListener?.Stop();
-            _dcsAutoConnectListener = null;
         }
 
         protected override void OnStateChanged(EventArgs e)
@@ -961,156 +955,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             {
                 _awacsRadioOverlay?.Close();
                 _awacsRadioOverlay = null;
-            }
-        }
-
-        private void AutoConnect(string address, int port)
-        {
-            string connection = $"{address}:{port}";
-
-            Logger.Info($"Received AutoConnect DCS-SRS @ {connection}");
-
-            if (_clientStateSingleton.IsConnected)
-            {
-                // Always show prompt about active/advertised SRS connection mismatch if client is already connected
-                string[] currentConnectionParts = ServerIp.Text.Trim().Split(':');
-                string currentAddress = currentConnectionParts[0];
-                int currentPort = 5002;
-                if (currentConnectionParts.Length >= 2)
-                {
-                    if (!int.TryParse(currentConnectionParts[1], out currentPort))
-                    {
-                        Logger.Warn($"Failed to parse port {currentConnectionParts[1]} of current connection, falling back to 5002 for autoconnect comparison");
-                        currentPort = 5002;
-                    }
-                }
-                string currentConnection = $"{currentAddress}:{currentPort}";
-
-                if (string.Equals(address, currentAddress, StringComparison.OrdinalIgnoreCase) && port == currentPort)
-                {
-                    // Current connection matches SRS server advertised by DCS, all good
-                    Logger.Info($"Current SRS connection {currentConnection} matches advertised server {connection}, ignoring autoconnect");
-                    return;
-                }
-                else if (port != currentPort)
-                {
-                    // Port mismatch, will always be a different server, no need to perform hostname lookups
-                    HandleAutoConnectMismatch(currentConnection, connection);
-                    return;
-                }
-
-                // Perform DNS lookup of advertised and current hostnames to find hostname/resolved IP matches                
-                List<string> currentIPs = new List<string>();
-
-                if (IPAddress.TryParse(currentAddress, out IPAddress currentIP))
-                {
-                    currentIPs.Add(currentIP.ToString());
-                }
-                else
-                {
-                    try
-                    {
-                        foreach (IPAddress ip in Dns.GetHostAddresses(currentConnectionParts[0]))
-                        {
-                            // SRS currently only supports IPv4 (due to address/port parsing)
-                            if (ip.AddressFamily == AddressFamily.InterNetwork)
-                            {
-                                currentIPs.Add(ip.ToString());
-                            }
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.Warn(e, $"Failed to resolve current SRS host {currentConnectionParts[0]} to IP addresses, ignoring autoconnect advertisement");
-                        return;
-                    }
-                }
-
-                List<string> advertisedIPs = new List<string>();
-
-                if (IPAddress.TryParse(address, out IPAddress advertisedIP))
-                {
-                    advertisedIPs.Add(advertisedIP.ToString());
-                }
-                else
-                {
-                    try
-                    {
-                        foreach (IPAddress ip in Dns.GetHostAddresses(connection))
-                        {
-                            // SRS currently only supports IPv4 (due to address/port parsing)
-                            if (ip.AddressFamily == AddressFamily.InterNetwork)
-                            {
-                                advertisedIPs.Add(ip.ToString());
-                            }
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.Warn(e, $"Failed to resolve advertised SRS host {address} to IP addresses, ignoring autoconnect advertisement");
-                        return;
-                    }
-                }
-
-                if (!currentIPs.Intersect(advertisedIPs).Any())
-                {
-                    // No resolved IPs match, display mismatch warning
-                    HandleAutoConnectMismatch(currentConnection, connection);
-                }
-            }
-            else
-            {
-                // Show auto connect prompt if client is not connected yet and setting has been enabled, otherwise automatically connect
-                bool showPrompt = _settings.GetClientSetting(SettingsKeys.AutoConnectPrompt).BoolValue;
-
-                bool connectToServer = !showPrompt;
-                if (_settings.GetClientSetting(SettingsKeys.AutoConnectPrompt).BoolValue)
-                {
-                    WindowHelper.BringProcessToFront(Process.GetCurrentProcess());
-
-                    var result = MessageBox.Show(this,
-                        $"Would you like to try to auto-connect to DCS-SRS @ {address}:{port}? ", "Auto Connect",
-                        MessageBoxButton.YesNo,
-                        MessageBoxImage.Question);
-
-                    connectToServer = (result == MessageBoxResult.Yes) && (StartStop.Content.ToString().ToLower() == "connect");
-                }
-
-                if (connectToServer)
-                {
-                    ServerIp.Text = connection;
-                    Connect();
-                }
-            }
-        }
-
-        private void HandleAutoConnectMismatch(string currentConnection, string advertisedConnection)
-        {
-            // Show auto connect mismatch prompt if setting has been enabled (default), otherwise automatically switch server
-            bool showPrompt = _settings.GetClientSetting(SettingsKeys.AutoConnectMismatchPrompt).BoolValue;
-
-            Logger.Info($"Current SRS connection {currentConnection} does not match advertised server {advertisedConnection}, {(showPrompt ? "displaying mismatch prompt" : "automatically switching server")}");
-
-            bool switchServer = !showPrompt;
-            if (showPrompt)
-            {
-                WindowHelper.BringProcessToFront(Process.GetCurrentProcess());
-
-                var result = MessageBox.Show(this,
-                    $"The SRS server advertised by DCS @ {advertisedConnection} does not match the SRS server @ {currentConnection} you are currently connected to.\n\n" +
-                    $"Would you like to connect to the advertised SRS server?",
-                    "Auto Connect Mismatch",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Warning);
-
-                switchServer = result == MessageBoxResult.Yes;
-            }
-
-            if (switchServer)
-            {
-                Stop();
-                ServerIp.Text = advertisedConnection;
-                Connect();
             }
         }
 
