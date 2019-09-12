@@ -19,7 +19,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechOutput
         {
             using (var synthesizer = new SpeechSynthesizer(_speechConfig, _audioConfig))
             {
-                using (var textresult = await synthesizer.SpeakTextAsync(text))
+                using (var textresult = await synthesizer.SpeakSsmlAsync(text))
                 {
                     if (textresult.Reason == ResultReason.SynthesizingAudioCompleted)
                     {

@@ -109,7 +109,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                 {
                     Logger.Debug($"RECOGNIZED: {e.Result.Text}");
                     string luisJson = Task.Run(() => LuisService.ParseIntent(e.Result.Text)).Result;
-                    string response;
+                    string response = "<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"en-US-JessaRUS\">";
 
                     Logger.Debug($"INTENT: {luisJson}");
                     LuisResponse luisResponse = JsonConvert.DeserializeObject<LuisResponse>(luisJson);
@@ -123,12 +123,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                     }
                     else if (sender == null)
                     {
-                        response = "Last transmitter, I could not recognise your call-sign.";
+                        response += "Last transmitter, I could not recognise your call-sign.";
                         Respond(response);
                     }
                     else
                     {
-                        response = $"{sender.ToString()}, {awacs}, ";
+                        response += $"{sender.ToString()}, {awacs}, ";
 
                         if (Task.Run(() => SenderVerifier.Verify(sender)).Result == false)
                         {
@@ -145,7 +145,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                                 response += Task.Run(() => RequestBearingToAirbase.Process(luisResponse, sender)).Result;
                             }
                         }
-                        Respond(response);
+                        Respond(response + "</voice></speak>");
                     }
                 }
                 else if (e.Result.Reason == ResultReason.NoMatch)
