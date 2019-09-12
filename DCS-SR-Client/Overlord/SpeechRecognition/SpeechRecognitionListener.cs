@@ -109,18 +109,43 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                 {
                     Logger.Debug($"RECOGNIZED: {e.Result.Text}");
                     string luisJson = Task.Run(() => LuisService.ParseIntent(e.Result.Text)).Result;
+                    string response;
 
                     Logger.Debug($"INTENT: {luisJson}");
                     LuisResponse luisResponse = JsonConvert.DeserializeObject<LuisResponse>(luisJson);
-                    if(luisResponse.Query != null && luisResponse.TopScoringIntent["intent"] == "RequestBogeyDope")
+
+                    string awacs = luisResponse.Entities.Find(x => x.Type == "awacs_callsign").Resolution.Values[0];
+                    Sender sender = Task.Run(() => SenderExtractor.Extract(luisResponse)).Result;
+
+                    if (awacs == null)
                     {
-                        string response = Task.Run(() => RequestBogeyDope.Process(luisResponse)).Result;
-                        Logger.Debug($"RESPONSE: {response}");
-                        byte[] audioResponse = Task.Run(() => Speaker.CreateResponse(response)).Result;
-                        if (audioResponse != null)
+                        // NO-OP
+                    }
+                    else if (sender == null)
+                    {
+                        response = "Last transmitter, I could not recognise your call-sign.";
+                        Respond(response);
+                    }
+                    else
+                    {
+                        response = $"{sender.ToString()}, {awacs}, ";
+
+                        if (Task.Run(() => SenderVerifier.Verify(sender)).Result == false)
                         {
-                            SendResponse(audioResponse, audioResponse.Length);
+                            response += "I cannot find you on scope.";
                         }
+                        else
+                        {
+                            if (luisResponse.Query != null && luisResponse.TopScoringIntent["intent"] == "RequestBogeyDope")
+                            {
+                                response += Task.Run(() => RequestBogeyDope.Process(luisResponse, sender)).Result;
+                            }
+                            else if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "RequestBearingToAirbase" || luisResponse.TopScoringIntent["intent"] == "RequestHeadingToAirbase"))
+                            {
+                                response += Task.Run(() => RequestBearingToAirbase.Process(luisResponse, sender)).Result;
+                            }
+                        }
+                        Respond(response);
                     }
                 }
                 else if (e.Result.Reason == ResultReason.NoMatch)
@@ -163,6 +188,16 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
             // Stops recognition.
             await _recognizer.StopContinuousRecognitionAsync().ConfigureAwait(false);
+        }
+
+        private void Respond(string response)
+        {
+            Logger.Debug($"RESPONSE: {response}");
+            byte[] audioResponse = Task.Run(() => Speaker.CreateResponse(response)).Result;
+            if (audioResponse != null)
+            {
+                SendResponse(audioResponse, audioResponse.Length);
+            }
         }
 
         // Expects a byte buffer containing 16 bit PCM WAV

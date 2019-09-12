@@ -24,7 +24,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
             queryString["spellCheck"] = "false";
             queryString["staging"] = "false";
 
-            var endpointUri = "https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/" + Constants.LUIS_APP_ID + "?" + queryString;
+            var endpointUri = "https://japaneast.api.cognitive.microsoft.com/luis/v2.0/apps/" + Constants.LUIS_APP_ID + "?" + queryString;
             var response = await client.GetAsync(endpointUri);
 
             return await response.Content.ReadAsStringAsync();

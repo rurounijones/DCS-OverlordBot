@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime;
+using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -504,6 +505,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
                         _audioManager.StartEncoding(-1, null, _guid, InputManager,
                             _resolvedIp, _port, null, VOIPConnectCallback);
+
+                        ConnectExternalAwacsMode();
                     }
                     catch (Exception ex)
                     {

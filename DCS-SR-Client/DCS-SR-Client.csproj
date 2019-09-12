@@ -220,12 +220,16 @@
     <Compile Include="Network\Models\DCSLosCheckRequest.cs" />
     <Compile Include="Network\Models\DCSLosCheckResult.cs" />
     <Compile Include="Overlord\Constants.cs" />
+    <Compile Include="Overlord\Intents\RequestBearingToAirbase.cs" />
+    <Compile Include="Overlord\SpeechRecognition\Sender.cs" />
     <Compile Include="Overlord\SpeechOutput\RadioStreamWriter.cs" />
     <Compile Include="Overlord\SpeechOutput\Speaker.cs" />
     <Compile Include="Overlord\SpeechRecognition\BotAudioProvider.cs" />
     <Compile Include="Overlord\SpeechRecognition\BufferedWaveProviderStreamReader.cs" />
     <Compile Include="Overlord\SpeechRecognition\LuisService.cs" />
     <Compile Include="Overlord\SpeechRecognition\RecorderAudioProvider.cs" />
+    <Compile Include="Overlord\SpeechRecognition\SenderExtractor.cs" />
+    <Compile Include="Overlord\SpeechRecognition\SenderVerifier.cs" />
     <Compile Include="Overlord\SpeechRecognition\SpeechRecognitionListener.cs" />
     <Compile Include="Overlord\GameState.cs" />
     <Compile Include="Overlord\Intents\RequestBogeyDope.cs" />
