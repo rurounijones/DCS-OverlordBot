@@ -27,7 +27,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
 
             if (braData != null)
             {
-                response = $"{airbase} bearing {Regex.Replace(braData["bearing"].ToString("000"), "\\d{1}", " $0")}";
+                response = $"{PronounceAirbase(airbase)} bearing {Regex.Replace(braData["bearing"].ToString("000"), "\\d{1}", " $0")}";
             }
             else
             {
@@ -35,6 +35,22 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
             }
 
             return response;
+        }
+
+        private static string PronounceAirbase(string airbase)
+        {
+            // TODO - Try and find the phonetic representation of all airbases on caucasus, including the russian carrier
+            switch (airbase.ToLower())
+            {
+                case "krymsk":
+                    airbase = "<phoneme alphabet=\"ipa\" ph=\"ˈkrɨm.sk\">Krymsk</phoneme>";
+                    break;
+                case "kutaisi":
+                    airbase = "<phoneme alphabet=\"ipa\" ph=\"kuˈtaɪ si\">Kutaisi</phoneme>";
+                    break;
+            }
+
+            return airbase;
         }
 
     }
