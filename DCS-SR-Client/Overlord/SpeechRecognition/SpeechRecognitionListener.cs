@@ -14,12 +14,16 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using NLog;
+using System.IO;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 {
     public class SpeechRecognitionListener
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
+        // Used when an exception is thrown so that the caller isn't left wondering.
+        private static readonly byte[] _failureMessage = File.ReadAllBytes("Overlord/equipment-failure.wav");
 
         // Authorization token expires every 10 minutes. Renew it every 9 minutes.
         private static TimeSpan RefreshTokenDuration = TimeSpan.FromMinutes(9);
@@ -105,53 +109,66 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
             _recognizer.Recognized += (s, e) =>
             {
-                if (e.Result.Reason == ResultReason.RecognizedSpeech)
+                string response = null;
+
+                try
                 {
-                    Logger.Debug($"RECOGNIZED: {e.Result.Text}");
-                    string luisJson = Task.Run(() => LuisService.ParseIntent(e.Result.Text)).Result;
-                    string response = "<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"en-US-JessaRUS\">";
-
-                    Logger.Debug($"INTENT: {luisJson}");
-                    LuisResponse luisResponse = JsonConvert.DeserializeObject<LuisResponse>(luisJson);
-
-                    string awacs = luisResponse.Entities.Find(x => x.Type == "awacs_callsign").Resolution.Values[0];
-                    Sender sender = Task.Run(() => SenderExtractor.Extract(luisResponse)).Result;
-
-                    if (awacs == null)
+                    if (e.Result.Reason == ResultReason.RecognizedSpeech)
                     {
-                        // NO-OP
-                    }
-                    else if (sender == null)
-                    {
-                        response += "Last transmitter, I could not recognise your call-sign.";
-                        Respond(response);
-                    }
-                    else
-                    {
-                        response += $"{sender.ToString()}, {awacs}, ";
+                        Logger.Debug($"RECOGNIZED: {e.Result.Text}");
+                        string luisJson = Task.Run(() => LuisService.ParseIntent(e.Result.Text)).Result;
 
-                        if (Task.Run(() => SenderVerifier.Verify(sender)).Result == false)
+                        Logger.Debug($"INTENT: {luisJson}");
+                        LuisResponse luisResponse = JsonConvert.DeserializeObject<LuisResponse>(luisJson);
+
+                        string awacs;
+                        Sender sender = Task.Run(() => SenderExtractor.Extract(luisResponse)).Result;
+
+                        if (luisResponse.Entities.Find(x => x.Type == "awacs_callsign") == null)
                         {
-                            response += "I cannot find you on scope.";
+                            // NO-OP
+                        }
+                        else if (sender == null)
+                        {
+                            response = "Last transmitter, I could not recognise your call-sign.";
+                            Respond(response);
                         }
                         else
                         {
-                            if (luisResponse.Query != null && luisResponse.TopScoringIntent["intent"] == "RequestBogeyDope")
+                            awacs = luisResponse.Entities.Find(x => x.Type == "awacs_callsign").Resolution.Values[0];
+                            response = $"{sender.ToString()}, {awacs}, ";
+
+                            if (Task.Run(() => SenderVerifier.Verify(sender)).Result == false)
                             {
-                                response += Task.Run(() => RequestBogeyDope.Process(luisResponse, sender)).Result;
+                                response += "I cannot find you on scope.";
                             }
-                            else if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "RequestBearingToAirbase" || luisResponse.TopScoringIntent["intent"] == "RequestHeadingToAirbase"))
+                            else
                             {
-                                response += Task.Run(() => RequestBearingToAirbase.Process(luisResponse, sender)).Result;
+                                if (luisResponse.Query != null && luisResponse.TopScoringIntent["intent"] == "RequestBogeyDope")
+                                {
+                                    response += Task.Run(() => RequestBogeyDope.Process(luisResponse, sender)).Result;
+                                }
+                                else if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "RequestBearingToAirbase" || luisResponse.TopScoringIntent["intent"] == "RequestHeadingToAirbase"))
+                                {
+                                    response += Task.Run(() => RequestBearingToAirbase.Process(luisResponse, sender)).Result;
+                                }
                             }
                         }
-                        Respond(response + "</voice></speak>");
                     }
-                }
-                else if (e.Result.Reason == ResultReason.NoMatch)
+                    else if (e.Result.Reason == ResultReason.NoMatch)
+                    {
+                        Logger.Debug($"NOMATCH: Speech could not be recognized.");
+                    }
+                } catch(Exception ex)
                 {
-                    Logger.Debug($"NOMATCH: Speech could not be recognized.");
+                    Logger.Debug(ex);
+                    SendResponse(_failureMessage, _failureMessage.Length);
+                    response = null;
                 }
+                if (response != null) {
+                    Respond("<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"en-US-JessaRUS\">" + response + "</voice></speak>");
+                }
+
             };
 
             _recognizer.Canceled += (s, e) =>

@@ -1,8 +1,6 @@
-﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers;
-using Microsoft.CognitiveServices.Speech;
+﻿using Microsoft.CognitiveServices.Speech;
 using Microsoft.CognitiveServices.Speech.Audio;
-using NAudio.Wave;
+using NLog;
 using System;
 using System.Threading.Tasks;
 
@@ -10,6 +8,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechOutput
 {
     class Speaker
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         private static SpeechConfig _speechConfig = SpeechConfig.FromSubscription(Constants.SPEECH_SUBSCRIPTION_KEY, Constants.SPEECH_REGION);
 
         private static RadioStreamWriter _streamWriter = new RadioStreamWriter(null);
@@ -17,6 +17,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechOutput
         
         public static async Task<byte[]> CreateResponse(string text)
         {
+            Logger.Debug($"RESPONSE: {text}");
+
             using (var synthesizer = new SpeechSynthesizer(_speechConfig, _audioConfig))
             {
                 using (var textresult = await synthesizer.SpeakSsmlAsync(text))
