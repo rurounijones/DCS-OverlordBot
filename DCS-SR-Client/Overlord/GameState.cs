@@ -1,4 +1,5 @@
-﻿using Npgsql;
+﻿using NLog;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -8,6 +9,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
 {
     class GameState
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private static NpgsqlConnection Database = new NpgsqlConnection(ConnectionString());
 
@@ -22,7 +24,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
             return connectionString;
         }
 
-        public static async Task<bool> DoesPilotExist(string group, int flight, int plane)
+        public static async Task<bool> DoesPilotExist(String group, int flight, int plane)
         {
             if (Database.State != System.Data.ConnectionState.Open)
             {
@@ -31,6 +33,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
             DbDataReader dbDataReader;
 
             String command = @"SELECT id FROM public.units WHERE pilot ILIKE '" + $"%{group} {flight}%{plane} |%'";
+
+            Logger.Debug(command);
 
             using (var cmd = new NpgsqlCommand(command, Database))
             {
@@ -54,7 +58,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
             }
             DbDataReader dbDataReader;
 
-            String command = @"SELECT degrees(ST_AZIMUTH(request.position, bogey.position)) as bearing,
+            var command = @"SELECT degrees(ST_AZIMUTH(request.position, bogey.position)) as bearing,
                                       ST_DISTANCE(request.position, bogey.position) as distance,
                                       bogey.altitude, bogey.heading
             FROM public.units AS bogey CROSS JOIN LATERAL
@@ -66,6 +70,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
             AND bogey.type LIKE 'Air+%'
             ORDER BY request.position<-> bogey.position ASC
             LIMIT 1";
+
+            Logger.Debug(command);
 
             Dictionary<string, int> output = null;
 

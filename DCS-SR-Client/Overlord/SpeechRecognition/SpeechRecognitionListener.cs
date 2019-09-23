@@ -126,30 +126,35 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
                         if (luisResponse.Entities.Find(x => x.Type == "awacs_callsign") == null)
                         {
+                            Logger.Debug($"RESPONSE NO-OP");
                             // NO-OP
                         }
                         else if (sender == null)
                         {
+                            Logger.Debug($"SENDER IS NULL");
                             response = "Last transmitter, I could not recognise your call-sign.";
-                            Respond(response);
                         }
                         else
                         {
                             awacs = luisResponse.Entities.Find(x => x.Type == "awacs_callsign").Resolution.Values[0];
-                            response = $"{sender.ToString()}, {awacs}, ";
+
+                            Logger.Debug($"SENDER: " + sender);
 
                             if (Task.Run(() => SenderVerifier.Verify(sender)).Result == false)
                             {
-                                response += "I cannot find you on scope.";
+                                Logger.Debug($"SenderVerified: false");
+                                response = $"{sender.ToString()}, {awacs}, I cannot find you on scope. ";
                             }
                             else
                             {
                                 if (luisResponse.Query != null && luisResponse.TopScoringIntent["intent"] == "RequestBogeyDope")
                                 {
+                                    response = $"{sender.ToString()}, {awacs}, ";
                                     response += Task.Run(() => RequestBogeyDope.Process(luisResponse, sender)).Result;
                                 }
                                 else if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "RequestBearingToAirbase" || luisResponse.TopScoringIntent["intent"] == "RequestHeadingToAirbase"))
                                 {
+                                    response = $"{sender.ToString()}, {awacs}, ";
                                     response += Task.Run(() => RequestBearingToAirbase.Process(luisResponse, sender)).Result;
                                 }
                             }
