@@ -37,12 +37,18 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
         private readonly AudioConfig _audioConfig;
         private readonly OpusEncoder _encoder;
 
+        private readonly string _voice;
+
         public TCPVoiceHandler _voiceHandler;
 
         public int lastReceivedRadio = -1;
 
-        public SpeechRecognitionListener(BufferedWaveProvider bufferedWaveProvider)
+        public SpeechRecognitionListener(BufferedWaveProvider bufferedWaveProvider, string callsign = null, string voice = "en-US-JessaRUS")
         {
+
+            Logger.Debug("VOICE: " + voice);
+
+            _voice = voice;
 
             var authorizationToken = Task.Run(() => GetToken()).Result;
 
@@ -171,7 +177,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                     response = null;
                 }
                 if (response != null) {
-                    Respond("<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"en-US-JessaRUS\">" + response + "</voice></speak>");
+                    Respond($"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{_voice}\">{response}</voice></speak>");
                 }
 
             };

@@ -219,7 +219,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
             }
             else
             {
-                bot = new BotAudioProvider();
+                var callsign = _clientStateSingleton.DcsPlayerRadioInfo.radios[audio.ReceivedRadio].name;
+                var voice = _clientStateSingleton.DcsPlayerRadioInfo.radios[audio.ReceivedRadio].voice;
+
+
+                bot = new BotAudioProvider(callsign, voice);
                 bot._speechRecognitionListener._voiceHandler = _tcpVoiceHandler;
                 _botsBufferedAudio[audio.ReceivedRadio] = bot;
             }

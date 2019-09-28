@@ -56,6 +56,8 @@
 
         public bool simul = false;
 
+        public string voice = null;
+
         /**
          * Used to determine if we should send an update to the server or not
          * We only need to do that if something that would stop us Receiving happens which

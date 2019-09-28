@@ -15,7 +15,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
         public SpeechRecognitionListener _speechRecognitionListener { get; set; }
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         
-        public BotAudioProvider()
+        public BotAudioProvider(string callsign, string voice)
         {
             _SpeechAudioProvider = new BufferedWaveProvider(AudioPreview.PCM_MONO_16K_S16LE)
             {
@@ -24,7 +24,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                 ReadFully = false
             };
 
-            _speechRecognitionListener = new SpeechRecognitionListener(_SpeechAudioProvider);
+            _speechRecognitionListener = new SpeechRecognitionListener(_SpeechAudioProvider, callsign, voice);
             Task.Run(() => _speechRecognitionListener.StartListeningAsync());
         }
 

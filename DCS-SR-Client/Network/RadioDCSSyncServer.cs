@@ -355,6 +355,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                     clientRadio.freqMax = updateRadio.freqMax;
 
                     clientRadio.name = updateRadio.name;
+                    clientRadio.voice = updateRadio.voice;
 
                     clientRadio.modulation = updateRadio.modulation;
 
