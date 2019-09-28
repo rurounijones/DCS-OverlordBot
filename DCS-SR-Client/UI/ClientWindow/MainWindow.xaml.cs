@@ -419,7 +419,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             {
                 try
                 {
-                    Sounds.BeepDisconnected.Play();
                 }
                 catch (Exception ex)
                 {
