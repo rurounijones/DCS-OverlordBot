@@ -17,27 +17,26 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechOutput
         
         public static async Task<byte[]> CreateResponse(string text)
         {
-            Logger.Debug($"RESPONSE: {text}");
-
             using (var synthesizer = new SpeechSynthesizer(_speechConfig, _audioConfig))
             {
                 using (var textresult = await synthesizer.SpeakSsmlAsync(text))
                 {
                     if (textresult.Reason == ResultReason.SynthesizingAudioCompleted)
                     {
-                        Console.WriteLine($"Speech synthesized to speaker for text [{text}]");
+                        Logger.Debug($"Speech synthesized to speaker for text [{text}]");
+                        Logger.Debug($"Audio size: {textresult.AudioData.Length}");
                         return textresult.AudioData;
                     }
                     else if (textresult.Reason == ResultReason.Canceled)
                     {
                         var cancellation = SpeechSynthesisCancellationDetails.FromResult(textresult);
-                        Console.WriteLine($"CANCELED: Reason={cancellation.Reason}");
+                        Logger.Debug($"CANCELED: Reason={cancellation.Reason}");
 
                         if (cancellation.Reason == CancellationReason.Error)
                         {
-                            Console.WriteLine($"CANCELED: ErrorCode={cancellation.ErrorCode}");
-                            Console.WriteLine($"CANCELED: ErrorDetails=[{cancellation.ErrorDetails}]");
-                            Console.WriteLine($"CANCELED: Did you update the subscription info?");
+                            Logger.Debug($"CANCELED: ErrorCode={cancellation.ErrorCode}");
+                            Logger.Debug($"CANCELED: ErrorDetails=[{cancellation.ErrorDetails}]");
+                            Logger.Debug($"CANCELED: Did you update the subscription info?");
                         }
                     }
                     return null;

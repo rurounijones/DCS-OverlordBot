@@ -130,7 +130,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                         string awacs;
                         Sender sender = Task.Run(() => SenderExtractor.Extract(luisResponse)).Result;
 
-                        if (luisResponse.Entities.Find(x => x.Type == "awacs_callsign") == null)
+                        if (luisResponse.Query != null && luisResponse.TopScoringIntent["intent"] == "None" || 
+                            luisResponse.Entities.Find(x => x.Type == "awacs_callsign") == null)
                         {
                             Logger.Debug($"RESPONSE NO-OP");
                             // NO-OP
@@ -190,9 +191,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                 {
                     Logger.Debug($"CANCELED: ErrorCode={e.ErrorCode}");
                     Logger.Debug($"CANCELED: ErrorDetails={e.ErrorDetails}");
+                    SendResponse(_failureMessage, _failureMessage.Length);
                 }
 
-                stopRecognition.TrySetResult(0);
+
+                stopRecognition.TrySetResult(1);
             };
 
             _recognizer.SessionStarted += (s, e) =>
@@ -225,6 +228,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
             if (audioResponse != null)
             {
                 SendResponse(audioResponse, audioResponse.Length);
+            }
+            else
+            {
+                SendResponse(_failureMessage, _failureMessage.Length);
             }
         }
 
