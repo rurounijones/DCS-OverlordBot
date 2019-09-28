@@ -43,6 +43,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
         public int lastReceivedRadio = -1;
 
+        // Allows OverlordBot to listen for a specific word to start listening. Currently not used although the setup has all been done.
+        // This is due to wierd state transition errors thatI cannot be bothered to debug.
+        KeywordRecognitionModel _wakeWord;
+
         public SpeechRecognitionListener(BufferedWaveProvider bufferedWaveProvider, string callsign = null, string voice = "en-US-JessaRUS")
         {
 
@@ -63,6 +67,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
             _streamReader = new BufferedWaveProviderStreamReader(bufferedWaveProvider);
             _audioConfig = AudioConfig.FromStreamInput(_streamReader, AudioStreamFormat.GetWaveFormatPCM(16000, 16, 1));
+
+            _wakeWord = KeywordRecognitionModel.FromFile($"Overlord/WakeWords/{callsign}.table");
 
             _recognizer = new SpeechRecognizer(_speechConfig, _audioConfig);
         }
@@ -180,7 +186,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                 if (response != null) {
                     Respond($"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{_voice}\">{response}</voice></speak>");
                 }
-
             };
 
             _recognizer.Canceled += (s, e) =>
@@ -193,8 +198,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                     Logger.Debug($"CANCELED: ErrorDetails={e.ErrorDetails}");
                     SendResponse(_failureMessage, _failureMessage.Length);
                 }
-
-
                 stopRecognition.TrySetResult(1);
             };
 
