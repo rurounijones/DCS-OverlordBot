@@ -36,11 +36,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                 plane = Int32.Parse(response.Entities.Find(x => x.Role == "element").Resolution.Value);
             }
             else if (response.Entities.Find(x => x.Role == "flight_and_element") != null &&
-                Int32.Parse(response.Entities.Find(x => x.Role == "flight_and_element").Resolution.Value) >= 10 &&
-                Int32.Parse(response.Entities.Find(x => x.Role == "flight_and_element").Resolution.Value) <= 99)
+                     response.Entities.Find(x => x.Role == "flight_and_element").Entity.Length == 2)
             {
-                flight = Int32.Parse(response.Entities.Find(x => x.Role == "flight_and_element").Resolution.Value[0].ToString());
-                plane = Int32.Parse(response.Entities.Find(x => x.Role == "flight_and_element").Resolution.Value[1].ToString());
+                bool flight_parse = Int32.TryParse(response.Entities.Find(x => x.Role == "flight_and_element").Entity[0].ToString(), out flight);
+                bool element_parse = Int32.TryParse(response.Entities.Find(x => x.Role == "flight_and_element").Entity[1].ToString(), out plane);
+
+                if(flight_parse == false || element_parse == false)
+                {
+                    return null;
+                }
             }
             else
             {
