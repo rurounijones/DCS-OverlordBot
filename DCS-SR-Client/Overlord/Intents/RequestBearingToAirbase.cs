@@ -31,7 +31,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
             }
             else
             {
-                response = $"I Could not find {airbase}";
+                response = $"I Could not find {PronounceAirbase(airbase)}";
             }
 
             return response;
