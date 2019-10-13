@@ -32,7 +32,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
             }
             DbDataReader dbDataReader;
 
-            String command = @"SELECT id FROM public.units WHERE pilot ILIKE '" + $"%{group} {flight}%{plane} |%'";
+            String command = @"SELECT id FROM public.units WHERE (pilot ILIKE '" + $"%{group} {flight}-{plane}%' OR pilot ILIKE '" + $"%{group} {flight}-{plane}%')";
 
             Logger.Debug(command);
 
@@ -64,7 +64,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
             FROM public.units AS bogey CROSS JOIN LATERAL
               (SELECT requester.position, requester.coalition
                 FROM public.units AS requester
-                WHERE requester.pilot ILIKE '" + $"%{group} {flight}%{plane} |%" + @"'
+                WHERE (requester.pilot ILIKE '" + $"%{group} {flight}-{plane}%" + @"' OR requester.pilot ILIKE '" + $"%{group} {flight}{plane}%" + @"' )
               ) as request
             WHERE NOT bogey.coalition = request.coalition
             AND bogey.type LIKE 'Air+%'
