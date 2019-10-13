@@ -28,12 +28,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
         // Authorization token expires every 10 minutes. Renew it every 9 minutes.
         private static TimeSpan RefreshTokenDuration = TimeSpan.FromMinutes(9);
 
-        // Creates an instance of a speech config with specified subscription key and service region.
-        // Replace with your own subscription key and service region (e.g., "westus").
-        private SpeechConfig _speechConfig;
-
         private readonly BufferedWaveProviderStreamReader _streamReader;
-        private readonly SpeechRecognizer _recognizer;
         private readonly AudioConfig _audioConfig;
         private readonly OpusEncoder _encoder;
 
@@ -54,13 +49,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
             _voice = voice;
 
-            var authorizationToken = Task.Run(() => GetToken()).Result;
-
-             _speechConfig = SpeechConfig.FromAuthorizationToken(authorizationToken, Constants.SPEECH_REGION);
-
-            // If you are using Custom Speech endpoint
-            _speechConfig.EndpointId = Constants.SPEECH_CUSTOM_ENDPOINT_ID;
-
            _encoder = OpusEncoder.Create(AudioManager.INPUT_SAMPLE_RATE, 1, FragLabs.Audio.Codecs.Opus.Application.Voip);
            _encoder.ForwardErrorCorrection = false;
            _encoder.FrameByteCount(AudioManager.SEGMENT_FRAMES);
@@ -70,7 +58,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
             _wakeWord = KeywordRecognitionModel.FromFile($"Overlord/WakeWords/{callsign}.table");
 
-            _recognizer = new SpeechRecognizer(_speechConfig, _audioConfig);
         }
 
         // Gets an authorization token by sending a POST request to the token service.
@@ -114,12 +101,22 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
         public async Task StartListeningAsync()
         {
+            Logger.Debug($"Started Recognition");
+
+            // Initialize the recognizer
+            var authorizationToken = Task.Run(() => GetToken()).Result;
+            SpeechConfig speechConfig = SpeechConfig.FromAuthorizationToken(authorizationToken, Constants.SPEECH_REGION);
+            speechConfig.EndpointId = Constants.SPEECH_CUSTOM_ENDPOINT_ID;
+            SpeechRecognizer recognizer = new SpeechRecognizer(speechConfig, _audioConfig);
+
+            // Setup the cancellation code
             var stopRecognition = new TaskCompletionSource<int>();
             CancellationTokenSource source = new CancellationTokenSource();
 
-            var tokenRenewTask = StartTokenRenewTask(source.Token, _recognizer);
+            // Start the token renewal so we can do long-running recognition.
+            var tokenRenewTask = StartTokenRenewTask(source.Token, recognizer);
 
-            _recognizer.Recognized += (s, e) =>
+            recognizer.Recognized += (s, e) =>
             {
                 string response = null;
 
@@ -188,7 +185,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                 }
             };
 
-            _recognizer.Canceled += (s, e) =>
+            recognizer.Canceled += (s, e) =>
             {
                 Logger.Debug($"CANCELED: Reason={e.Reason}");
 
@@ -201,12 +198,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                 stopRecognition.TrySetResult(1);
             };
 
-            _recognizer.SessionStarted += (s, e) =>
+            recognizer.SessionStarted += (s, e) =>
             {
                 Logger.Debug("\nSession started event.");
             };
 
-            _recognizer.SessionStopped += (s, e) =>
+            recognizer.SessionStopped += (s, e) =>
             {
                 Logger.Debug("\nSession stopped event.");
                 Logger.Debug("\nStop recognition.");
@@ -214,14 +211,17 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
             };
 
             // Starts continuous recognition. Uses StopContinuousRecognitionAsync() to stop recognition.
-            await _recognizer.StartContinuousRecognitionAsync().ConfigureAwait(false);
+            await recognizer.StartContinuousRecognitionAsync().ConfigureAwait(false);
 
             // Waits for completion.
             // Use Task.WaitAny to keep the task rooted.
             Task.WaitAny(new[] { stopRecognition.Task });
 
             // Stops recognition.
-            await _recognizer.StopContinuousRecognitionAsync().ConfigureAwait(false);
+            await recognizer.StopContinuousRecognitionAsync().ConfigureAwait(false);
+            source.Cancel();
+            Logger.Debug($"Stopped Recognition");
+            await StartListeningAsync();
         }
 
         private void Respond(string response)
