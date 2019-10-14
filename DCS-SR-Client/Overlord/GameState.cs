@@ -32,7 +32,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
             }
             DbDataReader dbDataReader;
 
-            String command = @"SELECT id FROM public.units WHERE (pilot ILIKE '" + $"%{group} {flight}-{plane}%' OR pilot ILIKE '" + $"%{group} {flight}-{plane}%')";
+            String command = @"SELECT id FROM public.units WHERE (pilot ILIKE '" + $"%{group} {flight}-{plane}%' OR pilot ILIKE '" + $"%{group} {flight}{plane}%')";
 
             Logger.Debug(command);
 
