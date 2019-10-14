@@ -2,11 +2,13 @@
 using System.Net.Http;
 using System.Web;
 using System.Threading.Tasks;
+using NewRelic.Api.Agent;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 {
     class LuisService
     {
+        [Trace]
         public static async Task<String> ParseIntent(String text)
         {
             var client = new HttpClient();

@@ -1,16 +1,15 @@
 ﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.LuisModels;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using NewRelic.Api.Agent;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 {
     class SenderExtractor
     {
 
+        [Trace]
         public async static Task<Sender> Extract(LuisResponse response)
         {
             string group;

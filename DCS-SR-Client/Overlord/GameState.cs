@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading.Tasks;
+using NewRelic.Api.Agent;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
 {
@@ -24,7 +25,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
             return connectionString;
         }
 
-        public static async Task<bool> DoesPilotExist(String group, int flight, int plane)
+        [Trace]
+        public static async Task<bool> DoesPilotExist(string group, int flight, int plane)
         {
             if (Database.State != System.Data.ConnectionState.Open)
             {
@@ -32,7 +34,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
             }
             DbDataReader dbDataReader;
 
-            String command = @"SELECT id FROM public.units WHERE (pilot ILIKE '" + $"%{group} {flight}-{plane}%' OR pilot ILIKE '" + $"%{group} {flight}{plane}%')";
+            string command = @"SELECT id FROM public.units WHERE (pilot ILIKE '" + $"%{group} {flight}-{plane}%' OR pilot ILIKE '" + $"%{group} {flight}{plane}%')";
 
             Logger.Debug(command);
 
@@ -51,6 +53,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
             }
         }
 
+        [Trace]
         public static async Task<Dictionary<string,int?>> GetBogeyDope(string group, int flight, int plane)
         {
             if(Database.State != System.Data.ConnectionState.Open) {
@@ -103,6 +106,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
             return output;
         }
 
+        [Trace]
         public static async Task<Dictionary<string, int>> GetBearingToAirbase(string group, int flight, int plane, string airbase)
         {
 

@@ -1,16 +1,14 @@
 ﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.LuisModels;
-using Newtonsoft.Json;
-using NLog;
-using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using NewRelic.Api.Agent;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
 {
     class RequestBogeyDope
     {
-
+        [Trace]
         public static async Task<string> Process(LuisResponse luisResponse, Sender sender)
         {
             string response;

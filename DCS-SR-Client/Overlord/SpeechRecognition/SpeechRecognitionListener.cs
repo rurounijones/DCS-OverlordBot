@@ -15,6 +15,7 @@ using System.Net.Http;
 using System.Threading;
 using NLog;
 using System.IO;
+using NewRelic.Api.Agent;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 {
@@ -118,71 +119,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
             recognizer.Recognized += (s, e) =>
             {
-                string response = null;
-
-                try
-                {
-                    if (e.Result.Reason == ResultReason.RecognizedSpeech)
-                    {
-                        Logger.Debug($"RECOGNIZED: {e.Result.Text}");
-                        string luisJson = Task.Run(() => LuisService.ParseIntent(e.Result.Text)).Result;
-
-                        Logger.Debug($"INTENT: {luisJson}");
-                        LuisResponse luisResponse = JsonConvert.DeserializeObject<LuisResponse>(luisJson);
-
-                        string awacs;
-                        Sender sender = Task.Run(() => SenderExtractor.Extract(luisResponse)).Result;
-
-                        if (luisResponse.Query != null && luisResponse.TopScoringIntent["intent"] == "None" || 
-                            luisResponse.Entities.Find(x => x.Type == "awacs_callsign") == null)
-                        {
-                            Logger.Debug($"RESPONSE NO-OP");
-                            // NO-OP
-                        }
-                        else if (sender == null)
-                        {
-                            Logger.Debug($"SENDER IS NULL");
-                            response = "Last transmitter, I could not recognise your call-sign.";
-                        }
-                        else
-                        {
-                            awacs = luisResponse.Entities.Find(x => x.Type == "awacs_callsign").Resolution.Values[0];
-
-                            Logger.Debug($"SENDER: " + sender);
-
-                            if (Task.Run(() => SenderVerifier.Verify(sender)).Result == false)
-                            {
-                                Logger.Debug($"SenderVerified: false");
-                                response = $"{sender.ToString()}, {awacs}, I cannot find you on scope. ";
-                            }
-                            else
-                            {
-                                if (luisResponse.Query != null && luisResponse.TopScoringIntent["intent"] == "RequestBogeyDope")
-                                {
-                                    response = $"{sender.ToString()}, {awacs}, ";
-                                    response += Task.Run(() => RequestBogeyDope.Process(luisResponse, sender)).Result;
-                                }
-                                else if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "RequestBearingToAirbase" || luisResponse.TopScoringIntent["intent"] == "RequestHeadingToAirbase"))
-                                {
-                                    response = $"{sender.ToString()}, {awacs}, ";
-                                    response += Task.Run(() => RequestBearingToAirbase.Process(luisResponse, sender)).Result;
-                                }
-                            }
-                        }
-                    }
-                    else if (e.Result.Reason == ResultReason.NoMatch)
-                    {
-                        Logger.Debug($"NOMATCH: Speech could not be recognized.");
-                    }
-                } catch(Exception ex)
-                {
-                    Logger.Debug(ex);
-                    SendResponse(_failureMessage, _failureMessage.Length);
-                    response = null;
-                }
-                if (response != null) {
-                    Respond($"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{_voice}\">{response}</voice></speak>");
-                }
+                ProcessAwacsCall(e);
             };
 
             recognizer.Canceled += (s, e) =>
@@ -222,6 +159,77 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
             source.Cancel();
             Logger.Debug($"Stopped Recognition");
             await StartListeningAsync();
+        }
+
+        [Transaction(Web = true)]
+        private void ProcessAwacsCall(SpeechRecognitionEventArgs e) {
+            string response = null;
+
+            try
+            {
+                if (e.Result.Reason == ResultReason.RecognizedSpeech)
+                {
+                    Logger.Debug($"RECOGNIZED: {e.Result.Text}");
+                    string luisJson = Task.Run(() => LuisService.ParseIntent(e.Result.Text)).Result;
+
+                    Logger.Debug($"INTENT: {luisJson}");
+                    LuisResponse luisResponse = JsonConvert.DeserializeObject<LuisResponse>(luisJson);
+
+                    string awacs;
+                    Sender sender = Task.Run(() => SenderExtractor.Extract(luisResponse)).Result;
+
+                    if (luisResponse.Query != null && luisResponse.TopScoringIntent["intent"] == "None" ||
+                        luisResponse.Entities.Find(x => x.Type == "awacs_callsign") == null)
+                    {
+                        Logger.Debug($"RESPONSE NO-OP");
+                        // NO-OP
+                    }
+                    else if (sender == null)
+                    {
+                        Logger.Debug($"SENDER IS NULL");
+                        response = "Last transmitter, I could not recognise your call-sign.";
+                    }
+                    else
+                    {
+                        awacs = luisResponse.Entities.Find(x => x.Type == "awacs_callsign").Resolution.Values[0];
+
+                        Logger.Debug($"SENDER: " + sender);
+
+                        if (Task.Run(() => SenderVerifier.Verify(sender)).Result == false)
+                        {
+                            Logger.Debug($"SenderVerified: false");
+                            response = $"{sender.ToString()}, {awacs}, I cannot find you on scope. ";
+                        }
+                        else
+                        {
+                            if (luisResponse.Query != null && luisResponse.TopScoringIntent["intent"] == "RequestBogeyDope")
+                            {
+                                response = $"{sender.ToString()}, {awacs}, ";
+                                response += Task.Run(() => RequestBogeyDope.Process(luisResponse, sender)).Result;
+                            }
+                            else if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "RequestBearingToAirbase" || luisResponse.TopScoringIntent["intent"] == "RequestHeadingToAirbase"))
+                            {
+                                response = $"{sender.ToString()}, {awacs}, ";
+                                response += Task.Run(() => RequestBearingToAirbase.Process(luisResponse, sender)).Result;
+                            }
+                        }
+                    }
+                }
+                else if (e.Result.Reason == ResultReason.NoMatch)
+                {
+                    Logger.Debug($"NOMATCH: Speech could not be recognized.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Debug(ex);
+                SendResponse(_failureMessage, _failureMessage.Length);
+                response = null;
+            }
+            if (response != null)
+            {
+                Respond($"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{_voice}\">{response}</voice></speak>");
+            }
         }
 
         private void Respond(string response)
