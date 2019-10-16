@@ -102,7 +102,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
         public async Task StartListeningAsync()
         {
-            Logger.Debug($"Started Recognition");
+            Logger.Debug($"Started Continuous Recognition");
 
             // Initialize the recognizer
             var authorizationToken = Task.Run(() => GetToken()).Result;
@@ -117,22 +117,36 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
             // Start the token renewal so we can do long-running recognition.
             var tokenRenewTask = StartTokenRenewTask(source.Token, recognizer);
 
-            recognizer.Recognized += (s, e) =>
+            recognizer.Recognized += async (s, e) =>
             {
-                ProcessAwacsCall(e);
+                await ProcessAwacsCall(e);
             };
 
-            recognizer.Canceled += (s, e) =>
+            recognizer.Canceled += async (s, e) =>
             {
-                Logger.Debug($"CANCELED: Reason={e.Reason}");
+                Logger.Debug($"CANCELLED: Reason={e.Reason}");
 
                 if (e.Reason == CancellationReason.Error)
                 {
-                    Logger.Debug($"CANCELED: ErrorCode={e.ErrorCode}");
-                    Logger.Debug($"CANCELED: ErrorDetails={e.ErrorDetails}");
-                    SendResponse(_failureMessage, _failureMessage.Length);
+                    Logger.Debug($"CANCELLED: ErrorCode={e.ErrorCode}");
+                    Logger.Debug($"CANCELLED: ErrorDetails={e.ErrorDetails}");
+
+                    if (e.ErrorCode != CancellationErrorCode.BadRequest && e.ErrorCode != CancellationErrorCode.ConnectionFailure)
+                    {
+                        await SendResponse(_failureMessage, _failureMessage.Length);
+                    }
                 }
                 stopRecognition.TrySetResult(1);
+            };
+
+            recognizer.SpeechStartDetected += (s, e) =>
+            {
+                Logger.Debug("\nSpeech started event.");
+            };
+
+            recognizer.SpeechEndDetected += (s, e) =>
+            {
+                Logger.Debug("\nSpeech ended event.");
             };
 
             recognizer.SessionStarted += (s, e) =>
@@ -143,7 +157,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
             recognizer.SessionStopped += (s, e) =>
             {
                 Logger.Debug("\nSession stopped event.");
-                Logger.Debug("\nStop recognition.");
                 stopRecognition.TrySetResult(0);
             };
 
@@ -157,12 +170,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
             // Stops recognition.
             await recognizer.StopContinuousRecognitionAsync().ConfigureAwait(false);
             source.Cancel();
-            Logger.Debug($"Stopped Recognition");
+            Logger.Debug($"Stopped Continuous Recognition");
             await StartListeningAsync();
         }
 
         [Transaction(Web = true)]
-        private void ProcessAwacsCall(SpeechRecognitionEventArgs e) {
+        private async Task ProcessAwacsCall(SpeechRecognitionEventArgs e) {
             string response = null;
 
             try
@@ -223,31 +236,31 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
             catch (Exception ex)
             {
                 Logger.Debug(ex);
-                SendResponse(_failureMessage, _failureMessage.Length);
+                await SendResponse(_failureMessage, _failureMessage.Length);
                 response = null;
             }
             if (response != null)
             {
-                Respond($"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{_voice}\">{response}</voice></speak>");
+                await Respond($"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{_voice}\">{response}</voice></speak>");
             }
         }
 
-        private void Respond(string response)
+        private async Task Respond(string response)
         {
             Logger.Debug($"RESPONSE: {response}");
             byte[] audioResponse = Task.Run(() => Speaker.CreateResponse(response)).Result;
             if (audioResponse != null)
             {
-                SendResponse(audioResponse, audioResponse.Length);
+                await SendResponse(audioResponse, audioResponse.Length);
             }
             else
             {
-                SendResponse(_failureMessage, _failureMessage.Length);
+                await SendResponse(_failureMessage, _failureMessage.Length);
             }
         }
 
         // Expects a byte buffer containing 16 bit PCM WAV
-        private void SendResponse(byte[] buffer, int length)
+        private async Task SendResponse(byte[] buffer, int length)
         {
 
             Queue<byte> audioQueue = new Queue<byte>(length);
@@ -285,7 +298,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
                     Buffer.BlockCopy(buff, 0, encoded, 0, len);
 
-                    _voiceHandler.Send(encoded, len, lastReceivedRadio);
+                    await Task.Run(() =>_voiceHandler.Send(encoded, len, lastReceivedRadio));
                 }
                 else
                 {
