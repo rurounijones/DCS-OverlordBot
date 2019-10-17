@@ -305,6 +305,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                     Logger.Debug($"Invalid Bytes for Encoding - {length} should be {AudioManager.SEGMENT_FRAMES}");
                 }
             }
+            // Send one null to reset the sending state
+            await Task.Run(() => _voiceHandler.Send(null, 0, lastReceivedRadio));
         }
 
     }

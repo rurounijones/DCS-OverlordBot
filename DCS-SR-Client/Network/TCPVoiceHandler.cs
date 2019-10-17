@@ -62,6 +62,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
         private Timer _timer;
         private bool hasSentVoicePacket; //used to force sending of first voice packet to establish comms
 
+
         private ClientStateSingleton _clientStateSingleton = ClientStateSingleton.Instance;
 
         private readonly SettingsStore _settings = SettingsStore.Instance;
@@ -586,124 +587,51 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             return yScore - xScore;
         }
 
-        public bool Send(byte[] bytes, int len)
+        public bool Send(byte[] bytes, int len, int radioId)
         {
-            //if either PTT is true, a microphone is available && socket connected etc
-            if (_ready
-                && _listener != null
-                && _listener.Connected
-                && (_ptt || _clientStateSingleton.DcsPlayerRadioInfo.ptt)
-                && _clientStateSingleton.DcsPlayerRadioInfo.IsCurrent()
-                && _clientStateSingleton.MicrophoneAvailable
-                && (bytes != null))
-                //can only send if DCS is connected
+            if (bytes != null)
             {
                 try
                 {
-                    // List of radios the transmission is sent to (can me multiple if simultaneous transmission is enabled)
-                    List<RadioInformation> transmittingRadios = new List<RadioInformation>();
+                    RadioInformation currentlySelectedRadio = _clientStateSingleton.DcsPlayerRadioInfo.radios[radioId];
 
-                    // Always add currently selected radio (if valid)
-                    var currentSelected = _clientStateSingleton.DcsPlayerRadioInfo.selected;
-                    RadioInformation currentlySelectedRadio = null;
-                    if (currentSelected >= 0 
-                        && currentSelected < _clientStateSingleton.DcsPlayerRadioInfo.radios.Length)
+                    List<double> frequencies = new List<double>(1);
+                    List<byte> encryptions = new List<byte>(1);
+                    List<byte> modulations = new List<byte>(1);
+
+                    frequencies.Add(currentlySelectedRadio.freq);
+                    encryptions.Add(currentlySelectedRadio.enc ? currentlySelectedRadio.encKey : (byte)0);
+                    modulations.Add((byte)currentlySelectedRadio.modulation);
+
+                    //generate packet
+                    var udpVoicePacket = new UDPVoicePacket
                     {
-                        currentlySelectedRadio = _clientStateSingleton.DcsPlayerRadioInfo.radios[currentSelected];
-                        
-                        if (currentlySelectedRadio != null && currentlySelectedRadio.modulation != RadioInformation.Modulation.DISABLED
-                            && (currentlySelectedRadio.freq > 100 || currentlySelectedRadio.modulation == RadioInformation.Modulation.INTERCOM))
-                        {
-                            transmittingRadios.Add(currentlySelectedRadio);
-                        }
-                    }
+                        GuidBytes = _guidAsciiBytes,
+                        AudioPart1Bytes = bytes,
+                        AudioPart1Length = (ushort)bytes.Length,
+                        Frequencies = frequencies.ToArray(),
+                        UnitId = _clientStateSingleton.DcsPlayerRadioInfo.unitId,
+                        Encryptions = encryptions.ToArray(),
+                        Modulations = modulations.ToArray(),
+                        PacketNumber = _packetNumber++
+                    };
 
-                    // Add all radios toggled for simultaneous transmission if the global flag has been set
-                    if (_clientStateSingleton.DcsPlayerRadioInfo.simultaneousTransmission)
+                    var encodedUdpVoicePacket = udpVoicePacket.EncodePacket();
+
+                    _listener.Client.Send(encodedUdpVoicePacket);
+
+                    RadioSendingState = new RadioSendingState
                     {
-                        foreach (var radio in _clientStateSingleton.DcsPlayerRadioInfo.radios)
-                        {
-                            if (radio != null && radio.simul && radio.modulation != RadioInformation.Modulation.DISABLED
-                                && (radio.freq > 100 || radio.modulation == RadioInformation.Modulation.INTERCOM)
-                                && !transmittingRadios.Contains(radio)) // Make sure we don't add the selected radio twice
-                            {
-                                transmittingRadios.Add(radio);
-                            }
-                        }
-                    }
-
-                    if (transmittingRadios.Count > 0)
-                    {
-                        List<double> frequencies = new List<double>(transmittingRadios.Count);
-                        List<byte> encryptions = new List<byte>(transmittingRadios.Count);
-                        List<byte> modulations = new List<byte>(transmittingRadios.Count);
-
-                        for (int i = 0; i < transmittingRadios.Count; i++)
-                        {
-                            var radio = transmittingRadios[i];
-
-                            // Further deduplicate transmitted frequencies if they have the same freq./modulation/encryption (caused by differently named radios)
-                            bool alreadyIncluded = false;
-                            for (int j = 0; j < frequencies.Count; j++)
-                            {
-                                if (frequencies[j] == radio.freq
-                                    && modulations[j] == (byte)radio.modulation
-                                    && encryptions[j] == (radio.enc ? radio.encKey : (byte)0))
-                                {
-                                    alreadyIncluded = true;
-                                    break;
-                                }
-                            }
-
-                            if (alreadyIncluded)
-                            {
-                                continue;
-                            }
-
-                            frequencies.Add(radio.freq);
-                            encryptions.Add(radio.enc ? radio.encKey : (byte)0);
-                            modulations.Add((byte)radio.modulation);
-                        }
-
-                        //generate packet
-                        var udpVoicePacket = new UDPVoicePacket
-                        {
-                            GuidBytes = _guidAsciiBytes,
-                            AudioPart1Bytes = bytes,
-                            AudioPart1Length = (ushort)bytes.Length,
-                            Frequencies = frequencies.ToArray(),
-                            UnitId = _clientStateSingleton.DcsPlayerRadioInfo.unitId,
-                            Encryptions = encryptions.ToArray(),
-                            Modulations = modulations.ToArray(),
-                            PacketNumber = _packetNumber++
-                        };
-
-                        var encodedUdpVoicePacket = udpVoicePacket.EncodePacket();
-
-                        //send audio
-                        _listener.Client.Send(encodedUdpVoicePacket);
-
-                        //not sending or really quickly switched sending
-                        if (currentlySelectedRadio != null &&
-                            (!RadioSendingState.IsSending || RadioSendingState.SendingOn != currentSelected))
-                        {
-                            _audioManager.PlaySoundEffectStartTransmit(currentSelected,
-                                currentlySelectedRadio.enc && (currentlySelectedRadio.encKey > 0), currentlySelectedRadio.volume);
-                        }
-
-                        //set radio overlay state
-                        RadioSendingState = new RadioSendingState
-                        {
-                            IsSending = true,
-                            LastSentAt = DateTime.Now.Ticks,
-                            SendingOn = currentSelected
-                        };
-                        return true;
-                    }
+                        IsSending = true,
+                        LastSentAt = DateTime.Now.Ticks,
+                        SendingOn = radioId
+                    };
+                    return true;
                 }
                 catch (Exception e)
                 {
                     Logger.Error(e, "Exception Sending Audio Message " + e.Message);
+                    return false;
                 }
             }
             else
@@ -711,116 +639,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                 if (RadioSendingState.IsSending)
                 {
                     RadioSendingState.IsSending = false;
-
-                    if (RadioSendingState.SendingOn >= 0)
-                    {
-                        var radio = _clientStateSingleton.DcsPlayerRadioInfo.radios[RadioSendingState.SendingOn];
-
-                        _audioManager.PlaySoundEffectEndTransmit(RadioSendingState.SendingOn, radio.volume);
-                    }
                 }
             }
             return false;
-        }
-
-        public bool Send(byte[] bytes, int len, int radioId)
-        {
-            try
-            {
-                // List of radios the transmission is sent to (can me multiple if simultaneous transmission is enabled)
-                List<RadioInformation> transmittingRadios = new List<RadioInformation>();
-
-                // Always add radio specified by the bot
-                var currentSelected = radioId;
-                RadioInformation currentlySelectedRadio = null;
-                if (currentSelected >= 0
-                    && currentSelected < _clientStateSingleton.DcsPlayerRadioInfo.radios.Length)
-                {
-                    currentlySelectedRadio = _clientStateSingleton.DcsPlayerRadioInfo.radios[currentSelected];
-
-                    if (currentlySelectedRadio != null && currentlySelectedRadio.modulation != RadioInformation.Modulation.DISABLED
-                        && (currentlySelectedRadio.freq > 100 || currentlySelectedRadio.modulation == RadioInformation.Modulation.INTERCOM))
-                    {
-                        transmittingRadios.Add(currentlySelectedRadio);
-                    }
-                }
-
-                // Add all radios toggled for simultaneous transmission if the global flag has been set
-                if (_clientStateSingleton.DcsPlayerRadioInfo.simultaneousTransmission)
-                {
-                    foreach (var radio in _clientStateSingleton.DcsPlayerRadioInfo.radios)
-                    {
-                        if (radio != null && radio.simul && radio.modulation != RadioInformation.Modulation.DISABLED
-                            && (radio.freq > 100 || radio.modulation == RadioInformation.Modulation.INTERCOM)
-                            && !transmittingRadios.Contains(radio)) // Make sure we don't add the selected radio twice
-                        {
-                            transmittingRadios.Add(radio);
-                        }
-                    }
-                }
-
-                List<double> frequencies = new List<double>(transmittingRadios.Count);
-                List<byte> encryptions = new List<byte>(transmittingRadios.Count);
-                List<byte> modulations = new List<byte>(transmittingRadios.Count);
-
-                for (int i = 0; i < transmittingRadios.Count; i++)
-                {
-                    var radio = transmittingRadios[i];
-
-                    // Further deduplicate transmitted frequencies if they have the same freq./modulation/encryption (caused by differently named radios)
-                    bool alreadyIncluded = false;
-                    for (int j = 0; j < frequencies.Count; j++)
-                    {
-                        if (frequencies[j] == radio.freq
-                            && modulations[j] == (byte)radio.modulation
-                            && encryptions[j] == (radio.enc ? radio.encKey : (byte)0))
-                        {
-                            alreadyIncluded = true;
-                            break;
-                        }
-                    }
-
-                    if (alreadyIncluded)
-                    {
-                        continue;
-                    }
-
-                    frequencies.Add(radio.freq);
-                    encryptions.Add(radio.enc ? radio.encKey : (byte)0);
-                    modulations.Add((byte)radio.modulation);
-                }
-
-                //generate packet
-                var udpVoicePacket = new UDPVoicePacket
-                {
-                    GuidBytes = _guidAsciiBytes,
-                    AudioPart1Bytes = bytes,
-                    AudioPart1Length = (ushort)bytes.Length,
-                    Frequencies = frequencies.ToArray(),
-                    UnitId = _clientStateSingleton.DcsPlayerRadioInfo.unitId,
-                    Encryptions = encryptions.ToArray(),
-                    Modulations = modulations.ToArray(),
-                    PacketNumber = _packetNumber++
-                };
-
-                var encodedUdpVoicePacket = udpVoicePacket.EncodePacket();
-
-                _listener.Client.Send(encodedUdpVoicePacket);
-
-                //set radio overlay state
-                RadioSendingState = new RadioSendingState
-                {
-                    IsSending = true,
-                    LastSentAt = DateTime.Now.Ticks,
-                    SendingOn = currentSelected
-                };
-                return true;
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e, "Exception Sending Audio Message " + e.Message);
-                return false;
-            }
         }
 
         private void StartPing()
