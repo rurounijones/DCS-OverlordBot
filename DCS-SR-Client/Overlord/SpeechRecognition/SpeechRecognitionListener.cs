@@ -259,7 +259,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
             }
         }
 
-        // Expects a byte buffer containing 16 bit PCM WAV
+        // Expects a byte buffer containing 16 bit 16KHz 1 channel PCM WAV
         private async Task SendResponse(byte[] buffer, int length)
         {
 
@@ -299,6 +299,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                     Buffer.BlockCopy(buff, 0, encoded, 0, len);
 
                     await Task.Run(() =>_voiceHandler.Send(encoded, len, lastReceivedRadio));
+                    // Sleep between sending 40ms worth of data so that we do not overflow the 3 second audio buffers of
+                    // normal SRS clients. The lower the sleep the less chance of audio corruption due to network issues
+                    // but the greater the chance of over-flowing buffers. 10-20ms sleep per 40ms of audio being sent seems
+                    // to be about the right balance.
+                    Thread.Sleep(10);
                 }
                 else
                 {
