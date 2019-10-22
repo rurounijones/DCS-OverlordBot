@@ -16,6 +16,7 @@ using System.Threading;
 using NLog;
 using System.IO;
 using NewRelic.Api.Agent;
+using System.Collections.Concurrent;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 {
@@ -39,13 +40,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
         public int lastReceivedRadio = -1;
 
+        private ConcurrentQueue<byte[]> _responses;
+
         // Allows OverlordBot to listen for a specific word to start listening. Currently not used although the setup has all been done.
         // This is due to wierd state transition errors thatI cannot be bothered to debug.
         KeywordRecognitionModel _wakeWord;
 
         public SpeechRecognitionListener(BufferedWaveProvider bufferedWaveProvider, string callsign = null, string voice = "en-US-JessaRUS")
         {
-
             Logger.Debug("VOICE: " + voice);
 
             _voice = voice;
@@ -59,6 +61,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
             _wakeWord = KeywordRecognitionModel.FromFile($"Overlord/WakeWords/{callsign}.table");
 
+            _responses = new ConcurrentQueue<byte[]>();
+            // Start background thread looking for responses to send
+            CheckForResponses();
         }
 
         // Gets an authorization token by sending a POST request to the token service.
@@ -236,27 +241,33 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
             catch (Exception ex)
             {
                 Logger.Debug(ex);
-                await SendResponse(_failureMessage, _failureMessage.Length);
+                _responses.Enqueue(_failureMessage);
                 response = null;
             }
             if (response != null)
             {
-                await Respond($"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{_voice}\">{response}</voice></speak>");
+                Logger.Debug($"RESPONSE: {response}");
+                var audioResponse = await Task.Run(() => Speaker.CreateResponse($"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{_voice}\">{response}</voice></speak>"));
+                _responses.Enqueue(audioResponse);
             }
         }
 
-        private async Task Respond(string response)
+        private void CheckForResponses()
         {
-            Logger.Debug($"RESPONSE: {response}");
-            byte[] audioResponse = Task.Run(() => Speaker.CreateResponse(response)).Result;
-            if (audioResponse != null)
+            new Thread(async () =>
             {
-                await SendResponse(audioResponse, audioResponse.Length);
-            }
-            else
-            {
-                await SendResponse(_failureMessage, _failureMessage.Length);
-            }
+                Thread.CurrentThread.IsBackground = true;
+                while (true)
+                {
+                    byte[] response;
+                    if (_responses.TryDequeue(out response))
+                    {
+                        Logger.Debug($"Sending Response: {response}");
+                        await SendResponse(response, response.Length);
+                    };
+                    Thread.Sleep(50);
+                }
+            }).Start();
         }
 
         // Expects a byte buffer containing 16 bit 16KHz 1 channel PCM WAV
@@ -301,9 +312,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                     await Task.Run(() =>_voiceHandler.Send(encoded, len, lastReceivedRadio));
                     // Sleep between sending 40ms worth of data so that we do not overflow the 3 second audio buffers of
                     // normal SRS clients. The lower the sleep the less chance of audio corruption due to network issues
-                    // but the greater the chance of over-flowing buffers. 10-20ms sleep per 40ms of audio being sent seems
+                    // but the greater the chance of over-flowing buffers. 20ms sleep per 40ms of audio being sent seems
                     // to be about the right balance.
-                    Thread.Sleep(10);
+                    Thread.Sleep(20);
                 }
                 else
                 {
@@ -312,6 +323,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
             }
             // Send one null to reset the sending state
             await Task.Run(() => _voiceHandler.Send(null, 0, lastReceivedRadio));
+            // Sleep for a second between sending messages to give players a chance to split messages.
+            Thread.Sleep(1000);
         }
 
     }
