@@ -504,8 +504,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
                         _audioManager.StartEncoding(-1, null, _guid, InputManager,
                             _resolvedIp, _port, null, VOIPConnectCallback);
-
-                        ConnectExternalAwacsMode();
                     }
                     catch (Exception ex)
                     {
@@ -545,6 +543,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             if (result)
             {
                 VOIPConnectionStatus.Source = Images.IconConnected;
+
+                // Freezes the UI but what the hell, we don't want fleshsacks clicking on things anyway
+                Thread.Sleep(5000);
+                ConnectExternalAwacsMode();
             }
             else
             {
@@ -891,6 +893,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             if (_clientStateSingleton.InExternalAWACSMode)
             {
                 _client.DisconnectExternalAWACSMode();
+                _client.ConnectExternalAWACSMode(ExternalAWACSModePassword.Password.Trim(), ExternalAWACSModeConnectionChanged);
             }
             else
             {
