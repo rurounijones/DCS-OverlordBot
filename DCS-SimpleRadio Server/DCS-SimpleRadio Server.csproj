@@ -96,21 +96,6 @@
       <HintPath>..\packages\Costura.Fody.1.6.2\lib\dotnet\Costura.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="DotNetty.Buffers, Version=0.4.7.0, Culture=neutral, PublicKeyToken=bc13ca065fa06c29, processorArchitecture=MSIL">
-      <HintPath>..\packages\DotNetty.Buffers.0.4.7\lib\net45\DotNetty.Buffers.dll</HintPath>
-    </Reference>
-    <Reference Include="DotNetty.Codecs, Version=0.4.7.0, Culture=neutral, PublicKeyToken=bc13ca065fa06c29, processorArchitecture=MSIL">
-      <HintPath>..\packages\DotNetty.Codecs.0.4.7\lib\net45\DotNetty.Codecs.dll</HintPath>
-    </Reference>
-    <Reference Include="DotNetty.Common, Version=0.4.7.0, Culture=neutral, PublicKeyToken=bc13ca065fa06c29, processorArchitecture=MSIL">
-      <HintPath>..\packages\DotNetty.Common.0.4.7\lib\net45\DotNetty.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="DotNetty.Handlers, Version=0.4.7.0, Culture=neutral, PublicKeyToken=bc13ca065fa06c29, processorArchitecture=MSIL">
-      <HintPath>..\packages\DotNetty.Handlers.0.4.7\lib\net45\DotNetty.Handlers.dll</HintPath>
-    </Reference>
-    <Reference Include="DotNetty.Transport, Version=0.4.7.0, Culture=neutral, PublicKeyToken=bc13ca065fa06c29, processorArchitecture=MSIL">
-      <HintPath>..\packages\DotNetty.Transport.0.4.7\lib\net45\DotNetty.Transport.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=1.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.1.1.0\lib\netstandard1.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
     </Reference>
@@ -239,10 +224,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Bootstrapper.cs" />
-    <Compile Include="Network\TCPVoiceRouter.cs" />
     <Compile Include="Network\OutgoingVoice.cs" />
     <Compile Include="Network\PendingPacket.cs" />
-    <Compile Include="Network\VOIPPacketHandler.cs" />
+    <Compile Include="Network\UDPVoiceRouter.cs" />
     <Compile Include="UI\ClientAdmin\ClientAdminViewModel.cs" />
     <Compile Include="UI\ClientAdmin\ClientViewModel.cs" />
     <Compile Include="UI\MainWindow\MainViewModel.cs" />

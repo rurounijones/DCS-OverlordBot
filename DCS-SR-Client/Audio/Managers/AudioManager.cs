@@ -1,19 +1,14 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Threading;
 using System.Windows;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Utility;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.DSP;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Input;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
-using Ciribob.DCS.SimpleRadio.Standalone.Common;
-using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network;
 using Easy.MessageHub;
 using FragLabs.Audio.Codecs;
@@ -58,7 +53,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
 
         private OpusEncoder _encoder;
 
-        private TCPVoiceHandler _tcpVoiceHandler;
+        private UdpVoiceHandler _udpVoiceHandler;
+
         private VolumeSampleProviderWithPeak _volumeSampleProvider;
 
         public float MicMax { get; set; } = -100;
@@ -103,12 +99,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
                 Environment.Exit(1);
             }
 
-            _tcpVoiceHandler = new TCPVoiceHandler(_clientsList, guid, ipAddress, port, _decoder, this, inputManager, voipConnectCallback);
-            var voiceSenderThread = new Thread(_tcpVoiceHandler.Listen);
+            _udpVoiceHandler = new UdpVoiceHandler(_clientsList, guid, ipAddress, port, _decoder, this, inputManager, voipConnectCallback);
+            var voiceSenderThread = new Thread(_udpVoiceHandler.Listen);
 
             voiceSenderThread.Start();
         }
-        
+
         private void ShowInputError(string message)
         {
             if (Environment.OSVersion.Version.Major == 10)
@@ -191,18 +187,21 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
             _volumeSampleProvider = null;
             _clientAudioMixer?.RemoveAllMixerInputs();
             _clientAudioMixer = null;
-          
+
             _clientsBufferedAudio.Clear();
             _recordersBufferedAudio.Clear();
 
             _encoder?.Dispose();
             _encoder = null;
-       
+
             _decoder?.Dispose();
             _decoder = null;
           
-            _tcpVoiceHandler?.RequestStop();
-            _tcpVoiceHandler = null;
+            if (_udpVoiceHandler != null)
+            {
+                _udpVoiceHandler.RequestStop();
+                _udpVoiceHandler = null;
+            }
 
             SpeakerMax = -100;
             MicMax = -100;
@@ -224,7 +223,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
 
 
                 bot = new BotAudioProvider(callsign, voice);
-                bot._speechRecognitionListener._voiceHandler = _tcpVoiceHandler;
+                bot._speechRecognitionListener._voiceHandler = _udpVoiceHandler;
                 _botsBufferedAudio[audio.ReceivedRadio] = bot;
             }
             bot.AddClientAudioSamples(audio);

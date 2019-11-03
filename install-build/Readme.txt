@@ -1,4 +1,4 @@
-Extract all the files from the Zip before running the Installer!
+Extract all the files from the zip archive before running the Installer!
 
 Installer needs to be run by CLIENTS ONLY
 
@@ -11,7 +11,7 @@ Copy DCS-SRSGameGUI.lua to C:\Users\USERNAME\Saved Games\DCS\Scripts
 Copy DCS-SRS-OverlayGameGUI.lua to C:\Users\USERNAME\Saved Games\DCS\Scripts
 Copy DCS-SRS-Overlay.dlg to C:\Users\USERNAME\Saved Games\DCS\Scripts
 
-Copy DCS-SRS-Hook.lua to C:\Users\USERNAME\Saved Games\DCS\Scripts\Hooks -- NOTE: Sub folder in Scripts folder
+Copy DCS-SRS-Hook.lua to C:\Users\USERNAME\Saved Games\DCS\Scripts\Hooks -- NOTE: Sub-folder in Scripts folder
 
 Create the folders if they dont exist
 
@@ -23,7 +23,7 @@ To the END of the Export.lua file in C:\Users\USERNAME\Saved Games\DCS\Scripts
 
 If it doesnt exist, just create the file and add the single line to it.
 
-Copy the rest of the zip file where ever you like and then run, don't forget to keep opus.dll with the rest of the .exes
+Copy the rest of the zip archive where ever you like and then run, don't forget to keep opus.dll with the rest of the .exes
 
 Thread on Forums: http://forums.eagle.ru/showthread.php?t=169387
 
@@ -32,7 +32,7 @@ Copy awacs-radios.json to where ever your SR-ClientRadio.exe is
 
 
 *** To Install AutoConnect System for SERVERS only ***
-To enable SRS clients to be prompted automatically to connect just add the DCS-SRS-AutoConnectGameGUI.lua 
+To enable SRS clients to be prompted automatically to connect just add the DCS-SRS-AutoConnectGameGUI.lua file 
 to the appropriate DCS Saved Games folder e.g. DCS.openbeta/Scripts, DCS.openalpha/Scripts or just DCS/Scripts
 
 Edit the line below to your server address where SRS server is running. Port is optional. DCS must be restarted on the server for this file and any changes to take effect.
@@ -51,10 +51,10 @@ If a client isn't connected and has SRS running they'll be prompted to connect a
 
 ***** FAQ *****
 Q: I Hear Static on certain frequencies
-A: This is likely an encrypted transmission. You will need to configure you're KY-58 or Encrypted Radio Appropriately 
+A: This is likely an encrypted transmission. You will need to configure your KY-58 or Encrypted Radio Appropriately 
 
 Q: How do I run a server?
-A: Run SR-Server.exe (no need to run installer or add scripts!) and make sure TCP PORTS 5002 and 5003 are open (if ports are left as default) 
+A: Run SR-Server.exe (no need to run installer or add scripts!) and make sure TCP + UDP PORT 5002 are open (if port is left as default) 
    It does NOT need to be on a PC running DCS and you do NOT need to port forward if you're just using the client.
 
 Q: I've installed everything manually and its not working

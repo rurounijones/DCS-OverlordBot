@@ -184,7 +184,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
 
             try
             {
-                // Read data from the client socket. 
+                // Read data from the client socket.
                 var bytesRead = handler.EndReceive(ar);
 
                 if (bytesRead > 0)

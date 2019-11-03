@@ -84,10 +84,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.UI.MainWindow
         public string AllowRadioEncryption
             => ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.ALLOW_RADIO_ENCRYPTION).BoolValue ? "ON" : "OFF";
 
-        public bool IsExternalAWACSModeEnabled { get; set; } 
+        public bool IsExternalAWACSModeEnabled { get; set; }
             = ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.EXTERNAL_AWACS_MODE).BoolValue;
 
-        private string _externalAWACSModeBluePassword = 
+        private string _externalAWACSModeBluePassword =
             ServerSettingsStore.Instance.GetExternalAWACSModeSetting(ServerSettingsKeys.EXTERNAL_AWACS_MODE_BLUE_PASSWORD).StringValue;
         public string ExternalAWACSModeBluePassword
         {
@@ -111,7 +111,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.UI.MainWindow
             }
         }
 
-        private string _externalAWACSModeRedPassword = 
+        private string _externalAWACSModeRedPassword =
             ServerSettingsStore.Instance.GetExternalAWACSModeSetting(ServerSettingsKeys.EXTERNAL_AWACS_MODE_RED_PASSWORD).StringValue;
         public string ExternalAWACSModeRedPassword
         {

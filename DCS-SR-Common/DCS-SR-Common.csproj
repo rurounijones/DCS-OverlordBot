@@ -115,6 +115,7 @@
     <Compile Include="Helpers\ListHelper.cs" />
     <Compile Include="Helpers\VolumeConversionHelper.cs" />
     <Compile Include="Network\Analytics.cs" />
+    <Compile Include="Network\ClientListExport.cs" />
     <Compile Include="Network\NetworkMessage.cs" />
     <Compile Include="Network\UDPInterfaceCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -33,17 +33,21 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Input
             new Guid("1b1e1b1c-0000-0000-0000-504944564944"), //Corsair Gaming Scimitar RGB Mouse
             new Guid("16a40951-0000-0000-0000-504944564944"), //HyperX 7.1 Audio
             new Guid("b660044f-0000-0000-0000-504944564944"), // T500 RS Gear Shift
-            new Guid("00f2068e-0000-0000-0000-504944564944") //CH PRO PEDALS USB 
+            new Guid("00f2068e-0000-0000-0000-504944564944") //CH PRO PEDALS USB
         };
 
         //devices that report incorrectly but SHOULD work?
         public static HashSet<Guid> _whitelistDevices = new HashSet<Guid>
         {
-            new Guid("1105231d-0000-0000-0000-504944564944"), //GTX Throttle 
+            new Guid("1105231d-0000-0000-0000-504944564944"), //GTX Throttle
             new Guid("b351044f-0000-0000-0000-504944564944"), //F16 MFD 2 Usage: Generic Type: Supplemental
             new Guid("11401dd2-0000-0000-0000-504944564944"), //Leo Bodnar BUtton Box
             new Guid("204803eb-0000-0000-0000-504944564944"), // VPC Throttle
-            new Guid("204303eb-0000-0000-0000-504944564944") // VPC Stick
+            new Guid("204303eb-0000-0000-0000-504944564944"), // VPC Stick
+            new Guid("205403eb-0000-0000-0000-504944564944"), // VPC Throttle
+            new Guid("205603eb-0000-0000-0000-504944564944"), // VPC Throttle
+            new Guid("205503eb-0000-0000-0000-504944564944")  // VPC Throttle
+
         };
 
         private readonly DirectInput _directInput;
@@ -62,7 +66,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Input
         public InputDeviceManager(Window window, MainWindow.ToggleOverlayCallback _toggleOverlayCallback)
         {
             _directInput = new DirectInput();
-        
+
 
             WindowHelper =
                 new WindowInteropHelper(window);
@@ -102,8 +106,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Input
                                     deviceInstance.ProductName.Trim().Replace("\0", ""));
                     }
                     else
-                    { 
-                    
+                    {
+
                         if (deviceInstance.Type == DeviceType.Keyboard)
                         {
 
@@ -662,11 +666,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Input
             foreach (var kpDevice in _inputDevices)
             {
                 var device = kpDevice.Value;
-                if (device != null && 
+                if (device != null &&
                     !device.IsDisposed &&
                     device.Information.InstanceGuid.Equals(inputDeviceBinding.InstanceGuid))
                 {
-                    
+
                     try
                     {
                         if (device is Joystick)

@@ -55,6 +55,16 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio
                 var sample = buffer[offset + n];
                 sample *= volume;
 
+                //stop over boosting
+                if (sample > 1.0F)
+                {
+                    sample = 1.0F;
+                }
+                else if (sample < -1.0F)
+                {
+                    sample = -1.0F;
+                }
+
                 buffer[offset + n] = sample;
 
                 if (sample > lastPeak)

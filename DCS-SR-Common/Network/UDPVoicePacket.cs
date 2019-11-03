@@ -6,7 +6,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network
 {
     /**
        * UDP PACKET LAYOUT
-       * 
+       *
        * - HEADER SEGMENT
        * UInt16 Packet Length - 2 bytes
        * UInt16 AudioPart1 Length - 2 bytes
@@ -137,7 +137,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network
             /**
              * FIXED SEGMENT
              */
-            
+
             // Offset for fixed segment
             var fixedSegmentOffset = PacketHeaderLength + dynamicSegmentLength;
 
@@ -167,73 +167,67 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network
 
         public static UDPVoicePacket DecodeVoicePacket(byte[] encodedOpusAudio, bool decode = true)
         {
-            Exception originalException = null;
-
             try
             {
-                return _DecodeVoicePacket(encodedOpusAudio, decode);
+
+
+                // Last 22 bytes of packet are always the client GUID
+                var receivingGuid = Encoding.ASCII.GetString(
+                    encodedOpusAudio, encodedOpusAudio.Length - GuidLength, GuidLength);
+
+                var packetLength = BitConverter.ToUInt16(encodedOpusAudio, 0);
+
+                var ecnAudio1 = BitConverter.ToUInt16(encodedOpusAudio, 2);
+
+                var freqLength = BitConverter.ToUInt16(encodedOpusAudio, 4);
+                var freqCount = freqLength / FrequencySegmentLength;
+
+                byte[] part1 = null;
+
+                if (decode)
+                {
+                    part1 = new byte[ecnAudio1];
+                    Buffer.BlockCopy(encodedOpusAudio, 6, part1, 0, ecnAudio1);
+                }
+
+                var frequencies = new double[freqCount];
+                var modulations = new byte[freqCount];
+                var encryptions = new byte[freqCount];
+
+                var frequencyOffset = PacketHeaderLength + ecnAudio1;
+                for (var i = 0; i < freqCount; i++)
+                {
+                    frequencies[i] = BitConverter.ToDouble(encodedOpusAudio, frequencyOffset);
+                    modulations[i] = encodedOpusAudio[frequencyOffset + 8];
+                    encryptions[i] = encodedOpusAudio[frequencyOffset + 9];
+
+                    frequencyOffset += FrequencySegmentLength;
+                }
+
+                var unitId = BitConverter.ToUInt32(encodedOpusAudio, PacketHeaderLength + ecnAudio1 + freqLength);
+
+                var packetNumber =
+                    BitConverter.ToUInt64(encodedOpusAudio, PacketHeaderLength + ecnAudio1 + freqLength + 4);
+
+                return new UDPVoicePacket
+                {
+                    Guid = receivingGuid,
+                    AudioPart1Bytes = part1,
+                    AudioPart1Length = ecnAudio1,
+                    Frequencies = frequencies,
+                    UnitId = unitId,
+                    Encryptions = encryptions,
+                    Modulations = modulations,
+                    PacketNumber = packetNumber,
+                    PacketLength = packetLength
+                };
             }
             catch (Exception ex)
             {
-                Logger.Error(ex, "Failed to decode voice packet");
-                throw ex;
+                Logger.Error(ex,"Unable to decode UDP Voice Packet");
             }
 
-        
-        }
-
-        private static UDPVoicePacket _DecodeVoicePacket(byte[] encodedOpusAudio, bool decode = true)
-        {
-            // Last 22 bytes of packet are always the client GUID
-            var receivingGuid = Encoding.ASCII.GetString(
-                encodedOpusAudio, encodedOpusAudio.Length - GuidLength, GuidLength);
-
-            var packetLength = BitConverter.ToUInt16(encodedOpusAudio, 0);
-
-            var ecnAudio1 = BitConverter.ToUInt16(encodedOpusAudio, 2);
-
-            var freqLength = BitConverter.ToUInt16(encodedOpusAudio, 4);
-            var freqCount = freqLength / FrequencySegmentLength;
-
-            byte[] part1 = null;
-
-            if (decode)
-            {
-                part1 = new byte[ecnAudio1];
-                Buffer.BlockCopy(encodedOpusAudio, 6, part1, 0, ecnAudio1);
-            }
-
-            var frequencies = new double[freqCount];
-            var modulations = new byte[freqCount];
-            var encryptions = new byte[freqCount];
-
-            var frequencyOffset = PacketHeaderLength + ecnAudio1;
-            for (var i = 0; i < freqCount; i++)
-            {
-                frequencies[i] = BitConverter.ToDouble(encodedOpusAudio, frequencyOffset);
-                modulations[i] = encodedOpusAudio[frequencyOffset + 8];
-                encryptions[i] = encodedOpusAudio[frequencyOffset + 9];
-
-                frequencyOffset += FrequencySegmentLength;
-            }
-
-            var unitId = BitConverter.ToUInt32(encodedOpusAudio, PacketHeaderLength + ecnAudio1 + freqLength);
-
-            var packetNumber = BitConverter.ToUInt64(encodedOpusAudio, PacketHeaderLength + ecnAudio1 + freqLength + 4);
-
-            return new UDPVoicePacket
-            {
-                Guid = receivingGuid,
-                AudioPart1Bytes = part1,
-                AudioPart1Length = ecnAudio1,
-                Frequencies = frequencies,
-                UnitId = unitId,
-                Encryptions = encryptions,
-                Modulations = modulations,
-                PacketNumber = packetNumber,
-                PacketLength = packetLength
-            };
+            return null;
         }
     }
 }
- 

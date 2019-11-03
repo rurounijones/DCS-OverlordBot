@@ -45,14 +45,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
                     {
                         Logger.Info($"Unable to read Effect {audioEffect} from {file} Successfully - not 16 bits!");
                     }
-                   
+
                 }
             }
             else
             {
                 Logger.Info($"Unable to find file for effect {audioEffect} in AudioEffects\\{FileNameLookup[(int) audioEffect]} ");
             }
-          
+
         }
 
         public AudioEffectTypes AudioEffectType { get; }

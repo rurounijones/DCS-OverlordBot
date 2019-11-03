@@ -60,7 +60,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Tests
             }
         }
 
-        //      
+        //
         //        [TestMethod()]
         //        public void FromShortTest()
         //        {

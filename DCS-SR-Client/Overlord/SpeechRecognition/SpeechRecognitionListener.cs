@@ -36,7 +36,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
         private readonly string _voice;
 
-        public TCPVoiceHandler _voiceHandler;
+        public UdpVoiceHandler _voiceHandler;
 
         public int lastReceivedRadio = -1;
 

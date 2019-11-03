@@ -17,9 +17,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
         // Required for all requests against the GitHub API, as per https://developer.github.com/v3/#user-agent-required
         public static readonly string GITHUB_USER_AGENT = $"{GITHUB_USERNAME}_{GITHUB_REPOSITORY}";
 
-        public static readonly string MINIMUM_PROTOCOL_VERSION = "1.6.0.0";
+        public static readonly string MINIMUM_PROTOCOL_VERSION = "1.7.0.0";
 
-        public static readonly string VERSION = "1.6.2.0";
+        public static readonly string VERSION = "1.7.0.2";
 
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 

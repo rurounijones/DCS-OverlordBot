@@ -48,6 +48,7 @@
         public float volume = 1.0f;
 
         public FreqMode freqMode = FreqMode.COCKPIT;
+        public FreqMode guardFreqMode = FreqMode.COCKPIT;
         public VolumeMode volMode = VolumeMode.COCKPIT;
 
         public bool expansion = false;

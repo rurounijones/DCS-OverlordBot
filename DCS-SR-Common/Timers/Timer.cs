@@ -5,7 +5,7 @@ namespace Cabhishek.Timers
 {
     /// <summary>
     /// Source: https://github.com/cabhishek
-    /// This timer class uses unmanaged DLL for better accuracy at short frequencies. 
+    /// This timer class uses unmanaged DLL for better accuracy at short frequencies.
     /// This class is not thread safe.
     /// http://stackoverflow.com/questions/416522/c-sharp-why-are-timer-frequencies-extremely-off
     /// </summary>

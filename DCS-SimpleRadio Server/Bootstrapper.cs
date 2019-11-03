@@ -16,6 +16,7 @@ using Ciribob.DCS.SimpleRadio.Standalone.Server.UI.MainWindow;
 using NLog;
 using NLog.Config;
 using NLog.Targets;
+using NLog.Targets.Wrappers;
 using LogManager = NLog.LogManager;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Server
@@ -64,18 +65,20 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server
             var config = new LoggingConfiguration();
 
             var fileTarget = new FileTarget();
-            config.AddTarget("file", fileTarget);
 
             fileTarget.FileName = "${basedir}/serverlog.txt";
             fileTarget.Layout =
                 @"${longdate} | ${logger} | ${message} ${exception:format=toString,Data:maxInnerExceptionLevel=1}";
+
+            var wrapper = new AsyncTargetWrapper(fileTarget, 5000, AsyncTargetWrapperOverflowAction.Discard);
+            config.AddTarget("file", wrapper);
 
 #if DEBUG
             config.LoggingRules.Add( new LoggingRule("*", LogLevel.Debug, fileTarget));
 #else
             config.LoggingRules.Add( new LoggingRule("*", LogLevel.Info, fileTarget));
 #endif
-           
+
             LogManager.Configuration = config;
 
             loggingReady = true;

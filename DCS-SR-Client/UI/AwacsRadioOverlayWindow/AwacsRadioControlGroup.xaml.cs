@@ -243,7 +243,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
                         ToggleSimultaneousTransmissionButton.IsEnabled = false;
                         ToggleSimultaneousTransmissionButton.Content = "Sim. OFF";
                     }
-                    
+
                 }
                 else
                 {
@@ -300,7 +300,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
             else
             {
                 var currentRadio = dcsPlayerRadioInfo.radios[RadioId];
-                var transmitting = TCPVoiceHandler.RadioSendingState;
+                var transmitting = UdpVoiceHandler.RadioSendingState;
 
                 if (transmitting.IsSending)
                 {
@@ -481,7 +481,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
             }
             else
             {
-                var receiveState = TCPVoiceHandler.RadioReceivingState[RadioId];
+                var receiveState = UdpVoiceHandler.RadioReceivingState[RadioId];
                 //check if current
 
                 if ((receiveState == null) || !receiveState.IsReceiving)

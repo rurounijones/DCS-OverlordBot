@@ -24,7 +24,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
         private readonly BiQuadFilter _highPassFilter;
         private readonly BiQuadFilter _lowPassFilter;
         
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+	private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public ClientAudioProvider()
         {
@@ -55,7 +55,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
             bool newTransmission = LikelyNewTransmission();
 
             int decodedLength = 0;
-            
+
             var decoded = _decoder.Decode(audio.EncodedAudio,
                 audio.EncodedAudio.Length, out decodedLength, newTransmission);
 
@@ -76,7 +76,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
                 {
                     //adjust for LOS + Distance + Volume
                     AdjustVolume(audio);
-                         
+
                     if (_settings.GetClientSetting(SettingsKeys.RadioEffects).BoolValue)
                     {
                         if (audio.ReceivedRadio == 0)
@@ -88,7 +88,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
                             AddRadioEffect(audio);
                         }
                     }
-                
+
                 }
                 else
                 {
@@ -114,7 +114,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
                 }
 
                 _lastReceivedOn = audio.ReceivedRadio;
-                LastUpdate = DateTime.Now.Ticks; 
+                LastUpdate = DateTime.Now.Ticks;
 
                 JitterBufferProviderInterface.AddSamples(new JitterBufferAudio
                 {
@@ -158,7 +158,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
                     mixedAudio[i] = (short)(audio * 32767);
                 }
             }
-            
+
         }
 
         private void AdjustVolume(ClientAudio clientAudio)
@@ -251,6 +251,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
             _decoder.Dispose();
             _decoder = null;
         }
-       
+
     }
 }

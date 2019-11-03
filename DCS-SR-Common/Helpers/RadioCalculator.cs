@@ -38,7 +38,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
         {
             //Friis equation http://www.daycounter.com/Calculators/Friis-Calculator.phtml
             //Prx= Ptx(dB)+ Gtx(dB)+ Grx(dB)  -  20log(4*PI*d/lambda);
-            //Re-arranged to give maximum distance at receiving power of -90 based on transmitting power 
+            //Re-arranged to give maximum distance at receiving power of -90 based on transmitting power
             //of 40 watts
 
             //Hard coded value 995267.9264 based on re-arranged Friis with 40dbm transmissing

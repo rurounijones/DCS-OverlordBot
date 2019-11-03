@@ -41,7 +41,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Settings
             }
             catch (FileNotFoundException ex)
             {
-                _logger.Info("Did not find server config file, initialising with default config");
+                _logger.Info("Did not find server config file, initialising with default config",ex);
 
                 _configuration = new Configuration();
                 _configuration.Add(new Section("General Settings"));
@@ -185,7 +185,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Settings
                     _configuration.SaveToFile(cfgFile);
                 } catch (Exception ex)
                 {
-                    _logger.Error("Unable to save settings!");
+                    _logger.Error("Unable to save settings!",ex);
                 }
             }
         }

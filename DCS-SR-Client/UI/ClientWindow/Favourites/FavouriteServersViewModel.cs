@@ -95,10 +95,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.Favourites
             var saveSucceeded = _favouriteServerStore.SaveToStore(_addresses);
             if (!saveSucceeded)
             {
-                MessageBox.Show(Application.Current.MainWindow, 
+                MessageBox.Show(Application.Current.MainWindow,
                     "Failed to save favourite servers. Please check logs for details.",
-                    "Favourite server save failure", 
-                    MessageBoxButton.OK, 
+                    "Favourite server save failure",
+                    MessageBoxButton.OK,
                     MessageBoxImage.Error);
             }
         }

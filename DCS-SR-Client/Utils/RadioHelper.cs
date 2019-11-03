@@ -18,7 +18,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Utils
 
             if (radio != null)
             {
-                if (radio.freqMode == RadioInformation.FreqMode.OVERLAY)
+                if (radio.freqMode == RadioInformation.FreqMode.OVERLAY || radio.guardFreqMode == RadioInformation.FreqMode.OVERLAY)
                 {
                     if (radio.secFreq > 0)
                     {
@@ -369,8 +369,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Utils
 
             var currentRadio = RadioHelper.GetRadio(radioId);
 
-            if (currentRadio != null 
-                && currentRadio.modulation != RadioInformation.Modulation.DISABLED 
+            if (currentRadio != null
+                && currentRadio.modulation != RadioInformation.Modulation.DISABLED
                 && currentRadio.volMode == RadioInformation.VolumeMode.OVERLAY)
             {
                 currentRadio.volume = volume;

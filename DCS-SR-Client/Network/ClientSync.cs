@@ -109,8 +109,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             }
 
             _radioDCSSync.StopExternalAWACSModeLoop();
-
-            CallExternalAWACSModeOnMain(false, 0);
+            CallExternalAWACSModeOnMain(true, 0);
         }
 
         private void Connect()
@@ -243,7 +242,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             //clear the clients list
             _clients.Clear();
             int decodeErrors = 0; //if the JSON is unreadable - new version likely
-            
+
             using (var reader = new StreamReader(_tcpClient.GetStream(), Encoding.UTF8))
             {
                 try
@@ -482,7 +481,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
         {
             try
             {
-               
+
                 message.Version = UpdaterChecker.VERSION;
 
                 var json = (JsonConvert.SerializeObject(message) + "\n");
@@ -512,7 +511,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
         public void Disconnect()
         {
             _stop = true;
-
+            Logger.Debug("ClientSync line 519 calling DisconnectExternalAWACSMode");
             DisconnectExternalAWACSMode();
 
             try

@@ -132,7 +132,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
             {
                 var overlayWindow = new WindowInteropHelper(this).Handle;
 
-                //focus DCS if needed 
+                //focus DCS if needed
                 var foreGround = WindowHelper.GetForegroundWindow();
 
                 Process[] localByName = Process.GetProcessesByName("dcs");

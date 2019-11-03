@@ -24,7 +24,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.DSP
             /**
              * From Coug4r
              * Apart from adding noise i'm only doing 3 things in this order:
-                - Custom clipping (which basicly creates the overmodulation effect) 
+                - Custom clipping (which basicly creates the overmodulation effect)
                 - Run the audio through bandpass filter 1
                 - Run the audio through bandpass filter 2
 

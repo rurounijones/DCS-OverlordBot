@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -25,7 +25,7 @@ using Timer = Cabhishek.Timers.Timer;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 {
-    public class TCPVoiceHandler
+    public class UdpVoiceHandler
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
@@ -41,39 +41,44 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
         private readonly string _guid;
         private readonly byte[] _guidAsciiBytes;
         private readonly InputDeviceManager _inputManager;
+        private readonly CancellationTokenSource _pingStop = new CancellationTokenSource();
         private readonly int _port;
+        private readonly SyncedServerSettings _serverSettings = SyncedServerSettings.Instance;
+
+        private readonly SettingsStore _settings = SettingsStore.Instance;
 
         private readonly CancellationTokenSource _stopFlag = new CancellationTokenSource();
-        private readonly CancellationTokenSource _pingStop = new CancellationTokenSource();
+
+        private readonly AudioManager.VOIPConnectCallback _voipConnectCallback;
 
         private readonly int JITTER_BUFFER = 50; //in milliseconds
 
+        private ClientStateSingleton _clientStateSingleton = ClientStateSingleton.Instance;
+
         //    private readonly JitterBuffer _jitterBuffer = new JitterBuffer();
-        private TcpClient _listener;
+        private UdpClient _listener;
 
         private ulong _packetNumber = 1;
 
         private volatile bool _ptt;
 
-        private volatile bool _stop;
-
         private volatile bool _ready;
+
+        private IPEndPoint _serverEndpoint;
+
+        private volatile bool _stop;
 
         private Timer _timer;
         private bool hasSentVoicePacket; //used to force sending of first voice packet to establish comms
 
+        private long _udpLastReceived = 0;
+        private DispatcherTimer _updateTimer;
 
-        private ClientStateSingleton _clientStateSingleton = ClientStateSingleton.Instance;
-
-        private readonly SettingsStore _settings = SettingsStore.Instance;
-        private readonly SyncedServerSettings _serverSettings = SyncedServerSettings.Instance;
-
-        private readonly AudioManager.VOIPConnectCallback _voipConnectCallback;
-
-        public TCPVoiceHandler(ConcurrentDictionary<string, SRClient> clientsList, string guid, IPAddress address,
-            int port, OpusDecoder decoder, AudioManager audioManager, InputDeviceManager inputManager, AudioManager.VOIPConnectCallback voipConnectCallback)
+        public UdpVoiceHandler(ConcurrentDictionary<string, SRClient> clientsList, string guid, IPAddress address,
+            int port, OpusDecoder decoder, AudioManager audioManager, InputDeviceManager inputManager,
+            AudioManager.VOIPConnectCallback voipConnectCallback)
         {
-           // _decoder = decoder;
+            // _decoder = decoder;
             _audioManager = audioManager;
 
             _clientsList = clientsList;
@@ -81,11 +86,34 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
             _guid = guid;
             _address = address;
-            _port = port + 1;
+            _port = port;
+
+            _serverEndpoint = new IPEndPoint(_address, _port);
 
             _inputManager = inputManager;
 
             _voipConnectCallback = voipConnectCallback;
+
+            _updateTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(5) };
+            _updateTimer.Tick += UpdateVOIPStatus;
+            _updateTimer.Start();
+        }
+
+        private void UpdateVOIPStatus(object sender, EventArgs e)
+        {
+            TimeSpan diff = TimeSpan.FromTicks(DateTime.Now.Ticks - _udpLastReceived);
+
+            //ping every 15 so after 35 seconds VoIP UDP issue
+            if (diff.Seconds > 35)
+            {
+                CallOnMainVOIPConnect(false);
+            }
+            else
+            {
+                CallOnMainVOIPConnect(true);
+            }
+
+
         }
 
         private void AudioEffectCheckTick()
@@ -112,9 +140,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
         public void Listen()
         {
+            _udpLastReceived = 0;
             _ready = false;
+            _listener = new UdpClient();
+            _listener.AllowNatTraversal(true);
+           // _listener.Connect(_serverEndpoint);
 
-            //start audio processing threads
+            //start 2 audio processing threads
             var decoderThread = new Thread(UdpAudioDecode);
             decoderThread.Start();
 
@@ -124,137 +156,45 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
             StartPing();
 
-            //keep reconnecting until stop
+            //set to false so we sent one packet to open up the radio
+            //automatically rather than the user having to press Send
+            hasSentVoicePacket = false;
+
+            _packetNumber = 1; //reset packet number
+
             while (!_stop)
             {
+                _ready = true;
                 try
                 {
-                    //set to false so we sent one packet to open up the radio
-                    //automatically rather than the user having to press Send
-                    hasSentVoicePacket = false;
+                    var groupEp = new IPEndPoint(IPAddress.Any, _port);
+                    //   listener.Client.ReceiveTimeout = 3000;
 
-                    _packetNumber = 1; //reset packet number
+                    var bytes = _listener.Receive(ref groupEp);
 
-                    _listener = new TcpClient();
-                    _listener.NoDelay = true;
-
-                    try
+                    if (bytes?.Length == 22)
                     {
-                        _listener.ConnectAsync(_address, _port).Wait(TimeSpan.FromSeconds(10));
+                        _udpLastReceived = DateTime.Now.Ticks;
+                        Logger.Info("Received Ping Back from Server");
                     }
-                    catch (Exception ex)
+                    else if (bytes?.Length > 22)
                     {
-                        Logger.Error(ex, $"Failed to connect to VOIP server @ {_address.ToString()}:{_port}");
-
-                        CallOnMainVOIPConnect(false, true);
-
-                        RequestStop();
-                        break;
+                        _udpLastReceived = DateTime.Now.Ticks;
+                        _encodedAudio.Add(bytes);
                     }
-
-                    if (!_listener.Connected)
-                    {
-                        Logger.Error($"Failed to connect to VOIP server @ {_address.ToString()}:{_port}");
-
-                        CallOnMainVOIPConnect(false, true);
-
-                        RequestStop();
-                        break;
-                    }
-
-                    //initial packet to get audio setup
-                    var udpVoicePacket = new UDPVoicePacket
-                    {
-                        GuidBytes = _guidAsciiBytes,
-                        AudioPart1Bytes = new byte[] {0, 1, 2, 3, 4, 5},
-                        AudioPart1Length = (ushort) 6,
-                        Frequencies = new double[] { 100 },
-                        UnitId = 1,
-                        Encryptions = new byte[] { 0 },
-                        Modulations = new byte[] { 4 },
-                        PacketNumber = 1
-                    }.EncodePacket();
-
-                    _listener.Client.Send(udpVoicePacket);
-
-                    //contains short for audio packet length
-                    byte[] lengthBuffer = new byte[2];
-
-                    _ready = true;
-
-                    Logger.Info("Connected to VOIP TCP " + _port);
-
-                    CallOnMainVOIPConnect(true);
-
-                    while (_listener.Connected && !_stop)
-                    {
-                        int received = _listener.Client.Receive(lengthBuffer, 2, SocketFlags.None);
-
-                        if (received == 0)
-                        {
-                            // didnt receive enough, quit.
-                            Logger.Warn(
-                                "Didnt Receive full packet for VOIP - Disconnecting & Reconnecting if next Recieve fails");
-                            //break;
-                        }
-                        else
-                        {
-                            ushort packetLength =
-                                BitConverter.ToUInt16(new byte[2] {lengthBuffer[0], lengthBuffer[1]}, 0);
-
-                            byte[] audioPacketBuffer = new byte[packetLength];
-
-                            //add pack in length to full buffer for packet decode
-                            audioPacketBuffer[0] = lengthBuffer[0];
-                            audioPacketBuffer[1] = lengthBuffer[1];
-
-                            received = _listener.Client.Receive(audioPacketBuffer, 2, packetLength - 2,
-                                SocketFlags.None);
-
-                            int offset = received + 2;
-                            int remaining = packetLength - 2 - received;
-                            while (remaining > 0 && received > 0)
-                            {
-                                received = _listener.Client.Receive(audioPacketBuffer, offset, remaining,
-                                    SocketFlags.None);
-
-                                remaining = remaining - received;
-                                offset = offset + received;
-                            }
-
-                            if (remaining == 0)
-                            {
-                                _encodedAudio.Add(audioPacketBuffer);
-                            }
-                            else
-                            {
-                                //didnt receive enough - log and reconnect
-                                Logger.Warn("Didnt Receive any packet for VOIP - Disconnecting & Reconnecting");
-                                break;
-                            }
-                        }
-                    }
-
-                    _ready = false;
                 }
                 catch (Exception e)
                 {
-                    if (!_stop)
-                    {
-                        Logger.Error(e, "Error with VOIP TCP Connection on port " + _port + " Reconnecting");
-                    }
+                    //  logger.Error(e, "error listening for UDP Voip");
                 }
-
-                try
-                {
-                    _listener.Close();
-                }
-                catch (Exception e)
-                {
-                }
-
-                CallOnMainVOIPConnect(false);
             }
+
+            _ready = false;
+
+            //stop UI Refreshing
+            _updateTimer.Stop();
+
+            CallOnMainVOIPConnect(false);
         }
 
         public void StartTimer()
@@ -304,6 +244,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                     return client;
                 }
             }
+
             return null;
         }
 
@@ -321,7 +262,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                         var time = DateTime.Now.Ticks; //should add at the receive instead?
 
                         if ((encodedOpusAudio != null)
-                            && (encodedOpusAudio.Length >= (UDPVoicePacket.PacketHeaderLength + UDPVoicePacket.FixedPacketLength + UDPVoicePacket.FrequencySegmentLength)))
+                            && (encodedOpusAudio.Length >=
+                                (UDPVoicePacket.PacketHeaderLength + UDPVoicePacket.FixedPacketLength +
+                                 UDPVoicePacket.FrequencySegmentLength)))
                         {
                             //  process
                             // check if we should play audio
@@ -332,58 +275,64 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                             {
                                 //Decode bytes
                                 var udpVoicePacket = UDPVoicePacket.DecodeVoicePacket(encodedOpusAudio);
-                                var frequencyCount = udpVoicePacket.Frequencies.Length;
 
-                                List<RadioReceivingPriority> radioReceivingPriorities = new List<RadioReceivingPriority>(frequencyCount);
-                                List<int> blockedRadios = CurrentlyBlockedRadios();
-
-                                // Parse frequencies into receiving radio priority for selection below
-                                for (var i = 0; i < frequencyCount; i++)
+                                if (udpVoicePacket != null && udpVoicePacket.Modulations[0] != 4)
                                 {
-                                    RadioReceivingState state = null;
-                                    bool decryptable;
-                                    var radio = _clientStateSingleton.DcsPlayerRadioInfo.CanHearTransmission(
-                                        udpVoicePacket.Frequencies[i],
-                                        (RadioInformation.Modulation) udpVoicePacket.Modulations[i],
-                                        udpVoicePacket.Encryptions[i],
-                                        udpVoicePacket.UnitId,
-                                        blockedRadios,
-                                        out state, 
-                                        out decryptable);
 
-                                    float losLoss = 0.0f;
-                                    double receivPowerLossPercent = 0.0;
 
-                                    if (radio != null && state != null)
+                                    var frequencyCount = udpVoicePacket.Frequencies.Length;
+
+                                    List<RadioReceivingPriority> radioReceivingPriorities =
+                                        new List<RadioReceivingPriority>(frequencyCount);
+                                    List<int> blockedRadios = CurrentlyBlockedRadios();
+
+                                    // Parse frequencies into receiving radio priority for selection below
+                                    for (var i = 0; i < frequencyCount; i++)
                                     {
-                                        if (
-                                            radio.modulation == RadioInformation.Modulation.INTERCOM
-                                            || (
-                                                HasLineOfSight(udpVoicePacket, out losLoss)
-                                                && InRange(udpVoicePacket.Guid, udpVoicePacket.Frequencies[i], out receivPowerLossPercent)
-                                                && !blockedRadios.Contains(state.ReceivedOn)
-                                            )
-                                        )
-                                        {
-                                            decryptable = (udpVoicePacket.Encryptions[i] == 0) || (udpVoicePacket.Encryptions[i] == radio.encKey && radio.enc);
+                                        RadioReceivingState state = null;
+                                        bool decryptable;
+                                        var radio = _clientStateSingleton.DcsPlayerRadioInfo.CanHearTransmission(
+                                            udpVoicePacket.Frequencies[i],
+                                            (RadioInformation.Modulation) udpVoicePacket.Modulations[i],
+                                            udpVoicePacket.Encryptions[i],
+                                            udpVoicePacket.UnitId,
+                                            blockedRadios,
+                                            out state,
+                                            out decryptable);
 
-                                            radioReceivingPriorities.Add(new RadioReceivingPriority()
+                                        float losLoss = 0.0f;
+                                        double receivPowerLossPercent = 0.0;
+
+                                        if (radio != null && state != null)
+                                        {
+                                            if (
+                                                radio.modulation == RadioInformation.Modulation.INTERCOM
+                                                || (
+                                                    HasLineOfSight(udpVoicePacket, out losLoss)
+                                                    && InRange(udpVoicePacket.Guid, udpVoicePacket.Frequencies[i],
+                                                        out receivPowerLossPercent)
+                                                    && !blockedRadios.Contains(state.ReceivedOn)
+                                                )
+                                            )
                                             {
-                                                Decryptable = decryptable,
-                                                Encryption = udpVoicePacket.Encryptions[i],
-                                                Frequency = udpVoicePacket.Frequencies[i],
-                                                LineOfSightLoss = losLoss,
-                                                Modulation = udpVoicePacket.Modulations[i],
-                                                ReceivingPowerLossPercent = receivPowerLossPercent,
-                                                ReceivingRadio = radio,
-                                                ReceivingState = state
-                                            });
+                                                decryptable =
+                                                    (udpVoicePacket.Encryptions[i] == 0) ||
+                                                    (udpVoicePacket.Encryptions[i] == radio.encKey && radio.enc);
+
+                                                radioReceivingPriorities.Add(new RadioReceivingPriority()
+                                                {
+                                                    Decryptable = decryptable,
+                                                    Encryption = udpVoicePacket.Encryptions[i],
+                                                    Frequency = udpVoicePacket.Frequencies[i],
+                                                    LineOfSightLoss = losLoss,
+                                                    Modulation = udpVoicePacket.Modulations[i],
+                                                    ReceivingPowerLossPercent = receivPowerLossPercent,
+                                                    ReceivingRadio = radio,
+                                                    ReceivingState = state
+                                                });
+                                            }
                                         }
                                     }
-                                }
-
-                                // Sort receiving radios to play audio on correct one
-                                radioReceivingPriorities.Sort(SortRadioReceivingPriorities);
 
                                 if (radioReceivingPriorities.Count > 0)
                                 {
@@ -409,8 +358,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                                                 Decryptable = destinationRadio.Decryptable,
                                                 // mark if we can decrypt it
                                                 RadioReceivingState = destinationRadio.ReceivingState,
-                                                RecevingPower = destinationRadio.ReceivingPowerLossPercent, //loss of 1.0 or greater is total loss
-                                                LineOfSightLoss = destinationRadio.LineOfSightLoss, // Loss of 1.0 or greater is total loss
+                                                RecevingPower =
+                                                    destinationRadio
+                                                        .ReceivingPowerLossPercent, //loss of 1.0 or greater is total loss
+                                                LineOfSightLoss =
+                                                    destinationRadio
+                                                        .LineOfSightLoss, // Loss of 1.0 or greater is total loss
                                                 PacketNumber = udpVoicePacket.PacketNumber
                                             };
 
@@ -429,8 +382,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                                                 _audioManager.AddClientAudio(audio);
                                             }
                                         }
-                                  
-
+                                    }
                                 }
                             }
                         }
@@ -471,7 +423,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                 for (int i = 1; i < 11; i++)
                 {
                     var radio = _clientStateSingleton.DcsPlayerRadioInfo.radios[i];
-                    if (radio.modulation != RadioInformation.Modulation.DISABLED && radio.simul && i != _clientStateSingleton.DcsPlayerRadioInfo.selected)
+                    if (radio.modulation != RadioInformation.Modulation.DISABLED && radio.simul &&
+                        i != _clientStateSingleton.DcsPlayerRadioInfo.selected)
                     {
                         transmitting.Add(i);
                     }
@@ -540,6 +493,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
                 return max > dist;
             }
+
             return false;
         }
 
@@ -552,6 +506,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             {
                 return 1;
             }
+
             if (y.ReceivingRadio == null | y.ReceivingState == null)
             {
                 return -1;
@@ -561,6 +516,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             {
                 xScore += 16;
             }
+
             if (y.Decryptable)
             {
                 yScore += 16;
@@ -570,6 +526,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             {
                 xScore += 8;
             }
+
             if (_clientStateSingleton.DcsPlayerRadioInfo.selected == y.ReceivingState.ReceivedOn)
             {
                 yScore += 8;
@@ -579,6 +536,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             {
                 xScore += 4;
             }
+
             if (y.ReceivingRadio.volume > 0)
             {
                 yScore += 4;
@@ -618,7 +576,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
                     var encodedUdpVoicePacket = udpVoicePacket.EncodePacket();
 
-                    _listener.Client.Send(encodedUdpVoicePacket);
+                    _listener.Send(encodedUdpVoicePacket, encodedUdpVoicePacket.Length, _serverEndpoint);
 
                     RadioSendingState = new RadioSendingState
                     {
@@ -647,42 +605,41 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
         private void StartPing()
         {
             Logger.Info("Pinging Server - Starting");
+
+            byte[] message = _guidAsciiBytes;
+
+            // Force immediate ping once to avoid race condition before starting to listen
+            _listener.Send(message, message.Length, _serverEndpoint);
+
             var thread = new Thread(() =>
             {
-                byte[] message = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+                //wait for initial sync - then ping
+                if (_pingStop.Token.WaitHandle.WaitOne(TimeSpan.FromSeconds(2)))
+                {
+                    return;
+                }
 
                 while (!_stop)
                 {
-                    //wait for cancel or quit    
-                    var cancelled = _pingStop.Token.WaitHandle.WaitOne(TimeSpan.FromSeconds(60));
-
-                    if (cancelled)
-                    {
-                        return;
-                    }
-
+                    //Logger.Info("Pinging Server");
                     try
                     {
-                        if (!RadioSendingState.IsSending && _listener != null && _listener.Connected)
+                        if (!RadioSendingState.IsSending && _listener != null)
                         {
-                            var udpVoicePacket = new UDPVoicePacket
-                            {
-                                GuidBytes = _guidAsciiBytes,
-                                AudioPart1Bytes = message,
-                                AudioPart1Length = (ushort) message.Length,
-                                Frequencies = new double[] { 100 },
-                                UnitId = 1,
-                                Encryptions = new byte[] { 0 },
-                                Modulations = new byte[] { 4 },
-                                PacketNumber = 1
-                            }.EncodePacket();
-
-                            _listener.Client.Send(udpVoicePacket);
+                            _listener.Send(message, message.Length,_serverEndpoint);
                         }
                     }
                     catch (Exception e)
                     {
                         Logger.Error(e, "Exception Sending Audio Ping! " + e.Message);
+                    }
+
+                    //wait for cancel or quit
+                    var cancelled = _pingStop.Token.WaitHandle.WaitOne(TimeSpan.FromSeconds(15));
+
+                    if (cancelled)
+                    {
+                        return;
                     }
                 }
             });
@@ -694,7 +651,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             try
             {
                 Application.Current.Dispatcher.Invoke(DispatcherPriority.Background,
-                    new ThreadStart(delegate { _voipConnectCallback(result, connectionError, $"{_address.ToString()}:{_port}"); }));
+                    new ThreadStart(delegate
+                    {
+                        _voipConnectCallback(result, connectionError, $"{_address.ToString()}:{_port}");
+                    }));
             }
             catch (Exception ex)
             {

@@ -15,6 +15,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
 
         public bool PlayedEndOfTransmission { get; set; }
 
-        public bool IsReceiving => (DateTime.Now.Ticks - LastReceviedAt) < 5000000;
+        public bool IsReceiving => (DateTime.Now.Ticks - LastReceviedAt) < 3500000;
     }
 }

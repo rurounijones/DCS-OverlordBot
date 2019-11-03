@@ -156,16 +156,7 @@
                     </StackPanel>
                     <StackPanel Margin="0"
                                 HorizontalAlignment="Center"
-                                Orientation="Horizontal">
-                        <Button x:Name="ConnectExternalAWACSMode"
-                                Width="220"
-                                Margin="0,10,0,0"
-                                HorizontalAlignment="Center"
-                                Click="ConnectExternalAWACSMode_OnClick"
-                                Content="Connect External AWACS Mode (EAM)"
-                                IsEnabled="False"
-                                Style="{DynamicResource SquareButtonStyle}" />
-                    </StackPanel>
+                                Orientation="Horizontal"/>
 
                     <StackPanel Margin="0"
                                 HorizontalAlignment="Center"

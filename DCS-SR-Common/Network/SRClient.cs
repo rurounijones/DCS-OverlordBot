@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Net;
 using System.Net.Sockets;
 using Newtonsoft.Json;
 
@@ -35,7 +36,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network
         public Socket ClientSocket { get; set; }
 
         [JsonIgnore]
-        public Socket VoipPort { get; set; }
+        public IPEndPoint VoipPort { get; set; }
 
         [JsonIgnore]
         public long LastUpdate { get; set; }

@@ -109,12 +109,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
             return LastUpdate > DateTime.Now.Ticks - 100000000;
         }
 
-        public RadioInformation CanHearTransmission(double frequency, 
+        public RadioInformation CanHearTransmission(double frequency,
             RadioInformation.Modulation modulation,
             byte encryptionKey,
             uint sendingUnitId,
             List<int> blockedRadios,
-            out RadioReceivingState receivingState, 
+            out RadioReceivingState receivingState,
             out bool decryptable)
         {
             if (!IsCurrent())

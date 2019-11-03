@@ -30,7 +30,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
             new ConcurrentDictionary<string, SRClient>();
 
         private readonly IEventAggregator _eventAggregator;
-        private TCPVoiceRouter _serverListener;
+        private UDPVoiceRouter _serverListener;
         private ServerSync _serverSync;
         private volatile bool _stop = true;
 
@@ -109,7 +109,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
                 {
                     if (ServerSettingsStore.Instance.GetGeneralSetting(ServerSettingsKeys.CLIENT_EXPORT_ENABLED).BoolValue)
                     {
-                        var json = JsonConvert.SerializeObject(_connectedClients.Values) + "\n";
+                        ClientListExport data = new ClientListExport { Clients = _connectedClients.Values, ServerVersion = UpdaterChecker.VERSION };
+                        var json = JsonConvert.SerializeObject(data) + "\n";
                         try
                         {
                             File.WriteAllText(exportFilePath, json);
@@ -178,9 +179,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Server.Network
 
                 PopulateBanList();
 
-                _serverListener = new TCPVoiceRouter(_connectedClients, _eventAggregator);
-                var voipListenerThread = new Thread(_serverListener.StartListening);
-                voipListenerThread.Start();
+                _serverListener = new UDPVoiceRouter(_connectedClients, _eventAggregator);
+                var listenerThread = new Thread(_serverListener.Listen);
+                listenerThread.Start();
 
                 _serverSync = new ServerSync(_connectedClients, _bannedIps, _eventAggregator);
                 var serverSyncThread = new Thread(_serverSync.StartListening);

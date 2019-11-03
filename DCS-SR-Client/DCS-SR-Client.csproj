@@ -239,6 +239,7 @@
     <Compile Include="Overlord\LuisModels\LuisCompositeEntity.cs" />
     <Compile Include="Overlord\LuisModels\LuisEntity.cs" />
     <Compile Include="Overlord\LuisModels\LuisResponse.cs" />
+    <Compile Include="Network\UDPVoiceHandler.cs" />
     <Compile Include="Settings\SynchedServerSettings.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -298,7 +299,6 @@
       <DependentUpon>ServerSettingsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Settings\SettingsStore.cs" />
-    <Compile Include="Network\TCPVoiceHandler.cs" />
     <Compile Include="UI\RadioOverlayWindow\WindowHelper.cs" />
     <Compile Include="UI\Sounds.cs" />
     <Compile Include="UI\ToolTips.cs" />

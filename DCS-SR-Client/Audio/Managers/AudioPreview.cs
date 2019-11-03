@@ -205,7 +205,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio
                 }
             }
         }
-        
+
         private void ShowOutputError(string message)
         {
             var messageBoxResult = CustomMessageBox.ShowYesNo(
@@ -304,7 +304,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio
    //                 _requestBufferedWaveProvider.AddSamples(pcmBytes, 0, pcmBytes.Length);
                     //encode as opus bytes
                     int len;
-                    //need to get framing right for opus - 
+                    //need to get framing right for opus -
                     var buff = _encoder.Encode(pcmBytes, pcmBytes.Length, out len);
 
                     if ((buff != null) && (len > 0))
@@ -343,19 +343,19 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio
         {
             _waveIn?.Dispose();
             _waveIn = null;
-       
+
             _waveOut?.Dispose();
             _waveOut = null;
-        
+
             _playBuffer?.ClearBuffer();
             _playBuffer = null;
-          
+
             _encoder?.Dispose();
             _encoder = null;
-     
+
             _decoder?.Dispose();
             _decoder = null;
-         
+
             _playBuffer?.ClearBuffer();
             _playBuffer = null;
 

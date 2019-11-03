@@ -31,7 +31,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
         RadioEncryptionEffects = 8, //Radio Encryption effects
         AutoConnectPrompt = 10, //message about auto connect
         RadioOverlayTaskbarHide = 11,
-      
+
         RefocusDCS = 19,
         ExpandControls = 20,
 
@@ -40,9 +40,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
         MinimiseToTray = 22,
         StartMinimised = 23,
 
-        RadioRxEffects_Start = 40, // Recieving Radio Effects 
+        RadioRxEffects_Start = 40, // Recieving Radio Effects
         RadioRxEffects_End = 41,
-        RadioTxEffects_Start = 42, // Recieving Radio Effects 
+        RadioTxEffects_Start = 42, // Recieving Radio Effects
         RadioTxEffects_End = 43,
 
         AutoSelectPresetChannel = 44, //auto select preset channel
@@ -204,14 +204,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
     public class SettingsStore
     {
         private static readonly string CFG_FILE_NAME = "client.cfg";
-    
+
         private static readonly object _lock = new object();
 
         private readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly Configuration _configuration;
 
         private string cfgFile = CFG_FILE_NAME;
-        
+
         private SettingsStore()
         {
             //check commandline
@@ -224,7 +224,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
                     cfgFile = arg.Replace("-cfg=", "").Trim();
                 }
             }
-            
+
             try
             {
                 _configuration = Configuration.LoadFromFile(cfgFile);
