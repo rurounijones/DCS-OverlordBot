@@ -123,8 +123,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
             ExternalAWACSModeName.Text = _settings.GetClientSetting(SettingsKeys.LastSeenName).StringValue;
 
-            UpdaterChecker.CheckForUpdate(_settings.GetClientSetting(SettingsKeys.CheckForBetaUpdates).BoolValue);
-
             _redrawUITimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
             _redrawUITimer.Tick += RedrawUITick;
             _redrawUITimer.Start();
