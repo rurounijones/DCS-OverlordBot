@@ -6,13 +6,13 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyTitle("DCS-SimpleRadio Standalone Client")]
-[assembly: AssemblyDescription("Client for DCS-SimpleRadio Standalone")]
+[assembly: AssemblyTitle("Overlady for DCS-SimpleRadio")]
+[assembly: AssemblyDescription("Overlady AWACS Bot for DCS-SimpleRadio Standalone")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Ciribob - GitHub.com/Ciribob")]
-[assembly: AssemblyProduct("DCS-SimpleRadio Standalone")]
-[assembly: AssemblyCopyright("Copyright ©  2016 - Ciribob")]
-[assembly: AssemblyTrademark("Ciribob - GitHub.com/Ciribob")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("Overlady for DCS-SimpleRadio")]
+[assembly: AssemblyCopyright("")]
+[assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
