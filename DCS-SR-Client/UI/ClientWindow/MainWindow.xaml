@@ -9,7 +9,7 @@
                       xmlns:local="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Client.UI"
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                       xmlns:settings="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Client.Settings"
-                      Title="DCS-SRS Client"
+                      Title="OverlordBot for SRS"
                       Width="550"
                       Height="412.001"
                       d:DataContext="{d:DesignInstance local:MainWindow}"
@@ -172,19 +172,19 @@
                                 Orientation="Horizontal">
                         <Label HorizontalAlignment="Center" HorizontalContentAlignment="Center" Content="Server" />
                         <Image x:Name="ServerConnectionStatus"
-                               Source="/Overlady;component/status-disconnected.png"
+                               Source="/OverlordBot;component/status-disconnected.png"
                                HorizontalAlignment="Center"
                                Height="26"
                                Margin="5,0,5,0" />
                         <Label HorizontalAlignment="Center" HorizontalContentAlignment="Center" Content="VOIP" />
                         <Image x:Name="VOIPConnectionStatus"
-                               Source="/Overlady;component/status-disconnected.png"
+                               Source="/OverlordBot;component/status-disconnected.png"
                                Height="26"
                                HorizontalAlignment="Center"
                                Margin="5,0,5,0" />
                         <Label HorizontalAlignment="Center" HorizontalContentAlignment="Center" Content="AWACS" />
                         <Image x:Name="AWACSConnectionStatus"
-                               Source="/Overlady;component/status-disconnected.png"
+                               Source="/OverlordBot;component/status-disconnected.png"
                                Height="26"
                                HorizontalAlignment="Center"
                                Margin="5,0,5,0" />

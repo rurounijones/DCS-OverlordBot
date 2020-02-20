@@ -6,11 +6,11 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyTitle("Overlady for DCS-SimpleRadio")]
-[assembly: AssemblyDescription("Overlady AWACS Bot for DCS-SimpleRadio Standalone")]
+[assembly: AssemblyTitle("OverlordBot for DCS-SimpleRadio")]
+[assembly: AssemblyDescription("OverlordBot AWACS Bot for DCS-SimpleRadio Standalone")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Overlady for DCS-SimpleRadio")]
+[assembly: AssemblyProduct("OverlordBot for DCS-SimpleRadio")]
 [assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
