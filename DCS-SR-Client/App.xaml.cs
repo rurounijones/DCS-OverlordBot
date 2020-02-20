@@ -44,32 +44,6 @@ namespace DCS_SR_Client
                 Environment.Exit(1);
             }
 
-#if !DEBUG
-            if (IsClientRunning())
-            {
-                Logger logger = LogManager.GetCurrentClassLogger();
-
-                if (_settings.GetClientSetting(SettingsKeys.AllowMultipleInstances).BoolValue)
-                {
-                    logger.Warn("Another SRS instance is already running, allowing multiple instances due to config setting");
-                }
-                else
-                {
-                    logger.Warn("Another SRS instance is already running, preventing second instance startup");
-
-                    MessageBoxResult result = MessageBox.Show(
-                    "Another instance of the SimpleRadio client is already running!\n\nThis one will now quit. Check your system tray for the SRS Icon",
-                    "Multiple SimpleRadio clients started!",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
-
-
-                    Environment.Exit(0);
-                    return;
-                }
-            }
-#endif
-
             InitNotificationIcon();
         }
 
