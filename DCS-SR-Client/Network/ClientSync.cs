@@ -26,7 +26,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private volatile bool _stop = false;
+        public volatile bool _stop = false;
 
         public static string ServerVersion = "Unknown";
         private readonly ConcurrentDictionary<string, SRClient> _clients;
@@ -93,7 +93,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                 return;
             }
 
-            if (_tcpClient != null && _tcpClient.Connected)
+            if (_tcpClient != null && _tcpClient.Client != null && _tcpClient.Connected)
             {
                 SendToServer(new NetworkMessage
                 {
@@ -217,8 +217,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
         {
             try
             {
-                Application.Current.Dispatcher.Invoke(DispatcherPriority.Background,
-                    new ThreadStart(delegate { _externalAWACSModeCallback(result, coalition); }));
+                if (this._externalAWACSModeCallback != null)
+                {
+                    Application.Current.Dispatcher.Invoke(DispatcherPriority.Background,
+                        new ThreadStart(delegate { _externalAWACSModeCallback(result, coalition); }));
+                }
             }
             catch (Exception ex)
             {

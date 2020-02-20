@@ -429,10 +429,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             StartStop.Content = "Connect";
             StartStop.IsEnabled = true;
             _clientStateSingleton.IsConnected = false;
+            _clientStateSingleton.InExternalAWACSMode = false;
             ToggleServerSettings.IsEnabled = false;
 
             ServerConnectionStatus.Source = connectionError ? Images.IconDisconnectedError : Images.IconDisconnected;
             VOIPConnectionStatus.Source = connectionError ? Images.IconDisconnectedError : Images.IconDisconnected;
+            AWACSConnectionStatus.Source = connectionError ? Images.IconDisconnectedError : Images.IconDisconnected;
+
 
             ExternalAWACSModePassword.IsEnabled = false;
             ExternalAWACSModePasswordLabel.IsEnabled = false;
@@ -457,10 +460,16 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             {
             }
 
-            if (_client != null)
+            try
             {
-                _client.Disconnect();
-                _client = null;
+                if (_client._stop == false)
+                {
+                    _client.Disconnect();
+                    _client = null;
+                }
+            } catch(NullReferenceException ex)
+            {
+                // If it is null then great. Mission accomplished
             }
 
             _clientStateSingleton.DcsPlayerRadioInfo.Reset();
@@ -542,9 +551,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             if (result)
             {
                 VOIPConnectionStatus.Source = Images.IconConnected;
-
-                // Freezes the UI but what the hell, we don't want fleshsacks clicking on things anyway
-                Thread.Sleep(5000);
                 ConnectExternalAwacsMode();
             }
             else
@@ -870,7 +876,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
         {
             if (_client == null ||
                 !_clientStateSingleton.IsConnected ||
-                !_serverSettings.GetSettingAsBool(Common.Setting.ServerSettingsKeys.EXTERNAL_AWACS_MODE) ||
                 (!_clientStateSingleton.InExternalAWACSMode &&
                 string.IsNullOrWhiteSpace(ExternalAWACSModePassword.Password)))
             {
@@ -893,6 +898,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
         {
             if (result)
             {
+                AWACSConnectionStatus.Source = Images.IconConnected;
                 _clientStateSingleton.InExternalAWACSMode = true;
                 _clientStateSingleton.DcsPlayerSideInfo.side = coalition;
                 _clientStateSingleton.DcsPlayerSideInfo.name = _clientStateSingleton.LastSeenName;
@@ -903,6 +909,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             }
             else
             {
+                AWACSConnectionStatus.Source = Images.IconDisconnected;
                 _clientStateSingleton.InExternalAWACSMode = false;
                 _clientStateSingleton.DcsPlayerSideInfo.side = 0;
                 _clientStateSingleton.DcsPlayerSideInfo.name = "";

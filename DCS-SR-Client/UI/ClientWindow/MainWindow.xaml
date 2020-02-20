@@ -172,13 +172,19 @@
                                 Orientation="Horizontal">
                         <Label HorizontalAlignment="Center" HorizontalContentAlignment="Center" Content="Server" />
                         <Image x:Name="ServerConnectionStatus"
-                               Source="/SR-ClientRadio;component/status-disconnected.png"
+                               Source="/Overlady;component/status-disconnected.png"
                                HorizontalAlignment="Center"
                                Height="26"
                                Margin="5,0,5,0" />
                         <Label HorizontalAlignment="Center" HorizontalContentAlignment="Center" Content="VOIP" />
                         <Image x:Name="VOIPConnectionStatus"
-                               Source="/SR-ClientRadio;component/status-disconnected.png"
+                               Source="/Overlady;component/status-disconnected.png"
+                               Height="26"
+                               HorizontalAlignment="Center"
+                               Margin="5,0,5,0" />
+                        <Label HorizontalAlignment="Center" HorizontalContentAlignment="Center" Content="AWACS" />
+                        <Image x:Name="AWACSConnectionStatus"
+                               Source="/Overlady;component/status-disconnected.png"
                                Height="26"
                                HorizontalAlignment="Center"
                                Margin="5,0,5,0" />
