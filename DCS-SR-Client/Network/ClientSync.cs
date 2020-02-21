@@ -426,6 +426,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                                             _radioDCSSync.StartExternalAWACSModeLoop();
                                         }
                                         break;
+                                    case NetworkMessage.MessageType.RADIO_UPDATE: // Supposed to be only received by server...
+                                        break;
                                     default:
                                         Logger.Error("Recevied unknown " + line);
                                         break;
