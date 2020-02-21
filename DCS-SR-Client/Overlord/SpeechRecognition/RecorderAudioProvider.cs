@@ -23,12 +23,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
 
             if (_waveFileWriter == null)
             {
-                _waveFileWriter = new WaveFileWriter($"E:\\Recordings\\{Guid.NewGuid()}.wav", new WaveFormat(16000, 1));
+                _waveFileWriter = new WaveFileWriter($"recordings/{Guid.NewGuid()}.wav", new WaveFormat(16000, 1));
             }
             else if (newTransmission)
             {
                 _waveFileWriter.Close();
-                _waveFileWriter = new WaveFileWriter($"E:\\Recordings\\{Guid.NewGuid()}.wav", new WaveFormat(16000, 1));
+                _waveFileWriter = new WaveFileWriter($"recordings/{Guid.NewGuid()}.wav", new WaveFormat(16000, 1));
             }
 
             int decodedLength = 0;
