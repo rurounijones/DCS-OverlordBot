@@ -240,6 +240,7 @@
     <Compile Include="Overlord\LuisModels\LuisEntity.cs" />
     <Compile Include="Overlord\LuisModels\LuisResponse.cs" />
     <Compile Include="Network\UDPVoiceHandler.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="Settings\SynchedServerSettings.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

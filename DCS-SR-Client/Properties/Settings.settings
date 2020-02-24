@@ -1,8 +1,39 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-
-<SettingsFile xmlns="uri:settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Ciribob.DCS.SimpleRadio.Standalone.Client.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="SpeechRegion" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">westus</Value>
+    </Setting>
+    <Setting Name="SpeechSubscriptionKey" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">add_key</Value>
+    </Setting>
+    <Setting Name="SpeechCustomEndpointId" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">add_custom_endpoint_id</Value>
+    </Setting>
+    <Setting Name="LuisAppId" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">add_luis_app_id</Value>
+    </Setting>
+    <Setting Name="LuisEndpointKey" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">add_luis_endpoint_key</Value>
+    </Setting>
+    <Setting Name="TacScribeHost" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">localhost</Value>
+    </Setting>
+    <Setting Name="TacScribePort" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">5432</Value>
+    </Setting>
+    <Setting Name="TacScribeDatabase" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">tac_scribe</Value>
+    </Setting>
+    <Setting Name="TacScribeUsername" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">tac_scribe</Value>
+    </Setting>
+    <Setting Name="TacScribePassword" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">tac_scribe</Value>
+    </Setting>
+    <Setting Name="TacScribeForceSSL" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+  </Settings>
 </SettingsFile>

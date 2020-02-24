@@ -6,20 +6,20 @@ using System.Threading.Tasks;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
 {
-    class Constants
+    class Settings
     {
-        public const string SPEECH_REGION = "";
-        public const string SPEECH_SUBSCRIPTION_KEY = "";
-        public const string SPEECH_CUSTOM_ENDPOINT_ID = "";
+        public static string SPEECH_REGION = Properties.Settings.Default.SpeechRegion;
+        public static string SPEECH_SUBSCRIPTION_KEY = Properties.Settings.Default.SpeechSubscriptionKey;
+        public static string SPEECH_CUSTOM_ENDPOINT_ID = Properties.Settings.Default.SpeechCustomEndpointId;
 
-        public const string LUIS_APP_ID = "";
-        public const string LUIS_ENDPOINT_KEY = "";
+        public static string LUIS_APP_ID = Properties.Settings.Default.LuisAppId;
+        public static string LUIS_ENDPOINT_KEY = Properties.Settings.Default.LuisEndpointKey;
 
-        public const string TAC_SCRIBE_HOST = "localhost";
-        public const string TAC_SCRIBE_PORT = "5432";
-        public const string TAC_SCRIBE_DATABASE = "tac_scribe";
-        public const string TAC_SCRIBE_USERNAME = "tac_scribe";
-        public const string TAC_SCRIBE_PASSWORD = "tac_scribe";
-        public const bool TAC_SCRIBE_FORCE_SSL = false;
+        public static string TAC_SCRIBE_HOST = Properties.Settings.Default.TacScribeHost;
+        public static string TAC_SCRIBE_PORT = Properties.Settings.Default.TacScribePort.ToString();
+        public static string TAC_SCRIBE_DATABASE = Properties.Settings.Default.TacScribeDatabase;
+        public static string TAC_SCRIBE_USERNAME = Properties.Settings.Default.TacScribeUsername;
+        public static string TAC_SCRIBE_PASSWORD = Properties.Settings.Default.TacScribePassword;
+        public static bool TAC_SCRIBE_FORCE_SSL = Properties.Settings.Default.TacScribeForceSSL;
     }
 }

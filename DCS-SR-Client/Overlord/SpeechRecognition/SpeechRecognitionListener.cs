@@ -71,8 +71,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
         {
             using (var client = new HttpClient())
             {
-                client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", Constants.SPEECH_SUBSCRIPTION_KEY);
-                UriBuilder uriBuilder = new UriBuilder("https://" + Constants.SPEECH_REGION + ".api.cognitive.microsoft.com/sts/v1.0/issueToken");
+                client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", Settings.SPEECH_SUBSCRIPTION_KEY);
+                UriBuilder uriBuilder = new UriBuilder("https://" + Settings.SPEECH_REGION + ".api.cognitive.microsoft.com/sts/v1.0/issueToken");
 
                 using (var result = await client.PostAsync(uriBuilder.Uri.AbsoluteUri, null))
                 {
@@ -111,8 +111,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
             // Initialize the recognizer
             var authorizationToken = Task.Run(() => GetToken()).Result;
-            SpeechConfig speechConfig = SpeechConfig.FromAuthorizationToken(authorizationToken, Constants.SPEECH_REGION);
-            speechConfig.EndpointId = Constants.SPEECH_CUSTOM_ENDPOINT_ID;
+            SpeechConfig speechConfig = SpeechConfig.FromAuthorizationToken(authorizationToken, Settings.SPEECH_REGION);
+            speechConfig.EndpointId = Settings.SPEECH_CUSTOM_ENDPOINT_ID;
             SpeechRecognizer recognizer = new SpeechRecognizer(speechConfig, _audioConfig);
 
             // Setup the cancellation code
