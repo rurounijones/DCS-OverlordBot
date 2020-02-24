@@ -275,7 +275,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                             if ((myClient != null) && _clientStateSingleton.DcsPlayerRadioInfo.IsCurrent())
                             {
                                 //Decode bytes
+                                Logger.Info($"Decoding Voice Packet");
                                 udpVoicePacket = UDPVoicePacket.DecodeVoicePacket(encodedOpusAudio);
+                                Logger.Info($"Decoded Voice Packet {udpVoicePacket.ToString()}");
 
                                 if (udpVoicePacket != null && udpVoicePacket.Modulations[0] != 4)
                                 {
