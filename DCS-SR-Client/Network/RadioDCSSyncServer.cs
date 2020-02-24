@@ -127,7 +127,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
                     Thread.Sleep(200);
                 }
-
+                _clientStateSingleton.InExternalAWACSMode = false;
                 Logger.Debug("Stopping external AWACS mode loop");
             });
         }

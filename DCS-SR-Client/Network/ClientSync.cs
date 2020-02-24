@@ -114,53 +114,62 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
         private void Connect()
         {
-            if (_radioDCSSync != null)
-            {
-                _radioDCSSync.Stop();
-                _radioDCSSync = null;
-            }
-
             bool connectionError = false;
 
-            _radioDCSSync = new RadioDCSSyncServer(ClientRadioUpdated, ClientCoalitionUpdate, _clients, _guid);
-            using (_tcpClient = new TcpClient())
+            while (true)
             {
-                _tcpClient.SendTimeout = 10;
-                try
+                if (_radioDCSSync != null)
                 {
-                    _tcpClient.NoDelay = true;
+                    _radioDCSSync.Stop();
+                    _radioDCSSync = null;
+                }
 
-                    // Wait for 10 seconds before aborting connection attempt - no SRS server running/port opened in that case
-                    _tcpClient.ConnectAsync(_serverEndpoint.Address, _serverEndpoint.Port).Wait(TimeSpan.FromSeconds(10));
-
-                    if (_tcpClient.Connected)
+                _radioDCSSync = new RadioDCSSyncServer(ClientRadioUpdated, ClientCoalitionUpdate, _clients, _guid);
+                using (_tcpClient = new TcpClient())
+                {
+                    _tcpClient.SendTimeout = 10;
+                    try
                     {
-                        _radioDCSSync.Listen();
-
                         _tcpClient.NoDelay = true;
 
-                        CallOnMain(true);
-                        bool stop = ClientSyncLoop();
-                        if (stop == false) {
+                        // Wait for 10 seconds before aborting connection attempt - no SRS server running/port opened in that case
+                        _tcpClient.ConnectAsync(_serverEndpoint.Address, _serverEndpoint.Port).Wait(TimeSpan.FromSeconds(10));
+
+                        if (_tcpClient.Connected)
+                        {
+                            _radioDCSSync.Listen();
+
+                            _tcpClient.NoDelay = true;
+
+                            CallOnMain(true);
+                            bool stop = ClientSyncLoop();
+                            if (stop == false)
+                            {
+                                connectionError = true;
+                            }
+                        }
+                        else
+                        {
+                            Logger.Error($"Failed to connect to server @ {_serverEndpoint.ToString()}");
+
+                            // Signal disconnect including an error
                             connectionError = true;
                         }
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        Logger.Error($"Failed to connect to server @ {_serverEndpoint.ToString()}");
-
-                        // Signal disconnect including an error
+                        Logger.Error(ex, "Could not connect to server");
                         connectionError = true;
                     }
                 }
-                catch (Exception ex)
+
+                _radioDCSSync.Stop();
+
+                if(connectionError == false)
                 {
-                    Logger.Error(ex, "Could not connect to server");
-                    connectionError = true;
+                    break;
                 }
             }
-
-            _radioDCSSync.Stop();
 
             //disconnect callback
             CallOnMain(false, connectionError);
