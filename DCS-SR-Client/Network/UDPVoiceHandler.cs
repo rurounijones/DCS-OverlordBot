@@ -254,6 +254,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             {
                 while (!_stop)
                 {
+                    UDPVoicePacket udpVoicePacket = default(UDPVoicePacket);
                     try
                     {
                         var encodedOpusAudio = new byte[0];
@@ -274,7 +275,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                             if ((myClient != null) && _clientStateSingleton.DcsPlayerRadioInfo.IsCurrent())
                             {
                                 //Decode bytes
-                                var udpVoicePacket = UDPVoicePacket.DecodeVoicePacket(encodedOpusAudio);
+                                udpVoicePacket = UDPVoicePacket.DecodeVoicePacket(encodedOpusAudio);
 
                                 if (udpVoicePacket != null && udpVoicePacket.Modulations[0] != 4)
                                 {
@@ -391,7 +392,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                     {
                         if (!_stop)
                         {
-                            Logger.Info(ex, "Failed to decode audio from Packet");
+                                Logger.Info(ex, $"Failed to decode audio from Packet {udpVoicePacket.ToString()}");
                         }
                     }
                 }
