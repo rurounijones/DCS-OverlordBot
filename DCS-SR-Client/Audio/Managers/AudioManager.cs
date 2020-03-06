@@ -216,18 +216,23 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
             if (_botsBufferedAudio.ContainsKey(audio.ReceivedRadio))
             {
                 bot = _botsBufferedAudio[audio.ReceivedRadio];
-                recorder = _recordersBufferedAudio[audio.ClientGuid];
 
             }
             else
             {
                 var callsign = _clientStateSingleton.DcsPlayerRadioInfo.radios[audio.ReceivedRadio].name;
                 var voice = _clientStateSingleton.DcsPlayerRadioInfo.radios[audio.ReceivedRadio].voice;
-
                 bot = new BotAudioProvider(callsign, voice);
                 bot._speechRecognitionListener._voiceHandler = _udpVoiceHandler;
                 _botsBufferedAudio[audio.ReceivedRadio] = bot;
 
+            }
+            if (_recordersBufferedAudio.ContainsKey(audio.ClientGuid))
+            {
+                recorder = _recordersBufferedAudio[audio.ClientGuid];
+            }
+            else
+            {
                 recorder = new RecorderAudioProvider();
                 _recordersBufferedAudio[audio.ClientGuid] = recorder;
             }
