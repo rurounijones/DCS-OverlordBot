@@ -129,12 +129,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
             recognizer.Canceled += async (s, e) =>
             {
-                Logger.Debug($"CANCELLED: Reason={e.Reason}");
+                Logger.Trace($"CANCELLED: Reason={e.Reason}");
 
                 if (e.Reason == CancellationReason.Error)
                 {
-                    Logger.Debug($"CANCELLED: ErrorCode={e.ErrorCode}");
-                    Logger.Debug($"CANCELLED: ErrorDetails={e.ErrorDetails}");
+                    Logger.Trace($"CANCELLED: ErrorCode={e.ErrorCode}");
+                    Logger.Trace($"CANCELLED: ErrorDetails={e.ErrorDetails}");
 
                     if (e.ErrorCode != CancellationErrorCode.BadRequest && e.ErrorCode != CancellationErrorCode.ConnectionFailure)
                     {
@@ -146,22 +146,22 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
             recognizer.SpeechStartDetected += (s, e) =>
             {
-                Logger.Debug("\nSpeech started event.");
+                Logger.Trace("\nSpeech started event.");
             };
 
             recognizer.SpeechEndDetected += (s, e) =>
             {
-                Logger.Debug("\nSpeech ended event.");
+                Logger.Trace("\nSpeech ended event.");
             };
 
             recognizer.SessionStarted += (s, e) =>
             {
-                Logger.Debug("\nSession started event.");
+                Logger.Trace("\nSession started event.");
             };
 
             recognizer.SessionStopped += (s, e) =>
             {
-                Logger.Debug("\nSession stopped event.");
+                Logger.Trace("\nSession stopped event.");
                 stopRecognition.TrySetResult(0);
             };
 
@@ -215,7 +215,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
                         if (Task.Run(() => SenderVerifier.Verify(sender)).Result == false)
                         {
-                            Logger.Debug($"SenderVerified: false");
+                            Logger.Trace($"SenderVerified: false");
                             response = $"{sender.ToString()}, {awacs}, I cannot find you on scope. ";
                         }
                         else
@@ -262,7 +262,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                     byte[] response;
                     if (_responses.TryDequeue(out response))
                     {
-                        Logger.Debug($"Sending Response: {response}");
+                        Logger.Trace($"Sending Response: {response}");
                         await SendResponse(response, response.Length);
                     };
                     Thread.Sleep(50);
