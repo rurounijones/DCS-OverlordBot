@@ -12,7 +12,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.9.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.4.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -119,6 +119,24 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Properties {
         public bool TacScribeForceSSL {
             get {
                 return ((bool)(this["TacScribeForceSSL"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("add_luis_endpoint_key")]
+        public string ShadowLuisEndpointKey {
+            get {
+                return ((string)(this["ShadowLuisEndpointKey"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("add_luis_app_id")]
+        public string ShadowLuisAppId {
+            get {
+                return ((string)(this["ShadowLuisAppId"]));
             }
         }
     }

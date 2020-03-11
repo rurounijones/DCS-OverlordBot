@@ -7,7 +7,7 @@ using NewRelic.Api.Agent;
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
 {
 
-    class RequestBearingToAirbase
+    class BearingToAirbase
     {
         [Trace]
         public static async Task<string> Process(LuisResponse luisResponse, Sender sender)

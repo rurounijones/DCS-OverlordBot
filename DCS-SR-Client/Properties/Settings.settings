@@ -35,5 +35,11 @@
     <Setting Name="TacScribeForceSSL" Type="System.Boolean" Scope="Application">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="ShadowLuisEndpointKey" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">add_luis_endpoint_key</Value>
+    </Setting>
+    <Setting Name="ShadowLuisAppId" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">add_luis_app_id</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

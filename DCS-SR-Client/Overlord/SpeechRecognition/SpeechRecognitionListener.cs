@@ -187,10 +187,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
             {
                 if (e.Result.Reason == ResultReason.RecognizedSpeech)
                 {
+                    // Send data to the nextgen shadow system. This is not part of the main flow so we don't await.
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                    LuisServiceV3.RecognizeAsync(e.Result.Text);
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+
                     Logger.Debug($"RECOGNIZED: {e.Result.Text}");
                     string luisJson = Task.Run(() => LuisService.ParseIntent(e.Result.Text)).Result;
-
-                    Logger.Debug($"INTENT: {luisJson}");
                     LuisResponse luisResponse = JsonConvert.DeserializeObject<LuisResponse>(luisJson);
 
                     string awacs;
@@ -220,15 +223,20 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                         }
                         else
                         {
-                            if (luisResponse.Query != null && luisResponse.TopScoringIntent["intent"] == "RequestBogeyDope")
+                            if (luisResponse.Query != null && luisResponse.TopScoringIntent["intent"] == "BogeyDope")
                             {
                                 response = $"{sender.ToString()}, {awacs}, ";
-                                response += Task.Run(() => RequestBogeyDope.Process(luisResponse, sender)).Result;
+                                response += Task.Run(() => BogeyDope.Process(luisResponse, sender)).Result;
                             }
-                            else if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "RequestBearingToAirbase" || luisResponse.TopScoringIntent["intent"] == "RequestHeadingToAirbase"))
+                            else if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "BearingToAirbase"))
                             {
                                 response = $"{sender.ToString()}, {awacs}, ";
-                                response += Task.Run(() => RequestBearingToAirbase.Process(luisResponse, sender)).Result;
+                                response += Task.Run(() => BearingToAirbase.Process(luisResponse, sender)).Result;
+                            }
+                            else if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "BearingToFriendlyPlayer"))
+                            {
+                                response = $"{sender.ToString()}, {awacs}, ";
+                                response += Task.Run(() => BearingToFriendlyPlayer.Process(luisResponse, sender)).Result;
                             }
                         }
                     }
