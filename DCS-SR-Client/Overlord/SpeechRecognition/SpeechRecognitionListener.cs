@@ -194,6 +194,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
                     Logger.Debug($"RECOGNIZED: {e.Result.Text}");
                     string luisJson = Task.Run(() => LuisService.ParseIntent(e.Result.Text)).Result;
+                    Logger.Debug($"LIVE LUIS RESPONSE: {luisJson}");
                     LuisResponse luisResponse = JsonConvert.DeserializeObject<LuisResponse>(luisJson);
 
                     string awacs;
@@ -223,7 +224,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                         }
                         else
                         {
-                            if (luisResponse.Query != null && luisResponse.TopScoringIntent["intent"] == "BogeyDope")
+                            if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "RadioCheck"))
+                            {
+                                response = $"{sender.ToString()}, {awacs}, five by five";
+                            }
+                            else if (luisResponse.Query != null && luisResponse.TopScoringIntent["intent"] == "BogeyDope")
                             {
                                 response = $"{sender.ToString()}, {awacs}, ";
                                 response += Task.Run(() => BogeyDope.Process(luisResponse, sender)).Result;
