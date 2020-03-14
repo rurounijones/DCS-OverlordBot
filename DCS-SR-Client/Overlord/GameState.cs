@@ -122,7 +122,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
             FROM public.units AS airbase CROSS JOIN LATERAL
               (SELECT requester.position, requester.coalition
                 FROM public.units AS requester
-                WHERE requester.pilot ILIKE " + $"'%{group} {flight}%{plane} |%'" + @"
+                WHERE (requester.pilot ILIKE '" + $"%{group} {flight}-{plane}%" + @"' OR requester.pilot ILIKE '" + $"%{group} {flight}{plane}%" + @"' )
               ) as request
             WHERE (
 				airbase.type = 'Ground+Static+Aerodrome'
@@ -142,14 +142,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
 
                 if (dbDataReader.HasRows)
                 {
-                    var bearing = (int)Math.Round(dbDataReader.GetDouble(0));
+                    var bearing = (int)Math.Round(dbDataReader.GetDouble(0) - 6);
                     // West == negative numbers so convert
                     if (bearing < 0) { bearing += 360; }
 
                     var range = (int)Math.Round((dbDataReader.GetDouble(1) * 0.539957d) / 1000); // Nautical Miles
 
                     output = new Dictionary<string, int>();
-                    output.Add("bearing", bearing - 6);
+                    output.Add("bearing", bearing);
                     output.Add("range", range);
                 }
                 dbDataReader.Close();
