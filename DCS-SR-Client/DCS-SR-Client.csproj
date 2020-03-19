@@ -223,6 +223,10 @@
     <Compile Include="Network\Models\DCSLosCheckRequest.cs" />
     <Compile Include="Network\Models\DCSLosCheckResult.cs" />
     <Compile Include="Overlord\Constants.cs" />
+    <Compile Include="Overlord\GameState\GameStateDoesPilotExist.cs" />
+    <Compile Include="Overlord\GameState\GameStateGetBearingToAirbase.cs" />
+    <Compile Include="Overlord\GameState\GameStateGetBogeyDope.cs" />
+    <Compile Include="Overlord\GameState\GameStateGetFriendlyPlayer.cs" />
     <Compile Include="Overlord\Intents\BearingToAirbase.cs" />
     <Compile Include="Overlord\Intents\BearingToFriendlyPlayer.cs" />
     <Compile Include="Overlord\SpeechRecognition\LuisServiceV3.cs" />
@@ -236,7 +240,7 @@
     <Compile Include="Overlord\SpeechRecognition\SenderExtractor.cs" />
     <Compile Include="Overlord\SpeechRecognition\SenderVerifier.cs" />
     <Compile Include="Overlord\SpeechRecognition\SpeechRecognitionListener.cs" />
-    <Compile Include="Overlord\GameState.cs" />
+    <Compile Include="Overlord\GameState\GameState.cs" />
     <Compile Include="Overlord\Intents\BogeyDope.cs" />
     <Compile Include="Overlord\LuisModels\LuisCompositeEntity.cs" />
     <Compile Include="Overlord\LuisModels\LuisEntity.cs" />
