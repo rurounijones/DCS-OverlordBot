@@ -9,7 +9,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
         [Trace]
         public static async Task<bool> Verify(Sender sender)
         {
-            if (await GameState.DoesPilotExist(sender.Group, sender.Flight, sender.Plane) == true)
+            if (await GameState.DoesPilotExist(sender.Group, sender.Flight, sender.Plane) != null)
             {
                 return true;
             }

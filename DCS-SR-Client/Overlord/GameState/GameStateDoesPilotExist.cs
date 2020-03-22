@@ -9,7 +9,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
     partial class GameState
     {
         [Trace]
-        public static async Task<bool> DoesPilotExist(string group, int flight, int plane)
+        public static async Task<string> DoesPilotExist(string group, int flight, int plane)
         {
             if (Database.State != System.Data.ConnectionState.Open)
             {
@@ -27,13 +27,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
                 await dbDataReader.ReadAsync();
                 if (dbDataReader.HasRows)
                 {
+                    var id = dbDataReader.GetString(0);
                     dbDataReader.Close();
-                    return true;
+                    return id;
                 }
                 else
                 {
                     dbDataReader.Close();
-                    return false;
+                    return null;
                 }
             }
         }

@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
-using FragLabs.Audio.Codecs;
 using NAudio.Wave;
 using NLog;
 
