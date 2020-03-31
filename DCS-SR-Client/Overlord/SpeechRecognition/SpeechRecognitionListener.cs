@@ -217,35 +217,38 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
                         Logger.Debug($"SENDER: " + sender);
 
-                        if (Task.Run(() => SenderVerifier.Verify(sender)).Result == false)
+                        string callerId = Task.Run(() => GameState.DoesPilotExist(sender.Group, sender.Flight, sender.Plane)).Result;
+
+                        if (callerId == null)
                         {
                             Logger.Trace($"SenderVerified: false");
-                            response = $"{sender.ToString()}, {awacs}, I cannot find you on scope. ";
+                            response = $"{sender}, {awacs}, I cannot find you on scope. ";
                         }
                         else
                         {
                             if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "RadioCheck"))
                             {
-                                response = $"{sender.ToString()}, {awacs}, five by five";
+                                response = $"{sender}, {awacs}, five by five";
                             }
                             else if (luisResponse.Query != null && luisResponse.TopScoringIntent["intent"] == "BogeyDope")
                             {
-                                response = $"{sender.ToString()}, {awacs}, ";
-                                response += Task.Run(() => BogeyDope.Process(luisResponse, sender)).Result;
+                                response = $"{sender}, {awacs}, ";
+                                response += Task.Run(() => BogeyDope.Process(sender)).Result;
                             }
                             else if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "BearingToAirbase"))
                             {
-                                response = $"{sender.ToString()}, {awacs}, ";
+                                response = $"{sender}, {awacs}, ";
                                 response += Task.Run(() => BearingToAirbase.Process(luisResponse, sender)).Result;
                             }
                             else if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "BearingToFriendlyPlayer"))
                             {
-                                response = $"{sender.ToString()}, {awacs}, ";
+                                response = $"{sender}, {awacs}, ";
                                 response += Task.Run(() => BearingToFriendlyPlayer.Process(luisResponse, sender)).Result;
                             }
-                            else if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "Picture"))
+                            else if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "SetWarningRadius"))
                             {
-                                response = $"{sender.ToString()}, {awacs}, we don't provide picture calls ";
+                                response = $"{sender}, {awacs}, ";
+                                response += Task.Run(() => SetWarningRadius.Process(luisResponse, callerId, sender, awacs,_voice, _responses)).Result;
                             }
                         }
                     }

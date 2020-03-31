@@ -1,6 +1,4 @@
-﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.LuisModels;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using NewRelic.Api.Agent;
 
@@ -9,21 +7,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
     class BogeyDope
     {
         [Trace]
-        public static async Task<string> Process(LuisResponse luisResponse, Sender sender)
+        public static async Task<string> Process(Sender sender)
         {
             string response;
 
-            Dictionary<string, int?> braData = await GameState.GetBogeyDope(sender.Group, sender.Flight, sender.Plane);
+            Contact contact = await GameState.GetBogeyDope(sender.Group, sender.Flight, sender.Plane);
 
-            if (braData != null)
+            if (contact != null)
             {
-
-                string bearing = Regex.Replace(braData["bearing"].Value.ToString("000"), "\\d{1}", " $0");
-                string range = braData["range"].Value.ToString();
-                string altitude = braData["altitude"].Value.ToString("N0");
-                string aspect = GetAspect(braData);
-
-                response = $"Bra, {bearing}, {range}, {altitude}{aspect}";
+                response = BuildResponse(contact);
             }
             else
             {
@@ -33,15 +25,25 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
             return response;
         }
 
-        private static string GetAspect(Dictionary<string, int?>  braData)
+        public static string BuildResponse(Contact contact)
         {
-            if (braData["heading"].HasValue == false)
+            string bearing = Regex.Replace(contact.Bearing.ToString("000"), "\\d{1}", " $0");
+            string range = contact.Range.ToString();
+            string altitude = contact.Altitude.ToString("N0");
+            string aspect = GetAspect(contact);
+
+            return $"Bra, {bearing}, {range}, {altitude}{aspect}";
+        }
+
+        private static string GetAspect(Contact contact)
+        {
+            if (contact.Heading.HasValue == false)
             {
                 return null;
             }
 
-            int bearing = braData["bearing"].Value;
-            int heading = braData["heading"].Value;
+            int bearing = contact.Bearing;
+            int heading = contact.Heading.Value;
 
             // Allows us to just use clockwise based positive calculations
             if (heading < bearing)
