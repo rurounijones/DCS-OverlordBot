@@ -31,8 +31,16 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
             string range = contact.Range.ToString();
             string altitude = contact.Altitude.ToString("N0");
             string aspect = GetAspect(contact);
+            string name = PronounceName(contact);
 
-            return $"Bra, {bearing}, {range}, {altitude}{aspect}";
+            var response = $"Bra, {bearing}, {range}, {altitude}{aspect}";
+
+            if(name != null)
+            {
+                response += $", type <break time=\"50\" /> {name}";
+            }
+
+            return response;
         }
 
         private static string GetAspect(Contact contact)
@@ -75,7 +83,71 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
             }
 
             return ", " + aspect;
+        }
 
+        private static string PronounceName(Contact contact)
+        {
+            if(contact.Name == null)
+            {
+                return null;
+            }
+
+            string s;
+            switch (contact.Name)
+            {
+                case "Su-27":
+                    s = "Flanker";
+                    break;
+                case "Su-33":
+                    s = "Flanker";
+                    break;
+                case "J-11A":
+                    s = "Flanker";
+                    break;
+                case "MiG-21Bis":
+                    s = "Fishbed";
+                    break;
+                case "A-50":
+                    s = "Mainstay";
+                    break;
+                case "Su-25":
+                    s = "Frogfoot";
+                    break;
+                case "Su-25T":
+                    s = "Frogfoot";
+                    break;
+                case "MiG-29A":
+                    s = "Fulcrum";
+                    break;
+                case "MiG-31":
+                    s = "Foxhound";
+                    break;
+                case "An-30M":
+                    s = "Clank";
+                    break;
+                case "F-5E-3":
+                    s = "Tiger 2";
+                    break;
+                case "Mi-8MTV2":
+                    s = "Hip";
+                    break;
+                case "Mi-24V":
+                    s = "Hind";
+                    break;
+                case "Su-24M":
+                    s = "Fencer";
+                    break;
+                case "Ka-50":
+                    s = "Hokum A";
+                    break;
+                case "Ka-52":
+                    s = "Hokum B";
+                    break;
+                default:
+                    s = contact.Name;
+                    break;
+            }
+            return s;
         }
 
     }

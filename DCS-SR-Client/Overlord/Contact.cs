@@ -6,5 +6,6 @@
         public int Range { get; set; }
         public int Altitude { get; set; }
         public int? Heading { get; set; }
+        public string Name { get; set; }
     }
 }
