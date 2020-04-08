@@ -86,6 +86,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
         {
             switch(value)
             {
+                case "zero":
+                    return 0;
                 case "one":
                     return 1;
                 case "two":
