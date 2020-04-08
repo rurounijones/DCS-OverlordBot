@@ -32,7 +32,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
 			    AND airbase.name = " + $"'{airbase}'" + @"
 			) OR (
                 airbase.type = 'Sea+Watercraft+AircraftCarrier'
-				AND airbase.pilot = " + $"'{airbase}'" + @"
+				AND airbase.name = " + $"'{airbase}'" + @"
 			)
             LIMIT 1";
 
