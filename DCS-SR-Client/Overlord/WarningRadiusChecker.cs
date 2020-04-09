@@ -1,6 +1,7 @@
 ﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechOutput;
 using NLog;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -60,51 +61,58 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
 
         private async Task CheckAsync()
         {
-            Logger.Info($"Peforming Warning Radius check for {_callerId}");
-
-            if(_warningStates.ContainsKey(_callerId) == false)
+            try
             {
-                _warningStates.TryAdd(_callerId, new List<string>());
+                Logger.Info($"Peforming Warning Radius check for {_callerId}");
+
+                if (_warningStates.ContainsKey(_callerId) == false)
+                {
+                    _warningStates.TryAdd(_callerId, new List<string>());
+                }
+
+                string callerCheckId = await GameState.DoesPilotExist(_sender.Group, _sender.Flight, _sender.Plane);
+
+                // If the caller does not exist any more or the ID has been reused for a different object
+                // then cancel the check.
+                if (callerCheckId != _callerId)
+                {
+                    if(callerCheckId == null) { callerCheckId = "DELETED"; }
+                    Logger.Debug($"CallerId changed, New: {callerCheckId} , Old: {_callerId}");
+                    Stop();
+                    return;
+                }
+
+                Contact contact = await GameState.GetBogeyDope(_sender.Group, _sender.Flight, _sender.Plane);
+
+                if (contact.Range > _distance)
+                {
+                    Logger.Debug($"Contact {contact.Id} is more than {_distance} miles ({contact.Range})");
+                    return;
+                }
+
+                if (_warningStates[_callerId].Contains(contact.Id))
+                {
+                    Logger.Debug($"Contact {contact.Id} already reported");
+                    return;
+                }
+
+                Logger.Debug($"New contact {contact.Id}");
+
+                var response = $"{_sender}, {_awacs}, Threat, {BogeyDope.BuildResponse(contact)}";
+                Logger.Debug($"Response: {response}");
+
+                response = $"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{_voice}\">{response}</voice></speak>";
+
+                byte[] audioData = await Speaker.CreateResponse(response);
+
+                if (audioData != null)
+                {
+                    _responseQueue.Enqueue(audioData);
+                    _warningStates[_callerId].Add(contact.Id);
+                }
             }
-
-            string callerCheckId = await GameState.DoesPilotExist(_sender.Group, _sender.Flight, _sender.Plane);
-
-            // If the caller does not exist any more or the ID has been reused for a different object
-            // then cancel the check.
-            if(callerCheckId != _callerId)
-            {
-                Logger.Debug($"CallerId changed, New: {callerCheckId} , Old: {_callerId}");
-                Stop();
-                return;
-            }
-
-            Contact contact = await GameState.GetBogeyDope(_sender.Group, _sender.Flight, _sender.Plane);
-
-            if (contact.Range > _distance)
-            {
-                Logger.Debug($"Contact {contact.Id} is more than {_distance} miles ({contact.Range})");
-                return;
-            }
-
-            if (_warningStates[_callerId].Contains(contact.Id))
-            {
-                Logger.Debug($"Contact {contact.Id} already reported");
-                return;
-            }
-
-            Logger.Debug($"New contact {contact.Id}");
-
-            _warningStates[_callerId].Add(contact.Id);
-
-            var response = $"{_sender}, {_awacs}, Threat, {BogeyDope.BuildResponse(contact)}";
-            Logger.Debug($"Response: {response}");
-
-            response = $"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{_voice}\">{response}</voice></speak>";
-
-            byte[] audioData = await Speaker.CreateResponse(response);
-
-            if (audioData != null) {
-                _responseQueue.Enqueue(audioData);
+            catch (Exception ex) {
+                Logger.Error(ex, "Error checking warning radius");
             }
         }
     }

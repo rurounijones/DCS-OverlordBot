@@ -260,7 +260,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
             }
             catch (Exception ex)
             {
-                Logger.Debug(ex);
+                Logger.Error(ex, "Error processing radio call");
                 _responses.Enqueue(_failureMessage);
                 response = null;
             }
