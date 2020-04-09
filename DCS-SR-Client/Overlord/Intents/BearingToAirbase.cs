@@ -26,7 +26,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
 
             if (braData != null)
             {
-                response = $"{PronounceAirbase(airbase)} bearing {Regex.Replace(braData["bearing"].ToString("000"), "\\d{1}", " $0")}";
+                var bearing = Regex.Replace(braData["bearing"].ToString("000"), "\\d{1}", " $0");
+                var range = braData["range"];
+                response = $"{PronounceAirbase(airbase)} bearing {bearing}, {range} miles";
             }
             else
             {
