@@ -39,7 +39,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                     else if (x["role"] == "flight_and_element")
                     {
                         Int32.TryParse(x["value"][0].ToString(), out flight);
-                        Int32.TryParse(x["value"][1].ToString(), out element);
+                        Int32.TryParse(x["value"].Substring(1), out element);
                     }
                     else if (x["role"] == "flight")
                     {
