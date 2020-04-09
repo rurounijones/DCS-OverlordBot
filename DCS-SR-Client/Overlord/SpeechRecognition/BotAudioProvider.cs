@@ -27,6 +27,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
             Task.Run(() => _speechRecognitionListener.StartListeningAsync());
         }
 
+        public bool SpeechRecognitionActive()
+        {
+            return _speechRecognitionListener.TimedOut == false;
+        }
+
         public void AddClientAudioSamples(ClientAudio audio)
         {
             bool newTransmission = LikelyNewTransmission();

@@ -42,6 +42,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
         private ConcurrentQueue<byte[]> _responses;
 
+        public bool TimedOut;
+
         // Allows OverlordBot to listen for a specific word to start listening. Currently not used although the setup has all been done.
         // This is due to wierd state transition errors thatI cannot be bothered to debug.
         KeywordRecognitionModel _wakeWord;
@@ -176,7 +178,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
             await recognizer.StopContinuousRecognitionAsync().ConfigureAwait(false);
             source.Cancel();
             Logger.Debug($"Stopped Continuous Recognition");
-            await StartListeningAsync();
+            TimedOut = true;
         }
 
         [Transaction(Web = true)]

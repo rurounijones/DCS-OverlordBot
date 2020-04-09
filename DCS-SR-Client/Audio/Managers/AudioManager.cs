@@ -212,11 +212,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
         public void AddClientAudio(ClientAudio audio)
         {
             BotAudioProvider bot = null;
-            RecorderAudioProvider recorder = null;
-            if (_botsBufferedAudio.ContainsKey(audio.ReceivedRadio))
+            if (_botsBufferedAudio.ContainsKey(audio.ReceivedRadio) && _botsBufferedAudio[audio.ReceivedRadio].SpeechRecognitionActive() == true)
             {
                 bot = _botsBufferedAudio[audio.ReceivedRadio];
-
             }
             else
             {
@@ -227,10 +225,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
                 _botsBufferedAudio[audio.ReceivedRadio] = bot;
             }
             bot.AddClientAudioSamples(audio);
-        }
-
-        private void RemoveClientBuffer(SRClient srClient)
-        {
         }
     }
 }
