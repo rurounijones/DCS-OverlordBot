@@ -4,6 +4,7 @@ using System.IO;
 using System.Windows;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using NLog;
+using Npgsql;
 
 namespace DCS_SR_Client
 {
@@ -45,6 +46,8 @@ namespace DCS_SR_Client
             }
 
             InitNotificationIcon();
+
+            NpgsqlConnection.GlobalTypeMapper.UseNetTopologySuite(geographyAsDefault: true);
         }
 
         private bool IsClientRunning()

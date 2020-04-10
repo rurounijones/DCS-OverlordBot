@@ -219,7 +219,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
                         Logger.Debug($"SENDER: " + sender);
 
-                        string callerId = Task.Run(() => GameState.DoesPilotExist(sender.Group, sender.Flight, sender.Plane)).Result;
+                        string callerId = Task.Run(() => GameState.GetPilotData(sender.Group, sender.Flight, sender.Plane)).Result.Id;
 
                         if (callerId == null)
                         {

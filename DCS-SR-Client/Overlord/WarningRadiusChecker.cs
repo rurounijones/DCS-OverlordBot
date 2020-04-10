@@ -70,7 +70,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
                     _warningStates.TryAdd(_callerId, new List<string>());
                 }
 
-                string callerCheckId = await GameState.DoesPilotExist(_sender.Group, _sender.Flight, _sender.Plane);
+                var caller = await GameState.GetPilotData(_sender.Group, _sender.Flight, _sender.Plane);
+                string callerCheckId = caller.Id;
 
                 // If the caller does not exist any more or the ID has been reused for a different object
                 // then cancel the check.

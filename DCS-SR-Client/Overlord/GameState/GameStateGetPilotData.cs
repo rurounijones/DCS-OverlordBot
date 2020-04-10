@@ -3,13 +3,14 @@ using Npgsql;
 using System.Data.Common;
 using System.Threading.Tasks;
 using NewRelic.Api.Agent;
+using NetTopologySuite.Geometries;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
 {
     partial class GameState
     {
         [Trace]
-        public static async Task<string> DoesPilotExist(string group, int flight, int plane)
+        public static async Task<GameObject> GetPilotData(string group, int flight, int plane)
         {
             if (Database.State != System.Data.ConnectionState.Open)
             {
@@ -17,7 +18,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
             }
             DbDataReader dbDataReader;
 
-            string command = @"SELECT id FROM public.units WHERE (pilot ILIKE '" + $"%{group} {flight}-{plane}%' OR pilot ILIKE '" + $"%{group} {flight}{plane}%')";
+            string command = @"SELECT id, position FROM public.units WHERE (pilot ILIKE '" + $"%{group} {flight}-{plane}%' OR pilot ILIKE '" + $"%{group} {flight}{plane}%')";
 
             Logger.Debug(command);
 
@@ -28,8 +29,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
                 if (dbDataReader.HasRows)
                 {
                     var id = dbDataReader.GetString(0);
+                    var position = (Point) dbDataReader[1];
                     dbDataReader.Close();
-                    return id;
+                    return new GameObject
+                    {
+                        Id = id,
+                        Position = position
+                    };
                 }
                 else
                 {
@@ -38,6 +44,5 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
                 }
             }
         }
-
     }
 }
