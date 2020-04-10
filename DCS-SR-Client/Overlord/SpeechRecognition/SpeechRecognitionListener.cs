@@ -252,6 +252,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                                 response = $"{sender}, {awacs}, ";
                                 response += Task.Run(() => SetWarningRadius.Process(luisResponse, callerId, sender, awacs,_voice, _responses)).Result;
                             }
+                            else if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "Picture"))
+                            {
+                                response = $"{sender}, {awacs}, We do not support picture calls ";
+                            }
+                            else if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "Declare"))
+                            {
+                                response = $"{sender}, {awacs}, We do not support declare calls yet";
+                            }
                         }
                     }
                 }
