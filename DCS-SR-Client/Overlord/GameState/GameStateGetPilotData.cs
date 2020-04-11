@@ -18,7 +18,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
             }
             DbDataReader dbDataReader;
 
-            string command = @"SELECT id, position FROM public.units WHERE (pilot ILIKE '" + $"%{group} {flight}-{plane}%' OR pilot ILIKE '" + $"%{group} {flight}{plane}%')";
+            string command = @"SELECT id, position, coalition FROM public.units WHERE (pilot ILIKE '" + $"%{group} {flight}-{plane}%' OR pilot ILIKE '" + $"%{group} {flight}{plane}%')";
 
             Logger.Debug(command);
 
@@ -30,11 +30,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
                 {
                     var id = dbDataReader.GetString(0);
                     var position = (Point) dbDataReader[1];
+                    var coalition = dbDataReader.GetInt32(2);
                     dbDataReader.Close();
                     return new GameObject
                     {
                         Id = id,
-                        Position = position
+                        Position = position,
+                        Coalition = coalition
                     };
                 }
                 else

@@ -17,6 +17,7 @@ using NLog;
 using System.IO;
 using NewRelic.Api.Agent;
 using System.Collections.Concurrent;
+using static Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 {
@@ -219,9 +220,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
                         Logger.Debug($"SENDER: " + sender);
 
-                        string callerId = Task.Run(() => GameState.GetPilotData(sender.Group, sender.Flight, sender.Plane)).Result.Id;
+                        GameObject caller = Task.Run(() => GetPilotData(sender.Group, sender.Flight, sender.Plane)).Result;
 
-                        if (callerId == null)
+                        if (caller.Id == null)
                         {
                             Logger.Trace($"SenderVerified: false");
                             response = $"{sender}, {awacs}, I cannot find you on scope. ";
@@ -250,7 +251,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                             else if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "SetWarningRadius"))
                             {
                                 response = $"{sender}, {awacs}, ";
-                                response += Task.Run(() => SetWarningRadius.Process(luisResponse, callerId, sender, awacs,_voice, _responses)).Result;
+                                response += Task.Run(() => SetWarningRadius.Process(luisResponse, caller.Id, sender, awacs,_voice, _responses)).Result;
                             }
                             else if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "Picture"))
                             {
@@ -258,7 +259,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                             }
                             else if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "Declare"))
                             {
-                                response = $"{sender}, {awacs}, We do not support declare calls yet";
+                                response = $"{sender}, {awacs}, ";
+                                response += Task.Run(() => Declare.Process(luisResponse, caller)).Result;
                             }
                         }
                     }

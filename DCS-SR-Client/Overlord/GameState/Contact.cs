@@ -7,5 +7,6 @@
         public int Altitude { get; set; }
         public int? Heading { get; set; }
         public string Name { get; set; }
+        public int Coalition { get; set; }
     }
 }

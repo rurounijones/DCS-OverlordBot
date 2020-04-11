@@ -241,8 +241,9 @@
     <Compile Include="Network\Models\DCSLosCheckRequest.cs" />
     <Compile Include="Network\Models\DCSLosCheckResult.cs" />
     <Compile Include="Overlord\Constants.cs" />
-    <Compile Include="Overlord\Contact.cs" />
+    <Compile Include="Overlord\GameState\Contact.cs" />
     <Compile Include="Overlord\GameState\GameObject.cs" />
+    <Compile Include="Overlord\GameState\GameStateGetContactsWithinCircle.cs" />
     <Compile Include="Overlord\GameState\GameStateGetPilotData.cs" />
     <Compile Include="Overlord\GameState\GameStateGetBearingToAirbase.cs" />
     <Compile Include="Overlord\GameState\GameStateGetBogeyDope.cs" />
