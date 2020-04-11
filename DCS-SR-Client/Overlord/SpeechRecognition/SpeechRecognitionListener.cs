@@ -222,7 +222,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
                         GameObject caller = Task.Run(() => GetPilotData(sender.Group, sender.Flight, sender.Plane)).Result;
 
-                        if (caller.Id == null)
+                        if (caller == null)
                         {
                             Logger.Trace($"SenderVerified: false");
                             response = $"{sender}, {awacs}, I cannot find you on scope. ";

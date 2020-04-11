@@ -30,7 +30,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
             WHERE (friendly.pilot ILIKE '" + $"%{targetGroup} {targetFlight}-{targetPlane}%" + @"' OR friendly.pilot ILIKE '" + $"%{targetGroup} {targetFlight}{targetPlane}%" + @"' )
             LIMIT 1";
 
-            Logger.Debug(command);
+            Logger.Trace(command);
 
             Dictionary<string, int?> output = null;
 

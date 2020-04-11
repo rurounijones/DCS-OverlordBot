@@ -36,6 +36,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
 			)
             LIMIT 1";
 
+            Logger.Trace(command);
+
             Dictionary<string, int> output = null;
 
             using (var cmd = new NpgsqlCommand(command, Database))

@@ -20,7 +20,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
 
             string command = @"SELECT id, position, coalition FROM public.units WHERE (pilot ILIKE '" + $"%{group} {flight}-{plane}%' OR pilot ILIKE '" + $"%{group} {flight}{plane}%')";
 
-            Logger.Debug(command);
+            Logger.Trace(command);
 
             using (var cmd = new NpgsqlCommand(command, Database))
             {

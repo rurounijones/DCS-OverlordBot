@@ -33,7 +33,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
             ORDER BY request.position<-> bogey.position ASC
             LIMIT 1";
 
-            Logger.Debug(command);
+            Logger.Trace(command);
 
             Contact output = null;
 
