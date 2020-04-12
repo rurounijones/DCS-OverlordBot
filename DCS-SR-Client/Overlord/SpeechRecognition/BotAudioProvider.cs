@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers;
@@ -14,7 +15,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
         public SpeechRecognitionListener _speechRecognitionListener { get; set; }
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         
-        public BotAudioProvider(string callsign, string voice)
+        public BotAudioProvider(string callsign, string voice, ConcurrentQueue<byte[]> responseQueue)
         {
             _SpeechAudioProvider = new BufferedWaveProvider(AudioPreview.PCM_MONO_16K_S16LE)
             {
@@ -23,7 +24,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                 ReadFully = false
             };
 
-            _speechRecognitionListener = new SpeechRecognitionListener(_SpeechAudioProvider, callsign, voice);
+            _speechRecognitionListener = new SpeechRecognitionListener(_SpeechAudioProvider, responseQueue, callsign, voice);
             Task.Run(() => _speechRecognitionListener.StartListeningAsync());
         }
 
@@ -69,7 +70,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
                 var pcmAudio = ConversionHelpers.ShortArrayToByteArray(audio.PcmAudioShort);
                 _SpeechAudioProvider.AddSamples(pcmAudio, 0, pcmAudio.Length);
-                _speechRecognitionListener.lastReceivedRadio = audio.ReceivedRadio;
             }
             else
             {

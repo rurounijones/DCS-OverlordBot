@@ -158,7 +158,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio
 
             try
             {
-                _overlordSpeechRecognitionListener = new SpeechRecognitionListener(_overlordSpeechRecognizerAudioBufferedWaveProvider);
+                _overlordSpeechRecognitionListener = new SpeechRecognitionListener(_overlordSpeechRecognizerAudioBufferedWaveProvider, null);
                 Task.Run(() => _overlordSpeechRecognitionListener.StartListeningAsync());
             }
             catch (Exception ex)
