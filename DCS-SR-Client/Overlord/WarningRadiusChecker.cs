@@ -71,14 +71,18 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
                 }
 
                 var caller = await GameState.GetPilotData(_sender.Group, _sender.Flight, _sender.Plane);
-                string callerCheckId = caller.Id;
 
                 // If the caller does not exist any more or the ID has been reused for a different object
                 // then cancel the check.
-                if (callerCheckId != _callerId)
+                if (caller == null || caller.Id != _callerId)
                 {
-                    if(callerCheckId == null) { callerCheckId = "DELETED"; }
-                    Logger.Debug($"CallerId changed, New: {callerCheckId} , Old: {_callerId}");
+                    if (caller == null) {
+                        caller = new GameState.GameObject
+                        {
+                            Id = "DELETED"
+                        };
+                    }
+                    Logger.Debug($"Stopping Warning Radius Check. CallerId changed, New: {caller.Id} , Old: {_callerId}.");
                     Stop();
                     return;
                 }
