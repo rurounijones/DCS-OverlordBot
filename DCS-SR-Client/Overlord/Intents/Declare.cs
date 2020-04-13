@@ -41,17 +41,18 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
                 double.TryParse(distanceString, out distance);
             }
 
-            distance = distance * 1.852001 * 1000; //Nautical miles to meters
-            Point declarePoint = Geospatial.CalculatePointFromSource(caller.Position, distance, bearing);
+            Point declarePoint = Geospatial.CalculatePointFromSource(caller.Position, NauticalMilesToMeters(distance), bearing);
 
-            var contacts = await GetContactsWithinCircle(declarePoint);
+            double radius = 1 + (distance * 0.05);
 
-            if(contacts.Count == 0)
+            var contacts = await GetContactsWithinCircle(declarePoint, NauticalMilesToMeters(radius));
+
+            contacts = contacts.Where(contact => contact.Id != caller.Id).ToList();
+
+            if (contacts.Count == 0)
             {
                 return "no contacts found";
             }
-
-            contacts = contacts.Where(contact => contact.Id != caller.Id).ToList();
 
             Dictionary<int, int> coalitionContacts = new Dictionary<int, int>
             {
@@ -88,6 +89,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
             {
                 return "unknown";
             }
+        }
+        private static double NauticalMilesToMeters(double nauticalMiles)
+        {
+            return nauticalMiles * 1.852001 * 1000;
         }
     }
 }
