@@ -15,7 +15,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
 
             string bearingString = null;
             if (luisResponse.Entities.Find(x => x.Role == "bearing") == null) {
-                return "I didn't get the bearing";
+                return "please provide a bearing";
             }
             else
             {
