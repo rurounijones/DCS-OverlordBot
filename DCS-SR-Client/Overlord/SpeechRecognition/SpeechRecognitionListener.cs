@@ -188,7 +188,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                 {
                     // Send data to the nextgen shadow system. This is not part of the main flow so we don't await.
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                    LuisServiceV3.RecognizeAsync(e.Result.Text);
+                    //LuisServiceV3.RecognizeAsync(e.Result.Text);
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
                     Logger.Info($"Incoming Transmission: {e.Result.Text}");
