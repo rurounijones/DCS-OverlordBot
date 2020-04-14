@@ -106,9 +106,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
                 var response = $"{_sender}, {_awacs}, Threat, {BogeyDope.BuildResponse(contact)}";
                 Logger.Debug($"Response: {response}");
 
-                response = $"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{_voice}\">{response}</voice></speak>";
+                var ssmlResponse = $"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{_voice}\">{response}</voice></speak>";
 
-                byte[] audioData = await Speaker.CreateResponse(response);
+                byte[] audioData = await Speaker.CreateResponse(ssmlResponse);
 
                 if (audioData != null)
                 {
