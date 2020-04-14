@@ -95,6 +95,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
             string s;
             switch (contact.Name)
             {
+                case "MiG-29S":
+                    s = "Fulcrum";
+                    break;
                 case "Su-27":
                     s = "Flanker";
                     break;
