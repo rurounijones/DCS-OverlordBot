@@ -12,37 +12,32 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
         [Trace]
         public static async Task<GameObject> GetPilotData(string group, int flight, int plane)
         {
-            if (Database.State != System.Data.ConnectionState.Open)
-            {
-                await Database.OpenAsync();
-            }
-            DbDataReader dbDataReader;
-
             string command = @"SELECT id, position, coalition FROM public.units WHERE (pilot ILIKE '" + $"%{group} {flight}-{plane}%' OR pilot ILIKE '" + $"%{group} {flight}{plane}%')";
-
-            Logger.Trace(command);
-
-            using (var cmd = new NpgsqlCommand(command, Database))
+            using (var connection = new NpgsqlConnection(ConnectionString()))
             {
-                dbDataReader = await cmd.ExecuteReaderAsync();
-                await dbDataReader.ReadAsync();
-                if (dbDataReader.HasRows)
+                await connection.OpenAsync();
+                using (var cmd = new NpgsqlCommand(command, connection))
                 {
-                    var id = dbDataReader.GetString(0);
-                    var position = (Point) dbDataReader[1];
-                    var coalition = dbDataReader.GetInt32(2);
-                    dbDataReader.Close();
-                    return new GameObject
+                    DbDataReader dbDataReader = await cmd.ExecuteReaderAsync();
+                    await dbDataReader.ReadAsync();
+                    if (dbDataReader.HasRows)
                     {
-                        Id = id,
-                        Position = position,
-                        Coalition = coalition
-                    };
-                }
-                else
-                {
-                    dbDataReader.Close();
-                    return null;
+                        var id = dbDataReader.GetString(0);
+                        var position = (Point)dbDataReader[1];
+                        var coalition = dbDataReader.GetInt32(2);
+                        dbDataReader.Close();
+                        return new GameObject
+                        {
+                            Id = id,
+                            Position = position,
+                            Coalition = coalition
+                        };
+                    }
+                    else
+                    {
+                        dbDataReader.Close();
+                        return null;
+                    }
                 }
             }
         }

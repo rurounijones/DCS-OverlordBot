@@ -1,13 +1,10 @@
 ﻿using NLog;
-using Npgsql;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
 {
     partial class GameState
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
-        private static NpgsqlConnection Database = new NpgsqlConnection(ConnectionString());
 
         private static string ConnectionString()
         {

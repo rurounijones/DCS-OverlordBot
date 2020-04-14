@@ -13,12 +13,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
         [Trace]
         public static async Task<Dictionary<string, int?>> GetFriendlyPlayer(string sourceGroup, int sourceFlight, int sourcePlane, string targetGroup, int targetFlight, int targetPlane)
         {
-            if (Database.State != System.Data.ConnectionState.Open)
-            {
-                await Database.OpenAsync();
-            }
-            DbDataReader dbDataReader;
-
             var command = @"SELECT degrees(ST_AZIMUTH(request.position, friendly.position)) as bearing,
                                       ST_DISTANCE(request.position, friendly.position) as distance,
                                       friendly.altitude, friendly.heading, friendly.pilot, friendly.group
@@ -30,33 +24,35 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
             WHERE (friendly.pilot ILIKE '" + $"%{targetGroup} {targetFlight}-{targetPlane}%" + @"' OR friendly.pilot ILIKE '" + $"%{targetGroup} {targetFlight}{targetPlane}%" + @"' )
             LIMIT 1";
 
-            Logger.Trace(command);
-
             Dictionary<string, int?> output = null;
 
-            using (var cmd = new NpgsqlCommand(command, Database))
+            using (var connection = new NpgsqlConnection(ConnectionString()))
             {
-                dbDataReader = await cmd.ExecuteReaderAsync();
-                await dbDataReader.ReadAsync();
-
-                if (dbDataReader.HasRows)
+                await connection.OpenAsync();
+                using (var cmd = new NpgsqlCommand(command, connection))
                 {
-                    Logger.Debug($"{dbDataReader[0]}, {dbDataReader[1]}, {dbDataReader[2]}, {dbDataReader[3]}, {dbDataReader[4]}, {dbDataReader[5]}");
-                    var bearing = (int)Math.Round(dbDataReader.GetDouble(0));
-                    // West == negative numbers so convert
-                    if (bearing < 0) { bearing += 360; }
+                    DbDataReader dbDataReader = await cmd.ExecuteReaderAsync();
+                    await dbDataReader.ReadAsync();
 
-                    var range = (int)Math.Round((dbDataReader.GetDouble(1) * 0.539957d) / 1000); // Nautical Miles
-                    var altitude = (int)Math.Round((dbDataReader.GetDouble(2) * 3.28d) / 1000d, 0) * 1000; // Feet
-                    var heading = (int)dbDataReader.GetDouble(3);
+                    if (dbDataReader.HasRows)
+                    {
+                        Logger.Debug($"{dbDataReader[0]}, {dbDataReader[1]}, {dbDataReader[2]}, {dbDataReader[3]}, {dbDataReader[4]}, {dbDataReader[5]}");
+                        var bearing = (int)Math.Round(dbDataReader.GetDouble(0));
+                        // West == negative numbers so convert
+                        if (bearing < 0) { bearing += 360; }
 
-                    output = new Dictionary<string, int?>();
-                    output.Add("bearing", bearing - 6);
-                    output.Add("range", range);
-                    output.Add("altitude", altitude);
-                    output.Add("heading", heading - 6);
+                        var range = (int)Math.Round((dbDataReader.GetDouble(1) * 0.539957d) / 1000); // Nautical Miles
+                        var altitude = (int)Math.Round((dbDataReader.GetDouble(2) * 3.28d) / 1000d, 0) * 1000; // Feet
+                        var heading = (int)dbDataReader.GetDouble(3);
+
+                        output = new Dictionary<string, int?>();
+                        output.Add("bearing", bearing - 6);
+                        output.Add("range", range);
+                        output.Add("altitude", altitude);
+                        output.Add("heading", heading - 6);
+                    }
+                    dbDataReader.Close();
                 }
-                dbDataReader.Close();
             }
 
             return output;

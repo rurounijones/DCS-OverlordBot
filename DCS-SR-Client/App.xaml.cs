@@ -2,9 +2,11 @@
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using NLog;
 using Npgsql;
+using Npgsql.Logging;
 
 namespace DCS_SR_Client
 {
@@ -48,6 +50,8 @@ namespace DCS_SR_Client
             InitNotificationIcon();
 
             NpgsqlConnection.GlobalTypeMapper.UseNetTopologySuite(geographyAsDefault: true);
+            NpgsqlLogManager.Provider = new NLogLoggingProvider();
+            NpgsqlLogManager.IsParameterLoggingEnabled = true;
         }
 
         private bool IsClientRunning()

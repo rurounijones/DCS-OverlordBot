@@ -12,13 +12,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
         [Trace]
         public static async Task<Dictionary<string, int>> GetBearingToAirbase(string group, int flight, int plane, string airbase)
         {
-
-            if (Database.State != System.Data.ConnectionState.Open)
-            {
-                await Database.OpenAsync();
-            }
-            DbDataReader dbDataReader;
-
             string command = @"SELECT degrees(ST_AZIMUTH(request.position, airbase.position)) as bearing,
                                       ST_DISTANCE(request.position, airbase.position) as distance,
 									  airbase.name
@@ -36,28 +29,29 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
 			)
             LIMIT 1";
 
-            Logger.Trace(command);
-
             Dictionary<string, int> output = null;
 
-            using (var cmd = new NpgsqlCommand(command, Database))
+            using (var connection = new NpgsqlConnection(ConnectionString()))
             {
-                dbDataReader = await cmd.ExecuteReaderAsync();
-                await dbDataReader.ReadAsync();
-
-                if (dbDataReader.HasRows)
+                await connection.OpenAsync();
+                using (var cmd = new NpgsqlCommand(command, connection))
                 {
-                    var bearing = (int)Math.Round(dbDataReader.GetDouble(0) - 6);
-                    // West == negative numbers so convert
-                    if (bearing < 0) { bearing += 360; }
+                    DbDataReader dbDataReader = await cmd.ExecuteReaderAsync();
+                    await dbDataReader.ReadAsync();
+                    if (dbDataReader.HasRows)
+                    {
+                        var bearing = (int)Math.Round(dbDataReader.GetDouble(0) - 6);
+                        // West == negative numbers so convert
+                        if (bearing < 0) { bearing += 360; }
 
-                    var range = (int)Math.Round((dbDataReader.GetDouble(1) * 0.539957d) / 1000); // Nautical Miles
+                        var range = (int)Math.Round((dbDataReader.GetDouble(1) * 0.539957d) / 1000); // Nautical Miles
 
-                    output = new Dictionary<string, int>();
-                    output.Add("bearing", bearing);
-                    output.Add("range", range);
+                        output = new Dictionary<string, int>();
+                        output.Add("bearing", bearing);
+                        output.Add("range", range);
+                    }
+                    dbDataReader.Close();
                 }
-                dbDataReader.Close();
             }
 
             return output;

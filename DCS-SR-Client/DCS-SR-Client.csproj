@@ -252,6 +252,7 @@
     <Compile Include="Overlord\Intents\BearingToFriendlyPlayer.cs" />
     <Compile Include="Overlord\Intents\Declare.cs" />
     <Compile Include="Overlord\Intents\SetWarningRadius.cs" />
+    <Compile Include="Overlord\NLogLoggingProvider.cs" />
     <Compile Include="Overlord\SpeechRecognition\LuisServiceV3.cs" />
     <Compile Include="Overlord\SpeechRecognition\Sender.cs" />
     <Compile Include="Overlord\SpeechOutput\RadioStreamWriter.cs" />
