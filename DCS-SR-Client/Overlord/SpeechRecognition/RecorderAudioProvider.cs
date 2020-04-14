@@ -70,7 +70,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
             }
             else
             {
-                Logger.Info("Failed to decode audio from Packet for recorder");
+                Logger.Debug("Failed to decode audio from Packet for recorder");
             }
         }
 

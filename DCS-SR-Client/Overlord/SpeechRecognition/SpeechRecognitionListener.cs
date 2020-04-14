@@ -191,7 +191,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                     LuisServiceV3.RecognizeAsync(e.Result.Text);
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
-                    Logger.Debug($"RECOGNIZED: {e.Result.Text}");
+                    Logger.Info($"Incoming Transmission: {e.Result.Text}");
                     string luisJson = Task.Run(() => LuisService.ParseIntent(e.Result.Text)).Result;
                     Logger.Debug($"LIVE LUIS RESPONSE: {luisJson}");
                     LuisResponse luisResponse = JsonConvert.DeserializeObject<LuisResponse>(luisJson);
@@ -274,7 +274,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
             }
             if (response != null)
             {
-                Logger.Debug($"RESPONSE: {response}");
+                Logger.Info($"Outgoing Transmission: {response}");
                 var audioResponse = await Task.Run(() => Speaker.CreateResponse($"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{_voice}\">{response}</voice></speak>"));
                 _responses.Enqueue(audioResponse);
             }

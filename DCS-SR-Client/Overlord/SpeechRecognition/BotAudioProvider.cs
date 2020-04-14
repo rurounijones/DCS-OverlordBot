@@ -73,7 +73,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
             }
             else
             {
-                Logger.Info("Failed to decode audio from Packet for client");
+                Logger.Debug("Failed to decode audio from Packet for client");
             }
         }
 

@@ -26,7 +26,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
             queryString["show-all-intents"] = "false";
             var uri = $"https://westus.api.cognitive.microsoft.com/luis/v3.0-preview/apps/{_luisAppId}/slots/production/predict?query={inputText}&{queryString}";
 
-            Logger.Info("SHADOW LUIS RESPONSE: " + await client.GetAsync(new Uri(uri, UriKind.Absolute)).Result.Content.ReadAsStringAsync());
+            Logger.Trace("SHADOW LUIS RESPONSE: " + await client.GetAsync(new Uri(uri, UriKind.Absolute)).Result.Content.ReadAsStringAsync());
 
             client.Dispose();
         }

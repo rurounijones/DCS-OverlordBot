@@ -44,7 +44,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
             _checkTimer = new Timer(CHECK_INTERVAL);
             _checkTimer.Elapsed += async (s, e) => await CheckAsync();
 
-            Logger.Info($"Starting {distance} mile Radius Warning Check for {callerId}");
+            Logger.Debug($"Starting {distance} mile Radius Warning Check for {callerId}");
 
             _checkTimer.Start();
 
@@ -53,7 +53,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
 
         private void Stop()
         {
-            Logger.Info($"Stopping Warning Check for {_callerId}");
+            Logger.Debug($"Stopping Warning Check for {_callerId}");
             _checkTimer.Stop();
             _warningStates.TryRemove(_callerId, out _);
             _checkTimer.Close();
@@ -63,7 +63,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
         {
             try
             {
-                Logger.Info($"Peforming Warning Radius check for {_callerId}");
+                Logger.Debug($"Peforming Warning Radius check for {_callerId}");
 
                 if (_warningStates.ContainsKey(_callerId) == false)
                 {
@@ -112,6 +112,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
 
                 if (audioData != null)
                 {
+                    Logger.Info($"Outgoing Transmission: {response}");
                     _responseQueue.Enqueue(audioData);
                     _warningStates[_callerId].Add(contact.Id);
                 }
