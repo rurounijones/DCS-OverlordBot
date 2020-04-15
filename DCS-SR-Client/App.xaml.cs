@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Discord;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using NLog;
@@ -52,6 +54,9 @@ namespace DCS_SR_Client
             NpgsqlConnection.GlobalTypeMapper.UseNetTopologySuite(geographyAsDefault: true);
             NpgsqlLogManager.Provider = new NLogLoggingProvider();
             NpgsqlLogManager.IsParameterLoggingEnabled = true;
+
+            Task.Run(() => DiscordClient.Connect());
+
         }
 
         private bool IsClientRunning()
@@ -114,6 +119,7 @@ namespace DCS_SR_Client
 
         protected override void OnExit(ExitEventArgs e)
         {
+            Task.Run(() => DiscordClient.Disconnect());
             _notifyIcon.Visible = false;
             base.OnExit(e);
         }

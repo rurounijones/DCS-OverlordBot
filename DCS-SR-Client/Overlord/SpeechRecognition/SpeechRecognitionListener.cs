@@ -18,6 +18,7 @@ using System.IO;
 using NewRelic.Api.Agent;
 using System.Collections.Concurrent;
 using static Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Discord;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 {
@@ -203,6 +204,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                         luisResponse.Entities.Find(x => x.Type == "awacs_callsign") == null)
                     {
                         Logger.Debug($"RESPONSE NO-OP");
+                        string transmission = "Transmission Ignored\nIncoming: " + e.Result.Text;
+                        await DiscordClient.SendTransmission(transmission).ConfigureAwait(false); ;
                         // NO-OP
                     }
                     else if (sender == null)
@@ -275,6 +278,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
             if (response != null)
             {
                 Logger.Info($"Outgoing Transmission: {response}");
+                string transmission = "Transmission pair\nIncoming: " + e.Result.Text + "\nOutgoing: " + response;
+                await DiscordClient.SendTransmission(transmission).ConfigureAwait(false);
                 var audioResponse = await Task.Run(() => Speaker.CreateResponse($"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{_voice}\">{response}</voice></speak>"));
                 _responses.Enqueue(audioResponse);
             }

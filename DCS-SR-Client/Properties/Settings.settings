@@ -41,5 +41,14 @@
     <Setting Name="ShadowLuisAppId" Type="System.String" Scope="Application">
       <Value Profile="(Default)">add_luis_app_id</Value>
     </Setting>
+    <Setting Name="DiscordToken" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">add_discord_token</Value>
+    </Setting>
+    <Setting Name="TransmissionLogDiscordGuild" Type="System.UInt64" Scope="Application">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="TransmissionLogDiscordChannel" Type="System.UInt64" Scope="Application">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
