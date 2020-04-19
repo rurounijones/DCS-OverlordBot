@@ -12,8 +12,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Util
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private static readonly int TrueMagneticOffset = 7;
-
         const double EarthRadius = 6378137.0;
         const double DegreesToRadians = 0.0174532925;
         const double RadiansToDegrees = 57.2957795;
@@ -43,24 +41,39 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Util
         }
 
 
-        public static int TrueToMagnetic(int bearing)
+        class GeoPoint : Geo.Abstractions.Interfaces.IPosition
         {
-            return bearing - TrueMagneticOffset;
+            private readonly Point Position;
+            public GeoPoint(Point position)
+            {
+                Position = position;
+            }
+
+            public Geo.Coordinate GetCoordinate()
+            {
+                // Remember Point is Lon/Lat
+                return new Geo.Coordinate(Position.Coordinate.Y, Position.Coordinate.X);
+            }
         }
 
-        public static double TrueToMagnetic(double bearing)
+        public static double TrueToMagnetic(Point position, double bearing)
         {
-            return bearing - TrueMagneticOffset;
+            var magnetic = bearing - CalculateOffset(position);
+            return magnetic;
         }
 
-        public static int MagneticToTrue(int bearing)
+        public static double MagneticToTrue(Point position, double bearing)
         {
-            return bearing + TrueMagneticOffset;
+            var magnetic = bearing + CalculateOffset(position);
+            return magnetic;
         }
 
-        public static double MagneticToTrue(double bearing)
+        private static double CalculateOffset(Point position)
         {
-            return bearing + TrueMagneticOffset;
+            var geopoint = new GeoPoint(position);
+            var calculator = new Geo.Geomagnetism.WmmGeomagnetismCalculator(Geo.Geodesy.Spheroid.Wgs84);
+            var result = calculator.TryCalculate(geopoint, DateTime.UtcNow);
+            return result.Declination;
         }
     }
 }

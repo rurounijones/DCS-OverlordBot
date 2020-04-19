@@ -5,13 +5,14 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading.Tasks;
 using NewRelic.Api.Agent;
+using NetTopologySuite.Geometries;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
 {
     partial class GameState
     {
         [Trace]
-        public static async Task<Dictionary<string, int?>> GetFriendlyPlayer(string sourceGroup, int sourceFlight, int sourcePlane, string targetGroup, int targetFlight, int targetPlane)
+        public static async Task<Dictionary<string, int?>> GetFriendlyPlayer(Point callerPosition, string sourceGroup, int sourceFlight, int sourcePlane, string targetGroup, int targetFlight, int targetPlane)
         {
             var command = @"SELECT degrees(ST_AZIMUTH(request.position, friendly.position)) as bearing,
                                       ST_DISTANCE(request.position, friendly.position) as distance,
@@ -37,19 +38,21 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
                     if (dbDataReader.HasRows)
                     {
                         Logger.Debug($"{dbDataReader[0]}, {dbDataReader[1]}, {dbDataReader[2]}, {dbDataReader[3]}, {dbDataReader[4]}, {dbDataReader[5]}");
-                        var bearing = Util.Geospatial.TrueToMagnetic((int)Math.Round(dbDataReader.GetDouble(0)));
+                        var bearing = Math.Round(dbDataReader.GetDouble(0));
                         // West == negative numbers so convert
                         if (bearing < 0) { bearing += 360; }
 
                         var range = (int)Math.Round((dbDataReader.GetDouble(1) * 0.539957d) / 1000); // Nautical Miles
                         var altitude = (int)Math.Round((dbDataReader.GetDouble(2) * 3.28d) / 1000d, 0) * 1000; // Feet
-                        var heading = (int)dbDataReader.GetDouble(3);
+                        var heading = dbDataReader.GetDouble(3);
 
-                        output = new Dictionary<string, int?>();
-                        output.Add("bearing", bearing - 6);
-                        output.Add("range", range);
-                        output.Add("altitude", altitude);
-                        output.Add("heading", heading - 6);
+                        output = new Dictionary<string, int?>
+                        {
+                            { "bearing", (int)Math.Round(Util.Geospatial.TrueToMagnetic(callerPosition, bearing)) },
+                            { "range", range },
+                            { "altitude", altitude },
+                            { "heading", (int)Math.Round(Util.Geospatial.TrueToMagnetic(callerPosition, heading)) }
+                        };
                     }
                     dbDataReader.Close();
                 }

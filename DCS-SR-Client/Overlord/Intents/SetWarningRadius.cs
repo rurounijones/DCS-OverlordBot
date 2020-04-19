@@ -9,10 +9,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public static async Task<string> Process(LuisResponse luisResponse, string callerId, Sender sender, string awacs, string voice, ConcurrentQueue<byte[]> responseQueue)
+        public static async Task<string> Process(LuisResponse luisResponse, Sender sender, string awacs, string voice, ConcurrentQueue<byte[]> responseQueue)
         {
 
-            Logger.Debug($"Setting up Warning Radius for {callerId} - {sender}");
+            Logger.Debug($"Setting up Warning Radius for {sender.GameObject.Id} - {sender}");
 
             int distance = 1;
             if (luisResponse.Entities.Find(x => x.Role == "distance") == null) {
@@ -22,7 +22,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
             {
                 distance = int.Parse(luisResponse.Entities.Find(x => x.Role == "distance").Entity);
 
-                new WarningRadiusChecker(callerId, sender, awacs, voice, distance, responseQueue);
+                new WarningRadiusChecker(sender.GameObject.Id, sender, awacs, voice, distance, responseQueue);
                 return $"warning set for {distance} miles";
             }
 

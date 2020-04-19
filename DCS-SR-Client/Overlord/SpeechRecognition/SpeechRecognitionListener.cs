@@ -219,9 +219,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
                         Logger.Debug($"SENDER: " + sender);
 
-                        GameObject caller = Task.Run(() => GetPilotData(sender.Group, sender.Flight, sender.Plane)).Result;
+                        sender.GameObject = Task.Run(() => GetPilotData(sender.Group, sender.Flight, sender.Plane)).Result;
 
-                        if (caller == null)
+                        if (sender.GameObject == null)
                         {
                             Logger.Trace($"SenderVerified: false");
                             response = $"{sender}, {awacs}, I cannot find you on scope. ";
@@ -250,7 +250,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                             else if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "SetWarningRadius"))
                             {
                                 response = $"{sender}, {awacs}, ";
-                                response += Task.Run(() => SetWarningRadius.Process(luisResponse, caller.Id, sender, awacs,_voice, _responses)).Result;
+                                response += Task.Run(() => SetWarningRadius.Process(luisResponse, sender, awacs,_voice, _responses)).Result;
                             }
                             else if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "Picture"))
                             {
@@ -259,7 +259,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                             else if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "Declare"))
                             {
                                 response = $"{sender}, {awacs}, ";
-                                response += Task.Run(() => Declare.Process(luisResponse, caller)).Result;
+                                response += Task.Run(() => Declare.Process(luisResponse, sender)).Result;
                             }
                         }
                     }

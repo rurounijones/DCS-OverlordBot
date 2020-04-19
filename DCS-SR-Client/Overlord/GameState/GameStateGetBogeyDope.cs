@@ -4,6 +4,7 @@ using System;
 using System.Data.Common;
 using System.Threading.Tasks;
 using NewRelic.Api.Agent;
+using NetTopologySuite.Geometries;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
 {
@@ -11,7 +12,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
     {
 
         [Trace]
-        public static async Task<Contact> GetBogeyDope(string group, int flight, int plane)
+        public static async Task<Contact> GetBogeyDope(Point callerPosition, string group, int flight, int plane)
         {
             var command = @"SELECT bogey.id,
                                    degrees(ST_AZIMUTH(request.position, bogey.position)) as bearing,
@@ -42,22 +43,22 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
                     {
                         Logger.Debug($"{dbDataReader[0]}, {dbDataReader[1]}, {dbDataReader[2]}, {dbDataReader[3]}, {dbDataReader[4]}, {dbDataReader[5]}, {dbDataReader[6]}, {dbDataReader[7]}");
                         var id = dbDataReader.GetString(0);
-                        var bearing = (int)Math.Round(dbDataReader.GetDouble(1));
+                        var bearing = dbDataReader.GetDouble(1);
                         // West == negative numbers so convert
                         if (bearing < 0) { bearing += 360; }
 
                         var range = (int)Math.Round((dbDataReader.GetDouble(2) * 0.539957d) / 1000); // Nautical Miles
                         var altitude = (int)Math.Round((dbDataReader.GetDouble(3) * 3.28d) / 1000d, 0) * 1000; // Feet
-                        var heading = (int)dbDataReader.GetDouble(4);
+                        var heading = dbDataReader.GetDouble(4);
                         var name = dbDataReader.GetString(7);
 
                         output = new Contact()
                         {
                             Id = id,
-                            Bearing = Util.Geospatial.TrueToMagnetic(bearing),
+                            Bearing = (int)Math.Round(Util.Geospatial.TrueToMagnetic(callerPosition, bearing)),
                             Range = range,
                             Altitude = altitude,
-                            Heading = Util.Geospatial.TrueToMagnetic(heading),
+                            Heading = (int) Math.Round(Util.Geospatial.TrueToMagnetic(callerPosition, heading)),
                             Name = name
                         };
                     }

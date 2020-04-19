@@ -71,7 +71,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
             }
             else
             {
-                Dictionary<string, int?> braData = await GameState.GetFriendlyPlayer(sender.Group, sender.Flight, sender.Plane, group, flight, element);
+                Dictionary<string, int?> braData = await GameState.GetFriendlyPlayer(sender.Position, sender.Group, sender.Flight, sender.Plane, group, flight, element);
 
                 if (braData != null)
                 {

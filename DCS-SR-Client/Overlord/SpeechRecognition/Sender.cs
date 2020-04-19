@@ -1,4 +1,7 @@
-﻿namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
+﻿using static Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
+using NetTopologySuite.Geometries;
+
+namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
 {
 
     class Sender
@@ -6,6 +9,13 @@
         public string Group { get; }
         public int Flight { get; }
         public int Plane { get; }
+        public GameObject GameObject { get; set; }
+
+        public Point Position {
+            get {
+                return GameObject.Position;
+            }
+        }
 
         public Sender(string group, int flight, int plane)
         {
@@ -18,6 +28,7 @@
         {
             return $"{Group} {Flight} {Plane}";
         }
+
     }
 }
 

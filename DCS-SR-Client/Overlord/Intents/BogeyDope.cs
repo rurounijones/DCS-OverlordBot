@@ -11,7 +11,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
         {
             string response;
 
-            Contact contact = await GameState.GetBogeyDope(sender.Group, sender.Flight, sender.Plane);
+            Contact contact = await GameState.GetBogeyDope(sender.Position, sender.Group, sender.Flight, sender.Plane);
 
             if (contact != null)
             {

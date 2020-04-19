@@ -22,7 +22,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
             var airbase = luisResponse.Entities.Find(x => x.Type == "airbase").Resolution.Values[0];
 
 
-            Dictionary<string, int> braData = await GameState.GetBearingToAirbase(sender.Group, sender.Flight, sender.Plane, airbase);
+            Dictionary<string, int> braData = await GameState.GetBearingToAirbase(sender.Position, sender.Group, sender.Flight, sender.Plane, airbase);
 
             if (braData != null)
             {

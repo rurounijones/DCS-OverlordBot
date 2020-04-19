@@ -4,13 +4,14 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading.Tasks;
 using NewRelic.Api.Agent;
+using NetTopologySuite.Geometries;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
 {
     partial class GameState
     {
         [Trace]
-        public static async Task<Dictionary<string, int>> GetBearingToAirbase(string group, int flight, int plane, string airbase)
+        public static async Task<Dictionary<string, int>> GetBearingToAirbase(Point callerPosition, string group, int flight, int plane, string airbase)
         {
             string command = @"SELECT degrees(ST_AZIMUTH(request.position, airbase.position)) as bearing,
                                       ST_DISTANCE(request.position, airbase.position) as distance,
@@ -40,7 +41,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
                     await dbDataReader.ReadAsync();
                     if (dbDataReader.HasRows)
                     {
-                        var bearing = Util.Geospatial.TrueToMagnetic((int)Math.Round(dbDataReader.GetDouble(0)));
+                        var bearing = Util.Geospatial.TrueToMagnetic(callerPosition, Math.Round(dbDataReader.GetDouble(0)));
                         // West == negative numbers so convert
                         if (bearing < 0) { bearing += 360; }
 
@@ -48,7 +49,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
 
                         output = new Dictionary<string, int>
                         {
-                            { "bearing", bearing },
+                            { "bearing", (int) Math.Round(bearing) },
                             { "range", range }
                         };
                     }

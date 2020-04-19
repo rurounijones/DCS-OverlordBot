@@ -13,7 +13,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public static async Task<string> Process(LuisResponse luisResponse, GameObject caller)
+        public static async Task<string> Process(LuisResponse luisResponse, Sender sender)
         {
 
             string bearingString = null;
@@ -44,15 +44,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
                 double.TryParse(distanceString, out distance);
             }
 
-            Point declarePoint = Geospatial.CalculatePointFromSource(caller.Position, NauticalMilesToMeters(distance), Geospatial.MagneticToTrue(bearing));
+            Point declarePoint = Geospatial.CalculatePointFromSource(sender.Position, NauticalMilesToMeters(distance), Geospatial.MagneticToTrue(sender.Position, bearing));
 
             double radius = 1 + (distance * 0.05);
 
-            Logger.Info($"Declare Source (Lon/Lat): {caller.Position}, Magnetic Bearing {bearing}, True Bearing {Geospatial.MagneticToTrue(bearing)},\n Declare Target (Lon/Lat): {declarePoint}, Search radius: {radius} miles");
+            Logger.Info($"Declare Source (Lon/Lat): {sender.Position}, Magnetic Bearing {bearing}, True Bearing {Geospatial.MagneticToTrue(sender.Position, bearing)},\n Declare Target (Lon/Lat): {declarePoint}, Search radius: {radius} miles");
 
             var contacts = await GetContactsWithinCircle(declarePoint, NauticalMilesToMeters(radius));
 
-            contacts = contacts.Where(contact => contact.Id != caller.Id).ToList();
+            contacts = contacts.Where(contact => contact.Id != sender.GameObject.Id).ToList();
 
             if (contacts.Count == 0)
             {
@@ -69,12 +69,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
             bool friendlies = false;
             bool enemies = false;
 
-            if(coalitionContacts[caller.Coalition] > 0)
+            if(coalitionContacts[sender.GameObject.Coalition] > 0)
             {
                 friendlies = true;
             }
 
-            if (coalitionContacts.Where(pair => pair.Key != caller.Coalition && pair.Key != 2).Count(pair => pair.Value > 0) > 0)
+            if (coalitionContacts.Where(pair => pair.Key != sender.GameObject.Coalition && pair.Key != 2).Count(pair => pair.Value > 0) > 0)
             {
                 enemies = true;
             }

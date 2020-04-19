@@ -87,7 +87,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
                     return;
                 }
 
-                Contact contact = await GameState.GetBogeyDope(_sender.Group, _sender.Flight, _sender.Plane);
+                Contact contact = await GameState.GetBogeyDope(caller.Position, _sender.Group, _sender.Flight, _sender.Plane);
 
                 if (contact.Range > _distance)
                 {
