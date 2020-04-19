@@ -53,10 +53,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
                         output = new Contact()
                         {
                             Id = id,
-                            Bearing = bearing - 6,
+                            Bearing = Util.Geospatial.TrueToMagnetic(bearing),
                             Range = range,
                             Altitude = altitude,
-                            Heading = heading - 6,
+                            Heading = Util.Geospatial.TrueToMagnetic(heading),
                             Name = name
                         };
                     }

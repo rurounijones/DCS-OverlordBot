@@ -40,15 +40,17 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
                     await dbDataReader.ReadAsync();
                     if (dbDataReader.HasRows)
                     {
-                        var bearing = (int)Math.Round(dbDataReader.GetDouble(0) - 6);
+                        var bearing = Util.Geospatial.TrueToMagnetic((int)Math.Round(dbDataReader.GetDouble(0)));
                         // West == negative numbers so convert
                         if (bearing < 0) { bearing += 360; }
 
                         var range = (int)Math.Round((dbDataReader.GetDouble(1) * 0.539957d) / 1000); // Nautical Miles
 
-                        output = new Dictionary<string, int>();
-                        output.Add("bearing", bearing);
-                        output.Add("range", range);
+                        output = new Dictionary<string, int>
+                        {
+                            { "bearing", bearing },
+                            { "range", range }
+                        };
                     }
                     dbDataReader.Close();
                 }

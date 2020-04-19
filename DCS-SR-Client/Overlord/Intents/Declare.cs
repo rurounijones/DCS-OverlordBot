@@ -1,6 +1,7 @@
 ﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.LuisModels;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Util;
 using NetTopologySuite.Geometries;
+using NLog;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,6 +11,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
 {
     class Declare
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         public static async Task<string> Process(LuisResponse luisResponse, GameObject caller)
         {
 
@@ -41,9 +44,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
                 double.TryParse(distanceString, out distance);
             }
 
-            Point declarePoint = Geospatial.CalculatePointFromSource(caller.Position, NauticalMilesToMeters(distance), bearing);
+            Point declarePoint = Geospatial.CalculatePointFromSource(caller.Position, NauticalMilesToMeters(distance), Geospatial.MagneticToTrue(bearing));
 
             double radius = 1 + (distance * 0.05);
+
+            Logger.Info($"Declare Source (Lon/Lat): {caller.Position}, Magnetic Bearing {bearing}, True Bearing {Geospatial.MagneticToTrue(bearing)},\n Declare Target (Lon/Lat): {declarePoint}, Search radius: {radius} miles");
 
             var contacts = await GetContactsWithinCircle(declarePoint, NauticalMilesToMeters(radius));
 

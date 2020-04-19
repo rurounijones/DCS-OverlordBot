@@ -37,7 +37,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
                     if (dbDataReader.HasRows)
                     {
                         Logger.Debug($"{dbDataReader[0]}, {dbDataReader[1]}, {dbDataReader[2]}, {dbDataReader[3]}, {dbDataReader[4]}, {dbDataReader[5]}");
-                        var bearing = (int)Math.Round(dbDataReader.GetDouble(0));
+                        var bearing = Util.Geospatial.TrueToMagnetic((int)Math.Round(dbDataReader.GetDouble(0)));
                         // West == negative numbers so convert
                         if (bearing < 0) { bearing += 360; }
 
