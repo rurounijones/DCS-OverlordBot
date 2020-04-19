@@ -12,6 +12,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
         {
             var command = @"SELECT id, coalition from public.units contact
                             WHERE contact.type ilike 'Air+%'
+                            AND contact.speed >= 26
                             AND ST_DWithin(@center, contact.position, @radius)";
 
             List<Contact> contacts = new List<Contact>();

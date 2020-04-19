@@ -24,6 +24,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
               ) as request
             WHERE NOT bogey.coalition = request.coalition
             AND bogey.type LIKE 'Air+%'
+            AND bogey.speed >= 26
             ORDER BY request.position<-> bogey.position ASC
             LIMIT 1";
 
