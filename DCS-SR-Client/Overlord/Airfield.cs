@@ -1,9 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using Geo.Geometries;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using NetTopologySuite.Geometries;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
 {
@@ -34,7 +34,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
 
         public Point Position {
             get {
-                return new Point(Longitude, Latitude, Altitude);
+                return new Point(Latitude, Longitude, Altitude);
             }
         }
     }

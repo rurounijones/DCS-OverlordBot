@@ -594,7 +594,10 @@
     <None Include="Overlord\Data\Airfields.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Overlord\Data\AtcAnapa.json">
+    <None Include="Overlord\Data\NavigationPoints\Anapa-Vityazevo.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Overlord\Data\NavigationPoints\Krasnodar-Center.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config">

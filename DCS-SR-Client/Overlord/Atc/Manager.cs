@@ -15,29 +15,54 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private static readonly List<Airfield> Airfields = JsonConvert.DeserializeObject<List<Airfield>>(File.ReadAllText("Overlord/Data/Airfields.json"));
-        private static readonly List<NavigationPoint> NavigationPoints = JsonConvert.DeserializeObject<List<NavigationPoint>>(File.ReadAllText("Overlord/Data/AtcAnapa.json"));
+        private static readonly Dictionary<string, List<NavigationPoint>> AirfieldNavigationPoints = PopulateAirfieldNavigationPoints();
 
         public Manager()
         {
             Task.Run(() => CheckNavigationPointsAsync());
         }
 
+        static private Dictionary<string, List<NavigationPoint>> PopulateAirfieldNavigationPoints()
+        {
+            Dictionary<string, List<NavigationPoint>> navigationPoints = new Dictionary<string, List<NavigationPoint>>
+            {
+                { "Anapa-Vityazevo", JsonConvert.DeserializeObject<List<NavigationPoint>>(File.ReadAllText("Overlord/Data/NavigationPoints/Anapa-Vityazevo.json")) },
+                { "Krasnodar-Center", JsonConvert.DeserializeObject<List<NavigationPoint>>(File.ReadAllText("Overlord/Data/NavigationPoints/Krasnodar-Center.json")) }
+            };
+            return navigationPoints;
+        }
+
         private async Task CheckNavigationPointsAsync()
         {
-            while(true)
+            while (true)
             {
+                Thread.Sleep(5000);
                 Logger.Debug($"Checking Airfields");
 
-                var anapa = Airfields.FirstOrDefault(x => x.Name == "Anapa-Vityazevo");
+                var airfields = Airfields.Where(x => AirfieldNavigationPoints.ContainsKey(x.Name));
 
-                List<GameObject> neabyAircraft = await GameState.GetAircraftNearAirfield(anapa);
-
-                foreach (var aircarft in neabyAircraft)
+                foreach (var airfield in airfields)
                 {
-                    Logger.Debug($"Aircraft {aircarft.Id} (Pilot {aircarft.Pilot}) is within 10nm of Anapa");
+                    List<GameObject> neabyAircraft = await GameState.GetAircraftNearAirfield(airfield);
+
+                    if(neabyAircraft.Count == 0)
+                    {
+                        Logger.Debug($"No Aircraft within 10nm of {airfield.Name}");
+                    }
+
+                    foreach (var aircarft in neabyAircraft)
+                    {
+                        Logger.Debug($"Aircraft {aircarft.Id} (Pilot {aircarft.Pilot}) is within 10nm of {airfield.Name}");
+                        foreach (var navigationPoint in AirfieldNavigationPoints[airfield.Name])
+                        {
+                            if(navigationPoint.Position.GetBounds().Contains(aircarft.GeoPoint))
+                            {
+                                Logger.Debug($"Aircraft {aircarft.Id} (Pilot {aircarft.Pilot}) is at {airfield.Name} {navigationPoint.Name}");
+                            }
+                        }
+                    }
                 }
 
-                Thread.Sleep(5000);
             }
         }
     }

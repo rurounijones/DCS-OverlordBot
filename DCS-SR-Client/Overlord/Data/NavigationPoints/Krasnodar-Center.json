@@ -1,0 +1,23 @@
+[
+  {
+    "name": "1st entry to 09 / 3rd exit from 27",
+    "lat": 45.0866685,
+    "lon": 38.9247869,
+    "radius": 25,
+    "altitude": 30.010032653808594
+  },
+  {
+    "name": "2nd entry 09 / 2nd exit from 27 ",
+    "lat": 45.0866084,
+    "lon": 38.9292344,
+    "radius": 25,
+    "altitude": 30.010032653808594
+  },
+  {
+    "name": "3rd entry 09 / 1st exit from 27",
+    "lat": 45.0862687,
+    "lon": 38.9509765,
+    "radius": 25,
+    "altitude": 30.010032653808594
+  }
+]

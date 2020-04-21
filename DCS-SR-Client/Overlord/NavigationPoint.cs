@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Geo.Geometries;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
 {
@@ -35,5 +36,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
         /// Used to determine if a unit is within the navigation point or not
         /// </summary>
         public int Radius { get; set; }
+
+        public Circle Position
+        {
+            get
+            {
+                return new Circle(Latitude, Longitude, Altitude, Radius);
+            }
+        }
     }
 }
