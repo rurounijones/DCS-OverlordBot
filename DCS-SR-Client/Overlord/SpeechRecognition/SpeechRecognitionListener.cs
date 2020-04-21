@@ -29,9 +29,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
         // Used when an exception is thrown so that the caller isn't left wondering.
         private static readonly byte[] _failureMessage = File.ReadAllBytes("Overlord/equipment-failure.wav");
 
-        // Authorization token expires every 10 minutes. Renew it every 9 minutes.
-        private static TimeSpan RefreshTokenDuration = TimeSpan.FromMinutes(9);
-
         private readonly BufferedWaveProviderStreamReader _streamReader;
         private readonly AudioConfig _audioConfig;
         private readonly OpusEncoder _encoder;
@@ -42,13 +39,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
         private ConcurrentQueue<byte[]> _responses;
 
-        public bool TimedOut;
+        public bool FinishedListening;
 
         // Allows OverlordBot to listen for a specific word to start listening. Currently not used although the setup has all been done.
         // This is due to wierd state transition errors thatI cannot be bothered to debug.
         KeywordRecognitionModel _wakeWord;
 
-        public SpeechRecognitionListener(BufferedWaveProvider bufferedWaveProvider, ConcurrentQueue<byte[]> responseQueue, string callsign = null, string voice = "en-US-JessaRUS")
+        public SpeechRecognitionListener(BufferedWaveProviderStreamReader streamReader, ConcurrentQueue<byte[]> responseQueue, string callsign = null, string voice = "en-US-JessaRUS")
         {
             Logger.Debug("VOICE: " + voice);
 
@@ -58,7 +55,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
            _encoder.ForwardErrorCorrection = false;
            _encoder.FrameByteCount(AudioManager.SEGMENT_FRAMES);
 
-            _streamReader = new BufferedWaveProviderStreamReader(bufferedWaveProvider);
+            _streamReader = streamReader;
             _audioConfig = AudioConfig.FromStreamInput(_streamReader, AudioStreamFormat.GetWaveFormatPCM(16000, 16, 1));
 
             _wakeWord = KeywordRecognitionModel.FromFile($"Overlord/WakeWords/{callsign}.table");
@@ -88,112 +85,56 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
             }
         }
 
-        // Renews authorization token periodically until cancellationToken is cancelled.
-        public static Task StartTokenRenewTask(CancellationToken cancellationToken, SpeechRecognizer recognizer)
-        {
-            return Task.Run(async () =>
-            {
-                while (!cancellationToken.IsCancellationRequested)
-                {
-                    await Task.Delay(RefreshTokenDuration, cancellationToken);
-
-                    if (!cancellationToken.IsCancellationRequested)
-                    {
-                        recognizer.AuthorizationToken = await GetToken();
-                    }
-                }
-            });
-        }
-
         public async Task StartListeningAsync()
         {
-            Logger.Debug($"Started Continuous Recognition");
+            Logger.Debug($"Started Recognition");
 
-            // Initialize the recognizer
-            var authorizationToken = Task.Run(() => GetToken()).Result;
+            var authorizationToken = await GetToken();
             SpeechConfig speechConfig = SpeechConfig.FromAuthorizationToken(authorizationToken, Settings.SPEECH_REGION);
             speechConfig.EndpointId = Settings.SPEECH_CUSTOM_ENDPOINT_ID;
             SpeechRecognizer recognizer = new SpeechRecognizer(speechConfig, _audioConfig);
 
-            // Setup the cancellation code
-            var stopRecognition = new TaskCompletionSource<int>();
-            CancellationTokenSource source = new CancellationTokenSource();
+            var result = await recognizer.RecognizeOnceAsync();
 
-            // Start the token renewal so we can do long-running recognition.
-            var tokenRenewTask = StartTokenRenewTask(source.Token, recognizer);
-
-            recognizer.Recognized += async (s, e) =>
+            if (result.Reason == ResultReason.RecognizedSpeech)
             {
-                await ProcessAwacsCall(e);
-            };
-
-            recognizer.Canceled += async (s, e) =>
+                _ = ProcessAwacsCall(result);
+            }
+            else if (result.Reason == ResultReason.NoMatch)
             {
-                Logger.Trace($"CANCELLED: Reason={e.Reason}");
+                Logger.Debug($"Speech could not be recognized.");
+            }
+            else if (result.Reason == ResultReason.Canceled)
+            {
+                var cancellation = CancellationDetails.FromResult(result);
+                Logger.Debug($"CANCELED: Reason={cancellation.Reason}");
 
-                if (e.Reason == CancellationReason.Error)
+                if (cancellation.Reason == CancellationReason.Error)
                 {
-                    Logger.Trace($"CANCELLED: ErrorCode={e.ErrorCode}");
-                    Logger.Trace($"CANCELLED: ErrorDetails={e.ErrorDetails}");
-
-                    if (e.ErrorCode != CancellationErrorCode.BadRequest && e.ErrorCode != CancellationErrorCode.ConnectionFailure)
-                    {
-                        _responses.Enqueue(_failureMessage);
-                    }
+                    Logger.Debug($"CANCELED: ErrorCode={cancellation.ErrorCode}");
+                    Logger.Debug($"CANCELED: ErrorDetails={cancellation.ErrorDetails}");
+                    Logger.Debug($"CANCELED: Did you update the subscription info?");
                 }
-                stopRecognition.TrySetResult(1);
-            };
-
-            recognizer.SpeechStartDetected += (s, e) =>
-            {
-                Logger.Trace("\nSpeech started event.");
-            };
-
-            recognizer.SpeechEndDetected += (s, e) =>
-            {
-                Logger.Trace("\nSpeech ended event.");
-            };
-
-            recognizer.SessionStarted += (s, e) =>
-            {
-                Logger.Trace("\nSession started event.");
-            };
-
-            recognizer.SessionStopped += (s, e) =>
-            {
-                Logger.Trace("\nSession stopped event.");
-                stopRecognition.TrySetResult(0);
-            };
-
-            // Starts continuous recognition. Uses StopContinuousRecognitionAsync() to stop recognition.
-            await recognizer.StartContinuousRecognitionAsync().ConfigureAwait(false);
-
-            // Waits for completion.
-            // Use Task.WaitAny to keep the task rooted.
-            Task.WaitAny(new[] { stopRecognition.Task });
-
-            // Stops recognition.
-            await recognizer.StopContinuousRecognitionAsync().ConfigureAwait(false);
-            source.Cancel();
-            Logger.Debug($"Stopped Continuous Recognition");
-            TimedOut = true;
+            }
+            Logger.Debug($"Stopped Recognition");
+            FinishedListening = true;
         }
 
         [Transaction(Web = true)]
-        private async Task ProcessAwacsCall(SpeechRecognitionEventArgs e) {
+        private async Task ProcessAwacsCall(SpeechRecognitionResult result) {
             string response = null;
 
             try
             {
-                if (e.Result.Reason == ResultReason.RecognizedSpeech)
+                if (result.Reason == ResultReason.RecognizedSpeech)
                 {
                     // Send data to the nextgen shadow system. This is not part of the main flow so we don't await.
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                     //LuisServiceV3.RecognizeAsync(e.Result.Text);
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
-                    Logger.Info($"Incoming Transmission: {e.Result.Text}");
-                    string luisJson = Task.Run(() => LuisService.ParseIntent(e.Result.Text)).Result;
+                    Logger.Info($"Incoming Transmission: {result.Text}");
+                    string luisJson = Task.Run(() => LuisService.ParseIntent(result.Text)).Result;
                     Logger.Debug($"LIVE LUIS RESPONSE: {luisJson}");
                     LuisResponse luisResponse = JsonConvert.DeserializeObject<LuisResponse>(luisJson);
 
@@ -204,7 +145,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                         luisResponse.Entities.Find(x => x.Type == "awacs_callsign") == null)
                     {
                         Logger.Debug($"RESPONSE NO-OP");
-                        string transmission = "Transmission Ignored\nIncoming: " + e.Result.Text;
+                        string transmission = "Transmission Ignored\nIncoming: " + result.Text;
                         await DiscordClient.SendTransmission(transmission).ConfigureAwait(false); ;
                         // NO-OP
                     }
@@ -264,7 +205,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                         }
                     }
                 }
-                else if (e.Result.Reason == ResultReason.NoMatch)
+                else if (result.Reason == ResultReason.NoMatch)
                 {
                     Logger.Debug($"NOMATCH: Speech could not be recognized.");
                 }
@@ -278,7 +219,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
             if (response != null)
             {
                 Logger.Info($"Outgoing Transmission: {response}");
-                string transmission = "Transmission pair\nIncoming: " + e.Result.Text + "\nOutgoing: " + response;
+                string transmission = "Transmission pair\nIncoming: " + result.Text + "\nOutgoing: " + response;
                 await DiscordClient.SendTransmission(transmission).ConfigureAwait(false);
                 var audioResponse = await Task.Run(() => Speaker.CreateResponse($"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{_voice}\">{response}</voice></speak>"));
                 _responses.Enqueue(audioResponse);

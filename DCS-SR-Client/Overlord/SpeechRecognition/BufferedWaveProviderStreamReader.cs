@@ -9,6 +9,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
     public class BufferedWaveProviderStreamReader : PullAudioInputStreamCallback
     {
         private BufferedWaveProvider _provider;
+        private bool _endTransmission = false;
 
         public BufferedWaveProviderStreamReader(BufferedWaveProvider provider)
         {
@@ -20,7 +21,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
             // PullAudioInputStreamCallback classes are expect to block on read 
             // however BufferedWaveProvider do not. therefore we will block until
             // the BufferedWaveProvider has something to return.
-            while (_provider.BufferedBytes == 0) { Thread.Sleep(50); }
+            while (_provider.BufferedBytes == 0 && _endTransmission == false) { Thread.Sleep(50); }
             return _provider.Read(dataBuffer, 0, (int)size);
         }
 
@@ -29,6 +30,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
             _provider.ClearBuffer();
             _provider = null;
             base.Dispose(disposing);
+        }
+
+        public void EndTransmission()
+        {
+            _endTransmission = true;
         }
     }
 }

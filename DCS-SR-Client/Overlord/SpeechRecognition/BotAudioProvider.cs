@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.IO;
 using System.Threading.Tasks;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers;
@@ -11,6 +12,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 {
     public class BotAudioProvider : AudioProvider
     {
+        // 2 seconds of silence
+        private static readonly byte[] _silence = new byte[AudioManager.INPUT_SAMPLE_RATE / 1000 * 2000];
+
+        BufferedWaveProviderStreamReader _StreamReader;
+
         BufferedWaveProvider _SpeechAudioProvider;
         public SpeechRecognitionListener _speechRecognitionListener { get; set; }
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
@@ -24,23 +30,23 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                 ReadFully = false
             };
 
-            _speechRecognitionListener = new SpeechRecognitionListener(_SpeechAudioProvider, responseQueue, callsign, voice);
+            _StreamReader = new BufferedWaveProviderStreamReader(_SpeechAudioProvider);
+
+            _speechRecognitionListener = new SpeechRecognitionListener(_StreamReader, responseQueue, callsign, voice);
             Task.Run(() => _speechRecognitionListener.StartListeningAsync());
         }
 
         public bool SpeechRecognitionActive()
         {
-            return _speechRecognitionListener.TimedOut == false;
+            return _speechRecognitionListener.FinishedListening == false;
         }
 
         public void AddClientAudioSamples(ClientAudio audio)
         {
             bool newTransmission = LikelyNewTransmission();
 
-            int decodedLength = 0;
-
             var decoded = _decoder.Decode(audio.EncodedAudio,
-                audio.EncodedAudio.Length, out decodedLength, newTransmission);
+                audio.EncodedAudio.Length, out int decodedLength, newTransmission);
 
             if (decodedLength > 0)
             {
@@ -77,10 +83,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
             }
         }
 
+        // Cognitive services waits for silence. Since we want to recognise as soon as the radio
+        // finishes transmission we need to simulate said silence.
         public void EndTransmission()
         {
-            var silence = new byte[AudioManager.INPUT_SAMPLE_RATE / 1000 * 2000];
-            _SpeechAudioProvider.AddSamples(silence, 0, silence.Length);
+            // TODO: Keep this around for a bit and see if we really need the silence or not.
+            // It appears to work but maybe it is more reliable to send some after transmission
+            // ends.
+            //_SpeechAudioProvider.AddSamples(_silence, 0, _silence.Length);
+            _StreamReader.EndTransmission();
         }
 
         //destructor to clear up opus

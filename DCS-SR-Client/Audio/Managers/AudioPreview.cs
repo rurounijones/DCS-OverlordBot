@@ -47,6 +47,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio
         // Overlord 
         private BufferedWaveProvider _overlordSpeechRecognizerAudioBufferedWaveProvider;
         private SpeechRecognitionListener _overlordSpeechRecognitionListener;
+        private BufferedWaveProviderStreamReader _streamReader;
 
         public float SpeakerBoost
         {
@@ -76,9 +77,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio
                 _previewAudioBufferedWaveProvider.ReadFully = true;
                 _previewAudioBufferedWaveProvider.DiscardOnBufferOverflow = true;
 
-                _overlordSpeechRecognizerAudioBufferedWaveProvider = new BufferedWaveProvider(PCM_MONO_16K_S16LE);
-                _overlordSpeechRecognizerAudioBufferedWaveProvider.ReadFully = false;
-                _overlordSpeechRecognizerAudioBufferedWaveProvider.DiscardOnBufferOverflow = true;
+                _overlordSpeechRecognizerAudioBufferedWaveProvider = new BufferedWaveProvider(PCM_MONO_16K_S16LE)
+                {
+                    ReadFully = false,
+                    DiscardOnBufferOverflow = true
+                };
+
+                _streamReader = new BufferedWaveProviderStreamReader(_overlordSpeechRecognizerAudioBufferedWaveProvider);
 
                 RadioFilter filter = new RadioFilter(_previewAudioBufferedWaveProvider.ToSampleProvider());
 
@@ -158,7 +163,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio
 
             try
             {
-                _overlordSpeechRecognitionListener = new SpeechRecognitionListener(_overlordSpeechRecognizerAudioBufferedWaveProvider, null);
+                _overlordSpeechRecognitionListener = new SpeechRecognitionListener(_streamReader, null);
                 Task.Run(() => _overlordSpeechRecognitionListener.StartListeningAsync());
             }
             catch (Exception ex)
