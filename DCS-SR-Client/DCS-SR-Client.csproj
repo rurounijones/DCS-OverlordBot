@@ -400,9 +400,13 @@
     <Compile Include="Network\Models\RadioSendingState.cs" />
     <Compile Include="Network\SRSClientSyncHandler.cs" />
     <Compile Include="Network\UDPVoiceHandler.cs" />
+    <Compile Include="Overlord\Airfield.cs" />
+    <Compile Include="Overlord\Atc\Manager.cs" />
+    <Compile Include="Overlord\NavigationPoint.cs" />
     <Compile Include="Overlord\Constants.cs" />
     <Compile Include="Overlord\GameState\Contact.cs" />
     <Compile Include="Overlord\GameState\GameObject.cs" />
+    <Compile Include="Overlord\GameState\GameStateGetAircraftNearAirfield.cs" />
     <Compile Include="Overlord\GameState\GameStateGetContactsWithinCircle.cs" />
     <Compile Include="Overlord\GameState\GameStateGetPilotData.cs" />
     <Compile Include="Overlord\GameState\GameStateGetBearingToAirbase.cs" />
@@ -587,6 +591,12 @@
     <EmbeddedResource Include="Overlord\WakeWords\Magic.table">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
+    <None Include="Overlord\Data\Airfields.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Overlord\Data\AtcAnapa.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>

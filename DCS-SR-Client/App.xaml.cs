@@ -18,6 +18,8 @@ namespace DCS_SR_Client
         private System.Windows.Forms.NotifyIcon _notifyIcon;
         private bool loggingReady = false;
 
+        private readonly Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc.Manager AtcManager;
+
         public App()
         {
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledExceptionHandler);
@@ -53,6 +55,8 @@ namespace DCS_SR_Client
             NpgsqlLogManager.IsParameterLoggingEnabled = true;
 
             Task.Run(() => DiscordClient.Connect());
+
+            AtcManager = new Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc.Manager();
 
         }
 

@@ -9,6 +9,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
             public string Id { get; set; }
             public Point Position { get; set; }
 
+            public string Pilot { get; set; }
             public int Coalition { get; set; }
         }
 
