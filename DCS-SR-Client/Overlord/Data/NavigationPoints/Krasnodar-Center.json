@@ -1,44 +1,56 @@
-[
-  {
-    "name": "taxiway A, short of runway 09/27",
-    "lat": 45.0866685,
-    "lon": 38.9247869,
-    "radius": 25,
-    "altitude": 30.010032653808594
-  },
-  {
-    "name": "taxiway B, short of Runway 09/27",
-    "lat": 45.0866084,
-    "lon": 38.9292344,
-    "radius": 25,
-    "altitude": 30.010032653808594
-  },
-  {
-    "name": "taxiway C, short of runway 09/27",
-    "lat": 45.0862687,
-    "lon": 38.9509765,
-    "radius": 25,
-    "altitude": 30.010032653808594
-  },
-  {
-    "name": "taxiway D, short of runway 09/27",
-    "lat": 45.0861495,
-    "lon": 38.8278844,
-    "radius": 25,
-    "altitude": 30.010032653808594
-  },
-  {
-    "name": "taxiway E, short of runway 09/27",
-    "lat": 45.0862075,
-    "lon": 38.9555256,
-    "radius": 25,
-    "altitude": 30.010032653808594
-  },
-  {
-    "name": "taxiway F, short of runway 09/27",
-    "lat": 45.0866940,
-    "lon": 38.9563893,
-    "radius": 25,
-    "altitude": 30.010032653808594
-  }
-]
+{
+  "name": "Krasnodar-Center",
+  "lon": 38.92520230077506,
+  "lat": 45.087429883845076,
+  "alt": 30.010032653808594,
+  "runways": [
+    {
+      "name": "runway 09/27"
+    }
+  ],
+  "taxiwayPoints": [
+    {
+      "name": "taxiway A, short of runway 09/27",
+      "lat": 45.0866685,
+      "lon": 38.9247869,
+      "radius": 25,
+      "altitude": 30.010032653808594
+    },
+    {
+      "name": "taxiway B, short of Runway 09/27",
+      "lat": 45.0866084,
+      "lon": 38.9292344,
+      "radius": 25,
+      "altitude": 30.010032653808594
+    },
+    {
+      "name": "taxiway C, short of runway 09/27",
+      "lat": 45.0862687,
+      "lon": 38.9509765,
+      "radius": 25,
+      "altitude": 30.010032653808594
+    },
+    {
+      "name": "taxiway D, short of runway 09/27",
+      "lat": 45.0861495,
+      "lon": 38.8278844,
+      "radius": 25,
+      "altitude": 30.010032653808594
+    },
+    {
+      "name": "taxiway E, short of runway 09/27",
+      "lat": 45.0862075,
+      "lon": 38.9555256,
+      "radius": 25,
+      "altitude": 30.010032653808594
+    },
+    {
+      "name": "taxiway F, short of runway 09/27",
+      "lat": 45.0866940,
+      "lon": 38.9563893,
+      "radius": 25,
+      "altitude": 30.010032653808594
+    }
+  ],
+  "landingPatternPoints": []
+}

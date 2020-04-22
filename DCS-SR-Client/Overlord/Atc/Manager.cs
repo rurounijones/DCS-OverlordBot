@@ -14,23 +14,21 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
     class Manager
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
-        private static readonly List<Airfield> Airfields = JsonConvert.DeserializeObject<List<Airfield>>(File.ReadAllText("Overlord/Data/Airfields.json"));
-        private static readonly Dictionary<string, List<NavigationPoint>> AirfieldNavigationPoints = PopulateAirfieldNavigationPoints();
+        private static readonly List<Airfield> Airfields = PopulateAirfields();
 
         public Manager()
         {
             Task.Run(() => CheckNavigationPointsAsync());
         }
 
-        static private Dictionary<string, List<NavigationPoint>> PopulateAirfieldNavigationPoints()
+        static private List<Airfield> PopulateAirfields()
         {
-            Dictionary<string, List<NavigationPoint>> navigationPoints = new Dictionary<string, List<NavigationPoint>>
+            List<Airfield> airfields = new List<Airfield>
             {
-                { "Anapa-Vityazevo", JsonConvert.DeserializeObject<List<NavigationPoint>>(File.ReadAllText("Overlord/Data/NavigationPoints/Anapa-Vityazevo.json")) },
-                { "Krasnodar-Center", JsonConvert.DeserializeObject<List<NavigationPoint>>(File.ReadAllText("Overlord/Data/NavigationPoints/Krasnodar-Center.json")) }
+                JsonConvert.DeserializeObject<Airfield>(File.ReadAllText("Overlord/Data/NavigationPoints/Anapa-Vityazevo.json")),
+                JsonConvert.DeserializeObject<Airfield>(File.ReadAllText("Overlord/Data/NavigationPoints/Krasnodar-Center.json"))
             };
-            return navigationPoints;
+            return airfields;
         }
 
         private async Task CheckNavigationPointsAsync()
@@ -38,23 +36,21 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
             while (true)
             {
                 Thread.Sleep(5000);
-                Logger.Debug($"Checking Airfields");
+                Logger.Trace($"Checking Airfields");
 
-                var airfields = Airfields.Where(x => AirfieldNavigationPoints.ContainsKey(x.Name));
-
-                foreach (var airfield in airfields)
+                foreach (var airfield in Airfields)
                 {
                     List<GameObject> neabyAircraft = await GameState.GetAircraftNearAirfield(airfield);
 
                     if(neabyAircraft.Count == 0)
                     {
-                        Logger.Debug($"No Aircraft within 10nm of {airfield.Name}");
+                        Logger.Trace($"No Aircraft within 10nm of {airfield.Name}");
                     }
 
                     foreach (var aircarft in neabyAircraft)
                     {
-                        Logger.Debug($"Aircraft {aircarft.Id} (Pilot {aircarft.Pilot}) is within 10nm of {airfield.Name}");
-                        foreach (var navigationPoint in AirfieldNavigationPoints[airfield.Name])
+                        Logger.Trace($"Aircraft {aircarft.Id} (Pilot {aircarft.Pilot}) is within 10nm of {airfield.Name}");
+                        foreach (var navigationPoint in airfield.TaxiwayPoints)
                         {
                             if(navigationPoint.Position.GetBounds().Contains(aircarft.GeoPoint))
                             {

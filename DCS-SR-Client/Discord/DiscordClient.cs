@@ -16,8 +16,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Discord
 		private static string _token = Properties.Settings.Default.DiscordToken;
 		private static ulong _transmissionLogGuildId = Properties.Settings.Default.TransmissionLogDiscordGuild;
 		private static ulong _transmissionLogChannelId = Properties.Settings.Default.TransmissionLogDiscordChannel;
-		private static ulong _atcLogGuildId = Properties.Settings.Default.AtcLogLogDiscordGuild;
-		private static ulong _atcLogChannelId = Properties.Settings.Default.AtcLogLogDiscordChannel;
+		private static ulong _atcLogGuildId = Properties.Settings.Default.AtcLogDiscordGuild;
+		private static ulong _atcLogChannelId = Properties.Settings.Default.AtcLogDiscordChannel;
 
 		public static async Task Connect()
 		{

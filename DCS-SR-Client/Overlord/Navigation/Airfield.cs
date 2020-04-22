@@ -32,6 +32,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Navigation
         [JsonProperty(PropertyName = "alt")]
         public double Altitude { get; set; }
 
+        public Runway[] Runways { get; set; }
+
+        public NavigationPoint[] TaxiwayPoints { get; set; }
+
         public Point Position {
             get {
                 return new Point(Latitude, Longitude, Altitude);

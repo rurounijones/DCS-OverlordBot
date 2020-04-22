@@ -50,10 +50,10 @@
     <Setting Name="TransmissionLogDiscordChannel" Type="System.UInt64" Scope="Application">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="AtcLogLogDiscordGuild" Type="System.UInt64" Scope="Application">
+    <Setting Name="AtcLogDiscordGuild" Type="System.UInt64" Scope="Application">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="AtcLogLogDiscordChannel" Type="System.UInt64" Scope="Application">
+    <Setting Name="AtcLogDiscordChannel" Type="System.UInt64" Scope="Application">
       <Value Profile="(Default)">0</Value>
     </Setting>
   </Settings>

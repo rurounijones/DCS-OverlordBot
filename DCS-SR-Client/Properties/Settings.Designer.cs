@@ -170,18 +170,18 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public ulong AtcLogLogDiscordGuild {
+        public ulong AtcLogDiscordGuild {
             get {
-                return ((ulong)(this["AtcLogLogDiscordGuild"]));
+                return ((ulong)(this["AtcLogDiscordGuild"]));
             }
         }
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public ulong AtcLogLogDiscordChannel {
+        public ulong AtcLogDiscordChannel {
             get {
-                return ((ulong)(this["AtcLogLogDiscordChannel"]));
+                return ((ulong)(this["AtcLogDiscordChannel"]));
             }
         }
     }
