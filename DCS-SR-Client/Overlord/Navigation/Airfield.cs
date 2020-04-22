@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
+namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Navigation
 {
     public class Airfield
     {

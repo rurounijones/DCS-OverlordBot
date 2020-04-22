@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Navigation;
+using Newtonsoft.Json;
 using NLog;
 using System.Collections.Generic;
 using System.IO;
@@ -57,7 +58,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
                         {
                             if(navigationPoint.Position.GetBounds().Contains(aircarft.GeoPoint))
                             {
-                                Logger.Debug($"Aircraft {aircarft.Id} (Pilot {aircarft.Pilot}) is at {airfield.Name} {navigationPoint.Name}");
+                                var msg = $"Aircraft {aircarft.Id} (Pilot {aircarft.Pilot}) is at {airfield.Name}, {navigationPoint.Name}";
+                                Logger.Debug(msg);
+                                _ = Discord.DiscordClient.SendNavigationPoint(msg);
                             }
                         }
                     }

@@ -400,9 +400,9 @@
     <Compile Include="Network\Models\RadioSendingState.cs" />
     <Compile Include="Network\SRSClientSyncHandler.cs" />
     <Compile Include="Network\UDPVoiceHandler.cs" />
-    <Compile Include="Overlord\Airfield.cs" />
+    <Compile Include="Overlord\Navigation\Airfield.cs" />
     <Compile Include="Overlord\Atc\Manager.cs" />
-    <Compile Include="Overlord\NavigationPoint.cs" />
+    <Compile Include="Overlord\Navigation\NavigationPoint.cs" />
     <Compile Include="Overlord\Constants.cs" />
     <Compile Include="Overlord\GameState\Contact.cs" />
     <Compile Include="Overlord\GameState\GameObject.cs" />

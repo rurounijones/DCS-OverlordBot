@@ -14,8 +14,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Discord
 		private static DiscordSocketClient _socket;
 
 		private static string _token = Properties.Settings.Default.DiscordToken;
-		private static ulong _guildId = Properties.Settings.Default.TransmissionLogDiscordGuild;
-		private static ulong _channelId = Properties.Settings.Default.TransmissionLogDiscordChannel;
+		private static ulong _transmissionLogGuildId = Properties.Settings.Default.TransmissionLogDiscordGuild;
+		private static ulong _transmissionLogChannelId = Properties.Settings.Default.TransmissionLogDiscordChannel;
+		private static ulong _atcLogGuildId = Properties.Settings.Default.AtcLogLogDiscordGuild;
+		private static ulong _atcLogChannelId = Properties.Settings.Default.AtcLogLogDiscordChannel;
 
 		public static async Task Connect()
 		{
@@ -52,8 +54,24 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Discord
 			}
 			try
 			{
-				await _socket.GetGuild(_guildId).GetTextChannel(_channelId).SendMessageAsync(transmission);
+				await _socket.GetGuild(_transmissionLogGuildId).GetTextChannel(_transmissionLogChannelId).SendMessageAsync(transmission);
 			} catch(Exception e)
+			{
+				Logger.Error(e);
+			}
+		}
+
+		public static async Task SendNavigationPoint(string navigationMessage)
+		{
+			if (_socket == null || _socket.ConnectionState != ConnectionState.Connected)
+			{
+				return;
+			}
+			try
+			{
+				await _socket.GetGuild(_atcLogGuildId).GetTextChannel(_atcLogChannelId).SendMessageAsync(navigationMessage);
+			}
+			catch (Exception e)
 			{
 				Logger.Error(e);
 			}

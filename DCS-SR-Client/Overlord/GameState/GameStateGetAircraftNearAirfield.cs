@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading.Tasks;
 using NetTopologySuite.Geometries;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Navigation;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
 {
@@ -17,7 +18,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
             var command = @"SELECT contact.id, contact.pilot, contact.position
             FROM units as contact
             WHERE ST_DWithin(@airfield, contact.position, @radius)
-            AND contact.altitude < 915
+            AND contact.altitude < @altitude
             AND contact.type LIKE 'Air+%';";
 
             using (var connection = new NpgsqlConnection(ConnectionString()))
@@ -29,6 +30,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
 
                     cmd.Parameters.AddWithValue("airfield", position);
                     cmd.Parameters.AddWithValue("radius", 18520);
+                    cmd.Parameters.AddWithValue("altitude", 915 + airfield.Altitude);
 
                     DbDataReader dbDataReader = await cmd.ExecuteReaderAsync();
                     while (await dbDataReader.ReadAsync())

@@ -205,7 +205,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                     {
                         Logger.Debug($"RESPONSE NO-OP");
                         string transmission = "Transmission Ignored\nIncoming: " + e.Result.Text;
-                        await DiscordClient.SendTransmission(transmission).ConfigureAwait(false); ;
+                        _ = DiscordClient.SendTransmission(transmission).ConfigureAwait(false);
                         // NO-OP
                     }
                     else if (sender == null)
@@ -279,7 +279,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
             {
                 Logger.Info($"Outgoing Transmission: {response}");
                 string transmission = "Transmission pair\nIncoming: " + e.Result.Text + "\nOutgoing: " + response;
-                await DiscordClient.SendTransmission(transmission).ConfigureAwait(false);
+                _ = DiscordClient.SendTransmission(transmission).ConfigureAwait(false);
                 var audioResponse = await Task.Run(() => Speaker.CreateResponse($"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{_voice}\">{response}</voice></speak>"));
                 if (audioResponse != null)
                 {

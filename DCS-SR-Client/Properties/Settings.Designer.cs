@@ -166,5 +166,23 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Properties {
                 return ((ulong)(this["TransmissionLogDiscordChannel"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public ulong AtcLogLogDiscordGuild {
+            get {
+                return ((ulong)(this["AtcLogLogDiscordGuild"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public ulong AtcLogLogDiscordChannel {
+            get {
+                return ((ulong)(this["AtcLogLogDiscordChannel"]));
+            }
+        }
     }
 }

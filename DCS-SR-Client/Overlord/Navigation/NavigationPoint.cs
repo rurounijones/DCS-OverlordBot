@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Geo.Geometries;
 
-namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
+namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Navigation
 {
     /// <summary>
     /// Class that holds the information needed for a navigation point. This means a decimal lat/lon pair
