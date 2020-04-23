@@ -61,7 +61,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Discord
 			}
 		}
 
-		public static async Task SendNavigationPoint(string navigationMessage)
+		public static async Task SendToAtcLogChannel(string navigationMessage)
 		{
 			if (_socket == null || _socket.ConnectionState != ConnectionState.Connected)
 			{

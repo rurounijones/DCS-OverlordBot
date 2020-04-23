@@ -3,7 +3,6 @@ using Newtonsoft.Json;
 using NLog;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using static Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
@@ -18,6 +17,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
 
         public Manager()
         {
+            Logger.Debug("Starting ATC Manager");
+            _ = Discord.DiscordClient.SendToAtcLogChannel("ATC Manager restarted");
             Task.Run(() => CheckNavigationPointsAsync());
         }
 
@@ -38,6 +39,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
                 Thread.Sleep(2000);
                 Logger.Trace($"Checking Airfields");
 
+                bool positionLogged = false;
                 foreach (var airfield in Airfields)
                 {
                     Logger.Trace($"Checking {airfield.Name}");
@@ -49,13 +51,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
                         Logger.Trace($"No Aircraft within 10nm of {airfield.Name}");
                     }
 
-                    foreach (var aircarft in neabyAircraft)
+                    foreach (var aircraft in neabyAircraft)
                     {
-                        if (!airfield.Aircraft.ContainsKey(aircarft.Id))
+                        if (!airfield.Aircraft.ContainsKey(aircraft.Id))
                         {
                             AircraftState.State state;
 
-                            if (aircarft.Altitude > airfield.Altitude + 30)
+                            if (aircraft.Altitude > airfield.Altitude + 30)
                             {
                                 state = AircraftState.State.Flying;
                             }
@@ -63,63 +65,66 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
                             {
                                 state = AircraftState.State.OnGround;
                             }
-                            _ = SendToDiscord($"New Aircraft, ID: {aircarft.Id} (Pilot: {aircarft.Pilot}), State: {state}, Airfield: {airfield.Name}");
-                            airfield.Aircraft.Add(aircarft.Id, new AircraftState(state));
+                            airfield.Aircraft.Add(aircraft.Id, new AircraftState(airfield, aircraft, state));
+                            positionLogged = true;
                         }
+                        if (positionLogged == true) { continue; }
 
-                        var stateMessage = $"Aircraft ID: {aircarft.Id} (Pilot {aircarft.Pilot}) is at state: {airfield.Aircraft[aircarft.Id].CurrentState}";
+
+                        var stateMessage = $"Aircraft ID: {aircraft.Id} (Pilot {aircraft.Pilot}) is at state: {airfield.Aircraft[aircraft.Id].CurrentState}";
                         Logger.Debug(stateMessage);
 
-                        if (aircarft.Altitude > airfield.Altitude + 30) { 
-                            if (airfield.Aircraft[aircarft.Id].CurrentState == AircraftState.State.OnRunway)
+                        if (aircraft.Altitude > airfield.Altitude + 10) { 
+                            if (airfield.Aircraft[aircraft.Id].CurrentState == AircraftState.State.OnRunway)
                             {
-                                airfield.Aircraft[aircarft.Id].Update(AircraftState.Trigger.Takeoff);
-                                _ = SendToDiscord($"Aircraft ID: {aircarft.Id} (Pilot {aircarft.Pilot}) took off from {airfield.Name}");
-                                continue;
+                                airfield.Aircraft[aircraft.Id].Takeoff();
+                                positionLogged = true;
                             }
                         }
+                        if (positionLogged == true) { continue; }
+
 
                         foreach (var runway in airfield.Runways)
                         {
-                            if (runway.Area.GetBounds().Contains(aircarft.GeoPoint))
+                            if (runway.Area.GetBounds().Contains(aircraft.GeoPoint))
                             {
-                                if (aircarft.Altitude <= airfield.Altitude + 10 && airfield.Aircraft[aircarft.Id].CurrentState != AircraftState.State.Outbound)
+                                if (aircraft.Altitude <= airfield.Altitude + 10 && airfield.Aircraft[aircraft.Id].CurrentState != AircraftState.State.Outbound)
                                 {
-                                    airfield.Aircraft[aircarft.Id].Update(AircraftState.Trigger.EnterRunway);
-                                    _ = SendToDiscord($"Aircraft ID: {aircarft.Id} (Pilot {aircarft.Pilot}) entered runway {runway.Name} at {airfield.Name}");
-                                    continue;
-                                } else
-                                {
-                                    airfield.Aircraft[aircarft.Id].Update(AircraftState.Trigger.Land);
-                                    _ = SendToDiscord($"Aircraft ID: {aircarft.Id} (Pilot {aircarft.Pilot}) landed at {airfield.Name}");
+                                    airfield.Aircraft[aircraft.Id].EnterRunway(runway);
                                 }
-                                continue;
+                                else if (aircraft.Altitude >= airfield.Altitude + 5 && airfield.Aircraft[aircraft.Id].CurrentState == AircraftState.State.Outbound)
+                                {
+                                    // No-op to stop flicking between take-off and landing.
+                                }
+                                else 
+                                {
+                                    airfield.Aircraft[aircraft.Id].Land(runway);
+                                }
+                                positionLogged = true;
+                                break;
                             }
                         }
+                        if(positionLogged == true) { continue; }
 
                         foreach (var navigationPoint in airfield.TaxiwayPoints)
                         {
-                            if (navigationPoint.Position.GetBounds().Contains(aircarft.GeoPoint))
+                            if (navigationPoint.Position.GetBounds().Contains(aircraft.GeoPoint))
                             {
-                                if (airfield.Aircraft[aircarft.Id].CurrentState == AircraftState.State.OnRunway)
+                                if (airfield.Aircraft[aircraft.Id].CurrentState == AircraftState.State.OnRunway)
                                 {
-                                    _ = SendToDiscord($"Aircraft ID: {aircarft.Id} (Pilot {aircarft.Pilot}) entered {navigationPoint.Name} from runway at {airfield.Name}");
-                                } else if (airfield.Aircraft[aircarft.Id].CurrentState == AircraftState.State.OnGround)
+                                    airfield.Aircraft[aircraft.Id].EnterBoundaryFromRunway(navigationPoint);
+                                } else if (airfield.Aircraft[aircraft.Id].CurrentState == AircraftState.State.OnGround)
                                 {
-                                    _ = SendToDiscord($"Aircraft ID: {aircarft.Id} (Pilot {aircarft.Pilot}) has taxied to {navigationPoint.Name} at {airfield.Name}");
+                                    airfield.Aircraft[aircraft.Id].EnterBoundaryFromTaxiway(navigationPoint);
+                                } else
+                                {
+                                    Logger.Error($"Could not determine how {aircraft.Id} entered {navigationPoint.Name}");
                                 }
-                                airfield.Aircraft[aircarft.Id].Update(AircraftState.Trigger.EnterTaxiwayRunwayBoundary);
                             }
                         }
                     }
                 }
             }
-        }
-
-        private async Task SendToDiscord(string message)
-        {
-            Logger.Debug(message);
-            await Discord.DiscordClient.SendNavigationPoint(message);
         }
     }
 

@@ -59,8 +59,6 @@ namespace DCS_SR_Client
             Task.Run(() => DiscordClient.Connect());
 
             AtcManager = new Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc.Manager();
-            var aircraftState = new AircraftState(AircraftState.State.OnGround);
-            LogManager.GetCurrentClassLogger().Info(aircraftState.Graph);
         }
 
         private void InitNotificationIcon()
