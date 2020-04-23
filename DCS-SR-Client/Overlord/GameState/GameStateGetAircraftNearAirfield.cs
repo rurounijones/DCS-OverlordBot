@@ -1,5 +1,4 @@
 ﻿using Npgsql;
-using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading.Tasks;
@@ -10,12 +9,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
 {
     public partial class GameState
     {
+        private static readonly int AIRFIELD_SEARCH_DISTANCE = 18520; // 10nm in meters
+        private static readonly int AIRFIELD_SEARCH_HEIGHT = 915; // 3000ft in meters
 
         public static async Task<List<GameObject>> GetAircraftNearAirfield(Airfield airfield)
         {
            var gameObjects = new List<GameObject>();
 
-            var command = @"SELECT contact.id, contact.pilot, contact.position
+            var command = @"SELECT contact.id, contact.pilot, contact.position, contact.altitude
             FROM units as contact
             WHERE ST_DWithin(@airfield, contact.position, @radius)
             AND contact.altitude < @altitude
@@ -29,8 +30,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
                     var position = new Point(airfield.Position.Coordinate.Longitude, airfield.Position.Coordinate.Latitude);
 
                     cmd.Parameters.AddWithValue("airfield", position);
-                    cmd.Parameters.AddWithValue("radius", 18520);
-                    cmd.Parameters.AddWithValue("altitude", 915 + airfield.Altitude);
+                    cmd.Parameters.AddWithValue("radius", AIRFIELD_SEARCH_DISTANCE);
+                    cmd.Parameters.AddWithValue("altitude", AIRFIELD_SEARCH_HEIGHT + airfield.Altitude);
 
                     DbDataReader dbDataReader = await cmd.ExecuteReaderAsync();
                     while (await dbDataReader.ReadAsync())
@@ -39,7 +40,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
                         {
                             Id = dbDataReader.GetString(0),
                             Pilot = dbDataReader.GetString(1),
-                            Position = (Point)dbDataReader[2]
+                            Position = (Point)dbDataReader[2],
+                            Altitude = dbDataReader.GetDouble(3)
                     };
                         gameObjects.Add(gameObject);
                     }
