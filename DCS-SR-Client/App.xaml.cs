@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Discord;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using NLog;
 using Npgsql;
 using Npgsql.Logging;
@@ -57,7 +59,8 @@ namespace DCS_SR_Client
             Task.Run(() => DiscordClient.Connect());
 
             AtcManager = new Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc.Manager();
-
+            var aircraftState = new AircraftState(AircraftState.State.OnGround);
+            LogManager.GetCurrentClassLogger().Info(aircraftState.Graph);
         }
 
         private void InitNotificationIcon()

@@ -1,4 +1,5 @@
-﻿using Geo.Geometries;
+﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc;
+using Geo.Geometries;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -37,6 +38,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Navigation
         public List<NavigationPoint> TaxiwayPoints { get; set; }
 
         public List<NavigationPoint> LandingPatternPoints { get; set; }
+
+        public Dictionary<string, AircraftState> Aircraft = new Dictionary<string, AircraftState>();
 
         public Point Position {
             get {

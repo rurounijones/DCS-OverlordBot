@@ -176,6 +176,9 @@
     <Reference Include="SharpDX.DirectInput, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpDX.DirectInput.4.0.1\lib\net45\SharpDX.DirectInput.dll</HintPath>
     </Reference>
+    <Reference Include="Stateless, Version=4.0.0.0, Culture=neutral, PublicKeyToken=93038f0927583c9a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Stateless.5.1.1\lib\net45\Stateless.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.AppContext, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.AppContext.4.3.0\lib\net463\System.AppContext.dll</HintPath>
@@ -400,6 +403,7 @@
     <Compile Include="Network\Models\RadioSendingState.cs" />
     <Compile Include="Network\SRSClientSyncHandler.cs" />
     <Compile Include="Network\UDPVoiceHandler.cs" />
+    <Compile Include="Overlord\Atc\AircraftState.cs" />
     <Compile Include="Overlord\Navigation\Airfield.cs" />
     <Compile Include="Overlord\Atc\Manager.cs" />
     <Compile Include="Overlord\Navigation\NavigationPoint.cs" />

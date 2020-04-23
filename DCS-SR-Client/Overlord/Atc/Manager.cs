@@ -35,11 +35,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
         {
             while (true)
             {
-                Thread.Sleep(5000);
+                Thread.Sleep(2000);
                 Logger.Trace($"Checking Airfields");
 
                 foreach (var airfield in Airfields)
                 {
+                    Logger.Trace($"Checking {airfield.Name}");
+
                     List<GameObject> neabyAircraft = await GameState.GetAircraftNearAirfield(airfield);
 
                     if(neabyAircraft.Count == 0)
@@ -49,44 +51,76 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
 
                     foreach (var aircarft in neabyAircraft)
                     {
-                        Logger.Trace($"Aircraft {aircarft.Id} (Pilot {aircarft.Pilot}) is within 10nm of {airfield.Name}");
-                        bool positionLogged = false;
+                        if (!airfield.Aircraft.ContainsKey(aircarft.Id))
+                        {
+                            AircraftState.State state;
+
+                            if (aircarft.Altitude > airfield.Altitude + 30)
+                            {
+                                state = AircraftState.State.Flying;
+                            }
+                            else
+                            {
+                                state = AircraftState.State.OnGround;
+                            }
+                            _ = SendToDiscord($"New Aircraft, ID: {aircarft.Id} (Pilot: {aircarft.Pilot}), State: {state}, Airfield: {airfield.Name}");
+                            airfield.Aircraft.Add(aircarft.Id, new AircraftState(state));
+                        }
+
+                        var stateMessage = $"Aircraft ID: {aircarft.Id} (Pilot {aircarft.Pilot}) is at state: {airfield.Aircraft[aircarft.Id].CurrentState}";
+                        Logger.Debug(stateMessage);
+
+                        if (aircarft.Altitude > airfield.Altitude + 30) { 
+                            if (airfield.Aircraft[aircarft.Id].CurrentState == AircraftState.State.OnRunway)
+                            {
+                                airfield.Aircraft[aircarft.Id].Update(AircraftState.Trigger.Takeoff);
+                                _ = SendToDiscord($"Aircraft ID: {aircarft.Id} (Pilot {aircarft.Pilot}) took off from {airfield.Name}");
+                                continue;
+                            }
+                        }
+
                         foreach (var runway in airfield.Runways)
                         {
                             if (runway.Area.GetBounds().Contains(aircarft.GeoPoint))
                             {
-                                string msg;
-                                if (aircarft.Altitude <= airfield.Altitude + 10)
+                                if (aircarft.Altitude <= airfield.Altitude + 10 && airfield.Aircraft[aircarft.Id].CurrentState != AircraftState.State.Outbound)
                                 {
-                                    msg = $"Aircraft {aircarft.Id} (Pilot {aircarft.Pilot}) is on {airfield.Name}, {runway.Name}";
-                                }
-                                else
+                                    airfield.Aircraft[aircarft.Id].Update(AircraftState.Trigger.EnterRunway);
+                                    _ = SendToDiscord($"Aircraft ID: {aircarft.Id} (Pilot {aircarft.Pilot}) entered runway {runway.Name} at {airfield.Name}");
+                                    continue;
+                                } else
                                 {
-                                    msg = $"Aircraft {aircarft.Id} (Pilot {aircarft.Pilot}) is above {airfield.Name}, {runway.Name}";
+                                    airfield.Aircraft[aircarft.Id].Update(AircraftState.Trigger.Land);
+                                    _ = SendToDiscord($"Aircraft ID: {aircarft.Id} (Pilot {aircarft.Pilot}) landed at {airfield.Name}");
                                 }
-                                positionLogged = true;
-                                Logger.Debug(msg);
-                                _ = Discord.DiscordClient.SendNavigationPoint(msg);
+                                continue;
                             }
                         }
-                        if (positionLogged != true)
+
+                        foreach (var navigationPoint in airfield.TaxiwayPoints)
                         {
-                            foreach (var navigationPoint in airfield.TaxiwayPoints)
+                            if (navigationPoint.Position.GetBounds().Contains(aircarft.GeoPoint))
                             {
-                                if (navigationPoint.Position.GetBounds().Contains(aircarft.GeoPoint))
+                                if (airfield.Aircraft[aircarft.Id].CurrentState == AircraftState.State.OnRunway)
                                 {
-                                    var msg = $"Aircraft {aircarft.Id} (Pilot {aircarft.Pilot}) is at {airfield.Name}, {navigationPoint.Name}";
-                                    Logger.Debug(msg);
-                                    _ = Discord.DiscordClient.SendNavigationPoint(msg);
+                                    _ = SendToDiscord($"Aircraft ID: {aircarft.Id} (Pilot {aircarft.Pilot}) entered {navigationPoint.Name} from runway at {airfield.Name}");
+                                } else if (airfield.Aircraft[aircarft.Id].CurrentState == AircraftState.State.OnGround)
+                                {
+                                    _ = SendToDiscord($"Aircraft ID: {aircarft.Id} (Pilot {aircarft.Pilot}) has taxied to {navigationPoint.Name} at {airfield.Name}");
                                 }
+                                airfield.Aircraft[aircarft.Id].Update(AircraftState.Trigger.EnterTaxiwayRunwayBoundary);
                             }
                         }
                     }
                 }
-
             }
         }
-    }
 
+        private async Task SendToDiscord(string message)
+        {
+            Logger.Debug(message);
+            await Discord.DiscordClient.SendNavigationPoint(message);
+        }
+    }
 
 }
