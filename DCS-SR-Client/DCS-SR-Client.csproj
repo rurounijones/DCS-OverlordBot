@@ -605,6 +605,9 @@
     <None Include="Overlord\Data\Airfields\Krymsk.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Overlord\Data\Airfields\Novorossiysk.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>

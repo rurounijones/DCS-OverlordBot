@@ -1,0 +1,53 @@
+{
+  "name": "Novorossiysk",
+  "lon": 37.786226060479564,
+  "lat": 44.6733296041269,
+  "alt": 40.010040283203125,
+  "runways": [
+    {
+      "name": "runway 04/22",
+      "points": [
+        {
+          "lat": 44.6625593,
+          "lon": 37.7699274
+        },
+        {
+          "lat": 44.6739130,
+          "lon": 37.7860634
+        },
+        {
+          "lat": 44.6735670,
+          "lon": 37.7865374
+        },
+        {
+          "lat": 44.6613044,
+          "lon": 37.7704332
+        }
+      ]
+    }
+  ],
+  "taxiwayPoints": [
+    {
+      "name": "taxiway A, short of runway 04/22",
+      "lat": 44.6739807,
+      "lon": 37.7856583,
+      "radius": 25,
+      "altitude": 40.010040283203125
+    },
+    {
+      "name": "taxiway B, short of Runway 04/22",
+      "lat": 44.6729661,
+      "lon": 37.7842160,
+      "radius": 25,
+      "altitude": 40.010040283203125
+    },
+    {
+      "name": "taxiway C, short of runway 04/22",
+      "lat": 44.6629015,
+      "lon": 37.7699327,
+      "radius": 25,
+      "altitude": 40.010040283203125
+    }
+  ],
+  "landingPatternPoints": []
+}
