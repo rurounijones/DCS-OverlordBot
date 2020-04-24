@@ -1,0 +1,60 @@
+{
+  "name": "Krymsk",
+  "lon": 37.985886938697085,
+  "lat": 44.961383022734175,
+  "alt": 20.010303497314453,
+  "runways": [
+    {
+      "name": "runway 04/22",
+      "points": [
+        {
+          "lat": 44.9595182,
+          "lon": 37.9834513
+        },
+        {
+          "lat": 44.9765957,
+          "lon": 38.0060292
+        },
+        {
+          "lat": 44.9762213,
+          "lon": 38.0064542
+        },
+        {
+          "lat": 44.9591540,
+          "lon": 37.9840029
+        }
+      ]
+    }
+  ],
+  "taxiwayPoints": [
+    {
+      "name": "taxiway A, short of runway 04/22",
+      "lat": 44.9607701,
+      "lon": 37.9865609,
+      "radius": 25,
+      "altitude": 20.010303497314453
+    },
+    {
+      "name": "taxiway B, short of Runway 04/22",
+      "lat": 44.9641401,
+      "lon": 37.9909903,
+      "radius": 25,
+      "altitude": 20.010303497314453
+    },
+    {
+      "name": "taxiway C, short of runway 04/22",
+      "lat": 44.9710252,
+      "lon": 38.0000383,
+      "radius": 25,
+      "altitude": 20.010303497314453
+    },
+    {
+      "name": "taxiway D, short of runway 04/22",
+      "lat": 44.9744584,
+      "lon": 38.0045569,
+      "radius": 25,
+      "altitude": 20.010303497314453
+    }
+  ],
+  "landingPatternPoints": []
+}

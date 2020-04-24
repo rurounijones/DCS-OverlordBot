@@ -599,10 +599,10 @@
     <None Include="Overlord\Data\Airfields.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Overlord\Data\Airfields\Anapa-Vityazevo.json">
+    <None Include="Overlord\Data\Airfields\Krasnodar-Center.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Overlord\Data\Airfields\Krasnodar-Center.json">
+    <None Include="Overlord\Data\Airfields\Krymsk.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config">
@@ -686,7 +686,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Overlord\Data\NavigationPoints\" />
     <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

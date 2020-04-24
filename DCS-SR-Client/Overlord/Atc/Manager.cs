@@ -24,11 +24,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
 
         static private List<Airfield> PopulateAirfields()
         {
-            List<Airfield> airfields = new List<Airfield>
+            List<Airfield> airfields = new List<Airfield>();
+
+            string[] fileArray = Directory.GetFiles("Overlord/Data/Airfields/", "*.json");
+
+            foreach (string file in fileArray)
             {
-                //JsonConvert.DeserializeObject<Airfield>(File.ReadAllText("Overlord/Data/Airfields/Anapa-Vityazevo.json")),
-                JsonConvert.DeserializeObject<Airfield>(File.ReadAllText("Overlord/Data/Airfields/Krasnodar-Center.json"))
-            };
+                airfields.Add(JsonConvert.DeserializeObject<Airfield>(File.ReadAllText(file)));
+            }
+
             return airfields;
         }
 

@@ -19,8 +19,7 @@ namespace DCS_SR_Client
     {
         private System.Windows.Forms.NotifyIcon _notifyIcon;
         private bool loggingReady = false;
-
-        private readonly Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc.Manager AtcManager;
+        private readonly Manager AtcManager;
 
         public App()
         {
@@ -58,7 +57,7 @@ namespace DCS_SR_Client
 
             Task.Run(() => DiscordClient.Connect());
 
-            AtcManager = new Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc.Manager();
+            AtcManager = new Manager();
         }
 
         private void InitNotificationIcon()
