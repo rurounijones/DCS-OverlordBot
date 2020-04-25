@@ -395,10 +395,23 @@
     <Compile Include="Audio\Utility\SpeexWrapper.cs" />
     <Compile Include="Discord\DiscordClient.cs" />
     <Compile Include="Input\InputBindState.cs" />
-    <Compile Include="Network\DCSAutoConnectListener.cs" />
-    <Compile Include="Network\Models\CombinedRadioState.cs" />
-    <Compile Include="Network\Models\DCSLosCheckRequest.cs" />
-    <Compile Include="Network\Models\DCSLosCheckResult.cs" />
+    <Compile Include="Network\DCS\DCSAutoConnectHandler.cs" />
+    <Compile Include="Network\DCS\DCSGameGuiHandler.cs" />
+    <Compile Include="Network\DCS\DCSLineOfSightHandler.cs" />
+    <Compile Include="Network\DCS\DCSRadioSyncHandler.cs" />
+    <Compile Include="Network\DCS\DCSRadioSyncManager.cs" />
+    <Compile Include="Network\DCS\Models\CombinedRadioState.cs" />
+    <Compile Include="Network\DCS\Models\DCSLosCheckRequest.cs" />
+    <Compile Include="Network\DCS\Models\DCSLosCheckResult.cs" />
+    <Compile Include="Network\LotATC\LotATCSyncHandler.cs" />
+    <Compile Include="Network\LotATC\Models\LotATCLineOfSightRequest.cs" />
+    <Compile Include="Network\LotATC\Models\LotATCMessageWrapper.cs" />
+    <Compile Include="Network\Models\RadioSendingState.cs" />
+    <Compile Include="Network\SRSClientSyncHandler.cs" />
+    <Compile Include="Network\UDPCommandHandler.cs" />
+    <Compile Include="Network\UDPVoiceHandler.cs" />
+    <Compile Include="Network\VAICOM\Models\VAICOMMessageWrapper.cs" />
+    <Compile Include="Network\VAICOM\VAICOMSyncHandler.cs" />
     <Compile Include="Overlord\Constants.cs" />
     <Compile Include="Overlord\GameState\Contact.cs" />
     <Compile Include="Overlord\GameState\GameObject.cs" />
@@ -427,7 +440,6 @@
     <Compile Include="Overlord\LuisModels\LuisCompositeEntity.cs" />
     <Compile Include="Overlord\LuisModels\LuisEntity.cs" />
     <Compile Include="Overlord\LuisModels\LuisResponse.cs" />
-    <Compile Include="Network\UDPVoiceHandler.cs" />
     <Compile Include="Overlord\Util\Geospatial.cs" />
     <Compile Include="Overlord\WarningRadiusChecker.cs" />
     <Compile Include="Settings.cs" />
@@ -443,6 +455,9 @@
     <Compile Include="Settings\RadioChannels\FilePresetChannelsStore.cs" />
     <Compile Include="Settings\RadioChannels\MockPresetChannelsStore.cs" />
     <Compile Include="Singletons\ClientStateSingleton.cs" />
+    <Compile Include="SRSClientSyncHandler.cs" />
+    <Compile Include="UDPCommandHandler.cs" />
+    <Compile Include="UDPVoiceHandler.cs" />
     <Compile Include="UI\ClientWindow\InputBindingControl.xaml.cs">
       <DependentUpon>InputBindingControl.xaml</DependentUpon>
     </Compile>
@@ -484,8 +499,6 @@
     <Compile Include="UI\RadioOverlayWindow\RadioOverlay.xaml.cs">
       <DependentUpon>RadioOverlay.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Network\Models\RadioSendingState.cs" />
-    <Compile Include="Network\RadioDCSSyncServer.cs" />
     <Compile Include="UI\ServerSettingsWindow\ServerSettingsWindow.xaml.cs">
       <DependentUpon>ServerSettingsWindow.xaml</DependentUpon>
     </Compile>
@@ -508,7 +521,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Network\ClientSync.cs" />
     <Compile Include="UI\ClientWindow\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
