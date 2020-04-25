@@ -104,7 +104,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
                 Environment.Exit(1);
             }
 
-            _udpVoiceHandler = new UdpVoiceHandler(_clientsList, guid, ipAddress, port, _decoder, this, inputManager, voipConnectCallback);
+            _udpVoiceHandler = new UdpVoiceHandler(guid, ipAddress, port, _decoder, this);
             var voiceSenderThread = new Thread(_udpVoiceHandler.Listen);
 
             voiceSenderThread.Start();

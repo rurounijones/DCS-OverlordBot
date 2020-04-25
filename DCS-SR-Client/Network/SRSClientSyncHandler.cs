@@ -8,9 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Network.LotATC;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Network.VAICOM;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
@@ -37,7 +34,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
         private ConnectCallback _callback;
         private ExternalAWACSModeConnectCallback _externalAWACSModeCallback;
         private UpdateUICallback _updateUICallback;
-        private readonly DCSRadioSyncHandler.NewAircraft _newAircraft;
         private IPEndPoint _serverEndpoint;
         private TcpClient _tcpClient;
 
@@ -46,18 +42,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
         private readonly ConnectedClientsSingleton _clients = ConnectedClientsSingleton.Instance;
 
 
-        private DCSRadioSyncManager _radioDCSSync = null;
-        private LotATCSyncHandler _lotATCSync;
-
         private static readonly int MAX_DECODE_ERRORS = 5;
-        private VAICOMSyncHandler _vaicomSync;
 
 
-        public SRSClientSyncHandler(string guid, UpdateUICallback uiCallback, DCSRadioSyncHandler.NewAircraft _newAircraft)
+        public SRSClientSyncHandler(string guid, UpdateUICallback uiCallback)
         {
             _guid = guid;
             _updateUICallback = uiCallback;
-            this._newAircraft = _newAircraft;
         }
 
 
@@ -97,39 +88,17 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
         public void DisconnectExternalAWACSMode()
         {
-            if (!_clientStateSingleton.ExternalAWACSModelSelected || _radioDCSSync == null)
+            if (!_clientStateSingleton.ExternalAWACSModelSelected)
             {
                 return;
             }
-
-            _radioDCSSync.StopExternalAWACSModeLoop();
 
             CallExternalAWACSModeOnMain(false, 0);
         }
 
         private void Connect()
         {
-            if (_radioDCSSync != null)
-            {
-                _radioDCSSync.Stop();
-                _radioDCSSync = null;
-            }
-            if (_lotATCSync != null)
-            {
-                _lotATCSync.Stop();
-                _lotATCSync = null;
-            }
-            if (_vaicomSync != null)
-            {
-                _vaicomSync.Stop();
-                _vaicomSync = null;
-            }
-
             bool connectionError = false;
-
-            _radioDCSSync = new DCSRadioSyncManager(ClientRadioUpdated, ClientCoalitionUpdate, _guid,_newAircraft);
-            _lotATCSync = new LotATCSyncHandler(ClientCoalitionUpdate, _guid);
-            _vaicomSync = new VAICOMSyncHandler();
 
             using (_tcpClient = new TcpClient())
             {
@@ -143,10 +112,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
                     if (_tcpClient.Connected)
                     {
-                        _radioDCSSync.Start();
-                        _lotATCSync.Start();
-                        _vaicomSync.Start();
-
                         _tcpClient.NoDelay = true;
 
                         CallOnMain(true);
@@ -166,10 +131,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                     connectionError = true;
                 }
             }
-
-            _radioDCSSync.Stop();
-            _lotATCSync.Stop();
-            _vaicomSync.Stop();
 
             //disconnect callback
             CallOnMain(false, connectionError);
@@ -440,13 +401,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
                                             CallExternalAWACSModeOnMain(false, 0);
                                         }
-                                        else if (_radioDCSSync != null && _radioDCSSync.IsListening)
+                                        else
                                         {
                                             Logger.Info("External AWACS mode authentication succeeded, coalition {0}", serverMessage.Client.Coalition == 1 ? "red" : "blue");
 
                                             CallExternalAWACSModeOnMain(true, serverMessage.Client.Coalition);
-
-                                            _radioDCSSync.StartExternalAWACSModeLoop();
                                         }
                                         break;
                                     default:

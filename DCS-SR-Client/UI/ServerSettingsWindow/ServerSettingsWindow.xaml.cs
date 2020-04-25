@@ -60,7 +60,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
                 AllowRadioEncryption.Content = settings.GetSettingAsBool(ServerSettingsKeys.ALLOW_RADIO_ENCRYPTION) ? "ON" : "OFF";
 
-                ServerVersion.Content = ClientSync.ServerVersion;
+                ServerVersion.Content = SRSClientSyncHandler.ServerVersion;
             }
             catch (IndexOutOfRangeException ex)
             {

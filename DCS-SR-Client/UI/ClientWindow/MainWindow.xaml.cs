@@ -44,7 +44,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
         private readonly string _guid;
         private readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private AudioPreview _audioPreview;
-        private ClientSync _client;
+        private SRSClientSyncHandler _client;
         private int _port = 5002;
 
         private Overlay.RadioOverlayWindow _radioOverlayWindow;
@@ -291,8 +291,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             {
                 bool eamEnabled = _serverSettings.GetSettingAsBool(Common.Setting.ServerSettingsKeys.EXTERNAL_AWACS_MODE);
 
-                ExternalAWACSModePassword.IsEnabled = eamEnabled && !_clientStateSingleton.InExternalAWACSMode && !isGameExportConnected;
-                ExternalAWACSModeName.IsEnabled = eamEnabled && !_clientStateSingleton.InExternalAWACSMode && !isGameExportConnected;
+                ExternalAWACSModePassword.IsEnabled = eamEnabled && !_clientStateSingleton.ExternalAWACSModeConnected && !isGameExportConnected;
+                ExternalAWACSModeName.IsEnabled = eamEnabled && !_clientStateSingleton.ExternalAWACSModeConnected && !isGameExportConnected;
             }
             else
             {
@@ -357,7 +357,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                         _resolvedIp = ip;
                         _port = GetPortFromTextBox();
 
-                        _client = new ClientSync(_clients, _guid, UpdateUICallback);
+                        _client = new SRSClientSyncHandler(_guid, UpdateUICallback);
                         _client.TryConnect(new IPEndPoint(_resolvedIp, _port), ConnectCallback);
 
                         StartStop.Content = "Connecting...";
@@ -429,7 +429,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             StartStop.Content = "Connect";
             StartStop.IsEnabled = true;
             _clientStateSingleton.IsConnected = false;
-            _clientStateSingleton.InExternalAWACSMode = false;
             ToggleServerSettings.IsEnabled = false;
 
             ServerConnectionStatus.Source = connectionError ? Images.IconDisconnectedError : Images.IconDisconnected;
@@ -462,7 +461,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
             try
             {
-                if (_client._stop == false)
+                if (_client != null)
                 {
                     _client.Disconnect();
                     _client = null;
@@ -473,7 +472,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             }
 
             _clientStateSingleton.DcsPlayerRadioInfo.Reset();
-            _clientStateSingleton.DcsPlayerSideInfo.Reset();
+            _clientStateSingleton.PlayerCoaltionLocationMetadata.Reset();
 
             if( connectionError == true)
             {
@@ -609,9 +608,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
                 bool eamEnabled = _serverSettings.GetSettingAsBool(Common.Setting.ServerSettingsKeys.EXTERNAL_AWACS_MODE);
 
-                ExternalAWACSModePassword.IsEnabled = eamEnabled && !_clientStateSingleton.InExternalAWACSMode && !_clientStateSingleton.IsGameConnected;
+                ExternalAWACSModePassword.IsEnabled = eamEnabled && !_clientStateSingleton.ExternalAWACSModeConnected && !_clientStateSingleton.IsGameConnected;
                 ExternalAWACSModePasswordLabel.IsEnabled = eamEnabled;
-                ExternalAWACSModeName.IsEnabled = eamEnabled && !_clientStateSingleton.InExternalAWACSMode && !_clientStateSingleton.IsGameConnected;
+                ExternalAWACSModeName.IsEnabled = eamEnabled && !_clientStateSingleton.ExternalAWACSModeConnected && !_clientStateSingleton.IsGameConnected;
                 ExternalAWACSModeNameLabel.IsEnabled = eamEnabled;
             }
             else
@@ -876,7 +875,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
         {
             if (_client == null ||
                 !_clientStateSingleton.IsConnected ||
-                (!_clientStateSingleton.InExternalAWACSMode &&
+                (!_clientStateSingleton.ExternalAWACSModeConnected &&
                 string.IsNullOrWhiteSpace(ExternalAWACSModePassword.Password)))
             {
                 return;
@@ -884,7 +883,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
             _clientStateSingleton.LastSeenName = ExternalAWACSModeName.Text;
 
-            if (_clientStateSingleton.InExternalAWACSMode)
+            if (_clientStateSingleton.ExternalAWACSModeConnected)
             {
                 // Already connected, do nothing
             }
@@ -899,9 +898,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             if (result)
             {
                 AWACSConnectionStatus.Source = Images.IconConnected;
-                _clientStateSingleton.InExternalAWACSMode = true;
-                _clientStateSingleton.DcsPlayerSideInfo.side = coalition;
-                _clientStateSingleton.DcsPlayerSideInfo.name = _clientStateSingleton.LastSeenName;
+                _clientStateSingleton.PlayerCoaltionLocationMetadata.side = coalition;
+                _clientStateSingleton.PlayerCoaltionLocationMetadata.name = _clientStateSingleton.LastSeenName;
                 _clientStateSingleton.DcsPlayerRadioInfo.name = _clientStateSingleton.LastSeenName;
 
                 ExternalAWACSModePassword.IsEnabled = false;
@@ -910,9 +908,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             else
             {
                 AWACSConnectionStatus.Source = Images.IconDisconnected;
-                _clientStateSingleton.InExternalAWACSMode = false;
-                _clientStateSingleton.DcsPlayerSideInfo.side = 0;
-                _clientStateSingleton.DcsPlayerSideInfo.name = "";
+                _clientStateSingleton.PlayerCoaltionLocationMetadata.side = 0;
+                _clientStateSingleton.PlayerCoaltionLocationMetadata.name = "";
                 _clientStateSingleton.DcsPlayerRadioInfo.name = "";
                 _clientStateSingleton.DcsPlayerRadioInfo.LastUpdate = 0;
                 _clientStateSingleton.LastSent = 0;
