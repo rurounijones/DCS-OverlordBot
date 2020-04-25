@@ -259,58 +259,62 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
         // Expects a byte buffer containing 16 bit 16KHz 1 channel PCM WAV
         private async Task SendResponse(byte[] buffer, int length, int radioId)
         {
-
-            Queue<byte> audioQueue = new Queue<byte>(length);
-
-            for (var i = 0; i < length; i++)
+            try
             {
-                audioQueue.Enqueue(buffer[i]);
-            }
+                Queue<byte> audioQueue = new Queue<byte>(length);
 
-            //read out the queue
-            while (audioQueue.Count >= SEGMENT_FRAMES)
-            {
-
-                byte[] packetBuffer = new byte[SEGMENT_FRAMES];
-
-                for (var i = 0; i < SEGMENT_FRAMES; i++)
+                for (var i = 0; i < length; i++)
                 {
-                    if (audioQueue.Count > 0)
+                    audioQueue.Enqueue(buffer[i]);
+                }
+
+                //read out the buffer
+                while (audioQueue.Count >= SEGMENT_FRAMES)
+                {
+
+                    byte[] packetBuffer = new byte[SEGMENT_FRAMES];
+
+                    for (var i = 0; i < SEGMENT_FRAMES; i++)
                     {
-                        packetBuffer[i] = audioQueue.Dequeue();
+                        if (audioQueue.Count > 0)
+                        {
+                            packetBuffer[i] = audioQueue.Dequeue();
+                        }
+                        else
+                        {
+                            packetBuffer[i] = 0;
+                        }
+                    }
+
+                    //encode as opus bytes
+                    var buff = _encoder.Encode(packetBuffer, SEGMENT_FRAMES, out int len);
+
+                    if ((_udpVoiceHandler != null) && (buff != null) && (len > 0))
+                    {
+                        //create copy with small buffer
+                        var encoded = new byte[len];
+
+                        Buffer.BlockCopy(buff, 0, encoded, 0, len);
+
+                        await Task.Run(() => _udpVoiceHandler.Send(encoded, len, radioId));
+                        // Sleep between sending 40ms worth of data so that we do not overflow the 3 second audio buffers of
+                        // normal SRS clients. The lower the sleep the less chance of audio corruption due to network issues
+                        // but the greater the chance of over-flowing buffers. 20ms sleep per 40ms of audio being sent seems
+                        // to be about the right balance.
+                        Thread.Sleep(20);
                     }
                     else
                     {
-                        packetBuffer[i] = 0;
+                        Logger.Debug($"Invalid Bytes for Encoding - {length} should be {SEGMENT_FRAMES}");
                     }
                 }
-
-                //encode as opus bytes
-                int len;
-                var buff = _encoder.Encode(packetBuffer, SEGMENT_FRAMES, out len);
-
-                if ((_udpVoiceHandler != null) && (buff != null) && (len > 0))
-                {
-                    //create copy with small buffer
-                    var encoded = new byte[len];
-
-                    Buffer.BlockCopy(buff, 0, encoded, 0, len);
-
-                    await Task.Run(() => _udpVoiceHandler.Send(encoded, len, radioId));
-                    // Sleep between sending 40ms worth of data so that we do not overflow the 3 second audio buffers of
-                    // normal SRS clients. The lower the sleep the less chance of audio corruption due to network issues
-                    // but the greater the chance of over-flowing buffers. 20ms sleep per 40ms of audio being sent seems
-                    // to be about the right balance.
-                    Thread.Sleep(20);
-                }
-                else
-                {
-                    Logger.Debug($"Invalid Bytes for Encoding - {length} should be {SEGMENT_FRAMES}");
-                }
+                // Send one null to reset the sending state
+                await Task.Run(() => _udpVoiceHandler.Send(null, 0, radioId));
+                // Sleep for a second between sending messages to give players a chance to split messages.
+            } catch (Exception ex)
+            {
+                Logger.Error(ex, $"Exception sending response. RadioId {radioId}, Response length {length}");
             }
-            // Send one null to reset the sending state
-            await Task.Run(() => _udpVoiceHandler.Send(null, 0, radioId));
-            // Sleep for a second between sending messages to give players a chance to split messages.
             Thread.Sleep(1000);
         }
     }
