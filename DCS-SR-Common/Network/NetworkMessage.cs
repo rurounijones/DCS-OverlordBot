@@ -1,9 +1,17 @@
 ﻿using System.Collections.Generic;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
+using Newtonsoft.Json;
+using NLog.Layouts;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network
 {
     public class NetworkMessage
     {
+        private static readonly JsonSerializerSettings JsonSerializerSettings = new JsonSerializerSettings
+        {
+            ContractResolver = new JsonNetworkPropertiesResolver(),
+            NullValueHandling = NullValueHandling.Ignore // same some network bandwidth
+        };
         public enum MessageType
         {
             UPDATE, //META Data update - No Radio Information
@@ -28,5 +36,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network
         public string ExternalAWACSModePassword { get; set; }
 
         public string Version { get; set; }
+
+        public string Encode()
+        {
+            Version = UpdaterChecker.VERSION;
+            return JsonConvert.SerializeObject(this, JsonSerializerSettings) + "\n";
+
+        }
     }
 }

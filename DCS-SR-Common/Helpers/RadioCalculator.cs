@@ -1,4 +1,5 @@
 ﻿using System;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.DCSState;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common
 {
@@ -54,11 +55,48 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
             return FriisMaximumTransmissionRange(frequency) > distance;
         }
 
-        public static double CalculateDistance(DcsPosition from, DcsPosition too)
+        public static double DegreeToRadian(double angle)
         {
-            return
-                Math.Abs(
-                    Math.Sqrt(Math.Pow(too.x - from.x, 2) + Math.Pow(too.y - from.y, 2) + Math.Pow(too.z - from.z, 2)));
+            return Math.PI * angle / 180.0;
         }
+
+        public static double CalculateDistanceHaversine(DCSLatLngPosition myLatLng, DCSLatLngPosition clientLatLng)
+        {
+            if (myLatLng.lat == clientLatLng.lat || myLatLng.lng == clientLatLng.lng)
+            {
+                //the above will cause a divide by 0 error so this is protection against that....
+                //should be *almost* impossible...
+                return Math.Abs(myLatLng.alt - clientLatLng.alt);
+            }
+
+            const double R = 6371e3; // meters
+            var φ1 = DegreeToRadian(myLatLng.lat);
+            var φ2 = DegreeToRadian(clientLatLng.lat);
+            var Δφ = DegreeToRadian(clientLatLng.lat - myLatLng.lat);
+            var Δλ = DegreeToRadian(clientLatLng.lng - myLatLng.lng);
+
+            var a = Math.Sin(Δφ / 2) * Math.Sin(Δφ / 2) +
+                    Math.Cos(φ1) * Math.Cos(φ2) *
+                    Math.Sin(Δλ / 2) * Math.Sin(Δλ / 2);
+            var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+            var d = R * c;
+            return Math.Abs(PythagDistance(d, myLatLng.alt - clientLatLng.alt));
+        }
+
+        //we have haversine great circle distance - but as they're aircraft we need to offset for height as that gives the real distance
+        private static double PythagDistance(double distance, double height)
+        {
+            height = Math.Abs(height);
+            distance = Math.Abs(distance);
+            if (height == 0)
+            {
+                return distance;
+            }
+
+            //distance^2 and height^2 
+            return Math.Sqrt((distance * distance) + (height * height));
+
+        }
+      
     }
 }

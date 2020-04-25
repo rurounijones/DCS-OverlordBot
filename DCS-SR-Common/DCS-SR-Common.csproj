@@ -106,18 +106,25 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DCSState\DCSLatLngPosition.cs" />
+    <Compile Include="DCSState\Transponder.cs" />
     <Compile Include="DCSState\RadioReceivingPriority.cs" />
     <Compile Include="DCSState\RadioReceivingState.cs" />
     <Compile Include="Helpers\CircularBuffer.cs" />
     <Compile Include="Helpers\ConversionHelpers.cs" />
     <Compile Include="DCSState\DCSPlayerSideInfo.cs" />
     <Compile Include="DCSState\DCSPosition.cs" />
+    <Compile Include="Helpers\JsonDCSIgnoreSerializationAttribute.cs" />
+    <Compile Include="Helpers\JsonNetworkIgnoreSerializationAttribute.cs" />
+    <Compile Include="Helpers\JsonDCSPropertiesResolver.cs" />
+    <Compile Include="Helpers\JsonNetworkPropertiesResolver.cs" />
     <Compile Include="Helpers\ListHelper.cs" />
     <Compile Include="Helpers\VolumeConversionHelper.cs" />
     <Compile Include="Network\Analytics.cs" />
     <Compile Include="Network\ClientListExport.cs" />
     <Compile Include="Network\NetworkMessage.cs" />
     <Compile Include="Network\UDPInterfaceCommand.cs" />
+    <Compile Include="Network\UDPPositionPacket.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DCSState\DCSPlayerRadioInfo.cs" />
     <Compile Include="Helpers\RadioCalculator.cs" />

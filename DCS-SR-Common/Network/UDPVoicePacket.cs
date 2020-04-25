@@ -99,6 +99,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network
              * AUDIO SEGMENT
              */
 
+            // Copy segment after length headers
             Buffer.BlockCopy(AudioPart1Bytes, 0, combinedBytes, 6, AudioPart1Bytes.Length);
 
             /**
@@ -165,23 +166,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network
             return combinedBytes;
         }
 
-        public override string ToString()
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.Append($"Guid: {Guid}, ");
-            sb.Append($"Frequencies: {Frequencies}, ");
-            sb.Append($"UnitId: {UnitId}, ");
-            sb.Append($"Encryptions: {Encryptions}, ");
-            sb.Append($"Modulations: {Modulations}, ");
-            sb.Append($"PacketNumber: {PacketNumber}, ");
-            sb.Append($"PacketLength: {PacketLength}");
-            return sb.ToString();
-        }
-
         public static UDPVoicePacket DecodeVoicePacket(byte[] encodedOpusAudio, bool decode = true)
         {
             try
             {
+
+
                 // Last 22 bytes of packet are always the client GUID
                 var receivingGuid = Encoding.ASCII.GetString(
                     encodedOpusAudio, encodedOpusAudio.Length - GuidLength, GuidLength);

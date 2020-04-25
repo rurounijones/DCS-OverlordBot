@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.DCSState;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
 using Newtonsoft.Json;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common
@@ -13,20 +15,58 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
             IN_COCKPIT = 1
         }
 
+        [JsonNetworkIgnoreSerialization]
+        [JsonDCSIgnoreSerialization]
         public string name = "";
-        public DcsPosition pos = new DcsPosition();
+
+        [JsonNetworkIgnoreSerialization]
+        [JsonDCSIgnoreSerialization]
+        public DCSLatLngPosition latLng = new DCSLatLngPosition();
+
+        [JsonNetworkIgnoreSerialization]
+        [JsonDCSIgnoreSerialization]
+        public bool inAircraft = false;
+
+        [JsonNetworkIgnoreSerialization]
+        [JsonDCSIgnoreSerialization]
         public volatile bool ptt = false;
 
         public RadioInformation[] radios = new RadioInformation[11]; //10 + intercom
+
+        [JsonNetworkIgnoreSerialization]
+        [JsonDCSIgnoreSerialization]
         public RadioSwitchControls control = RadioSwitchControls.HOTAS;
+
+        [JsonNetworkIgnoreSerialization]
         public short selected = 0;
+
         public string unit = "";
+        
         public uint unitId;
 
+        [JsonNetworkIgnoreSerialization]
+        [JsonDCSIgnoreSerialization]
+        public bool intercomHotMic = false; //if true switch to intercom and transmit
+
+        public Transponder iff = new Transponder();
+
+        [JsonIgnore]
         public readonly static uint UnitIdOffset = 100000001
             ; // this is where non aircraft "Unit" Ids start from for satcom intercom
 
+        [JsonNetworkIgnoreSerialization]
+        [JsonDCSIgnoreSerialization]
         public bool simultaneousTransmission = false; // Global toggle enabling simultaneous transmission on multiple radios, activated via the AWACS panel
+
+        [JsonNetworkIgnoreSerialization]
+        public SimultaneousTransmissionControl simultaneousTransmissionControl =
+            SimultaneousTransmissionControl.EXTERNAL_DCS_CONTROL;
+
+        public enum SimultaneousTransmissionControl
+        {
+            ENABLED_INTERNAL_SRS_CONTROLS = 1,
+            EXTERNAL_DCS_CONTROL = 0,
+        }
 
         public DCSPlayerRadioInfo()
         {
@@ -42,59 +82,81 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
         public void Reset()
         {
             name = "";
-            pos = new DcsPosition();
+            latLng = new DCSLatLngPosition();
             ptt = false;
             selected = 0;
             unit = "";
             simultaneousTransmission = false;
+            simultaneousTransmissionControl = SimultaneousTransmissionControl.EXTERNAL_DCS_CONTROL;
             LastUpdate = 0;
         }
 
         // override object.Equals
         public override bool Equals(object compare)
         {
-            if ((compare == null) || (GetType() != compare.GetType()))
+            try
             {
-                return false;
-            }
-
-            var compareRadio = compare as DCSPlayerRadioInfo;
-
-            if (control != compareRadio.control)
-            {
-                return false;
-            }
-            //if (side != compareRadio.side)
-            //{
-            //    return false;
-            //}
-            if (!name.Equals(compareRadio.name))
-            {
-                return false;
-            }
-            if (!unit.Equals(compareRadio.unit))
-            {
-                return false;
-            }
-
-            if (unitId != compareRadio.unitId)
-            {
-                return false;
-            }
-
-            for (var i = 0; i < radios.Length; i++)
-            {
-                var radio1 = radios[i];
-                var radio2 = compareRadio.radios[i];
-
-                if ((radio1 != null) && (radio2 != null))
+                if ((compare == null) || (GetType() != compare.GetType()))
                 {
-                    if (!radio1.Equals(radio2))
+                    return false;
+                }
+
+                var compareRadio = compare as DCSPlayerRadioInfo;
+
+                if (control != compareRadio.control)
+                {
+                    return false;
+                }
+                //if (side != compareRadio.side)
+                //{
+                //    return false;
+                //}
+                if (!name.Equals(compareRadio.name))
+                {
+                    return false;
+                }
+                if (!unit.Equals(compareRadio.unit))
+                {
+                    return false;
+                }
+
+                if (unitId != compareRadio.unitId)
+                {
+                    return false;
+                }
+
+                if (((iff == null) || (compareRadio.iff == null)))
+                {
+                    return false;
+                }
+                else
+                {
+                    //check iff
+                    if (!iff.Equals(compareRadio.iff))
                     {
                         return false;
                     }
                 }
+
+                for (var i = 0; i < radios.Length; i++)
+                {
+                    var radio1 = radios[i];
+                    var radio2 = compareRadio.radios[i];
+
+                    if ((radio1 != null) && (radio2 != null))
+                    {
+                        if (!radio1.Equals(radio2))
+                        {
+                            return false;
+                        }
+                    }
+                }
             }
+            catch
+            {
+                return false;
+            }
+          
 
             return true;
         }
@@ -109,6 +171,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
             return LastUpdate > DateTime.Now.Ticks - 100000000;
         }
 
+        //comparing doubles is risky - check that we're close enough to hear (within 100hz)
+        public static bool FreqCloseEnough(double freq1, double freq2)
+        {
+            var diff = Math.Abs(freq1 - freq2);
+
+            return diff < 500;
+        }
+
         public RadioInformation CanHearTransmission(double frequency,
             RadioInformation.Modulation modulation,
             byte encryptionKey,
@@ -117,12 +187,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
             out RadioReceivingState receivingState,
             out bool decryptable)
         {
-            if (!IsCurrent())
-            {
-                receivingState = null;
-                decryptable = false;
-                return null;
-            }
+        //    if (!IsCurrent())
+       //     {
+       //         receivingState = null;
+        //        decryptable = false;
+         //       return null;
+         //   }
 
             RadioInformation bestMatchingRadio = null;
             RadioReceivingState bestMatchingRadioState = null;
@@ -139,7 +209,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
                         (modulation == RadioInformation.Modulation.INTERCOM))
                     {
                         if ((unitId > 0) && (sendingUnitId > 0)
-                            && (unitId == sendingUnitId))
+                            && (unitId == sendingUnitId) )
                         {
                             receivingState = new RadioReceivingState
                             {
@@ -161,7 +231,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
                         continue;
                     }
 
-                    if ((receivingRadio.freq == frequency)
+                    //within 1khz
+                    if ((FreqCloseEnough(receivingRadio.freq,frequency))
                         && (receivingRadio.modulation == modulation)
                         && (receivingRadio.freq > 10000))
                     {
@@ -217,6 +288,18 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
             decryptable = bestMatchingDecryptable;
             receivingState = bestMatchingRadioState;
             return bestMatchingRadio;
+        }
+
+        public bool IsValid()
+        {
+            foreach (var radio in radios)
+            {
+                if (radio?.modulation != RadioInformation.Modulation.DISABLED)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

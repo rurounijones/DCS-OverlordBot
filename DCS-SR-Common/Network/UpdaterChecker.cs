@@ -2,10 +2,12 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Security.Principal;
 using System.Threading.Tasks;
 using System.Windows;
 using NLog;
 using Octokit;
+using Application = System.Windows.Application;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common
 {
@@ -17,9 +19,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
         // Required for all requests against the GitHub API, as per https://developer.github.com/v3/#user-agent-required
         public static readonly string GITHUB_USER_AGENT = $"{GITHUB_USERNAME}_{GITHUB_REPOSITORY}";
 
-        public static readonly string MINIMUM_PROTOCOL_VERSION = "1.7.0.0";
+        public static readonly string MINIMUM_PROTOCOL_VERSION = "1.8.0.0";
 
-        public static readonly string VERSION = "1.7.0.2";
+        public static readonly string VERSION = "1.8.0.0";
 
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
@@ -68,11 +70,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
                 // Compare latest versions with currently running version depending on user branch choice
                 if (checkForBetaUpdates && latestBetaVersion > currentVersion)
                 {
-                    ShowUpdateAvailableDialog("beta", latestBetaVersion, latestBetaRelease.HtmlUrl);
+                    ShowUpdateAvailableDialog("beta", latestBetaVersion, latestBetaRelease.HtmlUrl, true);
                 }
                 else if (latestStableVersion > currentVersion)
                 {
-                    ShowUpdateAvailableDialog("stable", latestStableVersion, latestStableRelease.HtmlUrl);
+                    ShowUpdateAvailableDialog("stable", latestStableVersion, latestStableRelease.HtmlUrl, false);
                 }
                 else if (checkForBetaUpdates && latestBetaVersion == currentVersion)
                 {
@@ -94,16 +96,78 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
 #endif
         }
 
-        public static void ShowUpdateAvailableDialog(string branch, Version version, string url)
+        public static void ShowUpdateAvailableDialog(string branch, Version version, string url, bool beta)
         {
             _logger.Warn($"New {branch} version available on GitHub: {version}");
 
-            var result = MessageBox.Show($"New {branch} version {version} available!\n\nDo you want to update?",
-                "Update available", MessageBoxButton.YesNo, MessageBoxImage.Information);
+            var result = MessageBox.Show($"New {branch} version {version} available!\n\nDo you want to Auto update? This will close SRS\n\nYes - Auto Update\nNo - Manual Update\nCancel - Ignore",
+                "Update available", MessageBoxButton.YesNoCancel, MessageBoxImage.Information);
 
             if (result == MessageBoxResult.Yes)
             {
+                try
+                {
+                    LaunchUpdater(beta);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Unable to Auto Update - please download latest version manually",
+                        "Auto Update Error", MessageBoxButton.YesNoCancel, MessageBoxImage.Information);
+
+                    Process.Start(url);
+                }
+
+            }
+            else if (result == MessageBoxResult.No)
+            {
                 Process.Start(url);
+            }
+        }
+
+        private static void LaunchUpdater(bool beta)
+        {
+            WindowsPrincipal principal = new WindowsPrincipal(WindowsIdentity.GetCurrent());
+            bool hasAdministrativeRight = principal.IsInRole(WindowsBuiltInRole.Administrator);
+
+            if (!hasAdministrativeRight)
+            {
+               
+                    var location = AppDomain.CurrentDomain.BaseDirectory;
+
+                    ProcessStartInfo startInfo = new ProcessStartInfo
+                    {
+                        UseShellExecute = true,
+                        WorkingDirectory = location,
+                        FileName = location + "SRS-AutoUpdater.exe",
+                        Verb = "runas"
+                    };
+
+                    if (beta)
+                    {
+                        startInfo.Arguments = "-beta";
+                    }
+                  
+                    try
+                    {
+                        Process p = Process.Start(startInfo);
+                    }
+                    catch (System.ComponentModel.Win32Exception ex)
+                    {
+                        MessageBox.Show(
+                            "SRS Auto Update Requires Admin Rights",
+                            "UAC Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+            }
+            else
+            {
+                if (beta)
+                {
+                    Process.Start("SRS-AutoUpdater.exe", "-beta");
+                }
+                else
+                {
+                    Process.Start("SRS-AutoUpdater.exe");
+                }
             }
         }
     }

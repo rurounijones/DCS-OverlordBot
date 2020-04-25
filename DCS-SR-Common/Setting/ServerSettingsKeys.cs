@@ -23,7 +23,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Setting
         EXTERNAL_AWACS_MODE_RED_PASSWORD = 12,
         CLIENT_EXPORT_FILE_PATH = 13,
         CHECK_FOR_BETA_UPDATES = 14,
-        ALLOW_RADIO_ENCRYPTION = 15
+        ALLOW_RADIO_ENCRYPTION = 15,
+        TEST_FREQUENCIES = 16,
+        SHOW_TUNED_COUNT = 17,
+        GLOBAL_LOBBY_FREQUENCIES = 18,
+        SHOW_TRANSMITTER_NAME = 19,
+        LOTATC_EXPORT_ENABLED = 20,
+        LOTATC_EXPORT_PORT = 21,
+        LOTATC_EXPORT_IP = 22,
+        UPNP_ENABLED = 23
     }
 
     public class DefaultServerSettings
@@ -46,6 +54,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Setting
             { ServerSettingsKeys.CLIENT_EXPORT_FILE_PATH.ToString(), "clients-list.json" },
             { ServerSettingsKeys.CHECK_FOR_BETA_UPDATES.ToString(), "false" },
             { ServerSettingsKeys.ALLOW_RADIO_ENCRYPTION.ToString(), "true" },
+            { ServerSettingsKeys.TEST_FREQUENCIES.ToString(), "247.2,120.3" },
+            { ServerSettingsKeys.SHOW_TUNED_COUNT.ToString(), "true" },
+            { ServerSettingsKeys.GLOBAL_LOBBY_FREQUENCIES.ToString(), "248.22" },
+            { ServerSettingsKeys.LOTATC_EXPORT_ENABLED.ToString(), "false" },
+            { ServerSettingsKeys.LOTATC_EXPORT_PORT.ToString(), "10712" },
+            { ServerSettingsKeys.LOTATC_EXPORT_IP.ToString(), "127.0.0.1" },
+            { ServerSettingsKeys.UPNP_ENABLED.ToString(), "true" },
         };
     }
 }
