@@ -492,6 +492,8 @@
     <Compile Include="UI\ToolTips.cs" />
     <Compile Include="Utils\DelegateCommand.cs" />
     <Compile Include="Utils\RadioHelper.cs" />
+    <Compile Include="Utils\ValueConverters\BooleanInverterConverter.cs" />
+    <Compile Include="Utils\ValueConverters\ConnectionStatusImageConverter.cs" />
     <Compile Include="Utils\WPFElementHelper.cs" />
     <Page Include="UI\ClientWindow\InputBindingControl.xaml">
       <SubType>Designer</SubType>

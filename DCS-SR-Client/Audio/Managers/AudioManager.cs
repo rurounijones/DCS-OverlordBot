@@ -84,7 +84,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
         public float MicBoost { get; set; } = 1.0f;
 
         public void StartEncoding(int mic, MMDevice speakers, string guid, InputDeviceManager inputManager,
-            IPAddress ipAddress, int port, MMDevice micOutput, VOIPConnectCallback voipConnectCallback)
+            IPAddress ipAddress, int port, MMDevice micOutput)
         {
             try
             {

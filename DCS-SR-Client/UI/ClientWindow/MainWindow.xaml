@@ -8,6 +8,7 @@
                       xmlns:input="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Client.Input"
                       xmlns:local="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Client.UI"
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                      xmlns:converters="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Client.Utils.ValueConverters"
                       xmlns:settings="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Client.Settings"
                       Title="OverlordBot for SRS"
                       Width="550"
@@ -170,23 +171,26 @@
                     <StackPanel Margin="0"
                                 HorizontalAlignment="Center"
                                 Orientation="Horizontal">
+                        <StackPanel.Resources>
+                            <converters:ConnectionStatusImageConverter x:Key="ConnectionStatusImageConverter"/>
+                        </StackPanel.Resources>
                         <Label HorizontalAlignment="Center" HorizontalContentAlignment="Center" Content="Server" />
                         <Image x:Name="ServerConnectionStatus"
-                               Source="/OverlordBot;component/status-disconnected.png"
+                               Source="{Binding Path=ClientState.IsConnected, Converter={StaticResource ConnectionStatusImageConverter}}"
                                HorizontalAlignment="Center"
                                Height="26"
                                Margin="5,0,5,0" />
                         <Label HorizontalAlignment="Center" HorizontalContentAlignment="Center" Content="VOIP" />
                         <Image x:Name="VOIPConnectionStatus"
-                               Source="/OverlordBot;component/status-disconnected.png"
+                               Source="{Binding Path=ClientState.IsVoipConnected, Converter={StaticResource ConnectionStatusImageConverter}}"
                                Height="26"
                                HorizontalAlignment="Center"
                                Margin="5,0,5,0" />
                         <Label HorizontalAlignment="Center" HorizontalContentAlignment="Center" Content="AWACS" />
-                        <Image x:Name="AWACSConnectionStatus"
-                               Source="/OverlordBot;component/status-disconnected.png"
+                        <Image x:Name="AwacsConnectionStatus"
+                               Source="{Binding Path=ClientState.ExternalAWACSModeConnected, Converter={StaticResource ConnectionStatusImageConverter}}"
                                Height="26"
-                               HorizontalAlignment="Center"
+                               HorizontalAlignment="Center" 
                                Margin="5,0,5,0" />
                     </StackPanel>
                 </StackPanel>

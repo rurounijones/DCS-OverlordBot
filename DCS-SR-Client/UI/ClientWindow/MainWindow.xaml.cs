@@ -65,8 +65,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
         private readonly DelegateCommand _connectCommand;
 
         private readonly SettingsStore _settings = SettingsStore.Instance;
-        private readonly ClientStateSingleton _clientStateSingleton = ClientStateSingleton.Instance;
         private readonly SyncedServerSettings _serverSettings = SyncedServerSettings.Instance;
+
+        /// <remarks>Used in the XAML for DataBinding many things</remarks>
+        public ClientStateSingleton ClientState { get; } = ClientStateSingleton.Instance;
 
         public MainWindow()
         {
@@ -282,17 +284,16 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
         private void RedrawUITick(object sender, EventArgs e)
         {
-            bool isGameGuiConnected = _clientStateSingleton.IsGameGuiConnected;
-            bool isGameExportConnected = _clientStateSingleton.IsGameExportConnected;
+            bool isGameExportConnected = ClientState.IsGameExportConnected;
 
             // Redraw UI state (currently once per second), toggling controls as required
             // Some other callbacks/UI state changes could also probably be moved to this...
-            if (_clientStateSingleton.IsConnected)
+            if (ClientState.IsConnected)
             {
                 bool eamEnabled = _serverSettings.GetSettingAsBool(Common.Setting.ServerSettingsKeys.EXTERNAL_AWACS_MODE);
 
-                ExternalAWACSModePassword.IsEnabled = eamEnabled && !_clientStateSingleton.ExternalAWACSModeConnected && !isGameExportConnected;
-                ExternalAWACSModeName.IsEnabled = eamEnabled && !_clientStateSingleton.ExternalAWACSModeConnected && !isGameExportConnected;
+                ExternalAWACSModePassword.IsEnabled = eamEnabled && !ClientState.ExternalAWACSModeConnected && !isGameExportConnected;
+                ExternalAWACSModeName.IsEnabled = eamEnabled && !ClientState.ExternalAWACSModeConnected && !isGameExportConnected;
             }
             else
             {
@@ -336,7 +337,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
         private void Connect()
         {
-            if (_clientStateSingleton.IsConnected)
+            if (ClientState.IsConnected)
             {
                 Stop();
             }
@@ -369,7 +370,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                         MessageBox.Show("Invalid IP or Host Name!", "Host Name Error", MessageBoxButton.OK,
                             MessageBoxImage.Error);
 
-                        _clientStateSingleton.IsConnected = false;
+                        ClientState.IsConnected = false;
                         ToggleServerSettings.IsEnabled = false;
                     }
                 }
@@ -378,7 +379,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                     MessageBox.Show("Invalid IP or Host Name!", "Host Name Error", MessageBoxButton.OK,
                         MessageBoxImage.Error);
 
-                    _clientStateSingleton.IsConnected = false;
+                    ClientState.IsConnected = false;
                     ToggleServerSettings.IsEnabled = false;
                 }
             }
@@ -415,7 +416,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
         private void Stop(bool connectionError = false)
         {
-            if (_clientStateSingleton.IsConnected && _settings.GetClientSetting(SettingsKeys.PlayConnectionSounds).BoolValue)
+            if (ClientState.IsConnected && _settings.GetClientSetting(SettingsKeys.PlayConnectionSounds).BoolValue)
             {
                 try
                 {
@@ -428,23 +429,18 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
             StartStop.Content = "Connect";
             StartStop.IsEnabled = true;
-            _clientStateSingleton.IsConnected = false;
+            ClientState.IsConnected = false;
             ToggleServerSettings.IsEnabled = false;
-
-            ServerConnectionStatus.Source = connectionError ? Images.IconDisconnectedError : Images.IconDisconnected;
-            VOIPConnectionStatus.Source = connectionError ? Images.IconDisconnectedError : Images.IconDisconnected;
-            AWACSConnectionStatus.Source = connectionError ? Images.IconDisconnectedError : Images.IconDisconnected;
-
 
             ExternalAWACSModePassword.IsEnabled = false;
             ExternalAWACSModePasswordLabel.IsEnabled = false;
             ExternalAWACSModeName.IsEnabled = false;
             ExternalAWACSModeNameLabel.IsEnabled = false;
 
-            if (!string.IsNullOrWhiteSpace(_clientStateSingleton.LastSeenName) &&
-                _settings.GetClientSetting(SettingsKeys.LastSeenName).StringValue != _clientStateSingleton.LastSeenName)
+            if (!string.IsNullOrWhiteSpace(ClientState.LastSeenName) &&
+                _settings.GetClientSetting(SettingsKeys.LastSeenName).StringValue != ClientState.LastSeenName)
             {
-                _settings.SetClientSetting(SettingsKeys.LastSeenName, _clientStateSingleton.LastSeenName);
+                _settings.SetClientSetting(SettingsKeys.LastSeenName, ClientState.LastSeenName);
             }
 
             try
@@ -471,8 +467,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                 // If it is null then great. Mission accomplished
             }
 
-            _clientStateSingleton.DcsPlayerRadioInfo.Reset();
-            _clientStateSingleton.PlayerCoaltionLocationMetadata.Reset();
+            ClientState.DcsPlayerRadioInfo.Reset();
+            ClientState.PlayerCoaltionLocationMetadata.Reset();
 
             if( connectionError == true)
             {
@@ -495,39 +491,17 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
             if (result)
             {
-                if (!_clientStateSingleton.IsConnected)
+                if (!ClientState.IsConnected)
                 {
-                    try
-                    {
+                    StartStop.Content = "Disconnect";
+                    StartStop.IsEnabled = true;
 
-                        StartStop.Content = "Disconnect";
-                        StartStop.IsEnabled = true;
+                    ClientState.IsConnected = true;
 
-                        _clientStateSingleton.IsConnected = true;
-                        ServerConnectionStatus.Source = Images.IconConnected;
-                        VOIPConnectionStatus.Source = Images.IconDisconnected;
+                    _settings.SetClientSetting(SettingsKeys.LastServer, ServerIp.Text);
 
-                        _settings.SetClientSetting(SettingsKeys.LastServer, ServerIp.Text);
-
-                        _audioManager.StartEncoding(-1, null, _guid, InputManager,
-                            _resolvedIp, _port, null, VOIPConnectCallback);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Error(ex,
-                            "Unable to get audio device - likely output device error - Pick another. Error:" +
-                            ex.Message);
-                        Stop();
-
-                        var messageBoxResult = CustomMessageBox.ShowYesNo(
-                            "Problem initialising Audio Output!\n\nTry a different Output device and please post your clientlog.txt to the support Discord server.\n\nJoin support Discord server now?",
-                            "Audio Output Error",
-                            "OPEN PRIVACY SETTINGS",
-                            "JOIN DISCORD SERVER",
-                            MessageBoxImage.Error);
-
-                        if (messageBoxResult == MessageBoxResult.Yes) Process.Start("https://discord.gg/baw7g3t");
-                    }
+                    _audioManager.StartEncoding(-1, null, _guid, InputManager,
+                        _resolvedIp, _port, null);
                 }
             }
             else if (string.Equals(currentConnection, connection, StringComparison.OrdinalIgnoreCase))
@@ -538,23 +512,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             }
             else
             {
-                if (!_clientStateSingleton.IsConnected)
+                if (!ClientState.IsConnected)
                 {
                     Stop(connectionError);
                 }
-            }
-        }
-
-        private void VOIPConnectCallback(bool result, bool connectionError, string connection)
-        {
-            if (result)
-            {
-                VOIPConnectionStatus.Source = Images.IconConnected;
-                ConnectExternalAwacsMode();
-            }
-            else
-            {
-                VOIPConnectionStatus.Source = connectionError ? Images.IconDisconnectedError : Images.IconDisconnected;
             }
         }
 
@@ -563,10 +524,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             _settings.SetPositionSetting(SettingsKeys.ClientX, Left);
             _settings.SetPositionSetting(SettingsKeys.ClientY, Top);
 
-            if (!string.IsNullOrWhiteSpace(_clientStateSingleton.LastSeenName) &&
-                _settings.GetClientSetting(SettingsKeys.LastSeenName).StringValue != _clientStateSingleton.LastSeenName)
+            if (!string.IsNullOrWhiteSpace(ClientState.LastSeenName) &&
+                _settings.GetClientSetting(SettingsKeys.LastSeenName).StringValue != ClientState.LastSeenName)
             {
-                _settings.SetClientSetting(SettingsKeys.LastSeenName, _clientStateSingleton.LastSeenName);
+                _settings.SetClientSetting(SettingsKeys.LastSeenName, ClientState.LastSeenName);
             }
 
             //save window position
@@ -602,15 +563,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
         private void UpdateUICallback()
         {
-            if (_clientStateSingleton.IsConnected)
+            if (ClientState.IsConnected)
             {
                 ToggleServerSettings.IsEnabled = true;
 
                 bool eamEnabled = _serverSettings.GetSettingAsBool(Common.Setting.ServerSettingsKeys.EXTERNAL_AWACS_MODE);
 
-                ExternalAWACSModePassword.IsEnabled = eamEnabled && !_clientStateSingleton.ExternalAWACSModeConnected && !_clientStateSingleton.IsGameConnected;
+                ExternalAWACSModePassword.IsEnabled = eamEnabled && !ClientState.ExternalAWACSModeConnected && !ClientState.IsGameConnected;
                 ExternalAWACSModePasswordLabel.IsEnabled = eamEnabled;
-                ExternalAWACSModeName.IsEnabled = eamEnabled && !_clientStateSingleton.ExternalAWACSModeConnected && !_clientStateSingleton.IsGameConnected;
+                ExternalAWACSModeName.IsEnabled = eamEnabled && !ClientState.ExternalAWACSModeConnected && !ClientState.IsGameConnected;
                 ExternalAWACSModeNameLabel.IsEnabled = eamEnabled;
             }
             else
@@ -874,16 +835,16 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
         private void ConnectExternalAwacsMode()
         {
             if (_client == null ||
-                !_clientStateSingleton.IsConnected ||
-                (!_clientStateSingleton.ExternalAWACSModeConnected &&
+                !ClientState.IsConnected ||
+                (!ClientState.ExternalAWACSModeConnected &&
                 string.IsNullOrWhiteSpace(ExternalAWACSModePassword.Password)))
             {
                 return;
             }
 
-            _clientStateSingleton.LastSeenName = ExternalAWACSModeName.Text;
+            ClientState.LastSeenName = ExternalAWACSModeName.Text;
 
-            if (_clientStateSingleton.ExternalAWACSModeConnected)
+            if (ClientState.ExternalAWACSModeConnected)
             {
                 // Already connected, do nothing
             }
@@ -897,22 +858,20 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
         {
             if (result)
             {
-                AWACSConnectionStatus.Source = Images.IconConnected;
-                _clientStateSingleton.PlayerCoaltionLocationMetadata.side = coalition;
-                _clientStateSingleton.PlayerCoaltionLocationMetadata.name = _clientStateSingleton.LastSeenName;
-                _clientStateSingleton.DcsPlayerRadioInfo.name = _clientStateSingleton.LastSeenName;
+                ClientState.PlayerCoaltionLocationMetadata.side = coalition;
+                ClientState.PlayerCoaltionLocationMetadata.name = ClientState.LastSeenName;
+                ClientState.DcsPlayerRadioInfo.name = ClientState.LastSeenName;
 
                 ExternalAWACSModePassword.IsEnabled = false;
                 ExternalAWACSModeName.IsEnabled = false;
             }
             else
             {
-                AWACSConnectionStatus.Source = Images.IconDisconnected;
-                _clientStateSingleton.PlayerCoaltionLocationMetadata.side = 0;
-                _clientStateSingleton.PlayerCoaltionLocationMetadata.name = "";
-                _clientStateSingleton.DcsPlayerRadioInfo.name = "";
-                _clientStateSingleton.DcsPlayerRadioInfo.LastUpdate = 0;
-                _clientStateSingleton.LastSent = 0;
+                ClientState.PlayerCoaltionLocationMetadata.side = 0;
+                ClientState.PlayerCoaltionLocationMetadata.name = "";
+                ClientState.DcsPlayerRadioInfo.name = "";
+                ClientState.DcsPlayerRadioInfo.LastUpdate = 0;
+                ClientState.LastSent = 0;
 
                 ExternalAWACSModePassword.IsEnabled = _serverSettings.GetSettingAsBool(Common.Setting.ServerSettingsKeys.EXTERNAL_AWACS_MODE);
                 ExternalAWACSModeName.IsEnabled = _serverSettings.GetSettingAsBool(Common.Setting.ServerSettingsKeys.EXTERNAL_AWACS_MODE);
