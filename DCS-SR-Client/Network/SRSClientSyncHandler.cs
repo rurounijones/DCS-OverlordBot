@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
@@ -36,6 +37,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
         private readonly ClientStateSingleton _clientStateSingleton = ClientStateSingleton.Instance;
         private readonly SyncedServerSettings _serverSettings = SyncedServerSettings.Instance;
         private readonly ConnectedClientsSingleton _clients = ConnectedClientsSingleton.Instance;
+
+        private DCSRadioSyncManager _radioDCSSync = null;
 
         private readonly string _guid = SettingsStore.Instance.GetClientSetting(SettingsKeys.CliendIdShort).StringValue;
 
@@ -135,7 +138,16 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
         private void Connect()
         {
+
+            if (_radioDCSSync != null)
+            {
+                _radioDCSSync.Stop();
+                _radioDCSSync = null;
+            }
+
             bool connectionError = false;
+
+            _radioDCSSync = new DCSRadioSyncManager(ClientRadioUpdated, _guid);
 
             using (_tcpClient = new TcpClient())
             {
@@ -170,6 +182,24 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             }
             //disconnect callback
             CallOnMain(false, connectionError);
+        }
+
+        private void ClientRadioUpdated()
+        {
+            Logger.Debug("Sending Radio Update to Server");
+            var sideInfo = _clientStateSingleton.PlayerCoaltionLocationMetadata;
+            SendToServer(new NetworkMessage
+            {
+                Client = new SRClient
+                {
+                    Coalition = sideInfo.side,
+                    Name = sideInfo.name,
+                    ClientGuid = _guid,
+                    RadioInfo = _clientStateSingleton.DcsPlayerRadioInfo,
+                    LatLngPosition = sideInfo.LngLngPosition
+                },
+                MsgType = NetworkMessage.MessageType.RADIO_UPDATE
+            });
         }
 
         private void CallOnMain(bool result, bool connectionError = false)
@@ -404,11 +434,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
                                             CallExternalAWACSModeOnMain(false, 0);
                                         }
-                                        else
+                                        else if (_radioDCSSync != null)
                                         {
                                             Logger.Info("External AWACS mode authentication succeeded, coalition {0}", serverMessage.Client.Coalition == 1 ? "red" : "blue");
 
                                             CallExternalAWACSModeOnMain(true, serverMessage.Client.Coalition);
+
+                                            _radioDCSSync.StartExternalAWACSModeLoop();
                                         }
                                         break;
                                     default:

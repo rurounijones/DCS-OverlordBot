@@ -395,6 +395,8 @@
     <Compile Include="Audio\Utility\SpeexWrapper.cs" />
     <Compile Include="Discord\DiscordClient.cs" />
     <Compile Include="Input\InputBindState.cs" />
+    <Compile Include="Network\DCS\DCSRadioSyncHandler.cs" />
+    <Compile Include="Network\DCS\DCSRadioSyncManager.cs" />
     <Compile Include="Network\Models\RadioSendingState.cs" />
     <Compile Include="Network\SRSClientSyncHandler.cs" />
     <Compile Include="Network\UDPVoiceHandler.cs" />
