@@ -129,11 +129,12 @@
                                 Margin="0,10,10,0"
                                 Content="EAM coalition password"
                                 IsEnabled="False" />
-                            <PasswordBox x:Name="ExternalAWACSModePassword"
+                            <TextBox x:Name="ExternalAWACSModePassword"
                                  Width="200"
                                  Height="23"
                                  Margin="0,0,10,0"
                                  HorizontalAlignment="Center"
+                                 Text="{Binding Path=ClientState.ExternalAWACSModePassword, Mode=TwoWay}"
                                  IsEnabled="False" />
                         </StackPanel>
                         <StackPanel Margin="0"

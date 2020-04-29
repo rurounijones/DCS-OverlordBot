@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Threading;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings.RadioChannels;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow.PresetChannels;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.DCSState;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network;
+using Easy.MessageHub;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
 {
@@ -19,6 +21,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
         public delegate bool RadioUpdatedCallback();
 
         private List<RadioUpdatedCallback> _radioCallbacks = new List<RadioUpdatedCallback>();
+
+        private readonly IMessageHub hub = MessageHub.Instance;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -67,6 +71,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
             set
             {
                 isVoipConnected = value;
+                if(value == true)
+                {
+                    hub.Publish(SRSClientSyncHandler.ConnectionState.Connected);
+                }
+                if (value == false)
+                {
+                    hub.Publish(SRSClientSyncHandler.ConnectionState.Disconnected);
+                }
                 NotifyPropertyChanged("IsVoipConnected");
             }
         }
@@ -88,7 +100,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
         }
 
         // Indicates the user's desire to be in External Awacs Mode or not
-        public bool ExternalAWACSModelSelected { get; set; }
+        public bool ExternalAWACSModeSelected { get; set; }
 
         // Indicates whether we are *actually* connected in External Awacs Mode
         // Used by the Name and Password related UI elements to determine if they are editable or not
@@ -97,9 +109,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
             get
             {
                 bool EamEnabled = SyncedServerSettings.Instance.GetSettingAsBool(Common.Setting.ServerSettingsKeys.EXTERNAL_AWACS_MODE);
-                return IsConnected && EamEnabled && ExternalAWACSModelSelected && !IsGameExportConnected;
+                return IsConnected && EamEnabled && ExternalAWACSModeSelected && !IsGameExportConnected;
             }
         }
+
+        public string LastSeenName { get; set; }
+
+        public string ExternalAWACSModePassword { get; set; }
 
         public bool IsLotATCConnected { get { return LotATCLastReceived >= DateTime.Now.Ticks - 50000000; } }
 
@@ -107,8 +123,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
         public bool IsGameExportConnected { get { return DcsExportLastReceived >= DateTime.Now.Ticks - 100000000; } }
         // Indicates an active game connection has been detected (1 tick = 100ns, 100000000 ticks = 10s stale timer), not updated by EAM
         public bool IsGameConnected { get { return IsGameGuiConnected && IsGameExportConnected; } }
-
-        public string LastSeenName { get; set; }
 
         private ClientStateSingleton()
         {
@@ -138,7 +152,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
             LastSent = 0;
 
             IsConnected = false;
-            ExternalAWACSModelSelected = false;
+            ExternalAWACSModeSelected = false;
 
             LastSeenName = "OverlordBot";
         }

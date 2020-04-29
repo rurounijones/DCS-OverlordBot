@@ -21,6 +21,7 @@ using Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.Favourites;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Utils;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network;
+using Easy.MessageHub;
 using MahApps.Metro.Controls;
 using NAudio.CoreAudioApi;
 using NLog;
@@ -41,7 +42,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
         private readonly ConcurrentDictionary<string, SRClient> _clients = new ConcurrentDictionary<string, SRClient>();
 
-        private readonly string _guid;
         private readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private AudioPreview _audioPreview;
         private SRSClientSyncHandler _client;
@@ -69,6 +69,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
         /// <remarks>Used in the XAML for DataBinding many things</remarks>
         public ClientStateSingleton ClientState { get; } = ClientStateSingleton.Instance;
+
+        private readonly IMessageHub hub = MessageHub.Instance;
 
         public MainWindow()
         {
@@ -111,10 +113,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             {
                 Logger.Info("Started DCS-SimpleRadio Client " + UpdaterChecker.VERSION);
             }
-
-            _guid = _settings.GetClientSetting(SettingsKeys.CliendIdShort).StringValue;
-
-            Analytics.Log("Client", "Startup", _settings.GetClientSetting(SettingsKeys.ClientIdLong).RawValue);
 
             InitSettingsScreen();
 
@@ -273,7 +271,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                 if (value != null)
                 {
                     ServerIp.Text = value.Address;
-                    ExternalAWACSModePassword.Password = string.IsNullOrWhiteSpace(value.EAMCoalitionPassword) ? "" : value.EAMCoalitionPassword;
+                    ClientState.ExternalAWACSModePassword = string.IsNullOrWhiteSpace(value.EAMCoalitionPassword) ? "" : value.EAMCoalitionPassword;
                 }
 
                 _connectCommand.RaiseCanExecuteChanged();
@@ -358,7 +356,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                         _resolvedIp = ip;
                         _port = GetPortFromTextBox();
 
-                        _client = new SRSClientSyncHandler(_guid, UpdateUICallback);
+                        _client = SRSClientSyncHandler.Instance;
                         _client.TryConnect(new IPEndPoint(_resolvedIp, _port), ConnectCallback);
 
                         StartStop.Content = "Connecting...";
@@ -500,7 +498,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
                     _settings.SetClientSetting(SettingsKeys.LastServer, ServerIp.Text);
 
-                    _audioManager.StartEncoding(-1, null, _guid, InputManager,
+                    _audioManager.StartEncoding(-1, null, _settings.GetClientSetting(SettingsKeys.CliendIdShort).StringValue, InputManager,
                         _resolvedIp, _port, null);
                 }
             }
@@ -515,6 +513,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                 if (!ClientState.IsConnected)
                 {
                     Stop(connectionError);
+                    hub.Publish(SRSClientSyncHandler.ConnectionState.Disconnected);
+
                 }
             }
         }
@@ -559,29 +559,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             }
 
             base.OnStateChanged(e);
-        }
-
-        private void UpdateUICallback()
-        {
-            if (ClientState.IsConnected)
-            {
-                ToggleServerSettings.IsEnabled = true;
-
-                bool eamEnabled = _serverSettings.GetSettingAsBool(Common.Setting.ServerSettingsKeys.EXTERNAL_AWACS_MODE);
-
-                ExternalAWACSModePassword.IsEnabled = eamEnabled && !ClientState.ExternalAWACSModeConnected && !ClientState.IsGameConnected;
-                ExternalAWACSModePasswordLabel.IsEnabled = eamEnabled;
-                ExternalAWACSModeName.IsEnabled = eamEnabled && !ClientState.ExternalAWACSModeConnected && !ClientState.IsGameConnected;
-                ExternalAWACSModeNameLabel.IsEnabled = eamEnabled;
-            }
-            else
-            {
-                ToggleServerSettings.IsEnabled = false;
-                ExternalAWACSModePassword.IsEnabled = false;
-                ExternalAWACSModePasswordLabel.IsEnabled = false;
-                ExternalAWACSModeName.IsEnabled = false;
-                ExternalAWACSModeNameLabel.IsEnabled = false;
-            }
         }
 
         private void RadioEncryptionEffects_Click(object sender, RoutedEventArgs e)
@@ -830,28 +807,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             _settings.GetClientSetting(SettingsKeys.PlayConnectionSounds).BoolValue =
                 (bool)PlayConnectionSounds.IsChecked;
             _settings.Save();
-        }
-
-        private void ConnectExternalAwacsMode()
-        {
-            if (_client == null ||
-                !ClientState.IsConnected ||
-                (!ClientState.ExternalAWACSModeConnected &&
-                string.IsNullOrWhiteSpace(ExternalAWACSModePassword.Password)))
-            {
-                return;
-            }
-
-            ClientState.LastSeenName = ExternalAWACSModeName.Text;
-
-            if (ClientState.ExternalAWACSModeConnected)
-            {
-                // Already connected, do nothing
-            }
-            else
-            {
-                _client.ConnectExternalAWACSMode(ExternalAWACSModePassword.Password.Trim(), ExternalAWACSModeConnectionChanged);
-            }
         }
 
         private void ExternalAWACSModeConnectionChanged(bool result, int coalition)
