@@ -251,7 +251,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                                     case NetworkMessage.MessageType.RADIO_UPDATE:
                                     case NetworkMessage.MessageType.UPDATE:
 
-                                        _serverSettings.Decode(serverMessage.ServerSettings);
+                                        if (serverMessage.ServerSettings != null)
+                                        {
+                                            _serverSettings.Decode(serverMessage.ServerSettings);
+                                        }
 
                                         if (_clients.ContainsKey(serverMessage.Client.ClientGuid))
                                         {
