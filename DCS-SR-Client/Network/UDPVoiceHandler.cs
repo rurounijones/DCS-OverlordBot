@@ -19,6 +19,7 @@ using Ciribob.DCS.SimpleRadio.Standalone.Common.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Setting;
 using FragLabs.Audio.Codecs;
 using NLog;
+using static Ciribob.DCS.SimpleRadio.Standalone.Common.RadioInformation;
 using Timer = Cabhishek.Timers.Timer;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
@@ -255,7 +256,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                                 //Decode bytes
                                 var udpVoicePacket = UDPVoicePacket.DecodeVoicePacket(encodedOpusAudio);
 
-                                if (udpVoicePacket != null && udpVoicePacket.Modulations[0] != 4)
+                                if (udpVoicePacket != null && ((Modulation) udpVoicePacket.Modulations[0] == Modulation.AM || (Modulation) udpVoicePacket.Modulations[0] == Modulation.FM))
                                 {
                                     var globalFrequencies = _serverSettings.GlobalFrequencies;
 
