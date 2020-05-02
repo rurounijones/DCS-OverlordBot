@@ -1,0 +1,67 @@
+{
+  "name": "Anapa-Vityazevo",
+  "lon": 45.0053694,
+  "lat": 37.3488341,
+  "alt": 42.9768,
+  "runways": [
+    {
+      "name": "Runway 04/22",
+      "points": [
+        {
+          "lat": 44.9955118,
+          "lon": 37.3351617
+        },
+        {
+          "lat": 44.9958471,
+          "lon": 37.3346953
+        },
+        {
+          "lat": 45.0144131,
+          "lon": 37.3604784
+        },
+        {
+          "lat": 45.0140693,
+          "lon": 37.3609831
+        }
+      ]
+    }
+  ],
+  "taxiwayPoints": [
+    {
+      "name": "taxiway A, Short of 04/22",
+      "lat": 44.9965574,
+      "lon": 37.3352583,
+      "radius": 25,
+      "altitude": 42.9768
+    },
+    {
+      "name": "taxiway B, Short of 04/22",
+      "lat": 45.0014729,
+      "lon": 37.3420944,
+      "radius": 25,
+      "altitude": 42.9768
+    },
+    {
+      "name": "taxiway C, Short of 04/22",
+      "lat": 45.0041374,
+      "lon": 37.3458115,
+      "radius": 25,
+      "altitude": 42.9768
+    },
+    {
+      "name": "taxiway D, Short of 04/22",
+      "lat": 45.0138561,
+      "lon": 37.3593013,
+      "radius": 25,
+      "altitude": 42.9768
+    },
+    {
+      "name": "taxiway E, Short of 04/22",
+      "lat": 45.0132395,
+      "lon": 37.3602454,
+      "radius": 25,
+      "altitude": 42.9768
+    }
+  ],
+  "landingPatternPoints": []
+}
