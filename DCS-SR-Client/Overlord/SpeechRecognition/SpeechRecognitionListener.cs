@@ -281,7 +281,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                 string transmission = "Transmission pair\nIncoming: " + e.Result.Text + "\nOutgoing: " + response;
                 await DiscordClient.SendTransmission(transmission).ConfigureAwait(false);
                 var audioResponse = await Task.Run(() => Speaker.CreateResponse($"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{_voice}\">{response}</voice></speak>"));
-                _responses.Enqueue(audioResponse);
+                if (audioResponse != null)
+                {
+                    _responses.Enqueue(audioResponse);
+                }
+                else
+                {
+                    _responses.Enqueue(_failureMessage);
+                }
             }
         }
     }

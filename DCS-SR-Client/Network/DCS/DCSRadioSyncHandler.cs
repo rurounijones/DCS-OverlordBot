@@ -169,6 +169,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
                     //update common parts
                     clientRadio.freqMin = updateRadio.freqMin;
                     clientRadio.freqMax = updateRadio.freqMax;
+                    clientRadio.voice = updateRadio.voice;
 
                     if (playerRadioInfo.simultaneousTransmissionControl == DCSPlayerRadioInfo.SimultaneousTransmissionControl.EXTERNAL_DCS_CONTROL)
                     {
