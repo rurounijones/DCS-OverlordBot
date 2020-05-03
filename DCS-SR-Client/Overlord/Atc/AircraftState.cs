@@ -10,9 +10,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public enum State { OnTaxiwayRunwayBoundary, OnGround, Flying, Inbound, Downwind, Base, Final, ShortFinal, OnRunway, Outbound }
+        public enum State { OnTaxiwayRunwayBoundary, OnGround, Flying, Inbound, DownwindEntry, Downwind, Base, Final, ShortFinal, OnRunway, Outbound }
         public enum Trigger { EnterTaxiwayRunwayBoundaryFromRunway, EnterTaxiwayRunwayBoundaryFromTaxiway, EnterTaxiwayFromRunway, EnterTaxiwayFromTaxiwayRunwayBoundary,
-            EnterRunway, Takeoff, StartInbound, TurnDownwind, TurnFinal, TurnBase, EnterShortFinal, Land }
+            EnterRunway, Takeoff, StartInbound, TurnEntryDownwind, TurnDownwind, TurnFinal, TurnBase, EnterShortFinal, Land }
 
         private readonly StateMachine<State, Trigger> _aircraftState;
 
@@ -66,6 +66,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
                 .Permit(Trigger.StartInbound, State.Inbound);
 
             _aircraftState.Configure(State.Inbound)
+                .Permit(Trigger.TurnEntryDownwind, State.DownwindEntry)
+                .Permit(Trigger.TurnDownwind, State.Downwind); // In case the player cuts the entry because of limitations
+
+            _aircraftState.Configure(State.DownwindEntry)
                 .Permit(Trigger.TurnDownwind, State.Downwind);
 
             _aircraftState.Configure(State.Downwind)

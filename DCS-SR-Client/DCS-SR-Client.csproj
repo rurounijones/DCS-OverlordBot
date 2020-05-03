@@ -404,6 +404,7 @@
     <Compile Include="Network\SRSClientSyncHandler.cs" />
     <Compile Include="Network\UDPVoiceHandler.cs" />
     <Compile Include="Overlord\Atc\AircraftState.cs" />
+    <Compile Include="Overlord\Intents\InboundToAirbase.cs" />
     <Compile Include="Overlord\Navigation\Airfield.cs" />
     <Compile Include="Overlord\Atc\Manager.cs" />
     <Compile Include="Overlord\Navigation\NavigationPoint.cs" />

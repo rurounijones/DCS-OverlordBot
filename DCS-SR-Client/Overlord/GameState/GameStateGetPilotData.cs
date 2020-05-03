@@ -30,7 +30,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
                         {
                             Id = id,
                             Position = position,
-                            Coalition = coalition
+                            Coalition = coalition,
+                            Pilot = $"{group} {flight} {plane}"
                         };
                     }
                     else

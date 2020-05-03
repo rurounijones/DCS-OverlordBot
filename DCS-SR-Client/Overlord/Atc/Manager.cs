@@ -13,7 +13,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
     class Manager
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private static readonly List<Airfield> Airfields = PopulateAirfields();
+        public static readonly List<Airfield> Airfields = PopulateAirfields();
 
         public Manager()
         {

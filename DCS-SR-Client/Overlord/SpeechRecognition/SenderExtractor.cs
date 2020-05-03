@@ -21,27 +21,27 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                 return null;
             }
 
-            var sender = response.CompositeEntities.Find(x => x.ParentType == "learned_sender" || x.ParentType == "defined_sender");
+            var sender = response.CompositeEntities.Find(x => x.ParentType == "learned_sender" || x.ParentType == "defined_sender" || x.ParentType == "airbase_caller");
 
             if (sender != null)
             {
 
                 sender.Children.ForEach(x =>
                 {
-                    if (x["type"] == "learned_group" || x["type"] == "defined_group")
+                    if (x.ContainsKey("type") && (x["type"] == "learned_group" || x["type"] == "defined_group"))
                     {
                         group = x["value"];
                     }
-                    else if (x["type"] == "awacs_callsign")
+                    else if (x.ContainsKey("type") && x["type"] == "awacs_callsign")
                     {
                         // No-op
                     }
-                    else if (x["role"] == "flight_and_element")
+                    else if (x.ContainsKey("role") && x["role"] == "flight_and_element")
                     {
                         Int32.TryParse(x["value"][0].ToString(), out flight);
                         Int32.TryParse(x["value"].Substring(1), out element);
                     }
-                    else if (x["role"] == "flight")
+                    else if (x.ContainsKey("role") && x["role"] == "flight")
                     {
                         int value = SenderExtractor.mapToInt(x["value"]);
                         if (value == -1)
@@ -52,7 +52,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                             flight = value;
                         }
                     }
-                    else if (x["role"] == "element")
+                    else if (x.ContainsKey("role") && x["role"] == "element")
                     {
                         int value = SenderExtractor.mapToInt(x["value"]);
 

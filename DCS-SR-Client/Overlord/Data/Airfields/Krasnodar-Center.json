@@ -31,44 +31,80 @@
       "name": "taxiway A, short of runway 09/27",
       "lat": 45.0866685,
       "lon": 38.9247869,
-      "radius": 25,
-      "altitude": 30.010032653808594
+      "radius": 25, // Approximately 80ft
+      "altitude": 30
     },
     {
       "name": "taxiway B, short of Runway 09/27",
       "lat": 45.0866084,
       "lon": 38.9292344,
       "radius": 25,
-      "altitude": 30.010032653808594
+      "altitude": 30
     },
     {
       "name": "taxiway C, short of runway 09/27",
       "lat": 45.0862687,
       "lon": 38.9509765,
       "radius": 25,
-      "altitude": 30.010032653808594
+      "altitude": 30
     },
     {
       "name": "taxiway D, short of runway 09/27",
       "lat": 45.0861495,
       "lon": 38.8278844,
       "radius": 25,
-      "altitude": 30.010032653808594
+      "altitude": 30
     },
     {
       "name": "taxiway E, short of runway 09/27",
       "lat": 45.0862075,
       "lon": 38.9555256,
       "radius": 25,
-      "altitude": 30.010032653808594
+      "altitude": 30
     },
     {
       "name": "taxiway F, short of runway 09/27",
       "lat": 45.0866940,
       "lon": 38.9563893,
       "radius": 25,
-      "altitude": 30.010032653808594
+      "altitude": 30
     }
   ],
-  "landingPatternPoints": []
+  "landingPatternPoints": [
+    {
+      "name": "DownwindEntry",
+      "lat": 45.1256415,
+      "lon": 38.9764124,
+      "radius": 76, // Approximately 250ft
+      "altitude": 334 // Airport MSL + 1000ft (approximately 304 meters)
+    },
+    {
+      "name": "Downwind",
+      "lat": 45.1038538,
+      "lon": 38.9416444,
+      "radius": 76,
+      "altitude": 334
+    },
+    {
+      "name": "Base",
+      "lat": 45.1049278,
+      "lon": 38.8541273,
+      "radius": 76,
+      "altitude": 334
+    },
+    {
+      "name": "Final",
+      "lat": 45.0882653,
+      "lon": 38.8540299,
+      "radius": 76,
+      "altitude": 334
+    },
+    {
+      "name": "ShortFinal",
+      "lat": 44.9974870,
+      "lon": 38.9010895,
+      "radius": 76,
+      "altitude": 106
+    }
+  ]
 }

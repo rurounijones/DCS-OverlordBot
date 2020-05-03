@@ -201,7 +201,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                     Sender sender = Task.Run(() => SenderExtractor.Extract(luisResponse)).Result;
 
                     if (luisResponse.Query != null && luisResponse.TopScoringIntent["intent"] == "None" ||
-                        luisResponse.Entities.Find(x => x.Type == "awacs_callsign") == null)
+                        (luisResponse.Entities.Find(x => x.Type == "awacs_callsign") == null &&
+                          luisResponse.Entities.Find(x => x.Type == "airbase_caller") == null)
+                        )
                     {
                         Logger.Debug($"RESPONSE NO-OP");
                         string transmission = "Transmission Ignored\nIncoming: " + e.Result.Text;
@@ -215,7 +217,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                     }
                     else
                     {
+                        awacs = null;
+                        if (luisResponse.Entities.Find(x => x.Type == "awacs_callsign") != null) {
                         awacs = luisResponse.Entities.Find(x => x.Type == "awacs_callsign").Resolution.Values[0];
+                        }
 
                         Logger.Debug($"SENDER: " + sender);
 
@@ -260,6 +265,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                             {
                                 response = $"{sender}, {awacs}, ";
                                 response += Task.Run(() => Declare.Process(luisResponse, sender)).Result;
+                            }
+                            else if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "InboundToAirbase"))
+                            {
+                                response = $"{sender}, ";
+                                response += Task.Run(() => InboundToAirbase.Process(luisResponse, sender)).Result;
                             }
                         }
                     }
