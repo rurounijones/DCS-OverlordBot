@@ -5,14 +5,14 @@ using System.Threading.Tasks;
 using NewRelic.Api.Agent;
 using NetTopologySuite.Geometries;
 
-namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
+namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
 {
-    partial class GameState
+    partial class GameQuerier
     {
         [Trace]
-        public static async Task<GameObject> GetPilotData(string group, int flight, int plane)
+        public static async Task<Player> GetPilotData(string group, int flight, int plane)
         {
-            string command = @"SELECT id, position, coalition FROM public.units WHERE (pilot ILIKE '" + $"%{group} {flight}-{plane}%' OR pilot ILIKE '" + $"%{group} {flight}{plane}%')";
+            string command = @"SELECT id, position, coalition, altitude, pilot FROM public.units WHERE (pilot ILIKE '" + $"%{group} {flight}-{plane}%' OR pilot ILIKE '" + $"%{group} {flight}{plane}%')";
             using (var connection = new NpgsqlConnection(ConnectionString()))
             {
                 await connection.OpenAsync();
@@ -25,13 +25,19 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
                         var id = dbDataReader.GetString(0);
                         var position = (Point)dbDataReader[1];
                         var coalition = dbDataReader.GetInt32(2);
+                        var altitude = dbDataReader.GetDouble(3);
+                        var pilot = dbDataReader.GetString(4);
                         dbDataReader.Close();
-                        return new GameObject
+                        return new Player
                         {
                             Id = id,
-                            Position = position,
+                            Position = new Geo.Geometries.Point(position.Y, position.X),
                             Coalition = coalition,
-                            Pilot = $"{group} {flight} {plane}"
+                            Pilot = pilot,
+                            Altitude = altitude,
+                            Group = group,
+                            Flight = flight,
+                            Plane = plane
                         };
                     }
                     else

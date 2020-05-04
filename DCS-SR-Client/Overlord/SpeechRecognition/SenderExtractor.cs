@@ -3,6 +3,7 @@ using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.LuisModels;
 using System;
 using System.Threading.Tasks;
 using NewRelic.Api.Agent;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 {
@@ -10,7 +11,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
     {
 
         [Trace]
-        public async static Task<Sender> Extract(LuisResponse response)
+        public async static Task<Player> Extract(LuisResponse response)
         {
             string group = null;
             int flight = -1;
@@ -73,7 +74,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                 return null;
             } else
             {
-                return new Sender(group, flight, element);
+                return new Player
+                {
+                    Group = group,
+                    Flight = flight,
+                    Plane = element
+                };
             }
         }
 

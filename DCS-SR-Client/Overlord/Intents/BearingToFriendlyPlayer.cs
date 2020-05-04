@@ -1,17 +1,17 @@
 ﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.LuisModels;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using NewRelic.Api.Agent;
 using System;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
 {
     class BearingToFriendlyPlayer
     {
         [Trace]
-        public static async Task<string> Process(LuisResponse luisResponse, Sender sender)
+        public static async Task<string> Process(LuisResponse luisResponse, Overlord.GameState.Player sender)
         {
             string response;
             string group = null;
@@ -71,14 +71,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
             }
             else
             {
-                Dictionary<string, int?> braData = await GameState.GetFriendlyPlayer(sender.Position, sender.Group, sender.Flight, sender.Plane, group, flight, element);
+                Contact contact = await GameQuerier.GetFriendlyPlayer(sender.Position, sender.Group, sender.Flight, sender.Plane, group, flight, element);
 
-                if (braData != null)
+                if (contact != null)
                 {
 
-                    string bearing = Regex.Replace(braData["bearing"].Value.ToString("000"), "\\d{1}", " $0");
-                    string range = braData["range"].Value.ToString();
-                    int altitude = braData["altitude"].Value;
+                    string bearing = Regex.Replace(Util.Geospatial.TrueToMagnetic(sender.Position, contact.Bearing).ToString("000"), "\\d{1}", " $0");
+                    string range = contact.Range.ToString();
+                    int altitude = (int)contact.Altitude;
                     int angels;
                     if(altitude < 1000)
                     {

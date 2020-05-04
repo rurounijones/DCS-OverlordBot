@@ -1,12 +1,8 @@
-﻿namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
+﻿namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
 {
-    public class Contact {
-        public string Id { get; set; }
+    public class Contact : GameObject {
         public int Bearing { get; set; }
         public int Range { get; set; }
-        public int Altitude { get; set; }
-        public int? Heading { get; set; }
-        public string Name { get; set; }
-        public int Coalition { get; set; }
+
     }
 }

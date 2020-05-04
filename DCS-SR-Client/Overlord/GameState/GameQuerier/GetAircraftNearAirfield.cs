@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using NetTopologySuite.Geometries;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Navigation;
 
-namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
+namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
 {
-    public partial class GameState
+    public partial class GameQuerier
     {
         private static readonly int AIRFIELD_SEARCH_DISTANCE = 18520; // 10nm in meters
         private static readonly int AIRFIELD_SEARCH_HEIGHT = 915; // 3000ft in meters
@@ -36,11 +36,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
                     DbDataReader dbDataReader = await cmd.ExecuteReaderAsync();
                     while (await dbDataReader.ReadAsync())
                     {
+                        var point = (Point)dbDataReader[2];
                         var gameObject = new GameObject
                         {
                             Id = dbDataReader.GetString(0),
                             Pilot = dbDataReader.GetString(1),
-                            Position = (Point)dbDataReader[2],
+                            Position = new Geo.Geometries.Point(point.Y, point.X),
                             Altitude = dbDataReader.GetDouble(3)
                     };
                         gameObjects.Add(gameObject);

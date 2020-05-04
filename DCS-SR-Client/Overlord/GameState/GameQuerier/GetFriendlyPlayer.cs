@@ -7,16 +7,19 @@ using System.Threading.Tasks;
 using NewRelic.Api.Agent;
 using NetTopologySuite.Geometries;
 
-namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
+namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
 {
-    partial class GameState
+    partial class GameQuerier
     {
         [Trace]
-        public static async Task<Dictionary<string, int?>> GetFriendlyPlayer(Point callerPosition, string sourceGroup, int sourceFlight, int sourcePlane, string targetGroup, int targetFlight, int targetPlane)
+        public static async Task<Contact> GetFriendlyPlayer(Geo.Geometries.Point callerPosition, string sourceGroup, int sourceFlight, int sourcePlane, string targetGroup, int targetFlight, int targetPlane)
         {
-            var command = @"SELECT degrees(ST_AZIMUTH(request.position, friendly.position)) as bearing,
-                                      ST_DISTANCE(request.position, friendly.position) as distance,
-                                      friendly.altitude, friendly.heading, friendly.pilot, friendly.group
+            var command = @"SELECT friendly.id,
+                                   friendly.position,
+                                   degrees(ST_AZIMUTH(request.position, friendly.position)) as bearing,
+                                   ST_DISTANCE(request.position, friendly.position) as distance,
+                                   friendly.altitude,
+                                   friendly.heading
             FROM public.units AS friendly CROSS JOIN LATERAL
               (SELECT requester.position, requester.coalition
                 FROM public.units AS requester
@@ -25,7 +28,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
             WHERE (friendly.pilot ILIKE '" + $"%{targetGroup} {targetFlight}-{targetPlane}%" + @"' OR friendly.pilot ILIKE '" + $"%{targetGroup} {targetFlight}{targetPlane}%" + @"' )
             LIMIT 1";
 
-            Dictionary<string, int?> output = null;
+            Contact friendly = null;
 
             using (var connection = new NpgsqlConnection(ConnectionString()))
             {
@@ -38,27 +41,30 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
                     if (dbDataReader.HasRows)
                     {
                         Logger.Debug($"{dbDataReader[0]}, {dbDataReader[1]}, {dbDataReader[2]}, {dbDataReader[3]}, {dbDataReader[4]}, {dbDataReader[5]}");
-                        var bearing = Math.Round(dbDataReader.GetDouble(0));
+                        var bearing = Math.Round(dbDataReader.GetDouble(2));
                         // West == negative numbers so convert
                         if (bearing < 0) { bearing += 360; }
 
-                        var range = (int)Math.Round((dbDataReader.GetDouble(1) * 0.539957d) / 1000); // Nautical Miles
-                        var altitude = (int)Math.Round((dbDataReader.GetDouble(2) * 3.28d) / 1000d, 0) * 1000; // Feet
-                        var heading = dbDataReader.GetDouble(3);
+                        var id = dbDataReader.GetString(0);
+                        var point = (Point)dbDataReader[1];
+                        var range = (int)Math.Round((dbDataReader.GetDouble(3) * 0.539957d) / 1000); // Nautical Miles
+                        var altitude = (int)Math.Round((dbDataReader.GetDouble(4) * 3.28d) / 1000d, 0) * 1000; // Feet
+                        var heading = dbDataReader.GetDouble(5);
 
-                        output = new Dictionary<string, int?>
+                        friendly = new Contact
                         {
-                            { "bearing", (int)Math.Round(Util.Geospatial.TrueToMagnetic(callerPosition, bearing)) },
-                            { "range", range },
-                            { "altitude", altitude },
-                            { "heading", (int)Math.Round(Util.Geospatial.TrueToMagnetic(callerPosition, heading)) }
+                            Id = id,
+                            Position = new Geo.Geometries.Point(point.Y, point.X),
+                            Pilot = $"{targetGroup} {targetFlight} {targetPlane}",
+                            Altitude = altitude,
+                            Bearing = (int)bearing,
+                            Heading = (int)heading
                         };
                     }
                     dbDataReader.Close();
                 }
             }
-
-            return output;
+            return friendly;
         }
     }
 }

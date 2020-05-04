@@ -1,8 +1,8 @@
-﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Navigation;
+﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Navigation;
 using NLog;
 using Stateless;
 using Stateless.Graph;
-using static Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
 {

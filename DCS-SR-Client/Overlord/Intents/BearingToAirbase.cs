@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using NewRelic.Api.Agent;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
 {
@@ -10,7 +11,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
     class BearingToAirbase
     {
         [Trace]
-        public static async Task<string> Process(LuisResponse luisResponse, Sender sender)
+        public static async Task<string> Process(LuisResponse luisResponse, Player sender)
         {
             string response;
 
@@ -22,11 +23,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
             var airbase = luisResponse.Entities.Find(x => x.Type == "airbase").Resolution.Values[0];
 
 
-            Dictionary<string, int> braData = await GameState.GetBearingToAirbase(sender.Position, sender.Group, sender.Flight, sender.Plane, airbase);
+            Dictionary<string, int> braData = await GameQuerier.GetBearingToAirbase(sender.Position, sender.Group, sender.Flight, sender.Plane, airbase);
 
             if (braData != null)
             {
-                var bearing = Regex.Replace(braData["bearing"].ToString("000"), "\\d{1}", " $0");
+                var bearing = Regex.Replace(Util.Geospatial.TrueToMagnetic(sender.Position, braData["bearing"]).ToString("000"), "\\d{1}", " $0");
                 var range = braData["range"];
                 response = $"{PronounceAirbase(airbase)} bearing {bearing}, {range} miles";
             }

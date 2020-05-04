@@ -6,18 +6,18 @@ using System.Threading.Tasks;
 using NewRelic.Api.Agent;
 using NetTopologySuite.Geometries;
 
-namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
+namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
 {
-    partial class GameState
+    partial class GameQuerier
     {
 
         [Trace]
-        public static async Task<Contact> GetBogeyDope(Point callerPosition, string group, int flight, int plane)
+        public static async Task<Contact> GetBogeyDope(Geo.Geometries.Point callerPosition, string group, int flight, int plane)
         {
             var command = @"SELECT bogey.id,
                                    degrees(ST_AZIMUTH(request.position, bogey.position)) as bearing,
                                    ST_DISTANCE(request.position, bogey.position) as distance,
-                                   bogey.altitude, bogey.heading, bogey.pilot, bogey.group, bogey.name
+                                   bogey.altitude, bogey.heading, bogey.pilot, bogey.group, bogey.name, bogey.position
             FROM public.units AS bogey CROSS JOIN LATERAL
               (SELECT requester.position, requester.coalition
                 FROM public.units AS requester
@@ -41,7 +41,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
 
                     if (dbDataReader.HasRows)
                     {
-                        Logger.Debug($"{dbDataReader[0]}, {dbDataReader[1]}, {dbDataReader[2]}, {dbDataReader[3]}, {dbDataReader[4]}, {dbDataReader[5]}, {dbDataReader[6]}, {dbDataReader[7]}");
+                        Logger.Debug($"{dbDataReader[0]}, {dbDataReader[1]}, {dbDataReader[2]}, {dbDataReader[3]}, {dbDataReader[4]}, {dbDataReader[5]}, {dbDataReader[6]}, {dbDataReader[7]}, {dbDataReader[8]} ");
                         var id = dbDataReader.GetString(0);
                         var bearing = dbDataReader.GetDouble(1);
                         // West == negative numbers so convert
@@ -50,15 +50,18 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
                         var range = (int)Math.Round((dbDataReader.GetDouble(2) * 0.539957d) / 1000); // Nautical Miles
                         var altitude = (int)Math.Round((dbDataReader.GetDouble(3) * 3.28d) / 1000d, 0) * 1000; // Feet
                         var heading = dbDataReader.GetDouble(4);
+                        var point = (Point)dbDataReader[8];
                         var name = dbDataReader.GetString(7);
+                        var position = new Geo.Geometries.Point(point.Y, point.X);
 
                         output = new Contact()
                         {
                             Id = id,
-                            Bearing = (int)Math.Round(Util.Geospatial.TrueToMagnetic(callerPosition, bearing)),
+                            Position = position,
+                            Bearing = (int)bearing,
                             Range = range,
                             Altitude = altitude,
-                            Heading = (int) Math.Round(Util.Geospatial.TrueToMagnetic(callerPosition, heading)),
+                            Heading = (int)heading,
                             Name = name
                         };
                     }

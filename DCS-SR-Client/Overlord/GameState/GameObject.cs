@@ -1,26 +1,14 @@
-﻿using NetTopologySuite.Geometries;
-
-namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
+﻿namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
 {
-    partial class GameState
+    public class GameObject
     {
-        public class GameObject
-        {
-            public string Id { get; set; }
-            public Point Position { get; set; }
+        public string Id { get; set; }
+        public Geo.Geometries.Point Position { get; set; }
 
-            public double Altitude { get; set; }
-
-            public string Pilot { get; set; }
-            public int Coalition { get; set; }
-
-            public Geo.Geometries.Point GeoPoint
-            {
-                get
-                {
-                    return new Geo.Geometries.Point(Position.Y, Position.X, Altitude);
-                }
-            }
-}
+        public string Pilot { get; set; }
+        public int Coalition { get; set; }
+        public double Altitude { get; set; }
+        public int? Heading { get; set; }
+        public string Name { get; set; }
     }
 }

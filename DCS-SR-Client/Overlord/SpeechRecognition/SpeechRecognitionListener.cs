@@ -10,14 +10,13 @@ using System;
 using System.Threading.Tasks;
 using FragLabs.Audio.Codecs;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using NLog;
 using System.IO;
 using NewRelic.Api.Agent;
 using System.Collections.Concurrent;
-using static Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Discord;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
@@ -198,7 +197,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                     LuisResponse luisResponse = JsonConvert.DeserializeObject<LuisResponse>(luisJson);
 
                     string awacs;
-                    Sender sender = Task.Run(() => SenderExtractor.Extract(luisResponse)).Result;
+                    Player senderInfo = Task.Run(() => SenderExtractor.Extract(luisResponse)).Result;
 
                     if (luisResponse.Query != null && luisResponse.TopScoringIntent["intent"] == "None" ||
                         (luisResponse.Entities.Find(x => x.Type == "awacs_callsign") == null &&
@@ -210,7 +209,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                         _ = DiscordClient.SendTransmission(transmission).ConfigureAwait(false);
                         // NO-OP
                     }
-                    else if (sender == null)
+                    else if (senderInfo == null)
                     {
                         Logger.Debug($"SENDER IS NULL");
                         response = "Last transmitter, I could not recognise your call-sign.";
@@ -222,53 +221,51 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                         awacs = luisResponse.Entities.Find(x => x.Type == "awacs_callsign").Resolution.Values[0];
                         }
 
-                        Logger.Debug($"SENDER: " + sender);
+                        var sender = Task.Run(() => GameQuerier.GetPilotData(senderInfo.Group, senderInfo.Flight, senderInfo.Plane)).Result;
 
-                        sender.GameObject = Task.Run(() => GetPilotData(sender.Group, sender.Flight, sender.Plane)).Result;
-
-                        if (sender.GameObject == null)
+                        if (sender == null)
                         {
                             Logger.Trace($"SenderVerified: false");
-                            response = $"{sender}, {awacs}, I cannot find you on scope. ";
+                            response = $"{senderInfo.Group} {senderInfo.Flight} {senderInfo.Plane}, {awacs}, I cannot find you on scope. ";
                         }
                         else
                         {
                             if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "RadioCheck"))
                             {
-                                response = $"{sender}, {awacs}, five by five";
+                                response = $"{sender.Callsign}, {awacs}, five by five";
                             }
                             else if (luisResponse.Query != null && luisResponse.TopScoringIntent["intent"] == "BogeyDope")
                             {
-                                response = $"{sender}, {awacs}, ";
+                                response = $"{sender.Callsign}, {awacs}, ";
                                 response += Task.Run(() => BogeyDope.Process(sender)).Result;
                             }
                             else if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "BearingToAirbase"))
                             {
-                                response = $"{sender}, {awacs}, ";
+                                response = $"{sender.Callsign}, {awacs}, ";
                                 response += Task.Run(() => BearingToAirbase.Process(luisResponse, sender)).Result;
                             }
                             else if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "BearingToFriendlyPlayer"))
                             {
-                                response = $"{sender}, {awacs}, ";
+                                response = $"{sender.Callsign}, {awacs}, ";
                                 response += Task.Run(() => BearingToFriendlyPlayer.Process(luisResponse, sender)).Result;
                             }
                             else if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "SetWarningRadius"))
                             {
-                                response = $"{sender}, {awacs}, ";
+                                response = $"{sender.Callsign}, {awacs}, ";
                                 response += Task.Run(() => SetWarningRadius.Process(luisResponse, sender, awacs,_voice, _responses)).Result;
                             }
                             else if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "Picture"))
                             {
-                                response = $"{sender}, {awacs}, We do not support picture calls ";
+                                response = $"{sender.Callsign}, {awacs}, We do not support picture calls ";
                             }
                             else if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "Declare"))
                             {
-                                response = $"{sender}, {awacs}, ";
+                                response = $"{sender.Callsign}, {awacs}, ";
                                 response += Task.Run(() => Declare.Process(luisResponse, sender)).Result;
                             }
                             else if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "InboundToAirbase"))
                             {
-                                response = $"{sender}, ";
+                                response = $"{sender.Callsign}, ";
                                 response += Task.Run(() => InboundToAirbase.Process(luisResponse, sender)).Result;
                             }
                         }

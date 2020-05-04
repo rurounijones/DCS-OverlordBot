@@ -1,4 +1,5 @@
-﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents;
+﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechOutput;
 using NLog;
 using System;
@@ -18,7 +19,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
 
         private readonly Timer _checkTimer;
         private readonly string _callerId;
-        private readonly Sender _sender;
+        private readonly Overlord.GameState.Player _sender;
         private readonly string _awacs;
         private readonly string _voice;
         private readonly int _distance;
@@ -26,7 +27,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
 
         private static readonly double CHECK_INTERVAL = 5000; // milliseconds
 
-        public WarningRadiusChecker(string callerId, Sender sender, string awacs, string voice, int distance, ConcurrentQueue<byte[]> responseQueue) 
+        public WarningRadiusChecker(string callerId, Overlord.GameState.Player sender, string awacs, string voice, int distance, ConcurrentQueue<byte[]> responseQueue) 
         {
             _callerId = callerId;
             _sender = sender;
@@ -70,14 +71,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
                     _warningStates.TryAdd(_callerId, new List<string>());
                 }
 
-                var caller = await GameState.GetPilotData(_sender.Group, _sender.Flight, _sender.Plane);
+                var caller = await GameQuerier.GetPilotData(_sender.Group, _sender.Flight, _sender.Plane);
 
                 // If the caller does not exist any more or the ID has been reused for a different object
                 // then cancel the check.
                 if (caller == null || caller.Id != _callerId)
                 {
                     if (caller == null) {
-                        caller = new GameState.GameObject
+                        caller = new Player
                         {
                             Id = "DELETED"
                         };
@@ -87,7 +88,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
                     return;
                 }
 
-                Contact contact = await GameState.GetBogeyDope(caller.Position, _sender.Group, _sender.Flight, _sender.Plane);
+                Contact contact = await GameQuerier.GetBogeyDope(caller.Position, _sender.Group, _sender.Flight, _sender.Plane);
 
                 if (contact.Range > _distance)
                 {
@@ -103,7 +104,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
 
                 Logger.Debug($"New contact {contact.Id}");
 
-                var response = $"{_sender}, {_awacs}, Threat, {BogeyDope.BuildResponse(contact)}";
+                var response = $"{_sender}, {_awacs}, Threat, {BogeyDope.BuildResponse(caller, contact)}";
                 Logger.Debug($"Response: {response}");
 
                 var ssmlResponse = $"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{_voice}\">{response}</voice></speak>";

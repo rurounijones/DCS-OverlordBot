@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using static Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
 {
@@ -48,7 +48,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
                 {
                     Logger.Trace($"Checking {airfield.Name}");
 
-                    List<GameObject> neabyAircraft = await GameState.GetAircraftNearAirfield(airfield);
+                    List<GameObject> neabyAircraft = await GameQuerier.GetAircraftNearAirfield(airfield);
 
                     if(neabyAircraft.Count == 0)
                     {
@@ -90,7 +90,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
 
                         foreach (var runway in airfield.Runways)
                         {
-                            if (runway.Area.GetBounds().Contains(aircraft.GeoPoint))
+                            if (runway.Area.GetBounds().Contains(aircraft.Position))
                             {
                                 if (aircraft.Altitude <= airfield.Altitude + 10 && airfield.Aircraft[aircraft.Id].CurrentState != AircraftState.State.Outbound)
                                 {
@@ -112,7 +112,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
 
                         foreach (var navigationPoint in airfield.TaxiwayPoints)
                         {
-                            if (navigationPoint.Position.GetBounds().Contains(aircraft.GeoPoint))
+                            if (navigationPoint.Position.GetBounds().Contains(aircraft.Position))
                             {
                                 if (airfield.Aircraft[aircraft.Id].CurrentState == AircraftState.State.OnRunway)
                                 {

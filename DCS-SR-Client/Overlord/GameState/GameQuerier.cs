@@ -1,8 +1,8 @@
 ﻿using NLog;
 
-namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
+namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
 {
-    partial class GameState
+    partial class GameQuerier
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 

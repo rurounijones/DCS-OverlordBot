@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 using NewRelic.Api.Agent;
 using NetTopologySuite.Geometries;
 
-namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
+namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
 {
-    partial class GameState
+    partial class GameQuerier
     {
         [Trace]
-        public static async Task<Dictionary<string, int>> GetBearingToAirbase(Point callerPosition, string group, int flight, int plane, string airbase)
+        public static async Task<Dictionary<string, int>> GetBearingToAirbase(Geo.Geometries.Point callerPosition, string group, int flight, int plane, string airbase)
         {
             string command = @"SELECT degrees(ST_AZIMUTH(request.position, airbase.position)) as bearing,
                                       ST_DISTANCE(request.position, airbase.position) as distance,
@@ -56,9 +56,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
                     dbDataReader.Close();
                 }
             }
-
             return output;
-
         }
     }
 }

@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading.Tasks;
 
-namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
+namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
 {
-    partial class GameState
+    partial class GameQuerier
     {
-        public static async Task<List<Contact>> GetContactsWithinCircle(Point center, double radius)
+        public static async Task<List<Contact>> GetContactsWithinCircle(Geo.Geometries.Point center, double radius)
         {
             var command = @"SELECT id, coalition from public.units contact
                             WHERE contact.type ilike 'Air+%'
@@ -22,7 +22,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
                 await connection.OpenAsync();
                 using (var cmd = new NpgsqlCommand(command, connection))
                 {
-                    cmd.Parameters.AddWithValue("center", center);
+                    cmd.Parameters.AddWithValue("center", new Point(center.Coordinate.Longitude, center.Coordinate.Latitude));
                     cmd.Parameters.AddWithValue("radius", radius);
 
                     DbDataReader dbDataReader = await cmd.ExecuteReaderAsync();

@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
 using NewRelic.Api.Agent;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
@@ -7,15 +8,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
     class BogeyDope
     {
         [Trace]
-        public static async Task<string> Process(Sender sender)
+        public static async Task<string> Process(Player sender)
         {
             string response;
 
-            Contact contact = await GameState.GetBogeyDope(sender.Position, sender.Group, sender.Flight, sender.Plane);
+            Contact contact = await GameQuerier.GetBogeyDope(sender.Position, sender.Group, sender.Flight, sender.Plane);
 
             if (contact != null)
             {
-                response = BuildResponse(contact);
+                response = BuildResponse(sender, contact);
             }
             else
             {
@@ -25,9 +26,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
             return response;
         }
 
-        public static string BuildResponse(Contact contact)
+        public static string BuildResponse(Player sender, Contact contact)
         {
-            string bearing = Regex.Replace(contact.Bearing.ToString("000"), "\\d{1}", " $0");
+            string bearing = Regex.Replace(Util.Geospatial.TrueToMagnetic(sender.Position, contact.Bearing).ToString("000"), "\\d{1}", " $0");
             string range = contact.Range.ToString();
             string altitude = contact.Altitude.ToString("N0");
             string aspect = GetAspect(contact);

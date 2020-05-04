@@ -411,12 +411,12 @@
     <Compile Include="Overlord\Constants.cs" />
     <Compile Include="Overlord\GameState\Contact.cs" />
     <Compile Include="Overlord\GameState\GameObject.cs" />
-    <Compile Include="Overlord\GameState\GameStateGetAircraftNearAirfield.cs" />
-    <Compile Include="Overlord\GameState\GameStateGetContactsWithinCircle.cs" />
-    <Compile Include="Overlord\GameState\GameStateGetPilotData.cs" />
-    <Compile Include="Overlord\GameState\GameStateGetBearingToAirbase.cs" />
-    <Compile Include="Overlord\GameState\GameStateGetBogeyDope.cs" />
-    <Compile Include="Overlord\GameState\GameStateGetFriendlyPlayer.cs" />
+    <Compile Include="Overlord\GameState\GameQuerier\GetAircraftNearAirfield.cs" />
+    <Compile Include="Overlord\GameState\GameQuerier\GetContactsWithinCircle.cs" />
+    <Compile Include="Overlord\GameState\GameQuerier\GetPilotData.cs" />
+    <Compile Include="Overlord\GameState\GameQuerier\GetBearingToAirbase.cs" />
+    <Compile Include="Overlord\GameState\GameQuerier\GetBogeyDope.cs" />
+    <Compile Include="Overlord\GameState\GameQuerier\GetFriendlyPlayer.cs" />
     <Compile Include="Overlord\Intents\BearingToAirbase.cs" />
     <Compile Include="Overlord\Intents\BearingToFriendlyPlayer.cs" />
     <Compile Include="Overlord\Intents\Declare.cs" />
@@ -424,7 +424,7 @@
     <Compile Include="Overlord\Navigation\Runway.cs" />
     <Compile Include="Overlord\NLogLoggingProvider.cs" />
     <Compile Include="Overlord\SpeechRecognition\LuisServiceV3.cs" />
-    <Compile Include="Overlord\SpeechRecognition\Sender.cs" />
+    <Compile Include="Overlord\GameState\Player.cs" />
     <Compile Include="Overlord\SpeechOutput\RadioStreamWriter.cs" />
     <Compile Include="Overlord\SpeechOutput\Speaker.cs" />
     <Compile Include="Overlord\SpeechRecognition\BotAudioProvider.cs" />
@@ -433,7 +433,7 @@
     <Compile Include="Overlord\SpeechRecognition\RecorderAudioProvider.cs" />
     <Compile Include="Overlord\SpeechRecognition\SenderExtractor.cs" />
     <Compile Include="Overlord\SpeechRecognition\SpeechRecognitionListener.cs" />
-    <Compile Include="Overlord\GameState\GameState.cs" />
+    <Compile Include="Overlord\GameState\GameQuerier.cs" />
     <Compile Include="Overlord\Intents\BogeyDope.cs" />
     <Compile Include="Overlord\LuisModels\LuisCompositeEntity.cs" />
     <Compile Include="Overlord\LuisModels\LuisEntity.cs" />
