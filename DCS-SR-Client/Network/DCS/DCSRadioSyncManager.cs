@@ -110,6 +110,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
             Task.Factory.StartNew(() =>
             {
                 Logger.Debug("Starting external AWACS mode loop");
+                _clientStateSingleton.ExternalAWACSModeConnected = true;
 
                 while (!_stopExternalAWACSMode)
                 {
@@ -136,6 +137,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
                 radio.Reset();
                 _dcsRadioSyncHandler.ProcessRadioInfo(radio);
 
+                _clientStateSingleton.ExternalAWACSModeConnected = false;
                 Logger.Debug("Stopping external AWACS mode loop");
             });
         }

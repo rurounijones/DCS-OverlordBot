@@ -77,12 +77,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
         private SRSClientSyncHandler()
         {
-            hub.Subscribe<ConnectionState>(cs => ProcessConnectionState(cs));
+            // Appears not to work after a disconnect for some ungodly reason.
+            //hub.Subscribe<ConnectionState>(cs => ProcessConnectionState(cs));
         }
 
-        private void ProcessConnectionState(ConnectionState cs)
+        public void ProcessConnectionState(ConnectionState cs)
         {
-            if(cs == ConnectionState.Connected)
+            Logger.Debug($"Recieving Connection State {cs}");
+            if (cs == ConnectionState.Connected)
             {
                 ConnectExternalAWACSMode();
             }
@@ -103,7 +105,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
         public void ConnectExternalAWACSMode()
         {
-            if (_clientStateSingleton.ExternalAWACSModeSelected)
+            if (_clientStateSingleton.ExternalAWACSModeConnected)
             {
                 return;
             }
@@ -128,11 +130,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
         public void DisconnectExternalAWACSMode()
         {
-            if (!_clientStateSingleton.ExternalAWACSModeSelected)
-            {
-                return;
-            }
-
+            _radioDCSSync.StopExternalAWACSModeLoop();
             CallExternalAWACSModeOnMain(false, 0);
         }
 
@@ -451,6 +449,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                         }
                         catch (Exception ex)
                         {
+                            Logger.Error(ex, $"Error decoding message from server: {line}");
                             decodeErrors++;
                             if (!_stop)
                             {
@@ -459,7 +458,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
                             if (decodeErrors > MAX_DECODE_ERRORS)
                             {
-                                ShowVersionMistmatchWarning("unknown");
+                                Logger.Error("Too many errors decoding server messagse. disconnecting");
                                 Disconnect();
                                 break;
                             }
@@ -513,14 +512,21 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                 }
 
                 var bytes = Encoding.UTF8.GetBytes(json);
-                _tcpClient.GetStream().Write(bytes, 0, bytes.Length);
+                try
+                {
+                    _tcpClient.GetStream().Write(bytes, 0, bytes.Length);
+                    _tcpClient.GetStream().Write(bytes, 0, bytes.Length);
+                } catch (ObjectDisposedException ex)
+                {
+                    Logger.Debug(ex, $"Tried writing message type {message.MsgType} to a disposed TcpClient");
+                }
                 //Need to flush?
             }
             catch (Exception ex)
             {
                 if (!_stop)
                 {
-                    Logger.Error(ex, "Client exception sending to server");
+                    Logger.Error(ex, $"Client exception sending message type {message.MsgType} to server");
                 }
 
                 Disconnect();
@@ -534,15 +540,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
             DisconnectExternalAWACSMode();
 
-            try
+            if (_tcpClient != null)
             {
-                if (_tcpClient != null)
-                {
-                    _tcpClient.Close(); // this'll stop the socket blocking
-                }
-            }
-            catch (Exception ex)
-            {
+                _tcpClient.Close(); // this'll stop the socket blocking
             }
 
             Logger.Error("Disconnecting from server");

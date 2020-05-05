@@ -10,11 +10,14 @@ using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.DCSState;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network;
 using Easy.MessageHub;
+using NLog;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
 {
     public sealed class ClientStateSingleton : INotifyPropertyChanged
     {
+        private readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         private static volatile ClientStateSingleton _instance;
         private static object _lock = new Object();
 
@@ -73,11 +76,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
                 isVoipConnected = value;
                 if(value == true)
                 {
-                    hub.Publish(SRSClientSyncHandler.ConnectionState.Connected);
+                    Logger.Debug($"Publishing Connection State {SRSClientSyncHandler.ConnectionState.Connected}");
+                    //hub.Publish(SRSClientSyncHandler.ConnectionState.Connected);
+                    SRSClientSyncHandler.Instance.ProcessConnectionState(SRSClientSyncHandler.ConnectionState.Connected);
                 }
                 if (value == false)
                 {
-                    hub.Publish(SRSClientSyncHandler.ConnectionState.Disconnected);
+                    Logger.Debug($"Publishing Connection State {SRSClientSyncHandler.ConnectionState.Disconnected}");
+                    //hub.Publish(SRSClientSyncHandler.ConnectionState.Disconnected);
+                    SRSClientSyncHandler.Instance.ProcessConnectionState(SRSClientSyncHandler.ConnectionState.Disconnected);
                 }
                 NotifyPropertyChanged("IsVoipConnected");
             }
@@ -104,14 +111,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
 
         // Indicates whether we are *actually* connected in External Awacs Mode
         // Used by the Name and Password related UI elements to determine if they are editable or not
-        public bool ExternalAWACSModeConnected
-        {
+        public bool ExternalAWACSModeConnected { get; set; }
+        /*{
             get
             {
                 bool EamEnabled = SyncedServerSettings.Instance.GetSettingAsBool(Common.Setting.ServerSettingsKeys.EXTERNAL_AWACS_MODE);
                 return IsConnected && EamEnabled && ExternalAWACSModeSelected && !IsGameExportConnected;
             }
-        }
+        }*/
 
         public string LastSeenName { get; set; }
 

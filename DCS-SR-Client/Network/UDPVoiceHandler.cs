@@ -237,7 +237,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                     try
                     {
                         var encodedOpusAudio = new byte[0];
-                        _encodedAudio.TryTake(out encodedOpusAudio, 100000, _stopFlag.Token);
+
+                        try
+                        {
+                            _encodedAudio.TryTake(out encodedOpusAudio, 100000, _stopFlag.Token);
+                        } catch(OperationCanceledException ex)
+                        {
+                            Logger.Debug(ex, "Cancelled operating to get encoded audio");
+                        }
 
                         var time = DateTime.Now.Ticks; //should add at the receive instead?
 

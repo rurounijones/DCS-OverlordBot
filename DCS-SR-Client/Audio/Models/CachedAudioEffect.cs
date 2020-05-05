@@ -39,7 +39,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client
                     {
                         AudioEffectBytes = new byte[reader.Length];
                         var read = reader.Read(AudioEffectBytes, 0, AudioEffectBytes.Length);
-                        Logger.Info($"Read Effect {audioEffect} from {file} Successfully");
                     }
                     else
                     {

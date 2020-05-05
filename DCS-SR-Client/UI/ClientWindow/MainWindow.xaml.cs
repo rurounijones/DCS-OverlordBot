@@ -414,17 +414,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
         private void Stop(bool connectionError = false)
         {
-            if (ClientState.IsConnected && _settings.GetClientSetting(SettingsKeys.PlayConnectionSounds).BoolValue)
-            {
-                try
-                {
-                }
-                catch (Exception ex)
-                {
-                    Logger.Warn(ex, "Failed to play disconnect sound");
-                }
-            }
-
             StartStop.Content = "Connect";
             StartStop.IsEnabled = true;
             ClientState.IsConnected = false;
@@ -441,38 +430,24 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                 _settings.SetClientSetting(SettingsKeys.LastSeenName, ClientState.LastSeenName);
             }
 
-            try
+            if (_audioManager != null)
             {
-                if (_audioManager != null)
-                {
-                    _audioManager.StopEncoding();
-                    _audioManager = null;
-                }
-            }
-            catch (Exception ex)
-            {
+                _audioManager.StopEncoding();
+                _audioManager = null;
             }
 
-            try
+            if (_client != null)
             {
-                if (_client != null)
-                {
-                    _client.Disconnect();
-                    _client = null;
-                }
-            } catch(NullReferenceException ex)
-            {
-                // If it is null then great. Mission accomplished
+                _client.Disconnect();
+                _client = null;
             }
 
             ClientState.DcsPlayerRadioInfo.Reset();
             ClientState.PlayerCoaltionLocationMetadata.Reset();
 
-            if( connectionError == true)
-            {
-                Logger.Debug("Connecting on Stop, connectionError == true");
-                Connect();
-            }
+            Logger.Debug("Could not connect to SRS server. Trying again");
+            Thread.Sleep(5000);
+            Connect();
         }
 
         private void SaveSelectedInputAndOutput()
@@ -502,19 +477,18 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                         _resolvedIp, _port, null);
                 }
             }
-            else if (string.Equals(currentConnection, connection, StringComparison.OrdinalIgnoreCase))
+            /*else if (string.Equals(currentConnection, connection, StringComparison.OrdinalIgnoreCase))
             {
                 // Only stop connection/reset state if connection is currently active
                 // Autoconnect mismatch will quickly disconnect/reconnect, leading to double-callbacks
                 Stop(connectionError);
-            }
+            }*/
             else
             {
                 if (!ClientState.IsConnected)
                 {
                     Stop(connectionError);
                     hub.Publish(SRSClientSyncHandler.ConnectionState.Disconnected);
-
                 }
             }
         }

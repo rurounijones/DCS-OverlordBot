@@ -2,6 +2,7 @@
 using Discord.WebSocket;
 using NLog;
 using System;
+using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -60,7 +61,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Discord
 
 		public static async Task Disconnect()
 		{
-			await _socket.StopAsync();
+			if (_socket != null)
+			{
+				await _socket.StopAsync();
+			}
 		}
 
 		private static async Task Reconnect(Exception e)

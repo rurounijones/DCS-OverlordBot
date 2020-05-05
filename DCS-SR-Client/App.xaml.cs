@@ -59,23 +59,6 @@ namespace DCS_SR_Client
 
         }
 
-        private bool IsClientRunning()
-        {
-            Process currentProcess = Process.GetCurrentProcess();
-            string currentProcessName = currentProcess.ProcessName.ToLower().Trim();
-
-            foreach (Process clsProcess in Process.GetProcesses())
-            {
-                if (clsProcess.Id != currentProcess.Id &&
-                    clsProcess.ProcessName.ToLower().Trim() == currentProcessName)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
         private void InitNotificationIcon()
         {
             System.Windows.Forms.MenuItem notifyIconContextMenuShow = new System.Windows.Forms.MenuItem
