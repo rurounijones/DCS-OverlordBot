@@ -36,6 +36,22 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Util
             return new Geo.Geometries.Point(lat * RadiansToDegrees, lon * RadiansToDegrees);
         }
 
+        public double DegreeToRadian(double angle) { return Math.PI * angle / 180.0; }
+        public double RadianToDegree(double angle) { return 180.0 * angle / Math.PI; }
+
+        public static double BearingTo(Geo.Coordinate source, Geo.Coordinate dest)
+        {
+            double lat1 = source.Latitude * DegreesToRadians;
+            double lat2 = dest.Latitude * DegreesToRadians;
+            double dLon = (dest.Longitude * DegreesToRadians) - (source.Longitude * DegreesToRadians);
+
+            double y = Math.Sin(dLon) * Math.Cos(lat2);
+            double x = Math.Cos(lat1) * Math.Sin(lat2) - Math.Sin(lat1) * Math.Cos(lat2) * Math.Cos(dLon);
+            double brng = Math.Atan2(y, x);
+
+            return (brng * RadiansToDegrees + 360) % 360;
+        }
+
         // So... Thanks to DArt of LotATC we have learned that, on the Caucuses, things are "Whack".
         // The TRUE bearing, on the caucuses, in DCS is the same as the MAGNETIC bearing in real-life
         // so for things like bearings to match up correctly using haversine calculations we need to
