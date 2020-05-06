@@ -6,6 +6,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
+using System;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
 {
@@ -15,14 +16,29 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         public static readonly List<Airfield> Airfields = PopulateAirfields();
 
-        public Manager()
+        private static volatile Manager _instance;
+        private static object _lock = new object();
+
+        private Manager() { }
+
+        public static Manager Instance
         {
-            Logger.Debug("Starting ATC Manager");
-            _ = Discord.DiscordClient.SendToAtcLogChannel("ATC Manager restarted");
-            Task.Run(() => CheckNavigationPointsAsync());
+            get
+            {
+                if (_instance == null)
+                {
+                    lock (_lock)
+                    {
+                        if (_instance == null)
+                            _instance = new Manager();
+                    }
+                }
+
+                return _instance;
+            }
         }
 
-        static private List<Airfield> PopulateAirfields()
+        private static List<Airfield> PopulateAirfields()
         {
             List<Airfield> airfields = new List<Airfield>();
 
@@ -34,6 +50,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
             }
 
             return airfields;
+        }
+
+        public Task Start()
+        {
+            Logger.Debug("Starting ATC Manager");
+            _ = Discord.DiscordClient.SendToAtcLogChannel("ATC Manager restarted");
+            return Task.Run(() => CheckNavigationPointsAsync());
         }
 
         private async Task CheckNavigationPointsAsync()
@@ -117,13 +140,51 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
                                 if (airfield.Aircraft[aircraft.Id].CurrentState == AircraftState.State.OnRunway)
                                 {
                                     airfield.Aircraft[aircraft.Id].EnterBoundaryFromRunway(navigationPoint);
+                                    positionLogged = true;
+                                    break;
                                 } else if (airfield.Aircraft[aircraft.Id].CurrentState == AircraftState.State.OnGround)
                                 {
                                     airfield.Aircraft[aircraft.Id].EnterBoundaryFromTaxiway(navigationPoint);
+                                    positionLogged = true;
+                                    break;
                                 } else
                                 {
                                     Logger.Error($"Could not determine how {aircraft.Id} entered {navigationPoint.Name}");
                                 }
+                            }
+                        }
+                        if (positionLogged == true) { continue; }
+
+                        foreach (var navigationPoint in airfield.LandingPatternPoints)
+                        {
+                            if (navigationPoint.Position.GetBounds().Contains(aircraft.Position))
+                            {
+                                positionLogged = true;
+                                switch (navigationPoint.Name)
+                                {
+                                    case "DownwindEntry":
+                                        airfield.Aircraft[aircraft.Id].TurnEntryDownwind();
+                                        break;
+                                    case "Downwind":
+                                        airfield.Aircraft[aircraft.Id].TurnDownwind();
+                                        break;
+                                    case "Base":
+                                        airfield.Aircraft[aircraft.Id].TurnBase();
+                                        break;
+                                    case "Final":
+                                        airfield.Aircraft[aircraft.Id].TurnFinal();
+                                        break;
+                                    case "ShortFinal":
+                                        airfield.Aircraft[aircraft.Id].EnterShortFinal();
+                                        break;
+                                    default:
+                                        positionLogged = false;
+                                        break;
+                                }
+                            }
+                            if(positionLogged)
+                            {
+                                break;
                             }
                         }
                     }
@@ -131,5 +192,4 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
             }
         }
     }
-
 }

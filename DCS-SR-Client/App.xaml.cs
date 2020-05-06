@@ -4,8 +4,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Discord;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using NLog;
 using Npgsql;
 using Npgsql.Logging;
@@ -19,14 +17,12 @@ namespace DCS_SR_Client
     {
         private System.Windows.Forms.NotifyIcon _notifyIcon;
         private bool loggingReady = false;
-        private readonly Manager AtcManager;
 
         public App()
         {
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledExceptionHandler);
 
             var location = AppDomain.CurrentDomain.BaseDirectory;
-            //var location = Assembly.GetExecutingAssembly().Location;
 
             //check for opus.dll
             if (!File.Exists(location + "\\opus.dll"))
@@ -57,7 +53,7 @@ namespace DCS_SR_Client
 
             Task.Run(() => DiscordClient.Connect());
 
-            AtcManager = new Manager();
+            Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc.Manager.Instance.Start();
         }
 
         private void InitNotificationIcon()
