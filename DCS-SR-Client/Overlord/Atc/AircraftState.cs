@@ -20,6 +20,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
         private readonly GameObject _aircraft;
         private Runway _runway;
 
+
         private readonly StateMachine<State, Trigger>.TriggerWithParameters<NavigationPoint> _enterTaxiwayRunwayBoundaryFromRunwayTrigger;
         private readonly StateMachine<State, Trigger>.TriggerWithParameters<NavigationPoint> _enterTaxiwayRunwayBoundaryFromTaxiwayTrigger;
         private readonly StateMachine<State, Trigger>.TriggerWithParameters<Runway> _enterRunwayTrigger;
@@ -115,7 +116,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
 
         private void UnhandledTrigger(State state, Trigger trigger)
         {
-            Logger.Error($"Unhandled Trigger: {trigger}, State: {state}");
+            Logger.Error($"Unhandled Trigger: {trigger}, State: {state}, Aircraft ID: {_aircraft.Id} (Pilot {_aircraft.Pilot}), Airfield : {_airfield.Name}");
         }
 
         private void SendToDiscord(string message)
@@ -166,6 +167,35 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
         private void OnEnterTaxiwayRunwayBoundaryFromRunway(NavigationPoint navigationPoint)
         {
             SendToDiscord($"Aircraft ID: {_aircraft.Id} (Pilot {_aircraft.Pilot}) entered {navigationPoint.Name} from runway at {_airfield.Name}");
+        }
+
+        public void TurnEntryDownwind() {
+            _aircraftState.Fire(Trigger.TurnEntryDownwind);
+            SendToDiscord($"Aircraft ID: {_aircraft.Id} (Pilot {_aircraft.Pilot}) turning for entry to the downwind for {_airfield.Name}");
+        }
+
+        public void TurnDownwind()
+        {
+            _aircraftState.Fire(Trigger.TurnDownwind);
+            SendToDiscord($"Aircraft ID: {_aircraft.Id} (Pilot {_aircraft.Pilot}) turning downwind  for {_airfield.Name}");
+        }
+
+        public void TurnBase()
+        {
+            _aircraftState.Fire(Trigger.TurnBase);
+            SendToDiscord($"Aircraft ID: {_aircraft.Id} (Pilot {_aircraft.Pilot}) turning base  for {_airfield.Name}");
+        }
+
+        public void TurnFinal()
+        {
+            _aircraftState.Fire(Trigger.TurnFinal);
+            SendToDiscord($"Aircraft ID: {_aircraft.Id} (Pilot {_aircraft.Pilot}) turning final  for {_airfield.Name}");
+        }
+
+        public void EnterShortFinal()
+        {
+            _aircraftState.Fire(Trigger.EnterShortFinal);
+            SendToDiscord($"Aircraft ID: {_aircraft.Id} (Pilot {_aircraft.Pilot}) entering short final for {_airfield.Name}");
         }
     }
 }
