@@ -104,7 +104,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
 
                 Logger.Debug($"New contact {contact.Id}");
 
-                var response = $"{_sender}, {_awacs}, Threat, {BogeyDope.BuildResponse(caller, contact)}";
+                var response = $"{_sender.Callsign}, {_awacs}, Threat, {BogeyDope.BuildResponse(caller, contact)}";
                 Logger.Debug($"Response: {response}");
 
                 var ssmlResponse = $"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{_voice}\">{response}</voice></speak>";

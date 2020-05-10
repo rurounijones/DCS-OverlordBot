@@ -63,7 +63,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
         {
             while (true)
             {
-                Thread.Sleep(2000);
+                Thread.Sleep(500);
                 Logger.Trace($"Checking Airfields");
 
                 bool positionLogged = false;
@@ -80,26 +80,23 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
 
                     foreach (var aircraft in neabyAircraft)
                     {
+                        positionLogged = false;
                         if (!airfield.Aircraft.ContainsKey(aircraft.Id))
                         {
                             AircraftState.State state;
 
-                            if (aircraft.Altitude > airfield.Altitude + 30)
-                            {
-                                state = AircraftState.State.Flying;
-                            }
-                            else
+                            if (aircraft.Altitude <= airfield.Altitude + 30)
                             {
                                 state = AircraftState.State.OnGround;
+                                airfield.Aircraft.Add(aircraft.Id, new AircraftState(airfield, aircraft, state));
                             }
-                            airfield.Aircraft.Add(aircraft.Id, new AircraftState(airfield, aircraft, state));
                             positionLogged = true;
                         }
                         if (positionLogged == true) { continue; }
 
-
-                        var stateMessage = $"Aircraft ID: {aircraft.Id} (Pilot {aircraft.Pilot}) is at state: {airfield.Aircraft[aircraft.Id].CurrentState}";
-                        Logger.Debug(stateMessage);
+                        airfield.Aircraft[aircraft.Id].UpdatePosition(aircraft);
+                        var stateMessage = $"Aircraft ID: {aircraft.Id} (Pilot {aircraft.Pilot}) is at state: {airfield.Aircraft[aircraft.Id].CurrentState}, Lat/Lon: {aircraft.Position.Coordinate.Latitude} / {aircraft.Position.Coordinate.Longitude}";
+                        Logger.Trace(stateMessage);
 
                         if (aircraft.Altitude > airfield.Altitude + 10) { 
                             if (airfield.Aircraft[aircraft.Id].CurrentState == AircraftState.State.OnRunway)
@@ -115,7 +112,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
                         {
                             if (runway.Area.GetBounds().Contains(aircraft.Position))
                             {
-                                if (aircraft.Altitude <= airfield.Altitude + 10 && airfield.Aircraft[aircraft.Id].CurrentState != AircraftState.State.Outbound)
+                                if (aircraft.Altitude <= airfield.Altitude + 10 && airfield.Aircraft[aircraft.Id].CurrentState != AircraftState.State.Outbound && airfield.Aircraft[aircraft.Id].CurrentState != AircraftState.State.ShortFinal)
                                 {
                                     airfield.Aircraft[aircraft.Id].EnterRunway(runway);
                                 }
@@ -123,7 +120,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
                                 {
                                     // No-op to stop flicking between take-off and landing.
                                 }
-                                else 
+                                if (aircraft.Altitude <= airfield.Altitude + 10 && airfield.Aircraft[aircraft.Id].CurrentState == AircraftState.State.ShortFinal)
                                 {
                                     airfield.Aircraft[aircraft.Id].Land(runway);
                                 }

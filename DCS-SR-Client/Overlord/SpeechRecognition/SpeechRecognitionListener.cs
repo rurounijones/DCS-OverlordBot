@@ -60,7 +60,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
             _streamReader = new BufferedWaveProviderStreamReader(bufferedWaveProvider);
             _audioConfig = AudioConfig.FromStreamInput(_streamReader, AudioStreamFormat.GetWaveFormatPCM(16000, 16, 1));
 
-            _wakeWord = KeywordRecognitionModel.FromFile($"Overlord/WakeWords/{callsign}.table");
+            //_wakeWord = KeywordRecognitionModel.FromFile($"Overlord/WakeWords/{callsign}.table");
 
             _responses = responseQueue;
         }

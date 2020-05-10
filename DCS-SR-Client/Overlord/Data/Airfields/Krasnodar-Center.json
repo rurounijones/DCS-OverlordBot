@@ -75,36 +75,60 @@
       "name": "DownwindEntry",
       "lat": 45.1256415,
       "lon": 38.9764124,
-      "radius": 76, // Approximately 250ft
+      "radius": 370, // 0.2nm
       "altitude": 334 // Airport MSL + 1000ft (approximately 304 meters)
     },
     {
       "name": "Downwind",
       "lat": 45.1038538,
       "lon": 38.9416444,
-      "radius": 76,
+      "radius": 185,
       "altitude": 334
     },
     {
       "name": "Base",
       "lat": 45.1049278,
       "lon": 38.8541273,
-      "radius": 76,
+      "radius": 185,
       "altitude": 334
     },
     {
       "name": "Final",
       "lat": 45.0882653,
       "lon": 38.8540299,
-      "radius": 76,
+      "radius": 185,
       "altitude": 334
     },
     {
       "name": "ShortFinal",
-      "lat": 44.9974870,
-      "lon": 38.9010895,
-      "radius": 76,
+      "lat": 45.0875055,
+      "lon": 38.9009343,
+      "radius": 185,
       "altitude": 106
     }
   ]
 }
+
+/*
+SELECT ST_Buffer(ST_Point( 38.9764124, 45.1256415)::geography, 370.4002, 'quad_segs=8') -- Entry to downwind
+UNION ALL
+SELECT ST_Buffer(ST_Point( 38.9416444, 45.1038538)::geography, 185.2001, 'quad_segs=8') -- Start of downwind
+UNION ALL
+SELECT ST_Buffer(ST_Point( 38.8541273, 45.1049278)::geography, 185.2001, 'quad_segs=8') -- Start of base
+UNION ALL
+SELECT ST_Buffer(ST_Point( 38.8540299, 45.0882653)::geography, 370.4002, 'quad_segs=8') -- Start of final
+UNION ALL
+SELECT ST_Buffer(ST_Point( 38.9009343, 45.0875055)::geography, 185.2001, 'quad_segs=8') -- Short final
+*/
+
+/*
+update units
+--set position = ST_Point(37.9764124, 45.1256415)::geography, altitude = 1800 -- Inbound
+--set position = ST_Point(38.9764124, 45.1256415)::geography, altitude = 250 -- Entry to downwind
+--set position = ST_Point(38.9416444, 45.1038538)::geography, altitude = 250 -- Start of downwind
+--set position = ST_Point(38.8541273, 45.1049278)::geography, altitude = 250 -- Start of base
+--set position = ST_Point(38.8540299, 45.0882653)::geography, altitude = 250 -- Start of final
+--set position = ST_Point(38.9009343, 45.0875055)::geography, altitude = 250 -- Short final
+--set position = ST_Point(38.9009343, 45.0875055)::geography, altitude = 35 -- On Runway
+where id = '25a0e';
+*/
