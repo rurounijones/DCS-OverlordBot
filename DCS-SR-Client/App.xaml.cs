@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Discord;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using NLog;
 using Npgsql;
 using Npgsql.Logging;
@@ -19,7 +17,6 @@ namespace DCS_SR_Client
     {
         private System.Windows.Forms.NotifyIcon _notifyIcon;
         private bool loggingReady = false;
-        private readonly SettingsStore _settings = SettingsStore.Instance;
 
         public App()
         {

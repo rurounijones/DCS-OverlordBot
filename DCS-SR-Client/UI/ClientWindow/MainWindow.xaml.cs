@@ -343,7 +343,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             {
                 SaveSelectedInputAndOutput();
 
-                _audioManager = new AudioManager(_clients);
+                _audioManager = AudioManager.Instance;
 
                 try
                 {

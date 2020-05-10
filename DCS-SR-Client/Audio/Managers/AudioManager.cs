@@ -9,13 +9,10 @@ using System.Windows;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Input;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
-using Ciribob.DCS.SimpleRadio.Standalone.Common.Network;
 using Easy.MessageHub;
 using FragLabs.Audio.Codecs;
 using NAudio.CoreAudioApi;
-using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 using NLog;
 using WPFCustomMessageBox;
@@ -37,8 +34,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
 
         public delegate void VOIPConnectCallback(bool result, bool connectionError, string connection);
 
-        private readonly CachedAudioEffect[] _cachedAudioEffects;
-
         private readonly ConcurrentDictionary<string, ClientAudioProvider> _clientsBufferedAudio =
             new ConcurrentDictionary<string, ClientAudioProvider>();
 
@@ -48,10 +43,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
         private readonly ConcurrentDictionary<int, BotAudioProvider> _botsBufferedAudio =
             new ConcurrentDictionary<int, BotAudioProvider>();
 
-        private readonly ConcurrentDictionary<int, ConcurrentQueue<byte[]>> _responseQueue =
+        public ConcurrentDictionary<int, ConcurrentQueue<byte[]>> ResponseQueues =
             new ConcurrentDictionary<int, ConcurrentQueue<byte[]>>();
 
-        private readonly ConcurrentDictionary<string, SRClient> _clientsList;
         private MixingSampleProvider _clientAudioMixer;
 
         private OpusDecoder _decoder;
@@ -60,27 +54,34 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
 
         private UdpVoiceHandler _udpVoiceHandler;
 
-        private VolumeSampleProviderWithPeak _volumeSampleProvider;
-
         public float MicMax { get; set; } = -100;
         public float SpeakerMax { get; set; } = -100;
 
         private ClientStateSingleton _clientStateSingleton = ClientStateSingleton.Instance;
 
-        private readonly SettingsStore _settings = SettingsStore.Instance;
+        #region Singleton definition
+        private static volatile AudioManager _instance;
+        private static object _lock = new object();
 
-        public AudioManager(ConcurrentDictionary<string, SRClient> clientsList)
+        private AudioManager() { }
+
+        public static AudioManager Instance
         {
-            _clientsList = clientsList;
-
-            _cachedAudioEffects =
-                new CachedAudioEffect[Enum.GetNames(typeof(CachedAudioEffect.AudioEffectTypes)).Length];
-            for (var i = 0; i < _cachedAudioEffects.Length; i++)
+            get
             {
-                _cachedAudioEffects[i] = new CachedAudioEffect((CachedAudioEffect.AudioEffectTypes) i);
+                if (_instance == null)
+                {
+                    lock (_lock)
+                    {
+                        if (_instance == null)
+                            _instance = new AudioManager();
+                    }
+                }
+
+                return _instance;
             }
         }
-
+        #endregion
         public float MicBoost { get; set; } = 1.0f;
 
         public void StartEncoding(int mic, MMDevice speakers, string guid, InputDeviceManager inputManager,
@@ -189,7 +190,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
         public void StopEncoding()
         {
 
-            _volumeSampleProvider = null;
             _clientAudioMixer?.RemoveAllMixerInputs();
             _clientAudioMixer = null;
 
@@ -216,11 +216,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
 
         public void AddClientAudio(ClientAudio audio)
         {
-            BotAudioProvider bot = null;
-            if (!_responseQueue.ContainsKey(audio.ReceivedRadio) || _responseQueue[audio.ReceivedRadio] == null)
+            BotAudioProvider bot;
+            if (!ResponseQueues.ContainsKey(audio.ReceivedRadio) || ResponseQueues[audio.ReceivedRadio] == null)
             {
-                _responseQueue[audio.ReceivedRadio] = new ConcurrentQueue<byte[]>();
-                CheckForResponses(_responseQueue[audio.ReceivedRadio], audio.ReceivedRadio);
+                ResponseQueues[audio.ReceivedRadio] = new ConcurrentQueue<byte[]>();
+                CheckForResponses(ResponseQueues[audio.ReceivedRadio], audio.ReceivedRadio);
             }
 
             if (_botsBufferedAudio.ContainsKey(audio.ReceivedRadio) && _botsBufferedAudio[audio.ReceivedRadio].SpeechRecognitionActive() == true)
@@ -231,7 +231,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
             {
                 var callsign = _clientStateSingleton.DcsPlayerRadioInfo.radios[audio.ReceivedRadio].name;
                 var voice = _clientStateSingleton.DcsPlayerRadioInfo.radios[audio.ReceivedRadio].voice;
-                var responseQueue = _responseQueue[audio.ReceivedRadio];
+                var responseQueue = ResponseQueues[audio.ReceivedRadio];
                 bot = new BotAudioProvider(callsign, voice, responseQueue);
                 bot._speechRecognitionListener._voiceHandler = _udpVoiceHandler;
                 _botsBufferedAudio[audio.ReceivedRadio] = bot;
@@ -246,7 +246,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
                 while (true)
                 {
                     byte[] response;
-                    if (responseQueue.TryDequeue(out response))
+                    if (responseQueue.TryDequeue(out response) && response != null)
                     {
                         Logger.Trace($"Sending Response: {response}");
                         await SendResponse(response, response.Length, radioId);
