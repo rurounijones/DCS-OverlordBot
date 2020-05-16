@@ -18,6 +18,8 @@ using NewRelic.Api.Agent;
 using System.Collections.Concurrent;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Discord;
+using Ciribob.DCS.SimpleRadio.Standalone.Common;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 {
@@ -41,17 +43,21 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
         private ConcurrentQueue<byte[]> _responses;
 
+        private RadioInformation _radioInfo;
+
         public bool TimedOut;
 
         // Allows OverlordBot to listen for a specific word to start listening. Currently not used although the setup has all been done.
         // This is due to wierd state transition errors thatI cannot be bothered to debug.
         KeywordRecognitionModel _wakeWord;
 
-        public SpeechRecognitionListener(BufferedWaveProvider bufferedWaveProvider, ConcurrentQueue<byte[]> responseQueue, string callsign = null, string voice = "en-US-JessaRUS")
+        public SpeechRecognitionListener(BufferedWaveProvider bufferedWaveProvider, ConcurrentQueue<byte[]> responseQueue, RadioInformation radioInfo)
         {
-            Logger.Debug("VOICE: " + voice);
+            _radioInfo = radioInfo;
 
-            _voice = voice;
+            _voice = _radioInfo.voice;
+
+            Logger.Debug("VOICE: " + _voice);
 
            _encoder = OpusEncoder.Create(AudioManager.INPUT_SAMPLE_RATE, 1, FragLabs.Audio.Codecs.Opus.Application.Voip);
            _encoder.ForwardErrorCorrection = false;
@@ -181,6 +187,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
         [Transaction(Web = true)]
         private async Task ProcessAwacsCall(SpeechRecognitionEventArgs e) {
             string response = null;
+            string clientMessage = "";
 
             try
             {
@@ -199,13 +206,26 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                     string awacs;
                     Player senderInfo = Task.Run(() => SenderExtractor.Extract(luisResponse)).Result;
 
+                    var clientsOnFreq = ConnectedClientsSingleton.Instance.ClientsOnFreq(_radioInfo.freq, RadioInformation.Modulation.AM);
+                    foreach (var client in clientsOnFreq)
+                    {
+                        if (client.Name != "OverlordBot")
+                        {
+                            clientMessage += $"{client.Name}, ";
+                        }
+                    }
+                    if(clientMessage.Length > 0)
+                    {
+                        clientMessage = clientMessage.Substring(0, clientMessage.Length - 2);
+                    }
+
                     if (luisResponse.Query != null && luisResponse.TopScoringIntent["intent"] == "None" ||
                         (luisResponse.Entities.Find(x => x.Type == "awacs_callsign") == null &&
                           luisResponse.Entities.Find(x => x.Type == "airbase_caller") == null)
                         )
                     {
                         Logger.Debug($"RESPONSE NO-OP");
-                        string transmission = "Transmission Ignored\nIncoming: " + e.Result.Text;
+                        string transmission = $"Transmission Ignored\nClients on freq: {clientMessage}\nIncoming: " + e.Result.Text;
                         _ = DiscordClient.SendTransmission(transmission).ConfigureAwait(false);
                         // NO-OP
                     }
@@ -285,7 +305,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
             if (response != null)
             {
                 Logger.Info($"Outgoing Transmission: {response}");
-                string transmission = "Transmission pair\nIncoming: " + e.Result.Text + "\nOutgoing: " + response;
+                string transmission = $"Transmission pair\nClients on freq: {clientMessage}\nIncoming: {e.Result.Text}\nOutgoing: {response}";
                 _ = DiscordClient.SendTransmission(transmission).ConfigureAwait(false);
                 var audioResponse = await Task.Run(() => Speaker.CreateResponse($"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{_voice}\">{response}</voice></speak>"));
                 if (audioResponse != null)

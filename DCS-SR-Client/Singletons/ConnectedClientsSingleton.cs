@@ -7,11 +7,14 @@ using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Setting;
+using NLog;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
 {
     public sealed class ConnectedClientsSingleton : INotifyPropertyChanged
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         private readonly ConcurrentDictionary<string, SRClient> _clients = new ConcurrentDictionary<string, SRClient>();
         private static volatile ConnectedClientsSingleton _instance;
         private static object _lock = new Object();
@@ -100,8 +103,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
             bool result = _clients.TryRemove(key, out value);
             if (result)
             {
-                NotifyPropertyChanged("Total");
-                NotifyPropertyChanged("InGame");
+                NotifyAll();
             }
             return result;
         }
@@ -109,8 +111,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
         public void Clear()
         {
             _clients.Clear();
-            NotifyPropertyChanged("Total");
-            NotifyPropertyChanged("InGame");
+            NotifyAll();
         }
 
         public bool TryGetValue(string key, out SRClient value)
@@ -123,18 +124,19 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
             return _clients.ContainsKey(key);
         }
 
-        public int ClientsOnFreq(double freq, RadioInformation.Modulation modulation)
+        public List<SRClient> ClientsOnFreq(double freq, RadioInformation.Modulation modulation)
         {
             if (!_serverSettings.GetSettingAsBool(ServerSettingsKeys.SHOW_TUNED_COUNT))
             {
-                return 0;
+                return new List<SRClient>();
             }
             var currentClientPos = ClientStateSingleton.Instance.PlayerCoaltionLocationMetadata;
             var currentUnitId = ClientStateSingleton.Instance.DcsPlayerRadioInfo.unitId;
             var coalitionSecurity = SyncedServerSettings.Instance.GetSettingAsBool(ServerSettingsKeys.COALITION_AUDIO_SECURITY);
             var globalFrequencies = _serverSettings.GlobalFrequencies;
             var global = globalFrequencies.Contains(freq);
-            int count = 0;
+
+            var clients = new List<SRClient>();
 
             foreach (var client in _clients)
             {
@@ -161,14 +163,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
                             //only send if we can hear!
                             if (receivingRadio != null)
                             {
-                                count++;
+                                clients.Add(client.Value);
                             }
                         }
                     }
                 }
             }
 
-            return count;
+            return clients;
         }
     }
 }

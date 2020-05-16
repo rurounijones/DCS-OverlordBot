@@ -94,7 +94,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
                         }
                         if (positionLogged == true) { continue; }
 
-                        airfield.Aircraft[aircraft.Id].UpdatePosition(aircraft);
+                        airfield.Aircraft[aircraft.Id].UpdateAicraftFlightData(aircraft);
                         var stateMessage = $"Aircraft ID: {aircraft.Id} (Pilot {aircraft.Pilot}) is at state: {airfield.Aircraft[aircraft.Id].CurrentState}, Lat/Lon: {aircraft.Position.Coordinate.Latitude} / {aircraft.Position.Coordinate.Longitude}";
                         Logger.Trace(stateMessage);
 

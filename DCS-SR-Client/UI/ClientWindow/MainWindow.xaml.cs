@@ -43,7 +43,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
         private readonly ConcurrentDictionary<string, SRClient> _clients = new ConcurrentDictionary<string, SRClient>();
 
         private readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private AudioPreview _audioPreview;
         private SRSClientSyncHandler _client;
         private int _port = 5002;
 
@@ -514,9 +513,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             _redrawUITimer?.Stop();
 
             Stop();
-
-            _audioPreview?.StopEncoding();
-            _audioPreview = null;
 
             _radioOverlayWindow?.Close();
             _radioOverlayWindow = null;

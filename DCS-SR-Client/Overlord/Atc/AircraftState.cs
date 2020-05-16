@@ -191,9 +191,17 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
         private void OnTurnEntryDownwind()
         {
             var heading = HeadingTo("Downwind");
+            var spokenHeading = Regex.Replace(heading.ToString("000"), "\\d{1}", " $0");
+
+            var direction = "left";
+
+            if(heading + 360 > _aircraft.Heading + 360)
+            {
+                direction = "right";
+            }
 
             var statusUpdate = $"Aircraft ID: {_aircraft.Id} (Pilot {_aircraft.Pilot}) entered start of entry to the downwind for {_airfield.Name}, Lat/Lon: {_aircraft.Position.Coordinate.Latitude} / {_aircraft.Position.Coordinate.Longitude}";
-            var text = $"{_callsign}, {_airfield.Name} approach, turn heading {heading}, speed 1 8 0 knots";
+            var text = $"{_callsign}, {_airfield.Name} approach, turn {direction} heading {spokenHeading}, speed 1 6 0 knots";
 
             SendToDiscord(statusUpdate);
             SendToPlayer(text);
@@ -209,7 +217,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
             var heading = HeadingTo("Base");
 
             var statusUpdate = $"Aircraft ID: {_aircraft.Id} (Pilot {_aircraft.Pilot}) entered start of downwind for {_airfield.Name}, Lat/Lon: {_aircraft.Position.Coordinate.Latitude} / {_aircraft.Position.Coordinate.Longitude}";
-            var text = $"{_callsign}, turn heading {heading}";
+            var text = $"{_callsign}, turn right heading {heading}";
 
             SendToDiscord(statusUpdate);
             SendToPlayer(text);
@@ -224,7 +232,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
             var heading = HeadingTo("Final");
 
             var statusUpdate = $"Aircraft ID: {_aircraft.Id} (Pilot {_aircraft.Pilot}) entered start of base for {_airfield.Name}, Lat/Lon: {_aircraft.Position.Coordinate.Latitude} / {_aircraft.Position.Coordinate.Longitude}";
-            var text = $"{_callsign}, turn heading {heading}";
+            var text = $"{_callsign}, turn left heading 1 7 7";
 
             SendToDiscord(statusUpdate);
             SendToPlayer(text);
@@ -236,10 +244,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
         }
         public void OnTurnFinal()
         {
-            var heading = HeadingTo("ShortFinal");
-
             var statusUpdate = $"Aircraft ID: {_aircraft.Id} (Pilot {_aircraft.Pilot}) entered start of final for {_airfield.Name}, Lat/Lon: {_aircraft.Position.Coordinate.Latitude} / {_aircraft.Position.Coordinate.Longitude}";
-            var text = $"{_callsign}, turn heading {heading} for final, cleared to land";
+            var text = $"{_callsign}, turn left final for runway 0 9";
 
             SendToDiscord(statusUpdate);
             SendToPlayer(text);
@@ -252,15 +258,16 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
         public void OnEnterShortFinal()
         {
             var statusUpdate = $"Aircraft ID: {_aircraft.Id} (Pilot {_aircraft.Pilot}) entering short final for {_airfield.Name}, Lat/Lon: {_aircraft.Position.Coordinate.Latitude} / {_aircraft.Position.Coordinate.Longitude}";
+            var text = $"{_callsign}, check landing gear, cleared to land";
             SendToDiscord(statusUpdate);
         }
 
-        private string HeadingTo(string name)
+        private int HeadingTo(string name)
         {
             var nextPoint = _airfield.LandingPatternPoints.Find(x => x.Name == name);
             var trueBearingToNextPoint = Util.Geospatial.BearingTo(_aircraft.Position.Coordinate, nextPoint.Position.Center);
             var magneticHeadingToNextPoint = Util.Geospatial.TrueToMagnetic(_aircraft.Position, trueBearingToNextPoint);
-            return Regex.Replace(magneticHeadingToNextPoint.ToString("000"), "\\d{1}", " $0");
+            return (int)magneticHeadingToNextPoint;
         }
 
         private void SendToPlayer(string text)
@@ -278,10 +285,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
             }
         }
 
-        public void UpdatePosition(GameObject aircraft)
+        public void UpdateAicraftFlightData(GameObject aircraft)
         {
             _aircraft.Position = aircraft.Position;
             _aircraft.Altitude = aircraft.Altitude;
+            _aircraft.Heading = aircraft.Heading;
         }
     }
 }

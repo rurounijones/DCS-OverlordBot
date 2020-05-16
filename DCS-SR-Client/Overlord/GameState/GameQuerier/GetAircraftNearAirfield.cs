@@ -16,7 +16,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
         {
            var gameObjects = new List<GameObject>();
 
-            var command = @"SELECT contact.id, contact.pilot, contact.position, contact.altitude
+            var command = @"SELECT contact.id, contact.pilot, contact.position, contact.altitude, contact.heading
             FROM units as contact
             WHERE ST_DWithin(@airfield, contact.position, @radius)
             AND contact.altitude < @altitude
@@ -42,8 +42,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
                             Id = dbDataReader.GetString(0),
                             Pilot = dbDataReader.GetString(1),
                             Position = new Geo.Geometries.Point(point.Y, point.X),
-                            Altitude = dbDataReader.GetDouble(3)
-                    };
+                            Altitude = dbDataReader.GetDouble(3),
+                            Heading = (int)dbDataReader.GetDouble(4)
+
+                        };
                         gameObjects.Add(gameObject);
                     }
                     dbDataReader.Close();

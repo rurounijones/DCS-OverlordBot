@@ -229,10 +229,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
             }
             else
             {
-                var callsign = _clientStateSingleton.DcsPlayerRadioInfo.radios[audio.ReceivedRadio].name;
-                var voice = _clientStateSingleton.DcsPlayerRadioInfo.radios[audio.ReceivedRadio].voice;
+                var receivedRadioInfo = _clientStateSingleton.DcsPlayerRadioInfo.radios[audio.ReceivedRadio];
                 var responseQueue = ResponseQueues[audio.ReceivedRadio];
-                bot = new BotAudioProvider(callsign, voice, responseQueue);
+                bot = new BotAudioProvider(receivedRadioInfo, responseQueue);
                 bot._speechRecognitionListener._voiceHandler = _udpVoiceHandler;
                 _botsBufferedAudio[audio.ReceivedRadio] = bot;
             }

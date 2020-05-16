@@ -11,20 +11,27 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 {
     public class BotAudioProvider : AudioProvider
     {
+
+        //https://trac.ffmpeg.org/wiki/audio%20types
+        public static readonly WaveFormat PCM_MONO_16K_S16LE = new WaveFormat(16000, 1);
+
         BufferedWaveProvider _SpeechAudioProvider;
         public SpeechRecognitionListener _speechRecognitionListener { get; set; }
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         
-        public BotAudioProvider(string callsign, string voice, ConcurrentQueue<byte[]> responseQueue)
+        public BotAudioProvider(RadioInformation recievedRadioInfo, ConcurrentQueue<byte[]> responseQueue)
         {
-            _SpeechAudioProvider = new BufferedWaveProvider(AudioPreview.PCM_MONO_16K_S16LE)
+            _SpeechAudioProvider = new BufferedWaveProvider(PCM_MONO_16K_S16LE)
             {
                 BufferDuration = new TimeSpan(0, 1, 0),
                 DiscardOnBufferOverflow = true,
                 ReadFully = false
             };
 
-            _speechRecognitionListener = new SpeechRecognitionListener(_SpeechAudioProvider, responseQueue, callsign, voice);
+            var callsign = recievedRadioInfo.name;
+            var voice = recievedRadioInfo.voice;
+
+            _speechRecognitionListener = new SpeechRecognitionListener(_SpeechAudioProvider, responseQueue, recievedRadioInfo);
             Task.Run(() => _speechRecognitionListener.StartListeningAsync());
         }
 

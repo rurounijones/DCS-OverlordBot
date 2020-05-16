@@ -73,29 +73,29 @@
   "landingPatternPoints": [
     {
       "name": "DownwindEntry",
-      "lat": 45.1256415,
-      "lon": 38.9764124,
-      "radius": 370, // 0.2nm
-      "altitude": 334 // Airport MSL + 1000ft (approximately 304 meters)
+      "lat": 45.1428710,
+      "lon": 38.9778426,
+      "radius": 370,
+      "altitude": 334
     },
     {
       "name": "Downwind",
-      "lat": 45.1038538,
-      "lon": 38.9416444,
+      "lat": 45.1207682,
+      "lon": 38.9418687,
       "radius": 185,
       "altitude": 334
     },
     {
       "name": "Base",
-      "lat": 45.1049278,
-      "lon": 38.8541273,
+      "lat": 45.1231660,
+      "lon": 38.8777564,
       "radius": 185,
       "altitude": 334
     },
     {
       "name": "Final",
-      "lat": 45.0882653,
-      "lon": 38.8540299,
+      "lat": 45.1056573,
+      "lon": 38.8544686,
       "radius": 185,
       "altitude": 334
     },
