@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Windows.Documents;
 using NLog;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network
@@ -20,7 +21,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network
        * - FIXED SEGMENT
        * UInt UnitId - 4 bytes
        * UInt64 PacketId - 8 bytes
-       * Bytes / ASCII String GUID - 22 bytes
+       * byte Retransmit / node / hop count - 1 byte
+       * Bytes / ASCII String TRANSMISSION GUID - 22 bytes used for transmission relay
+       * Bytes / ASCII String CLIENT GUID - 22 bytes
        */
 
     public class UDPVoicePacket
@@ -42,6 +45,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network
         public static readonly int FixedPacketLength =
             sizeof(uint) // UInt UnitId - 4 bytes
             + sizeof(ulong) // UInt64 PacketId - 8 bytes
+            + sizeof(byte) // Byte indicating number of hops for this message // default is 0
+            + GuidLength  // Bytes / ASCII String Transmission GUID - 22 bytes
             + GuidLength; // Bytes / ASCII String GUID - 22 bytes
 
         // HEADER SEGMENT
@@ -53,14 +58,30 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network
 
         // FREQUENCY SEGMENT
         public double[] Frequencies { get; set; }
-        public byte[] Modulations { get; set; } // 0 - AM, 1 - FM, 2- Intercom, 3 - disabled
+
+        /*
+        AM = 0,
+        FM = 1,
+        INTERCOM = 2,
+        DISABLED = 3,
+        HAVEQUICK = 4,
+        SATCOM = 5,
+        MIDS = 6,*/
+        public byte[] Modulations { get; set; }
+
         public byte[] Encryptions { get; set; }
 
         // FIXED SEGMENT
         public uint UnitId { get; set; }
         public byte[] GuidBytes { get; set; }
         public string Guid { get; set; }
+
+        public byte[] OriginalClientGuidBytes { get; set; }
+        public string OriginalClientGuid { get; set; }
         public ulong PacketNumber { get; set; }
+
+        //Number of times its been retransmitted - added to stop retransmission loop with sensible limit
+        public byte RetransmissionCount { get; set; } = new byte();
 
         public byte[] EncodePacket()
         {
@@ -71,7 +92,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network
             var staticSegmentLength = PacketHeaderLength + FixedPacketLength;
             var totalPacketLength = staticSegmentLength + dynamicSegmentLength;
 
-            PacketLength = (ushort) totalPacketLength;
+            PacketLength = (ushort)totalPacketLength;
 
             // Allocate memory for all combined packet segments
             var combinedBytes = new byte[totalPacketLength];
@@ -160,6 +181,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network
             combinedBytes[fixedSegmentOffset + 10] = packetNumber[6];
             combinedBytes[fixedSegmentOffset + 11] = packetNumber[7];
 
+            // back before Transmission GUID
+            combinedBytes[totalPacketLength - (GuidLength + GuidLength + 1)] = RetransmissionCount;
+
+            //Copy Transmission nearly at the end - just before the clientGUID
+            Buffer.BlockCopy(OriginalClientGuidBytes, 0, combinedBytes, totalPacketLength - (GuidLength + GuidLength), GuidLength);
+
             // Copy client GUID to end of packet
             Buffer.BlockCopy(GuidBytes, 0, combinedBytes, totalPacketLength - GuidLength, GuidLength);
 
@@ -170,11 +197,22 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network
         {
             try
             {
-
-
                 // Last 22 bytes of packet are always the client GUID
                 var receivingGuid = Encoding.ASCII.GetString(
                     encodedOpusAudio, encodedOpusAudio.Length - GuidLength, GuidLength);
+
+                //Copy Transmission nearly at the end - just before the client GUID
+                var transmissionBytes = new byte[GuidLength];
+
+                //copy the raw bytes as we'll need them for retransmit
+                Buffer.BlockCopy(encodedOpusAudio, encodedOpusAudio.Length - (GuidLength + GuidLength),
+                    transmissionBytes, 0, GuidLength);
+
+                var transmissionGuid = Encoding.ASCII.GetString(
+                    encodedOpusAudio, encodedOpusAudio.Length - (GuidLength + GuidLength), GuidLength);
+
+                //just before transmission GUID
+                var retransmissionCount = encodedOpusAudio[encodedOpusAudio.Length - (GuidLength + GuidLength + 1)];
 
                 var packetLength = BitConverter.ToUInt16(encodedOpusAudio, 0);
 
@@ -220,12 +258,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Network
                     Encryptions = encryptions,
                     Modulations = modulations,
                     PacketNumber = packetNumber,
-                    PacketLength = packetLength
+                    PacketLength = packetLength,
+                    OriginalClientGuid = transmissionGuid,
+                    OriginalClientGuidBytes = transmissionBytes,
+                    RetransmissionCount = retransmissionCount
                 };
             }
             catch (Exception ex)
             {
-                Logger.Error(ex,"Unable to decode UDP Voice Packet");
+                Logger.Error(ex, "Unable to decode UDP Voice Packet");
             }
 
             return null;

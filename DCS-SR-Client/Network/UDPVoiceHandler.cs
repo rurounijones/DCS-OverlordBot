@@ -1,15 +1,10 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Threading;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
@@ -592,6 +587,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                     var udpVoicePacket = new UDPVoicePacket
                     {
                         GuidBytes = _guidAsciiBytes,
+                        OriginalClientGuidBytes = _guidAsciiBytes,
                         AudioPart1Bytes = bytes,
                         AudioPart1Length = (ushort)bytes.Length,
                         Frequencies = frequencies.ToArray(),
