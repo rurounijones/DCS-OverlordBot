@@ -1,12 +1,19 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Awacs;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
 using NewRelic.Api.Agent;
+using Newtonsoft.Json;
+using System.Linq;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
 {
     class BogeyDope
     {
+        public static readonly List<Aircraft> AircraftMapping = JsonConvert.DeserializeObject<List<Aircraft>>(File.ReadAllText("Overlord/Data/Aircraft.json"));
+
         [Trace]
         public static async Task<string> Process(Player sender)
         {
@@ -88,70 +95,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
 
         private static string PronounceName(Contact contact)
         {
-            if(contact.Name == null)
-            {
-                return null;
-            }
-
-            string s;
-            switch (contact.Name)
-            {
-                case "MiG-29S":
-                    s = "Fulcrum";
-                    break;
-                case "Su-27":
-                    s = "Flanker";
-                    break;
-                case "Su-33":
-                    s = "Flanker";
-                    break;
-                case "J-11A":
-                    s = "Flanker";
-                    break;
-                case "MiG-21Bis":
-                    s = "Fishbed";
-                    break;
-                case "A-50":
-                    s = "Mainstay";
-                    break;
-                case "Su-25":
-                    s = "Frogfoot";
-                    break;
-                case "Su-25T":
-                    s = "Frogfoot";
-                    break;
-                case "MiG-29A":
-                    s = "Fulcrum";
-                    break;
-                case "MiG-31":
-                    s = "Foxhound";
-                    break;
-                case "An-30M":
-                    s = "Clank";
-                    break;
-                case "F-5E-3":
-                    s = "Tiger 2";
-                    break;
-                case "Mi-8MTV2":
-                    s = "Hip";
-                    break;
-                case "Mi-24V":
-                    s = "Hind";
-                    break;
-                case "Su-24M":
-                    s = "Fencer";
-                    break;
-                case "Ka-50":
-                    s = "Hokum A";
-                    break;
-                case "Ka-52":
-                    s = "Hokum B";
-                    break;
-                default:
-                    s = contact.Name;
-                    break;
-            }
-            return s;
+            if (contact.Name == null || contact.Name.Length == 0)
+                return "unknown";
+            var aircraft = AircraftMapping.FirstOrDefault(ac => ac.DcsId.Equals(contact.Name));
+            if (aircraft != null && aircraft.NatoName.Length > 0)
+                return aircraft.NatoName;
+            else
+                return contact.Name;
         }
 
     }

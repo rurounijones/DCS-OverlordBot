@@ -403,6 +403,7 @@
     <Compile Include="Network\SRSClientSyncHandler.cs" />
     <Compile Include="Network\UDPVoiceHandler.cs" />
     <Compile Include="Overlord\Atc\AircraftState.cs" />
+    <Compile Include="Overlord\Awacs\Aircraft.cs" />
     <Compile Include="Overlord\Intents\InboundToAirbase.cs" />
     <Compile Include="Overlord\Navigation\Airfield.cs" />
     <Compile Include="Overlord\Atc\Manager.cs" />
@@ -596,6 +597,9 @@
     <EmbeddedResource Include="Overlord\WakeWords\Magic.table">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
+    <None Include="Overlord\Data\Aircraft.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Overlord\Data\Airfields.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

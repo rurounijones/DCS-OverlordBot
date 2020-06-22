@@ -1,0 +1,350 @@
+[
+  // The following come from file-listing in Scripts\Database\planes filenames
+  {
+    "dcs_id": "A-10A",
+    "nato_name": "Warthog"
+  },
+  {
+    "dcs_id": "A-10C",
+    "nato_name": "Warthog"
+  },
+  {
+    "dcs_id": "A-50",
+    "nato_name": "Mainstay"
+  },
+  {
+    "dcs_id": "An-26B",
+    "nato_name": "Curl"
+  },
+  {
+    "dcs_id": "An-30M",
+    "nato_name": "Clank"
+  },
+  {
+    "dcs_id": "B-1B",
+    "nato_name": "Lancer"
+  },
+  {
+    "dcs_id": "B-52H",
+    "nato_name": "Stratofortress"
+  },
+  {
+    "dcs_id": "BAE_Harrier",
+    "nato_name": "Harrier"
+  },
+  {
+    "dcs_id": "C-130",
+    "nato_name": "Hercules"
+  },
+  {
+    "dcs_id": "C-17A",
+    "nato_name": "Globemaster 3"
+  },
+  {
+    "dcs_id": "E-2C",
+    "nato_name": "Hawkeye"
+  },
+  {
+    "dcs_id": "E-3A",
+    "nato_name": "Sentry"
+  },
+  {
+    "dcs_id": "F-111F",
+    "nato_name": "Aardvark"
+  },
+  {
+    "dcs_id": "F-117A",
+    "nato_name": "Nighthawk"
+  },
+  {
+    "dcs_id": "F-14A",
+    "nato_name": "Tomcat"
+  },
+  {
+    "dcs_id": "F-15C",
+    "nato_name": "Eagle"
+  },
+  {
+    "dcs_id": "F-15E",
+    "nato_name": "Strike Eagle"
+  },
+  {
+    "dcs_id": "F-16A-2",
+    "nato_name": "Falcon"
+  },
+  {
+    "dcs_id": "F-16A",
+    "nato_name": "Falcon"
+  },
+  {
+    "dcs_id": "F-16C-2",
+    "nato_name": "Falcon"
+  },
+  {
+    "dcs_id": "F-16C",
+    "nato_name": "Falcon"
+  },
+  {
+    "dcs_id": "F-4E",
+    "nato_name": "Phantom"
+  },
+  {
+    "dcs_id": "FA-18A",
+    "nato_name": "Hornet"
+  },
+  {
+    "dcs_id": "FA-18C",
+    "nato_name": "Hornet"
+  },
+  {
+    "dcs_id": "IL-76MD",
+    "nato_name": "Candid"
+  },
+  {
+    "dcs_id": "IL-78M",
+    "nato_name": "Candid"
+  },
+  {
+    "dcs_id": "KC-10A",
+    "nato_name": "Extender"
+  },
+  {
+    "dcs_id": "KC-135",
+    "nato_name": "Stratotanker"
+  },
+  {
+    "dcs_id": "MiG-23MLD",
+    "nato_name": "Flogger"
+  },
+  {
+    "dcs_id": "MiG-25PD",
+    "nato_name": "Foxbat"
+  },
+  {
+    "dcs_id": "MiG-25RBT",
+    "nato_name": "Foxbat"
+  },
+  {
+    "dcs_id": "MiG-27K",
+    "nato_name": "Flogger-J"
+  },
+  {
+    "dcs_id": "MiG-29A",
+    "nato_name": "Fulcrum"
+  },
+  {
+    "dcs_id": "MiG-29G",
+    "nato_name": "Fulcrum"
+  },
+  {
+    "dcs_id": "MiG-29K",
+    "nato_name": "Fulcrum"
+  },
+  {
+    "dcs_id": "MiG-29S",
+    "nato_name": "Fulcrum"
+  },
+  {
+    "dcs_id": "MiG-31",
+    "nato_name": "Foxhound"
+  },
+  {
+    "dcs_id": "Mirage_2000-5",
+    "nato_name": "Mirage"
+  },
+  {
+    "dcs_id": "RQ-1A_Predator",
+    "nato_name": "Predator"
+  },
+  {
+    "dcs_id": "S-3B-2",
+    "nato_name": "Viking"
+  },
+  {
+    "dcs_id": "S-3B",
+    "nato_name": "Viking"
+  },
+  {
+    "dcs_id": "Su-17M4",
+    "nato_name": "Fitter"
+  },
+  {
+    "dcs_id": "Su-24M",
+    "nato_name": "Fencer"
+  },
+  {
+    "dcs_id": "Su-24MR",
+    "nato_name": "Fencer"
+  },
+  {
+    "dcs_id": "Su-25",
+    "nato_name": "Frogfoot"
+  },
+  {
+    "dcs_id": "Su-25T",
+    "nato_name": "Frogfoot"
+  },
+  {
+    "dcs_id": "Su-25TM",
+    "nato_name": "Frogfoot"
+  },
+  {
+    "dcs_id": "Su-27",
+    "nato_name": "Flanker"
+  },
+  {
+    "dcs_id": "Su-30",
+    "nato_name": "Flanker-C"
+  },
+  {
+    "dcs_id": "Su-33",
+    "nato_name": "Flanker-D"
+  },
+  {
+    "dcs_id": "Tornado_GR4",
+    "nato_name": "Tornado"
+  },
+  {
+    "dcs_id": "Tornado_IDS",
+    "nato_name": "Tornado"
+  },
+  {
+    "dcs_id": "Tu-142",
+    "nato_name": "Bear"
+  },
+  {
+    "dcs_id": "Tu-160",
+    "nato_name": "Blackjack"
+  },
+  {
+    "dcs_id": "Tu-22M3",
+    "nato_name": "Backfire"
+  },
+  {
+    "dcs_id": "Tu-95MS",
+    "nato_name": "Bear-F"
+  },
+  {
+    "dcs_id": "yak-40",
+    "nato_name": "Codling"
+  },
+  // The following come from file-listing in Scripts\Database\helicopters filenames
+  {
+    "dcs_id": "AB-212ASW",
+    "nato_code": "Huey"
+  },
+  {
+    "dcs_id": "AH-1W",
+    "nato_code": "Cobra"
+  },
+  {
+    "dcs_id": "AH-64A",
+    "nato_code": "Apache"
+  },
+  {
+    "dcs_id": "AH-64D",
+    "nato_code": "Apache"
+  },
+  {
+    "dcs_id": "CH-47D",
+    "nato_code": "Chinook"
+  },
+  {
+    "dcs_id": "CH-53E",
+    "nato_code": "Super Stallion"
+  },
+  {
+    "dcs_id": "Ka-27",
+    "nato_code": "Helix"
+  },
+  {
+    "dcs_id": "Ka-50",
+    "nato_code": "Hokum-A"
+  },
+  {
+    "dcs_id": "Ka-52",
+    "nato_code": "Hokum-B"
+  },
+  {
+    "dcs_id": "Mi-24V",
+    "nato_code": "Hind"
+  },
+  {
+    "dcs_id": "Mi-26",
+    "nato_code": "Halo"
+  },
+  {
+    "dcs_id": "Mi-28N",
+    "nato_code": "Havoc"
+  },
+  {
+    "dcs_id": "Mi-8MT",
+    "nato_code": "Hip"
+  },
+  {
+    "dcs_id": "OH-58D",
+    "nato_code": "Kiowa"
+  },
+  {
+    "dcs_id": "SH-3W",
+    "nato_code": "Sea King"
+  },
+  {
+    "dcs_id": "SH-60B",
+    "nato_code": "Seahawk"
+  },
+  {
+    "dcs_id": "UH-60A",
+    "nato_code": "Blackhawk"
+  },
+
+  // The following come from units seen in the mission editor
+  {
+    "dcs_id": "Mi-8MTV2",
+    "nato_code": "Hip"
+  },
+  {
+    "dcs_id": "MiG-21Bis",
+    "nato_code": "Fishbed"
+  },
+  {
+    "dcs_id": "F-5E-3",
+    "nato_code": "Tiger-2"
+  },
+  {
+    "dcs_id": "J-11A",
+    "nato_name": "Flanker-L"
+  },
+  {
+    "dcs_id": "UH-1H",
+    "nato_name": "Huey"
+  },
+  {
+    "dcs_id": "F/A-18C Lot 20",
+    "nato_name": "Hornet"
+  },
+  {
+    "dcs_id": "F-16CM bl.50",
+    "nato_name": "Falcon"
+  },
+  {
+    "dcs_id": "F-14B",
+    "nato_name": "Tomcat"
+  },
+  {
+    "dcs_id": "SA342M",
+    "nato_name": "Gazelle"
+  },
+  {
+    "dcs_id": "KC-135MPRS",
+    "nato_name": "Stratotanker"
+  },
+  {
+    "dcs_id": "AJS37",
+    "nato_name": "Viggen"
+  },
+  {
+    "dcs_id": "M-2000C",
+    "nato_name": "Mirage"
+  }
+]
