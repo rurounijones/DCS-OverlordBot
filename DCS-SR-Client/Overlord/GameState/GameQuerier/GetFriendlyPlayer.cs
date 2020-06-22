@@ -57,6 +57,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
                             Position = new Geo.Geometries.Point(point.Y, point.X),
                             Pilot = $"{targetGroup} {targetFlight} {targetPlane}",
                             Altitude = altitude,
+                            Range = range,
                             Bearing = (int)bearing,
                             Heading = (int)heading
                         };
