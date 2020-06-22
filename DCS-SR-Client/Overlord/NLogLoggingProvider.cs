@@ -29,7 +29,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
 
         public override void Log(NpgsqlLogLevel level, int connectorId, string msg, Exception exception = null)
         {
-            var ev = new LogEventInfo(ToNLogLogLevel(level), "", msg);
+            var ev = new LogEventInfo(ToNLogLogLevel(level), "Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Npgsql", msg);
             if (exception != null)
                 ev.Exception = exception;
             if (connectorId != 0)
