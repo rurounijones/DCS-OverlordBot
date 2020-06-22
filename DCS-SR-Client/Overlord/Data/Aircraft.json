@@ -1,0 +1,74 @@
+[
+  {
+    "name": "MiG-29S",
+    "nato_code": "Fulcrum"
+  },
+  {
+    "name": "Su-27",
+    "nato_code": "Flanker"
+  },
+  {
+    "name": "Su-33",
+    "nato_code": "Flanker"
+  },
+  {
+    "name": "J-11A",
+    "nato_code": "Flanker"
+  },
+  {
+    "name": "MiG-21Bis",
+    "nato_code": "Fishbed"
+  },
+  {
+    "name": "A-50",
+    "nato_code": "Mainstay"
+  },
+  {
+    "name": "Su-25",
+    "nato_code": "Frogfoot"
+  },
+  {
+    "name": "Su-25T",
+    "nato_code": "Frogfoot"
+  },
+  {
+    "name": "MiG-29A",
+    "nato_code": "Fulcrum"
+  },
+  {
+    "name": "MiG-31",
+    "nato_code": "Foxhound"
+  },
+  {
+    "name": "An-30M",
+    "nato_code": "Clank"
+  },
+  {
+    "name": "F-5E-3",
+    "nato_code": "Tiger 2"
+  },
+  {
+    "name": "Mi-8MTV2",
+    "nato_code": "Hip"
+  },
+  {
+    "name": "Mi-24V",
+    "nato_code": "Hind"
+  },
+  {
+    "name": "Su-24M",
+    "nato_code": "Fencer"
+  },
+  {
+    "name": "Ka-50",
+    "nato_code": "Hokum A"
+  },
+  {
+    "name": "Ka-52",
+    "nato_code": "Hokum B"
+  },
+  {
+    "name": "Il-76MD",
+    "nato_code": "Candid" //Il-76MD
+  }
+]
