@@ -318,5 +318,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                 }
             }
         }
+
+        public async Task SendTransmission(string message)
+        {
+            var audioResponse = await Task.Run(() => Speaker.CreateResponse($"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{_voice}\">{message}</voice></speak>"));
+            _responses.Enqueue(audioResponse);
+        }
     }
 }

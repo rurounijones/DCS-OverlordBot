@@ -40,7 +40,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
         private readonly ConcurrentDictionary<string, RecorderAudioProvider> _recordersBufferedAudio =
             new ConcurrentDictionary<string, RecorderAudioProvider>();
 
-        private readonly ConcurrentDictionary<int, BotAudioProvider> _botsBufferedAudio =
+        public readonly ConcurrentDictionary<int, BotAudioProvider> BotAudioProviders =
             new ConcurrentDictionary<int, BotAudioProvider>();
 
         public ConcurrentDictionary<int, ConcurrentQueue<byte[]>> ResponseQueues =
@@ -177,9 +177,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
 
         public void PlaySoundEffectEndReceive(int transmitOnRadio, float volume)
         {
-            if (_botsBufferedAudio.ContainsKey(transmitOnRadio))
+            if (BotAudioProviders.ContainsKey(transmitOnRadio))
             {
-                _botsBufferedAudio[transmitOnRadio].EndTransmission();
+                BotAudioProviders[transmitOnRadio].EndTransmission();
             }
         }
 
@@ -223,9 +223,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
                 CheckForResponses(ResponseQueues[audio.ReceivedRadio], audio.ReceivedRadio);
             }
 
-            if (_botsBufferedAudio.ContainsKey(audio.ReceivedRadio) && _botsBufferedAudio[audio.ReceivedRadio].SpeechRecognitionActive() == true)
+            if (BotAudioProviders.ContainsKey(audio.ReceivedRadio) && BotAudioProviders[audio.ReceivedRadio].SpeechRecognitionActive() == true)
             {
-                bot = _botsBufferedAudio[audio.ReceivedRadio];
+                bot = BotAudioProviders[audio.ReceivedRadio];
             }
             else
             {
@@ -233,7 +233,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
                 var responseQueue = ResponseQueues[audio.ReceivedRadio];
                 bot = new BotAudioProvider(receivedRadioInfo, responseQueue);
                 bot._speechRecognitionListener._voiceHandler = _udpVoiceHandler;
-                _botsBufferedAudio[audio.ReceivedRadio] = bot;
+                BotAudioProviders[audio.ReceivedRadio] = bot;
             }
             bot.AddClientAudioSamples(audio);
         }

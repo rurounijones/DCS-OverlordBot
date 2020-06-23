@@ -1,9 +1,10 @@
-﻿using Discord;
+﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers;
+using Discord;
 using Discord.WebSocket;
 using NLog;
 using System;
-using System.Net.Sockets;
-using System.Threading;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Discord
@@ -40,10 +41,32 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Discord
 
 			_socket.Log += Log;
 			_socket.Disconnected += Reconnect;
+			_socket.MessageReceived += ProcessMessage;
 
 			await _socket.LoginAsync(TokenType.Bot, _token);
 			await _socket.StartAsync();
 			Logger.Info("Logged into Discord");
+		}
+
+		private async static Task ProcessMessage(SocketMessage message)
+		{
+			if (message.Channel.GetType() == typeof(SocketDMChannel)
+				&& message.Author.Id == 278154654347427840 // DOLT 1-2 RurouniJones's Discord ID
+				&& message.Content.Split(new char[] { ' ' })[0].Equals(Properties.Settings.Default.ServerName))
+			{
+				string radioId = message.Content.Split(new char[] { ' ' })[1];
+				string messageText = string.Join(" ", message.Content.Split(new char[] { ' ' }).Skip(2).ToArray());
+
+				Logger.Info($"Discord message recieved for transmission on radio {radioId}: {messageText}");
+				try
+				{
+					await AudioManager.Instance.BotAudioProviders[int.Parse(radioId)].SendTransmission(messageText);
+					await SendTransmission($"Outgoing Transmission:\n{messageText}");
+				} catch(KeyNotFoundException ex)
+				{
+					Logger.Error(ex, $"Could not find radio with key {radioId}");
+				}
+			}
 		}
 
 		public static async Task SendTransmission(string transmission)

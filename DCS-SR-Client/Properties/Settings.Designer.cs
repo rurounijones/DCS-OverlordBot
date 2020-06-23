@@ -184,5 +184,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Properties {
                 return ((ulong)(this["AtcLogDiscordChannel"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("add_server_name_here")]
+        public string ServerName {
+            get {
+                return ((string)(this["ServerName"]));
+            }
+        }
     }
 }

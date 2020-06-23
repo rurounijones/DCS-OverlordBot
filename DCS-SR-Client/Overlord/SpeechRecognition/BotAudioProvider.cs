@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechOutput;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using NAudio.Wave;
 using NLog;
@@ -18,6 +19,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
         BufferedWaveProvider _SpeechAudioProvider;
         public SpeechRecognitionListener _speechRecognitionListener { get; set; }
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        public double Frequency;
         
         public BotAudioProvider(RadioInformation recievedRadioInfo, ConcurrentQueue<byte[]> responseQueue)
         {
@@ -30,9 +32,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
             var callsign = recievedRadioInfo.name;
             var voice = recievedRadioInfo.voice;
+            Frequency = recievedRadioInfo.freq;
 
             _speechRecognitionListener = new SpeechRecognitionListener(_SpeechAudioProvider, responseQueue, recievedRadioInfo);
             Task.Run(() => _speechRecognitionListener.StartListeningAsync());
+        }
+
+        public async Task SendTransmission(string message)
+        {
+            await _speechRecognitionListener.SendTransmission(message);
         }
 
         public bool SpeechRecognitionActive()
