@@ -51,7 +51,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
                         var altitude = (int)Math.Round((dbDataReader.GetDouble(3) * 3.28d) / 1000d, 0) * 1000; // Feet
                         var heading = dbDataReader.GetDouble(4);
                         var point = (Point)dbDataReader[8];
-                        var name = dbDataReader.GetString(7);
+
+                        string name;
+                        try
+                        {
+                            name = dbDataReader.GetString(7);
+                        } catch (Exception)
+                        {
+                            name = "unknown";
+                        }
                         var position = new Geo.Geometries.Point(point.Y, point.X);
 
                         output = new Contact()
