@@ -58,7 +58,13 @@ namespace DCS_SR_Client
 
             Task.Run(async () => await DiscordClient.Connect());
 
-            Task.Run(async () => await Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc.Manager.Instance.Start(_token));
+            // Since this is experimental still and we only want it running on dev bots with discord logging. Gate it behind configuration
+            // for the discord guild and channel.
+            if (Ciribob.DCS.SimpleRadio.Standalone.Client.Properties.Settings.Default.AtcLogDiscordGuild > 0 &&
+                Ciribob.DCS.SimpleRadio.Standalone.Client.Properties.Settings.Default.AtcLogDiscordChannel > 0)
+            {
+                Task.Run(async () => await Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc.Manager.Instance.Start(_token));
+            }
         }
 
         private void InitNotificationIcon()
