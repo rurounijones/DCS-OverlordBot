@@ -1,8 +1,10 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Discord;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord;
 using NLog;
 using Npgsql;
@@ -17,6 +19,9 @@ namespace DCS_SR_Client
     {
         private System.Windows.Forms.NotifyIcon _notifyIcon;
         private bool loggingReady = false;
+
+        private static readonly CancellationTokenSource _tokenSource = new CancellationTokenSource();
+        private static readonly CancellationToken _token = _tokenSource.Token;
 
         public App()
         {
@@ -51,9 +56,9 @@ namespace DCS_SR_Client
             NpgsqlLogManager.Provider = new NLogLoggingProvider();
             NpgsqlLogManager.IsParameterLoggingEnabled = true;
 
-            Task.Run(() => DiscordClient.Connect());
+            Task.Run(async () => await DiscordClient.Connect());
 
-            Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc.Manager.Instance.Start();
+            Task.Run(async () => await Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc.Manager.Instance.Start(_token));
         }
 
         private void InitNotificationIcon()
@@ -94,12 +99,13 @@ namespace DCS_SR_Client
         private void NotifyIcon_Quit(object sender, EventArgs args)
         {
             MainWindow.Close();
-
         }
 
         protected override void OnExit(ExitEventArgs e)
         {
+            _tokenSource.Cancel();
             Task.Run(() => DiscordClient.Disconnect());
+            SRSClientSyncHandler.Instance.ApplicationStopped = true;
             _notifyIcon.Visible = false;
             base.OnExit(e);
         }

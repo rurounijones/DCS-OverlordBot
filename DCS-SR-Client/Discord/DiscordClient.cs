@@ -43,8 +43,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Discord
 			_socket.Disconnected += Reconnect;
 			_socket.MessageReceived += ProcessMessage;
 
-			await _socket.LoginAsync(TokenType.Bot, _token);
-			await _socket.StartAsync();
+			try
+			{
+				await _socket.LoginAsync(TokenType.Bot, _token);
+				await _socket.StartAsync();
+			} catch(Exception ex)
+			{
+				await Reconnect(ex);
+			}
 			Logger.Info("Logged into Discord");
 		}
 

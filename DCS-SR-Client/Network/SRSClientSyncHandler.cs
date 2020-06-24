@@ -50,6 +50,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
         private readonly IMessageHub hub = MessageHub.Instance;
 
+        public bool ApplicationStopped = false;
+
         public enum ConnectionState
         {
             Connected,
@@ -262,7 +264,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                     });
 
                     string line;
-                    while ((line = reader.ReadLine()) != null)
+                    while ((line = reader.ReadLine()) != null && ApplicationStopped == false)
                     {
                         try
                         {

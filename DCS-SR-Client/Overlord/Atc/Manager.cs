@@ -6,7 +6,6 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
-using System;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
 {
@@ -52,16 +51,16 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
             return airfields;
         }
 
-        public Task Start()
+        public async Task Start(CancellationToken token)
         {
             Logger.Debug("Starting ATC Manager");
             _ = Discord.DiscordClient.SendToAtcLogChannel("ATC Manager restarted");
-            return Task.Run(() => CheckNavigationPointsAsync());
+            await CheckNavigationPointsAsync(token);
         }
 
-        private async Task CheckNavigationPointsAsync()
+        private async Task CheckNavigationPointsAsync(CancellationToken token)
         {
-            while (true)
+            while (!token.IsCancellationRequested)
             {
                 Thread.Sleep(500);
                 Logger.Trace($"Checking Airfields");
