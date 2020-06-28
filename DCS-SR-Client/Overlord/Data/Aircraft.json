@@ -231,85 +231,85 @@
   // The following come from file-listing in Scripts\Database\helicopters filenames
   {
     "dcs_id": "AB-212ASW",
-    "nato_code": "Huey"
+    "nato_name": "Huey"
   },
   {
     "dcs_id": "AH-1W",
-    "nato_code": "Cobra"
+    "nato_name": "Cobra"
   },
   {
     "dcs_id": "AH-64A",
-    "nato_code": "Apache"
+    "nato_name": "Apache"
   },
   {
     "dcs_id": "AH-64D",
-    "nato_code": "Apache"
+    "nato_name": "Apache"
   },
   {
     "dcs_id": "CH-47D",
-    "nato_code": "Chinook"
+    "nato_name": "Chinook"
   },
   {
     "dcs_id": "CH-53E",
-    "nato_code": "Super Stallion"
+    "nato_name": "Super Stallion"
   },
   {
     "dcs_id": "Ka-27",
-    "nato_code": "Helix"
+    "nato_name": "Helix"
   },
   {
     "dcs_id": "Ka-50",
-    "nato_code": "Hokum-A"
+    "nato_name": "Hokum-A"
   },
   {
     "dcs_id": "Ka-52",
-    "nato_code": "Hokum-B"
+    "nato_name": "Hokum-B"
   },
   {
     "dcs_id": "Mi-24V",
-    "nato_code": "Hind"
+    "nato_name": "Hind"
   },
   {
     "dcs_id": "Mi-26",
-    "nato_code": "Halo"
+    "nato_name": "Halo"
   },
   {
     "dcs_id": "Mi-28N",
-    "nato_code": "Havoc"
+    "nato_name": "Havoc"
   },
   {
     "dcs_id": "Mi-8MT",
-    "nato_code": "Hip"
+    "nato_name": "Hip"
   },
   {
     "dcs_id": "OH-58D",
-    "nato_code": "Kiowa"
+    "nato_name": "Kiowa"
   },
   {
     "dcs_id": "SH-3W",
-    "nato_code": "Sea King"
+    "nato_name": "Sea King"
   },
   {
     "dcs_id": "SH-60B",
-    "nato_code": "Seahawk"
+    "nato_name": "Seahawk"
   },
   {
     "dcs_id": "UH-60A",
-    "nato_code": "Blackhawk"
+    "nato_name": "Blackhawk"
   },
 
   // The following come from units seen in the mission editor
   {
     "dcs_id": "Mi-8MTV2",
-    "nato_code": "Hip"
+    "nato_name": "Hip"
   },
   {
     "dcs_id": "MiG-21Bis",
-    "nato_code": "Fishbed"
+    "nato_name": "Fishbed"
   },
   {
     "dcs_id": "F-5E-3",
-    "nato_code": "Tiger-2"
+    "nato_name": "Tiger-2"
   },
   {
     "dcs_id": "J-11A",

@@ -7,11 +7,14 @@ using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
 using NewRelic.Api.Agent;
 using Newtonsoft.Json;
 using System.Linq;
+using System;
+using NLog;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
 {
     class BogeyDope
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         public static readonly List<Aircraft> AircraftMapping = JsonConvert.DeserializeObject<List<Aircraft>>(File.ReadAllText("Overlord/Data/Aircraft.json"));
 
         [Trace]
@@ -95,13 +98,27 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
 
         private static string PronounceName(Contact contact)
         {
-            if (contact.Name == null || contact.Name.Length == 0)
+            Aircraft aircraft;
+            try
+            {
+                if (contact.Name == null || contact.Name.Length == 0)
+                {
+                    return "unknown";
+                }
+                aircraft = AircraftMapping.FirstOrDefault(ac => ac.DcsId.Equals(contact.Name));
+                if (aircraft != null && aircraft.NatoName != null && aircraft.NatoName.Length > 0)
+                {
+                    return aircraft.NatoName;
+                }
+                else
+                {
+                    return contact.Name;
+                }
+            } catch (NullReferenceException ex)
+            {
+                Logger.Error(ex, "Exception pronouncing name of contact");
                 return "unknown";
-            var aircraft = AircraftMapping.FirstOrDefault(ac => ac.DcsId.Equals(contact.Name));
-            if (aircraft != null && aircraft.NatoName.Length > 0)
-                return aircraft.NatoName;
-            else
-                return contact.Name;
+            }
         }
 
     }
