@@ -26,6 +26,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
                 WHERE (requester.pilot ILIKE '" + $"%{sourceGroup} {sourceFlight}-{sourcePlane}%" + @"' OR requester.pilot ILIKE '" + $"%{sourceGroup} {sourceFlight}{sourcePlane}%" + @"' )
               ) as request
             WHERE (friendly.pilot ILIKE '" + $"%{targetGroup} {targetFlight}-{targetPlane}%" + @"' OR friendly.pilot ILIKE '" + $"%{targetGroup} {targetFlight}{targetPlane}%" + @"' )
+            AND friendly.coalition = request.coalition
             LIMIT 1";
 
             Contact friendly = null;
