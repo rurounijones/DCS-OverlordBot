@@ -22,7 +22,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
         {
             string response;
 
-            Contact contact = await GameQuerier.GetBogeyDope(sender.Position, sender.Group, sender.Flight, sender.Plane);
+            Contact contact = await GameQuerier.GetBogeyDope(sender.Coalition, sender.Group, sender.Flight, sender.Plane);
 
             if (contact != null)
             {

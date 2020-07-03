@@ -6,7 +6,7 @@
         public Geo.Geometries.Point Position { get; set; }
 
         public string Pilot { get; set; }
-        public int Coalition { get; set; }
+        public Coalition Coalition { get; set; }
         public double Altitude { get; set; }
         public int? Heading { get; set; }
         public string Name { get; set; }

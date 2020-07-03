@@ -32,7 +32,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
                         var contact = new Contact
                         {
                             Id = dbDataReader.GetString(0),
-                            Coalition = dbDataReader.GetInt32(1)
+                            Coalition = (Coalition) dbDataReader.GetInt32(1)
                         };
                         contacts.Add(contact);
                     }

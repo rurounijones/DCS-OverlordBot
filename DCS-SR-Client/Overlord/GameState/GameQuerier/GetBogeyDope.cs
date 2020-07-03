@@ -12,8 +12,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
     {
 
         [Trace]
-        public static async Task<Contact> GetBogeyDope(Geo.Geometries.Point callerPosition, string group, int flight, int plane)
+        public static async Task<Contact> GetBogeyDope(Coalition coalition, string group, int flight, int plane)
         {
+
             var command = @"SELECT bogey.id,
                                    degrees(ST_AZIMUTH(request.position, bogey.position)) as bearing,
                                    ST_DISTANCE(request.position, bogey.position) as distance,
@@ -23,7 +24,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
                 FROM public.units AS requester
                 WHERE (requester.pilot ILIKE '" + $"%{group} {flight}-{plane}%" + @"' OR requester.pilot ILIKE '" + $"%{group} {flight}{plane}%" + @"' )
               ) as request
-            WHERE NOT bogey.coalition = request.coalition
+            WHERE bogey.coalition = " + (int) coalition.GetOpposingCoalition() + @"
             AND bogey.type LIKE 'Air+%'
             AND bogey.speed >= 26
             ORDER BY request.position<-> bogey.position ASC

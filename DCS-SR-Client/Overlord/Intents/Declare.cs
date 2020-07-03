@@ -13,7 +13,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public static async Task<string> Process(LuisResponse luisResponse, Overlord.GameState.Player sender)
+        public static async Task<string> Process(LuisResponse luisResponse, Player sender)
         {
 
             string bearingString = null;
@@ -59,13 +59,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
                 return "no contacts found";
             }
 
-            Dictionary<int, int> coalitionContacts = new Dictionary<int, int>
+            Dictionary<Coalition, int> coalitionContacts = new Dictionary<Coalition, int>
             {
-                { 0, contacts.Where(contact => contact.Coalition == 0).Count() },
-                { 1, contacts.Where(contact => contact.Coalition == 1).Count() },
-                { 2, contacts.Where(contact => contact.Coalition == 2).Count() },
+                { Coalition.Neutral, contacts.Where(contact => contact.Coalition == Coalition.Neutral).Count() },
+                { Coalition.Redfor, contacts.Where(contact => contact.Coalition == Coalition.Redfor).Count() },
+                { Coalition.Bluefor, contacts.Where(contact => contact.Coalition == Coalition.Bluefor).Count() },
             };
 
+            bool neutrals = false;
             bool friendlies = false;
             bool enemies = false;
 
@@ -74,20 +75,25 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
                 friendlies = true;
             }
 
-            if (coalitionContacts.Where(pair => pair.Key != sender.Coalition && pair.Key != 2).Count(pair => pair.Value > 0) > 0)
+            if (coalitionContacts.Where(pair => pair.Key == sender.Coalition.GetOpposingCoalition()).Count(pair => pair.Value > 0) > 0)
             {
                 enemies = true;
             }
 
-            if(enemies == true && friendlies == true)
+            if (coalitionContacts.Where(pair => pair.Key != sender.Coalition && pair.Key != sender.Coalition.GetOpposingCoalition()).Count(pair => pair.Value > 0) > 0)
+            {
+                neutrals = true;
+            }
+
+            if(enemies == true && ( friendlies == true || neutrals == true ))
             {
                 return "furball";
             }
-            else if (enemies == false && friendlies == true)
+            else if (enemies == false && (friendlies == true || neutrals == true))
             {
                 return "friendly";
             }
-            else if (enemies == true && friendlies == false)
+            else if (enemies == true && (friendlies == false && neutrals == false))
             {
                 return "hostile";
             } else

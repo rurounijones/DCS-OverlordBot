@@ -27,7 +27,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
 
         private static readonly double CHECK_INTERVAL = 5000; // milliseconds
 
-        public WarningRadiusChecker(string callerId, Overlord.GameState.Player sender, string awacs, string voice, int distance, ConcurrentQueue<byte[]> responseQueue) 
+        public WarningRadiusChecker(string callerId, Player sender, string awacs, string voice, int distance, ConcurrentQueue<byte[]> responseQueue) 
         {
             _callerId = callerId;
             _sender = sender;
@@ -88,7 +88,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
                     return;
                 }
 
-                Contact contact = await GameQuerier.GetBogeyDope(caller.Position, _sender.Group, _sender.Flight, _sender.Plane);
+                Contact contact = await GameQuerier.GetBogeyDope(caller.Coalition, _sender.Group, _sender.Flight, _sender.Plane);
 
                 if (contact.Range > _distance)
                 {

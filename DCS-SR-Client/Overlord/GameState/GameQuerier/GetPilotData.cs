@@ -32,7 +32,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
                         {
                             Id = id,
                             Position = new Geo.Geometries.Point(position.Y, position.X),
-                            Coalition = coalition,
+                            Coalition = (Coalition) coalition,
                             Pilot = pilot,
                             Altitude = altitude,
                             Group = group,

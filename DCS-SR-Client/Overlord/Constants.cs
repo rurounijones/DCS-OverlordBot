@@ -22,4 +22,28 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
         public static string TAC_SCRIBE_PASSWORD = Properties.Settings.Default.TacScribePassword;
         public static bool TAC_SCRIBE_FORCE_SSL = Properties.Settings.Default.TacScribeForceSSL;
     }
+
+    public enum Coalition
+    {
+        Neutral,
+        Redfor,
+        Bluefor
+    }
+
+    static class CoalitionMethods
+    {
+
+        public static Coalition GetOpposingCoalition(this Coalition coalition)
+        {
+            switch (coalition)
+            {
+                case Coalition.Redfor:
+                    return Coalition.Bluefor;
+                case Coalition.Bluefor:
+                    return Coalition.Redfor;
+                default:
+                    throw new ArgumentException($"Cannot determine opposing coalition for {coalition}");
+            }
+        }
+    }
 }
