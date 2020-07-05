@@ -51,7 +51,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
                         var range = (int)Math.Round((dbDataReader.GetDouble(2) * 0.539957d) / 1000); // Nautical Miles
                         var altitude = (int)Math.Round((dbDataReader.GetDouble(3) * 3.28d) / 1000d, 0) * 1000; // Feet
                         var heading = dbDataReader.GetDouble(4);
-                        var point = (Point)dbDataReader[8];
+                        var position = (Point)dbDataReader[8];
 
                         string name;
                         try
@@ -61,12 +61,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
                         {
                             name = "unknown";
                         }
-                        var position = new Geo.Geometries.Point(point.Y, point.X);
 
                         output = new Contact()
                         {
                             Id = id,
-                            Position = position,
+                            Position = new Geo.Geometries.Point(position.Y, position.X),
                             Bearing = (int)bearing,
                             Range = range,
                             Altitude = altitude,

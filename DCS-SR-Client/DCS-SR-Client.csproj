@@ -410,6 +410,7 @@
     <Compile Include="Network\UDPVoiceHandler.cs" />
     <Compile Include="Overlord\Atc\Manager.cs" />
     <Compile Include="Overlord\Awacs\Aircraft.cs" />
+    <Compile Include="Overlord\Intents\ReadytoTaxi.cs" />
     <Compile Include="Overlord\Navigation\Airfield.cs" />
     <Compile Include="Overlord\Constants.cs" />
     <Compile Include="Overlord\GameState\Contact.cs" />
@@ -610,7 +611,7 @@
     <None Include="Overlord\Data\Airfields.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Overlord\Data\Airfields\Anapa-Vitzayevo.json">
+    <None Include="Overlord\Data\Airfields\Anapa-Vityazevo.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config">

@@ -1,7 +1,6 @@
 ﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.LuisModels;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Util;
-using NetTopologySuite.Geometries;
 using NLog;
 using System.Collections.Generic;
 using System.Linq;

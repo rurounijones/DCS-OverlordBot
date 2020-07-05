@@ -47,7 +47,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
                         if (bearing < 0) { bearing += 360; }
 
                         var id = dbDataReader.GetString(0);
-                        var point = (Point)dbDataReader[1];
+                        var position = (Point)dbDataReader[1];
                         var range = (int)Math.Round((dbDataReader.GetDouble(3) * 0.539957d) / 1000); // Nautical Miles
                         var altitude = (int)Math.Round((dbDataReader.GetDouble(4) * 3.28d) / 1000d, 0) * 1000; // Feet
                         var heading = dbDataReader.GetDouble(5);
@@ -55,7 +55,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
                         friendly = new Contact
                         {
                             Id = id,
-                            Position = new Geo.Geometries.Point(point.Y, point.X),
+                            Position = new Geo.Geometries.Point(position.Y, position.X),
                             Pilot = $"{targetGroup} {targetFlight} {targetPlane}",
                             Altitude = altitude,
                             Range = range,

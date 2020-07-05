@@ -203,7 +203,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                     Logger.Debug($"LIVE LUIS RESPONSE: {luisJson}");
                     LuisResponse luisResponse = JsonConvert.DeserializeObject<LuisResponse>(luisJson);
 
-                    string awacs;
+                    string botCallsign;
                     Player senderInfo = Task.Run(() => SenderExtractor.Extract(luisResponse)).Result;
 
                     var clientsOnFreq = ConnectedClientsSingleton.Instance.ClientsOnFreq(_radioInfo.freq, RadioInformation.Modulation.AM);
@@ -236,9 +236,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                     }
                     else
                     {
-                        awacs = null;
-                        if (luisResponse.Entities.Find(x => x.Type == "awacs_callsign") != null) {
-                        awacs = luisResponse.Entities.Find(x => x.Type == "awacs_callsign").Resolution.Values[0];
+                        botCallsign = null;
+                        if (luisResponse.Entities.Find(x => x.Type == "awacs_callsign") != null)
+                        {
+                            botCallsign = luisResponse.Entities.Find(x => x.Type == "awacs_callsign").Resolution.Values[0];
+                        }
+                        else if(luisResponse.Entities.Find(x => x.Type == "airbase") != null)
+                        {
+                            botCallsign = luisResponse.Entities.Find(x => x.Type == "airbase").Resolution.Values[0];
                         }
 
                         var sender = Task.Run(() => GameQuerier.GetPilotData(senderInfo.Group, senderInfo.Flight, senderInfo.Plane)).Result;
@@ -246,42 +251,48 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                         if (sender == null)
                         {
                             Logger.Trace($"SenderVerified: false");
-                            response = $"{senderInfo.Group} {senderInfo.Flight} {senderInfo.Plane}, {awacs}, I cannot find you on scope. ";
+                            response = $"{senderInfo.Group} {senderInfo.Flight} {senderInfo.Plane}, {botCallsign}, I cannot find you on scope. ";
                         }
                         else
                         {
                             if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "RadioCheck"))
                             {
-                                response = $"{sender.Callsign}, {awacs}, five by five";
+                                response = $"{sender.Callsign}, {botCallsign}, five by five";
                             }
                             else if (luisResponse.Query != null && luisResponse.TopScoringIntent["intent"] == "BogeyDope")
                             {
-                                response = $"{sender.Callsign}, {awacs}, ";
+                                response = $"{sender.Callsign}, {botCallsign}, ";
                                 response += Task.Run(() => BogeyDope.Process(sender)).Result;
                             }
                             else if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "BearingToAirbase"))
                             {
-                                response = $"{sender.Callsign}, {awacs}, ";
+                                response = $"{sender.Callsign}, {botCallsign}, ";
                                 response += Task.Run(() => BearingToAirbase.Process(luisResponse, sender)).Result;
                             }
                             else if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "BearingToFriendlyPlayer"))
                             {
-                                response = $"{sender.Callsign}, {awacs}, ";
+                                response = $"{sender.Callsign}, {botCallsign}, ";
                                 response += Task.Run(() => BearingToFriendlyPlayer.Process(luisResponse, sender)).Result;
                             }
                             else if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "SetWarningRadius"))
                             {
-                                response = $"{sender.Callsign}, {awacs}, ";
-                                response += Task.Run(() => SetWarningRadius.Process(luisResponse, sender, awacs,_voice, _responses)).Result;
+                                response = $"{sender.Callsign}, {botCallsign}, ";
+                                response += Task.Run(() => SetWarningRadius.Process(luisResponse, sender, botCallsign,_voice, _responses)).Result;
                             }
                             else if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "Picture"))
                             {
-                                response = $"{sender.Callsign}, {awacs}, We do not support picture calls ";
+                                response = $"{sender.Callsign}, {botCallsign}, We do not support picture calls ";
                             }
                             else if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "Declare"))
                             {
-                                response = $"{sender.Callsign}, {awacs}, ";
+                                response = $"{sender.Callsign}, {botCallsign}, ";
                                 response += Task.Run(() => Declare.Process(luisResponse, sender)).Result;
+                            }
+
+                            else if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "ReadyToTaxi"))
+                            {
+                                response = $"{sender.Callsign}, {botCallsign} Ground, ";
+                                response += Task.Run(() => ReadytoTaxi.Process(luisResponse, sender)).Result;
                             }
                         }
                     }
