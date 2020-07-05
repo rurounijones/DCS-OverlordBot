@@ -6,6 +6,7 @@ using System.Windows;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Discord;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc;
 using NLog;
 using Npgsql;
 using Npgsql.Logging;
@@ -63,6 +64,7 @@ namespace DCS_SR_Client
             if (Ciribob.DCS.SimpleRadio.Standalone.Client.Properties.Settings.Default.AtcLogDiscordGuild > 0 &&
                 Ciribob.DCS.SimpleRadio.Standalone.Client.Properties.Settings.Default.AtcLogDiscordChannel > 0)
             {
+                var _ = Manager.Airfields; // Build the airfields
             }
         }
 
