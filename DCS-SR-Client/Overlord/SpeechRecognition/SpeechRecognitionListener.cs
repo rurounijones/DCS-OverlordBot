@@ -283,11 +283,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                                 response = $"{sender.Callsign}, {awacs}, ";
                                 response += Task.Run(() => Declare.Process(luisResponse, sender)).Result;
                             }
-                            else if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "InboundToAirbase"))
-                            {
-                                response = $"{sender.Callsign}, ";
-                                response += Task.Run(() => InboundToAirbase.Process(luisResponse, sender)).Result;
-                            }
                         }
                     }
                 }

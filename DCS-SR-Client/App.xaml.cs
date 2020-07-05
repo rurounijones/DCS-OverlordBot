@@ -63,7 +63,6 @@ namespace DCS_SR_Client
             if (Ciribob.DCS.SimpleRadio.Standalone.Client.Properties.Settings.Default.AtcLogDiscordGuild > 0 &&
                 Ciribob.DCS.SimpleRadio.Standalone.Client.Properties.Settings.Default.AtcLogDiscordChannel > 0)
             {
-                Task.Run(async () => await Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc.Manager.Instance.Start(_token));
             }
         }
 
