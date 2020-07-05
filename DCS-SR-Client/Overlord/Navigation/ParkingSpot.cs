@@ -1,35 +1,43 @@
 ﻿using Newtonsoft.Json;
+using NLog;
+using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Navigation
 {
     public class ParkingSpot : TaxiPoint
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         [JsonProperty(PropertyName = "destination")]
         public bool Destination { get; set; }
 
         [JsonProperty(PropertyName = "points")]
         public List<BoundaryPoint> BoundaryPoints { get; set; }
 
-        private Geo.Geometries.Polygon _area;
-        public Geo.Geometries.Polygon Area
+        public Geo.Geometries.Polygon Area { get; set; }
+
+        [OnDeserialized]
+        internal void BuildParkingSpotPolygon(StreamingContext context)
         {
-            get
+            try
             {
-                if (_area != null)
+                if (BoundaryPoints.Count > 0)
                 {
-                    return _area;
-                }
+                    List<Geo.Coordinate> points = new List<Geo.Coordinate>();
 
-                List<Geo.Coordinate> points = new List<Geo.Coordinate>();
-
-                foreach (var boundaryPoint in BoundaryPoints)
-                {
-                    points.Add(boundaryPoint.Coordinate);
+                    foreach (var boundaryPoint in BoundaryPoints)
+                    {
+                        points.Add(boundaryPoint.Coordinate);
+                    }
+                    points.Add(points[0]);
+                    Area = new Geo.Geometries.Polygon(points.ToArray());
                 }
-                points.Add(points[0]);
-                _area = new Geo.Geometries.Polygon(points.ToArray());
-                return _area;
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, "Error building polygon of Parking Spot");
             }
         }
 

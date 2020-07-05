@@ -39,9 +39,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc
 
             foreach (string file in fileArray)
             {
-                var airfield = JsonConvert.DeserializeObject<Airfield>(File.ReadAllText(file));
-                airfield.BuildTaxiGraph();
-                airfields.Add(airfield);
+                airfields.Add(JsonConvert.DeserializeObject<Airfield>(File.ReadAllText(file)));
             }
 
             return airfields;

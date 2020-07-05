@@ -6,6 +6,7 @@ using QuikGraph.Graphviz;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Navigation
 {
@@ -75,8 +76,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Navigation
         private UndirectedGraph<TaxiPoint, TaggedEdge<TaxiPoint, string>> TaxiNavigationGraph = new UndirectedGraph<TaxiPoint, TaggedEdge<TaxiPoint, string>>();
         private Dictionary<TaggedEdge<TaxiPoint, string>, double> TaxiwayCost;
 
-
-        public void BuildTaxiGraph()
+        [OnDeserialized]
+        public void BuildTaxiGraph(StreamingContext context)
         {
             foreach(Runway runway in Runways)
             {
