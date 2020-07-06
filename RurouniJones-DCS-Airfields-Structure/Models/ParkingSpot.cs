@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Navigation
+namespace RurouniJones.DCS.Airfields.Structure
 {
     public class ParkingSpot : TaxiPoint
     {

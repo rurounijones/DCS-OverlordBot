@@ -7,11 +7,11 @@
   "runways": [
     {
       "name": "Runway 0 4",
-      "direction":  4
+      "direction": 4
     },
     {
       "name": "Runway 2 2",
-      "direction":  220
+      "direction": 220
     }
   ],
 
@@ -33,7 +33,7 @@
     },
     {
       "name": "November Whiskey"
-    },
+    }
   ],
 
   "parkingSpots": [
@@ -221,10 +221,22 @@
       "cost": 1
     },
     {
+      "name": "Alpha",
+      "source": "Runway 0 4",
+      "target": "Alpha Mike",
+      "cost": 999
+    },
+    {
       "name": "Bravo",
       "source": "Runway 0 4",
       "target": "Bravo Mike Whiskey",
       "cost": 1
+    },
+    {
+      "name": "Bravo",
+      "source": "Bravo Mike Whiskey",
+      "target": "Runway 0 4",
+      "cost": 999
     },
     {
       "name": "Charlie",
@@ -233,9 +245,21 @@
       "cost": 1
     },
     {
+      "name": "Charlie",
+      "source": "Charlie Mike",
+      "target": "Runway 0 4",
+      "cost": 999
+    },
+    {
       "name": "Runway",
       "source": "Runway 0 4",
       "target": "Runway 2 2",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway 2 2",
+      "target": "Runway 0 4",
       "cost": 999
     },
     {
@@ -245,10 +269,22 @@
       "cost": 1
     },
     {
+      "name": "Delta",
+      "source": "Delta Mike",
+      "target": "Runway 2 2",
+      "cost": 999
+    },
+    {
       "name": "Mike",
       "source": "Bravo Mike Whiskey",
       "target": "Alpha Mike",
       "cost": 1
+    },
+    {
+      "name": "Mike",
+      "source": "Alpha Mike",
+      "target": "Bravo Mike Whiskey",
+      "cost": 999
     },
     {
       "name": "Mike",
@@ -257,10 +293,22 @@
       "cost": 1
     },
     {
+      "name": "Mike",
+      "source": "Bravo Mike Whiskey",
+      "target": "Charlie Mike",
+      "cost": 999
+    },
+    {
       "name": "Whiskey",
       "source": "November Whiskey",
       "target": "Bravo Mike Whiskey",
       "cost": 1
+    },
+    {
+      "name": "Whiskey",
+      "source": "Bravo Mike Whiskey",
+      "target": "November Whiskey",
+      "cost": 999
     },
     {
       "name": "Mike",
@@ -271,8 +319,20 @@
     {
       "name": "Mike",
       "source": "Mike November",
+      "target": "Delta Mike",
+      "cost": 999
+    },
+    {
+      "name": "Mike",
+      "source": "Mike November",
       "target": "Charlie Mike",
       "cost": 1
+    },
+    {
+      "name": "Mike",
+      "source": "Charlie Mike",
+      "target": "Mike November",
+      "cost": 999
     },
     {
       "name": "Whiskey",
@@ -281,10 +341,22 @@
       "cost": 1
     },
     {
+      "name": "Whiskey",
+      "source": "Bravo Mike Whiskey",
+      "target": "Whiskey Spots",
+      "cost": 999
+    },
+    {
       "name": "Echo",
       "source": "Echo Spots",
       "target": "Runway 2 2",
       "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Runway 2 2",
+      "target": "Echo Spots",
+      "cost": 999
     },
     {
       "name": "November",
@@ -294,8 +366,20 @@
     },
     {
       "name": "November",
+      "source": "November Whiskey",
+      "target": "Maintenance Area",
+      "cost": 999
+    },
+    {
+      "name": "November",
       "source": "Maintenance Area",
       "target": "Mike November",
+      "cost": 999
+    },
+    {
+      "name": "November",
+      "source": "Mike November",
+      "target": "Maintenance Area",
       "cost": 999
     },
     {
@@ -305,10 +389,34 @@
       "cost": 1
     },
     {
+      "name": "Echo",
+      "source": "Runway 2 2",
+      "target": "East Apron",
+      "cost": 999
+    },
+    {
       "name": "Mike",
       "source": "Apron 2",
       "target": "Bravo Mike Whiskey",
       "cost": 1
+    },
+    {
+      "name": "Mike",
+      "source": "Bravo Mike Whiskey",
+      "target": "Apron 2",
+      "cost": 100
+    },
+    {
+      "name": "Mike",
+      "source": "Apron 2",
+      "target": "Charlie Mike",
+      "cost": 999
+    },
+    {
+      "name": "Mike",
+      "source": "Charlie Mike",
+      "target": "Apron 2",
+      "cost": 100
     },
     {
       "name": "Mike",
@@ -318,20 +426,20 @@
     },
     {
       "name": "Mike",
+      "source": "Mike November",
+      "target": "Apron 1",
+      "cost": 100
+    },
+    {
+      "name": "Mike",
       "source": "Delta Mike",
       "target": "Apron 1",
-      "cost": 999
+      "cost": 100
     },
     {
       "name": "Mike",
-      "source": "Charlie Mike",
-      "target": "Apron 2",
-      "cost": 999
-    },
-    {
-      "name": "Mike",
-      "source": "Bravo Mike Whiskey",
-      "target": "Apron 2",
+      "source": "Apron 1",
+      "target": "Delta Mike",
       "cost": 999
     }
   ]

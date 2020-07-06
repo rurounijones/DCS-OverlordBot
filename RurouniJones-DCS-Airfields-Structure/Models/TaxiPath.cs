@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
-using System.Collections.Generic;
 
-namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Navigation
+namespace RurouniJones.DCS.Airfields.Structure
 {
     public class TaxiPath
     {

@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 
-namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Navigation
+namespace RurouniJones.DCS.Airfields.Structure
 {
     public class Airfield
     {
@@ -74,10 +74,16 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Navigation
             }
         }
 
-        private AdjacencyGraph<TaxiPoint, TaggedEdge<TaxiPoint, string>> TaxiNavigationGraph = new AdjacencyGraph<TaxiPoint, TaggedEdge<TaxiPoint, string>>();
+        private readonly AdjacencyGraph<TaxiPoint, TaggedEdge<TaxiPoint, string>> TaxiNavigationGraph = new AdjacencyGraph<TaxiPoint, TaggedEdge<TaxiPoint, string>>();
         private Dictionary<TaggedEdge<TaxiPoint, string>, double> TaxiwayCost;
         private Func<TaggedEdge<TaxiPoint, string>, double> TaxiwayCostFunction;
-        
+
+        public IEnumerable<TaxiPoint> TaxiPoints {
+            get {
+                return TaxiNavigationGraph.Vertices;
+            }
+        }
+
         [OnDeserialized]
         public void BuildTaxiGraph(StreamingContext context)
         {
@@ -117,6 +123,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Navigation
             }
         }
 
+        /**
+         * TODO: This should be moved to some sort of ATC Ground Class.
+         */
         public string GetTaxiInstructions(TaxiPoint source, TaxiPoint target)
         {
             TryFunc<TaxiPoint, IEnumerable<TaggedEdge<TaxiPoint, string>>> tryGetPaths = TaxiNavigationGraph.ShortestPathsDijkstra(TaxiwayCostFunction, source);
@@ -133,7 +142,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Navigation
                         comments.Add($"Cross {runway.Name}");
                     }
                 }
-                return $"Taxi to {target.Name} via {string.Join(" ", RemoveRepeating(taxiways))}, {string.Join(", ", comments)}";
+                string instructions = $"Taxi to {target.Name} via {string.Join(" ", RemoveRepeating(taxiways))}";
+                if(comments.Count > 0)
+                {
+                    instructions += $", {string.Join(", ", comments)}";
+                }
+
+                return instructions;
             }
             else
             {
@@ -160,6 +175,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Navigation
             return dedupedTaxiways;
         }
 
+        /**
+         * TODO: Get rid of this when we have a nice little separate tool that does all the creation of the graphs.
+         */
         private void OutputDotGraph()
         {
             string dotGraph = TaxiNavigationGraph.ToGraphviz(algorithm =>
@@ -171,15 +189,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Navigation
                 };
                 algorithm.FormatEdge += (sender, edgeArgs) =>
                 {
-                    var label = new QuikGraph.Graphviz.Dot.GraphvizEdgeLabel();
-                    label.Value = $"{edgeArgs.Edge.Tag} : {TaxiwayCost[edgeArgs.Edge]}";
+                    var label = new QuikGraph.Graphviz.Dot.GraphvizEdgeLabel
+                    {
+                        Value = $"{edgeArgs.Edge.Tag} : {TaxiwayCost[edgeArgs.Edge]}"
+                    };
                     edgeArgs.EdgeFormat.Label = label;
                 };
             });
 
             Logger.Debug(Name + " \n" + dotGraph);
         }
-
     }
-
 }

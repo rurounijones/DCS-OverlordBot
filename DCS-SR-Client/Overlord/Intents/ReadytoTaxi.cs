@@ -1,24 +1,23 @@
-﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
+﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.LuisModels;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Navigation;
-using Geo;
 using Geo.Geometries;
 using NLog;
+using RurouniJones.DCS.Airfields.Structure;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
 {
     class ReadytoTaxi
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static readonly List<Airfield> Airfields = Populator.Airfields;
+
         public static async Task<string> Process(LuisResponse luisResponse, Player sender)
         {
 
             var airbaseName = luisResponse.Entities.First(x => x.Type == "airbase").Resolution.Values[0];
-            var airfield = Manager.Airfields.First(x => x.Name == airbaseName);
+            var airfield = Airfields.First(x => x.Name == airbaseName);
 
             // Find where this player is
             TaxiPoint source = airfield.ParkingSpots.Find(parkingSpot => IsPlayerInBounds(parkingSpot.Area, sender.Position));

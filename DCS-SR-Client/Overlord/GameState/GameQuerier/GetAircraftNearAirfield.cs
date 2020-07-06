@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading.Tasks;
 using NetTopologySuite.Geometries;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Navigation;
+using RurouniJones.DCS.Airfields.Structure;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
 {

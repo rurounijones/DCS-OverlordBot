@@ -6,7 +6,6 @@ using System.Windows;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Discord;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Atc;
 using NLog;
 using Npgsql;
 using Npgsql.Logging;
@@ -19,10 +18,9 @@ namespace DCS_SR_Client
     public partial class App : Application
     {
         private System.Windows.Forms.NotifyIcon _notifyIcon;
-        private bool loggingReady = false;
+        private readonly bool loggingReady = false;
 
         private static readonly CancellationTokenSource _tokenSource = new CancellationTokenSource();
-        private static readonly CancellationToken _token = _tokenSource.Token;
 
         public App()
         {
@@ -58,14 +56,6 @@ namespace DCS_SR_Client
             NpgsqlLogManager.IsParameterLoggingEnabled = true;
 
             Task.Run(async () => await DiscordClient.Connect());
-
-            // Since this is experimental still and we only want it running on dev bots with discord logging. Gate it behind configuration
-            // for the discord guild and channel.
-            if (Ciribob.DCS.SimpleRadio.Standalone.Client.Properties.Settings.Default.AtcLogDiscordGuild > 0 &&
-                Ciribob.DCS.SimpleRadio.Standalone.Client.Properties.Settings.Default.AtcLogDiscordChannel > 0)
-            {
-                var _ = Manager.Airfields; // Build the airfields
-            }
         }
 
         private void InitNotificationIcon()
