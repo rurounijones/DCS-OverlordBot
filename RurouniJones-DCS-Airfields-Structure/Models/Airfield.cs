@@ -45,29 +45,42 @@ namespace RurouniJones.DCS.Airfields.Structure
         public bool DotGraph { get; set; }
 
         /// <summary>
-        /// Blah
+        /// A list of Parking spots
+        /// 
+        /// A Parking Spot includes anywhere where aircraft might spawn. So this needs to cover areas where a mission
+        /// maker might spawn "OnGround" aircraft such as Harriers. For this reason the Parking Spots at Anapa include
+        /// the Maintenance Area as Harriers are spawned there on GAW.
         /// </summary>
         [JsonProperty(PropertyName = "parkingSpots")]
         public List<ParkingSpot> ParkingSpots { get; set; }
 
         /// <summary>
-        /// Blah
+        /// A list of Runways 
         /// </summary>
         [JsonProperty(PropertyName = "runways")]
         public List<Runway> Runways { get; set; }
 
         /// <summary>
-        /// Blah
+        /// A list of Taxi Junctions
+        /// 
+        /// A Taxi Junction is any place where two taxiways meet each other and where they meet either a Parking Spot
+        /// or a Runway
         /// </summary>
         [JsonProperty(PropertyName = "junctions")]
         public List<Junction> Junctions { get; set; }
 
         /// <summary>
-        /// Blah
+        /// A list of Taxipaths
+        /// 
+        /// A taxi path is a taxiway with a specific source and target TaxiPoint.
+        /// If a taxiway is to be navigated in both directions then it needs two taxipaths, one going each way.
         /// </summary>
         [JsonProperty(PropertyName = "taxipaths")]
         public List<TaxiPath> Taxiways { get; set; }
 
+        /// <summary>
+        /// Blah
+        /// </summary>
         public Point Position {
             get {
                 return new Point(Latitude, Longitude, Altitude);
