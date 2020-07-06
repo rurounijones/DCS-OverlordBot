@@ -7,7 +7,13 @@ namespace RurouniJones.DCS.Airfields.Structure.Tests
     [TestClass]
     public class AnapaTests
     {
-        private static readonly Airfield Anapa = Populator.Airfields.First(airfield => airfield.Name.Equals("Anapa-Vityazevo"));
+        private static Airfield Anapa;
+
+        [ClassInitialize]
+        public static void SetAirfield(TestContext _)
+        {
+            Anapa = Populator.Airfields.First(airfield => airfield.Name.Equals("Anapa-Vityazevo"));
+        }
 
         [TestMethod]
         public void TestApronOneToRunwayFour()
