@@ -20,13 +20,16 @@ Currently this project is part of the DCS-OverlordBot project and is not release
 
 ```cs
 using RurouniJones.DCS.Airfields;
+using RurouniJones.DCS.Airfields.Structure;
+using RurouniJones.DCS.Airfields.Controllers;
 
-Airfield Anapa = Populator.Airfields.First(airfield => airfield.Name.Equals("Anapa-Vityazevo"));
+Airfield anapa = Populator.Airfields.First(airfield => airfield.Name.Equals("Anapa-Vityazevo"));
+Controller anapaController = new GroundController(Anapa);
 
 ParkingSpot source = Anapa.ParkingSpot.First(spot => spot.Name.Equals("Apron 1"));
 Runway target = Anapa.Runways.First(runway => runway.Name.Equals("Runway 0 4"));
 
-string taxiInstructions = Anapa.GetTaxiInstructions(source, target);
+string taxiInstructions = Controller.GetTaxiInstructions(source, target);
 ```
 
 Data for each airfield is stored in the `Data` folder as a JSON configuration file.
