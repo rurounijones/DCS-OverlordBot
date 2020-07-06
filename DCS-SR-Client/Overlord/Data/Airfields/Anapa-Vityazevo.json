@@ -1,15 +1,17 @@
 ﻿{
   "name": "Anapa-Vityazevo",
-  "lat": 0.00,
-  "lon": 0.00,
-  "alt": 0,
-  "dotGraph":  true,
+  "lon": 37.35978347755592,
+  "lat": 45.01317473377168,
+  "alt": 43.00004196166992,
+  "dotGraph": true,
   "runways": [
     {
       "name": "Runway 0 4",
+      "direction":  4
     },
     {
-      "name": "Runway 2 2"
+      "name": "Runway 2 2",
+      "direction":  220
     }
   ],
 
@@ -31,32 +33,45 @@
     },
     {
       "name": "November Whiskey"
-    }
+    },
   ],
 
   "parkingSpots": [
     {
       "name": "Whiskey Spots",
-      "destination": false,
       "points": [
-      ]
-    },
-    {
-      "name": "Echo Spots",
-      "destination": false,
-      "points": [
-      ]
-    },
-    {
-      "name": "Apron 1",
-      "destination": true,
-      "points": [
-
+        {
+          "lat": 45.0076902,
+          "lon": 37.3301518
+        },
+        {
+          "lat": 45.0036701,
+          "lon": 37.331639
+        },
+        {
+          "lat": 45.0033495,
+          "lon": 37.3361908
+        },
+        {
+          "lat": 45.0009074,
+          "lon": 37.3353987
+        },
+        {
+          "lat": 45.0004787,
+          "lon": 37.3288515
+        },
+        {
+          "lat": 45.0071288,
+          "lon": 37.3262344
+        },
+        {
+          "lat": 45.0076902,
+          "lon": 37.3301518
+        }
       ]
     },
     {
       "name": "Apron 2",
-      "destination": true,
       "points": [
         {
           "lat": 45.0037476,
@@ -64,7 +79,7 @@
         },
         {
           "lat": 45.0072952,
-          "lon": 37.343817
+          "lon": 37.3438172
         },
         {
           "lat": 45.0066855,
@@ -81,126 +96,243 @@
       ]
     },
     {
-      "name": "East Apron",
-      "destination": false,
+      "name": "Apron 1",
       "points": [
+        {
+          "lat": 45.0078707,
+          "lon": 37.3462624
+        },
+        {
+          "lat": 45.0087698,
+          "lon": 37.3449421
+        },
+        {
+          "lat": 45.012273,
+          "lon": 37.350019
+        },
+        {
+          "lat": 45.0114266,
+          "lon": 37.3512489
+        },
+        {
+          "lat": 45.0078707,
+          "lon": 37.3462624
+        }
+      ]
+    },
+    {
+      "name": "East Apron",
+      "points": [
+        {
+          "lat": 45.0126419,
+          "lon": 37.3631432
+        },
+        {
+          "lat": 45.0092958,
+          "lon": 37.3683526
+        },
+        {
+          "lat": 45.0086257,
+          "lon": 37.3674453
+        },
+        {
+          "lat": 45.0119802,
+          "lon": 37.3578067
+        },
+        {
+          "lat": 45.0126419,
+          "lon": 37.3631432
+        }
+      ]
+    },
+    {
+      "name": "Maintenance Area",
+      "points": [
+        {
+          "lat": 45.0071719,
+          "lon": 37.3371968
+        },
+        {
+          "lat": 45.0077986,
+          "lon": 37.3388156
+        },
+        {
+          "lat": 45.006738,
+          "lon": 37.340166
+        },
+        {
+          "lat": 45.005707,
+          "lon": 37.3385969
+        },
+        {
+          "lat": 45.0071719,
+          "lon": 37.3371968
+        }
+      ]
+    },
+    {
+      "name": "Echo Spots",
+      "points": [
+        {
+          "lat": 45.0093861,
+          "lon": 37.3595813
+        },
+        {
+          "lat": 45.0034387,
+          "lon": 37.3673135
+        },
+        {
+          "lat": 45.0092603,
+          "lon": 37.3753331
+        },
+        {
+          "lat": 45.0116077,
+          "lon": 37.3688707
+        },
+        {
+          "lat": 45.0100766,
+          "lon": 37.3675563
+        },
+        {
+          "lat": 45.009228,
+          "lon": 37.3686464
+        },
+        {
+          "lat": 45.0085042,
+          "lon": 37.392511
+        },
+        {
+          "lat": 45.0112663,
+          "lon": 37.3620022
+        },
+        {
+          "lat": 45.0093861,
+          "lon": 37.3595813
+        }
       ]
     }
   ],
 
-  "taxiways": [
+  "taxipaths": [
     {
       "name": "Alpha",
-      "connections": [
-        "Runway 0 4",
-        "Alpha Mike"
-      ],
+      "source": "Alpha Mike",
+      "target": "Runway 0 4",
       "cost": 1
     },
     {
-      "name": "Mike",
-      "connections": [
-        "Alpha Mike",
-        "Bravo Mike Whiskey"
-      ],
+      "name": "Bravo",
+      "source": "Runway 0 4",
+      "target": "Bravo Mike Whiskey",
       "cost": 1
     },
     {
-      "name": "Mike",
-      "connections": [
-        "Bravo Mike Whiskey",
-        "Charlie Mike"
-      ],
+      "name": "Charlie",
+      "source": "Runway 0 4",
+      "target": "Charlie Mike",
       "cost": 1
     },
     {
-      "name": "Mike",
-      "connections": [
-        "Charlie Mike",
-        "Mike November"
-      ],
-      "cost": 1
-    },
-    {
-      "name": "Mike",
-      "connections": [
-        "Mike November",
-        "Delta Mike"
-      ],
-      "cost": 1
-    },
-    {
-      "name": "Whiskey",
-      "connections": [
-        "Whiskey Spots",
-        "Bravo Mike Whiskey"
-      ],
-      "cost": 1
-    },
-    {
-      "name": "Whiskey",
-      "connections": [
-        "Bravo Mike Whiskey",
-        "November Whiskey"
-      ],
-      "cost": 1
-    },
-
-    {
-      "name": "November",
-      "connections": [
-        "Mike November",
-        "November Whiskey"
-      ],
-      "cost": 10
-    },
-    {
-      "name": "Echo",
-      "connections": [
-        "Echo Spots",
-        "Runway 2 2"
-      ],
-      "cost": 1
+      "name": "Runway",
+      "source": "Runway 0 4",
+      "target": "Runway 2 2",
+      "cost": 999
     },
     {
       "name": "Delta",
-      "connections": [
-        "Runway 2 2",
-        "Delta Mike"
-      ],
+      "source": "Runway 2 2",
+      "target": "Delta Mike",
       "cost": 1
     },
     {
       "name": "Mike",
-      "connections": [
-        "Apron 2",
-        "Bravo Mike Whiskey"
-      ],
-      "cost": 10
+      "source": "Bravo Mike Whiskey",
+      "target": "Alpha Mike",
+      "cost": 1
     },
     {
       "name": "Mike",
-      "connections": [
-        "Apron 2",
-        "Charlie Mike"
-      ],
-      "cost": 10
+      "source": "Charlie Mike",
+      "target": "Bravo Mike Whiskey",
+      "cost": 1
+    },
+    {
+      "name": "Whiskey",
+      "source": "November Whiskey",
+      "target": "Bravo Mike Whiskey",
+      "cost": 1
     },
     {
       "name": "Mike",
-      "connections": [
-        "Apron 1",
-        "Mike November"
-      ],
+      "source": "Delta Mike",
+      "target": "Mike November",
+      "cost": 1
+    },
+    {
+      "name": "Mike",
+      "source": "Mike November",
+      "target": "Charlie Mike",
+      "cost": 1
+    },
+    {
+      "name": "Whiskey",
+      "source": "Whiskey Spots",
+      "target": "Bravo Mike Whiskey",
       "cost": 1
     },
     {
       "name": "Echo",
-      "connections": [
-        "East Apron",
-        "Runway 2 2"
-      ],
+      "source": "Echo Spots",
+      "target": "Runway 2 2",
       "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Maintenance Area",
+      "target": "November Whiskey",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Maintenance Area",
+      "target": "Mike November",
+      "cost": 999
+    },
+    {
+      "name": "Echo",
+      "source": "East Apron",
+      "target": "Runway 2 2",
+      "cost": 1
+    },
+    {
+      "name": "Mike",
+      "source": "Apron 2",
+      "target": "Bravo Mike Whiskey",
+      "cost": 1
+    },
+    {
+      "name": "Mike",
+      "source": "Apron 1",
+      "target": "Mike November",
+      "cost": 1
+    },
+    {
+      "name": "Mike",
+      "source": "Delta Mike",
+      "target": "Apron 1",
+      "cost": 999
+    },
+    {
+      "name": "Mike",
+      "source": "Charlie Mike",
+      "target": "Apron 2",
+      "cost": 999
+    },
+    {
+      "name": "Mike",
+      "source": "Bravo Mike Whiskey",
+      "target": "Apron 2",
+      "cost": 999
     }
   ]
 }

@@ -65,8 +65,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Navigation
         /// <summary>
         /// Blah
         /// </summary>
-        [JsonProperty(PropertyName = "taxiways")]
-        public List<Taxiway> Taxiways { get; set; }
+        [JsonProperty(PropertyName = "taxipaths")]
+        public List<TaxiPath> Taxiways { get; set; }
 
         public Point Position {
             get {
@@ -74,7 +74,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Navigation
             }
         }
 
-        private UndirectedGraph<TaxiPoint, TaggedEdge<TaxiPoint, string>> TaxiNavigationGraph = new UndirectedGraph<TaxiPoint, TaggedEdge<TaxiPoint, string>>();
+        private AdjacencyGraph<TaxiPoint, TaggedEdge<TaxiPoint, string>> TaxiNavigationGraph = new AdjacencyGraph<TaxiPoint, TaggedEdge<TaxiPoint, string>>();
         private Dictionary<TaggedEdge<TaxiPoint, string>, double> TaxiwayCost;
         private Func<TaggedEdge<TaxiPoint, string>, double> TaxiwayCostFunction;
         
@@ -96,10 +96,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Navigation
 
             TaxiwayCost = new Dictionary<TaggedEdge<TaxiPoint, string>, double>(TaxiNavigationGraph.EdgeCount);
 
-            foreach (Taxiway taxiway in Taxiways)
+            foreach (TaxiPath taxiway in Taxiways)
             {
-                TaxiPoint source = TaxiNavigationGraph.Vertices.First(taxiPoint => taxiPoint.Name.Equals(taxiway.Connections[0]));
-                TaxiPoint target = TaxiNavigationGraph.Vertices.First(taxiPoint => taxiPoint.Name.Equals(taxiway.Connections[1]));
+                TaxiPoint source = TaxiNavigationGraph.Vertices.First(taxiPoint => taxiPoint.Name.Equals(taxiway.Source));
+                TaxiPoint target = TaxiNavigationGraph.Vertices.First(taxiPoint => taxiPoint.Name.Equals(taxiway.Target));
                 string tag = taxiway.Name;
 
                 TaggedEdge<TaxiPoint, string> edge = new TaggedEdge<TaxiPoint, string>(source, target, tag);
@@ -120,15 +120,20 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Navigation
         public string GetTaxiInstructions(TaxiPoint source, TaxiPoint target)
         {
             TryFunc<TaxiPoint, IEnumerable<TaggedEdge<TaxiPoint, string>>> tryGetPaths = TaxiNavigationGraph.ShortestPathsDijkstra(TaxiwayCostFunction, source);
-            
+            List<string> comments = new List<string>();
+
             if (tryGetPaths(target, out IEnumerable<TaggedEdge<TaxiPoint, string>> path))
             {
                 List<string> taxiways = new List<string>();
                 foreach (TaggedEdge<TaxiPoint, string> edge in path)
                 {
                     taxiways.Add(edge.Tag);
+                    if (edge.Source is Runway runway)
+                    {
+                        comments.Add($"Cross {runway.Name}");
+                    }
                 }
-                return $"Taxi to {target.Name} via {string.Join(" ", RemoveRepeating(taxiways))}";
+                return $"Taxi to {target.Name} via {string.Join(" ", RemoveRepeating(taxiways))}, {string.Join(", ", comments)}";
             }
             else
             {
@@ -172,7 +177,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Navigation
                 };
             });
 
-            Logger.Debug(Name + "\n" + dotGraph);
+            Logger.Debug(Name + " \n" + dotGraph);
         }
 
     }

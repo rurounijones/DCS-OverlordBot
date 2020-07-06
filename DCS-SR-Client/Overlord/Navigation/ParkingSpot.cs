@@ -10,9 +10,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Navigation
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        [JsonProperty(PropertyName = "destination")]
-        public bool Destination { get; set; }
-
         [JsonProperty(PropertyName = "points")]
         public List<BoundaryPoint> BoundaryPoints { get; set; }
 
