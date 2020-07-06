@@ -7,8 +7,8 @@
     <ProjectGuid>{CD11CC7C-8EEE-4C38-9534-B5A7A4F6800A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>RurouniJones.DCS.Airfields.Structure</RootNamespace>
-    <AssemblyName>RurouniJones-DCS-Airfields-Structure</AssemblyName>
+    <RootNamespace>RurouniJones.DCS.Airfields</RootNamespace>
+    <AssemblyName>RurouniJones-DCS-Airfields</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -62,13 +62,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\GroundController.cs" />
     <Compile Include="Populator.cs" />
-    <Compile Include="Models\Airfield.cs" />
-    <Compile Include="Models\Junction.cs" />
-    <Compile Include="Models\ParkingSpot.cs" />
-    <Compile Include="Models\Runway.cs" />
-    <Compile Include="Models\TaxiPath.cs" />
-    <Compile Include="Models\TaxiPoint.cs" />
+    <Compile Include="Structure\Airfield.cs" />
+    <Compile Include="Structure\Junction.cs" />
+    <Compile Include="Structure\ParkingSpot.cs" />
+    <Compile Include="Structure\Runway.cs" />
+    <Compile Include="Structure\TaxiPath.cs" />
+    <Compile Include="Structure\TaxiPoint.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

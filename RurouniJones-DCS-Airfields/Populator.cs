@@ -1,8 +1,9 @@
 ﻿using Newtonsoft.Json;
+using RurouniJones.DCS.Airfields.Structure;
 using System.Collections.Generic;
 using System.IO;
 
-namespace RurouniJones.DCS.Airfields.Structure
+namespace RurouniJones.DCS.Airfields
 {
     public class Populator
     {

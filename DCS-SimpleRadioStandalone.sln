@@ -17,9 +17,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NAudio", "NAudio\NAudio.csproj", "{DA4F02E3-0B5E-42CD-B8D9-5583FA51D66E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DCS-Airfields-Structure", "RurouniJones-DCS-Airfields-Structure\DCS-Airfields-Structure.csproj", "{CD11CC7C-8EEE-4C38-9534-B5A7A4F6800A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DCS-Airfields", "RurouniJones-DCS-Airfields\DCS-Airfields.csproj", "{CD11CC7C-8EEE-4C38-9534-B5A7A4F6800A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DCS-Airfields-Structure-Tests", "RurouniJones-DCS-Airfields-Structure-Tests\DCS-Airfields-Structure-Tests.csproj", "{A07C1162-1E12-40EE-BF45-0A35805F6F6E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DCS-Airfields-Tests", "RurouniJones-DCS-Airfields-Tests\DCS-Airfields-Tests.csproj", "{A07C1162-1E12-40EE-BF45-0A35805F6F6E}"
 	ProjectSection(ProjectDependencies) = postProject
 		{CD11CC7C-8EEE-4C38-9534-B5A7A4F6800A} = {CD11CC7C-8EEE-4C38-9534-B5A7A4F6800A}
 	EndProjectSection

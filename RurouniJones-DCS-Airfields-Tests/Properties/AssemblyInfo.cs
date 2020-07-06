@@ -2,11 +2,11 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("RurouniJones-DCS-Airfields-Structure-Tests")]
+[assembly: AssemblyTitle("RurouniJones-DCS-Airfields-Tests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("RurouniJones-DCS-Airfields-Structure-Tests")]
+[assembly: AssemblyProduct("RurouniJones-DCS-Airfields-Tests")]
 [assembly: AssemblyCopyright("Copyright ©  2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

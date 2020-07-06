@@ -636,9 +636,9 @@
       <Project>{838bdb0b-5eb1-4c1e-9026-0a8842ac00c6}</Project>
       <Name>OpusWrapper</Name>
     </ProjectReference>
-    <ProjectReference Include="..\RurouniJones-DCS-Airfields-Structure\DCS-Airfields-Structure.csproj">
+    <ProjectReference Include="..\RurouniJones-DCS-Airfields\DCS-Airfields.csproj">
       <Project>{cd11cc7c-8eee-4c38-9534-b5a7a4f6800a}</Project>
-      <Name>DCS-Airfields-Structure</Name>
+      <Name>DCS-Airfields</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

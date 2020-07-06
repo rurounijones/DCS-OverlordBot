@@ -1,18 +1,20 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+using RurouniJones.DCS.Airfields.Structure;
 using System.Linq;
 
-namespace RurouniJones.DCS.Airfields.Structure.Tests
+namespace RurouniJones.DCS.Airfields.Controllers.Tests
 {
     [TestClass]
     public class AnapaTests
     {
-        private static Airfield Anapa;
+        private static Airfield Airfield;
+        private static GroundController Controller;
 
         [ClassInitialize]
         public static void SetAirfield(TestContext _)
         {
-            Anapa = Populator.Airfields.First(airfield => airfield.Name.Equals("Anapa-Vityazevo"));
+            Airfield = Populator.Airfields.First(airfield => airfield.Name.Equals("Anapa-Vityazevo"));
+            Controller = new GroundController(Airfield);
         }
 
         [TestMethod]
@@ -21,7 +23,7 @@ namespace RurouniJones.DCS.Airfields.Structure.Tests
             ParkingSpot source = (ParkingSpot) GetTaxiPoint("Apron 1");
             Runway target = (Runway) GetTaxiPoint("Runway 0 4");
 
-            string instructions = Anapa.GetTaxiInstructions(source, target);
+            string instructions = Controller.GetTaxiInstructions(source, target);
 
             Assert.AreEqual("Taxi to Runway 0 4 via Mike Alpha", instructions);
         }
@@ -32,7 +34,7 @@ namespace RurouniJones.DCS.Airfields.Structure.Tests
             ParkingSpot source = (ParkingSpot) GetTaxiPoint("Apron 2");
             Runway target = (Runway) GetTaxiPoint("Runway 0 4");
 
-            string instructions = Anapa.GetTaxiInstructions(source, target);
+            string instructions = Controller.GetTaxiInstructions(source, target);
 
             Assert.AreEqual("Taxi to Runway 0 4 via Mike Alpha", instructions);
         }
@@ -43,7 +45,7 @@ namespace RurouniJones.DCS.Airfields.Structure.Tests
             ParkingSpot source = (ParkingSpot) GetTaxiPoint("Whiskey Spots");
             Runway target = (Runway) GetTaxiPoint("Runway 0 4");
 
-            string instructions = Anapa.GetTaxiInstructions(source, target);
+            string instructions = Controller.GetTaxiInstructions(source, target);
 
             Assert.AreEqual("Taxi to Runway 0 4 via Whiskey Mike Alpha", instructions);
         }
@@ -54,7 +56,7 @@ namespace RurouniJones.DCS.Airfields.Structure.Tests
             ParkingSpot source = (ParkingSpot) GetTaxiPoint("Maintenance Area");
             Runway target = (Runway) GetTaxiPoint("Runway 0 4");
 
-            string instructions = Anapa.GetTaxiInstructions(source, target);
+            string instructions = Controller.GetTaxiInstructions(source, target);
 
             Assert.AreEqual("Taxi to Runway 0 4 via November Whiskey Mike Alpha", instructions);
         }
@@ -65,7 +67,7 @@ namespace RurouniJones.DCS.Airfields.Structure.Tests
             ParkingSpot source = (ParkingSpot) GetTaxiPoint("East Apron");
             Runway target = (Runway) GetTaxiPoint("Runway 0 4");
 
-            string instructions = Anapa.GetTaxiInstructions(source, target);
+            string instructions = Controller.GetTaxiInstructions(source, target);
 
             Assert.AreEqual("Taxi to Runway 0 4 via Echo Delta Mike Alpha, Cross Runway 2 2", instructions);
         }
@@ -76,14 +78,14 @@ namespace RurouniJones.DCS.Airfields.Structure.Tests
             ParkingSpot source = (ParkingSpot) GetTaxiPoint("Echo Spots");
             Runway target = (Runway) GetTaxiPoint("Runway 0 4");
 
-            string instructions = Anapa.GetTaxiInstructions(source, target);
+            string instructions = Controller.GetTaxiInstructions(source, target);
 
             Assert.AreEqual("Taxi to Runway 0 4 via Echo Delta Mike Alpha, Cross Runway 2 2", instructions);
         }
 
         private TaxiPoint GetTaxiPoint(string name)
         {
-            return Anapa.TaxiPoints.First(taxiPoint => taxiPoint.Name.Equals(name));
+            return Airfield.TaxiPoints.First(taxiPoint => taxiPoint.Name.Equals(name));
         }
     }
 }

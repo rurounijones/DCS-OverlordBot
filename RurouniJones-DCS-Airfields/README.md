@@ -1,4 +1,4 @@
-﻿# DCS Airfields Structure
+﻿# DCS Airfields
 
 This library provides datastructures and algorithms designed to make dealing with DCS Airfields easier.
 
@@ -19,7 +19,7 @@ Currently this project is part of the DCS-OverlordBot project and is not release
 ## Usage
 
 ```cs
-using RurouniJones.DCS.Airfields.Structure;
+using RurouniJones.DCS.Airfields;
 
 Airfield Anapa = Populator.Airfields.First(airfield => airfield.Name.Equals("Anapa-Vityazevo"));
 

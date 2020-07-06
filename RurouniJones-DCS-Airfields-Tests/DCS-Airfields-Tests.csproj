@@ -8,8 +8,8 @@
     <ProjectGuid>{A07C1162-1E12-40EE-BF45-0A35805F6F6E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>RurouniJones_DCS_Airfields_Structure_Tests</RootNamespace>
-    <AssemblyName>RurouniJones-DCS-Airfields-Structure-Tests</AssemblyName>
+    <RootNamespace>RurouniJones.DCS.Airfields.Tests</RootNamespace>
+    <AssemblyName>RurouniJones-DCS-Airfields-Tests</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -50,7 +50,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Taxi\AnapaTests.cs" />
+    <Compile Include="GroundController\AnapaTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -58,9 +58,9 @@
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\RurouniJones-DCS-Airfields-Structure\DCS-Airfields-Structure.csproj">
+    <ProjectReference Include="..\RurouniJones-DCS-Airfields\DCS-Airfields.csproj">
       <Project>{CD11CC7C-8EEE-4C38-9534-B5A7A4F6800A}</Project>
-      <Name>DCS-Airfields-Structure</Name>
+      <Name>DCS-Airfields</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

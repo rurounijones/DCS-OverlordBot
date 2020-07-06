@@ -2,6 +2,8 @@
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.LuisModels;
 using Geo.Geometries;
 using NLog;
+using RurouniJones.DCS.Airfields;
+using RurouniJones.DCS.Airfields.Controllers;
 using RurouniJones.DCS.Airfields.Structure;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,7 +31,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
 
             TaxiPoint target = airfield.Runways[0];
 
-            return airfield.GetTaxiInstructions(source, target);
+            return new GroundController(airfield).GetTaxiInstructions(source, target);
         }
 
         private static bool IsPlayerInBounds(Polygon area, Point player)
