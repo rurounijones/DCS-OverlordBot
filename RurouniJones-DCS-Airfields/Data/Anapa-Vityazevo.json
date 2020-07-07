@@ -3,213 +3,105 @@
   "lon": 37.35978347755592,
   "lat": 45.01317473377168,
   "alt": 43.00004196166992,
-  "dotGraph": true,
+  "dotGraph": false,
   "runways": [
     {
       "name": "Runway 0 4",
-      "direction": 4
+      "direction": 4,
+      "lat": 0,
+      "lon": 0
     },
     {
       "name": "Runway 2 2",
-      "direction": 220
+      "direction": 220,
+      "lat": 0,
+      "lon": 0
     }
   ],
 
   "junctions": [
     {
-      "name": "Alpha Mike"
+      "name": "Alpha Mike",
+      "lat": 44.9981578,
+      "lon": 37.3332707
     },
     {
-      "name": "Bravo Mike Whiskey"
+      "name": "Bravo Mike Whiskey",
+      "lat": 45.0030686,
+      "lon": 37.3397771
     },
     {
-      "name": "Charlie Mike"
+      "name": "Charlie Mike",
+      "lat": 45.0056625,
+      "lon": 37.3435851
     },
     {
-      "name": "Delta Mike"
+      "name": "Delta Mike",
+      "lat": 45.0153986,
+      "lon": 37.3570236
     },
     {
-      "name": "Mike November"
+      "name": "Mike November",
+      "lat": 45.0078665,
+      "lon": 37.3465924
     },
     {
-      "name": "November Whiskey"
+      "name": "November Whiskey",
+      "lat": 45.0041228,
+      "lon": 37.3348995
+    },
+    {
+      "name": "Bravo Runway",
+      "lat": 45.0011993,
+      "lon": 37.3424703
+    },
+    {
+      "name": "Charlie Runway",
+      "lat": 45.0038921,
+      "lon": 37.3462753
     }
   ],
 
   "parkingSpots": [
     {
       "name": "Whiskey Spots",
-      "points": [
-        {
-          "lat": 45.0076902,
-          "lon": 37.3301518
-        },
-        {
-          "lat": 45.0036701,
-          "lon": 37.331639
-        },
-        {
-          "lat": 45.0033495,
-          "lon": 37.3361908
-        },
-        {
-          "lat": 45.0009074,
-          "lon": 37.3353987
-        },
-        {
-          "lat": 45.0004787,
-          "lon": 37.3288515
-        },
-        {
-          "lat": 45.0071288,
-          "lon": 37.3262344
-        },
-        {
-          "lat": 45.0076902,
-          "lon": 37.3301518
-        }
-      ]
+      "lat": 45.0025587,
+      "lon": 37.3325848
     },
     {
       "name": "Apron 2",
-      "points": [
-        {
-          "lat": 45.0037476,
-          "lon": 37.3388059
-        },
-        {
-          "lat": 45.0072952,
-          "lon": 37.3438172
-        },
-        {
-          "lat": 45.0066855,
-          "lon": 37.3446088
-        },
-        {
-          "lat": 45.0031584,
-          "lon": 37.3397618
-        },
-        {
-          "lat": 45.0037476,
-          "lon": 37.3388059
-        }
-      ]
+      "lat": 45.0052733,
+      "lon": 37.3415787
     },
     {
       "name": "Apron 1",
-      "points": [
-        {
-          "lat": 45.0078707,
-          "lon": 37.3462624
-        },
-        {
-          "lat": 45.0087698,
-          "lon": 37.3449421
-        },
-        {
-          "lat": 45.012273,
-          "lon": 37.350019
-        },
-        {
-          "lat": 45.0114266,
-          "lon": 37.3512489
-        },
-        {
-          "lat": 45.0078707,
-          "lon": 37.3462624
-        }
-      ]
+      "lat": 45.0101579,
+      "lon": 37.3481762
     },
     {
       "name": "East Apron",
-      "points": [
-        {
-          "lat": 45.0126419,
-          "lon": 37.3631432
-        },
-        {
-          "lat": 45.0092958,
-          "lon": 37.3683526
-        },
-        {
-          "lat": 45.0086257,
-          "lon": 37.3674453
-        },
-        {
-          "lat": 45.0119802,
-          "lon": 37.3578067
-        },
-        {
-          "lat": 45.0126419,
-          "lon": 37.3631432
-        }
-      ]
+      "lat": 45.0052733,
+      "lon": 37.3415787
     },
     {
       "name": "Maintenance Area",
-      "points": [
-        {
-          "lat": 45.0071719,
-          "lon": 37.3371968
-        },
-        {
-          "lat": 45.0077986,
-          "lon": 37.3388156
-        },
-        {
-          "lat": 45.006738,
-          "lon": 37.340166
-        },
-        {
-          "lat": 45.005707,
-          "lon": 37.3385969
-        },
-        {
-          "lat": 45.0071719,
-          "lon": 37.3371968
-        }
-      ]
+      "lat": 45.0069344,
+      "lon": 37.3381935
     },
     {
       "name": "Echo Spots",
-      "points": [
-        {
-          "lat": 45.0093861,
-          "lon": 37.3595813
-        },
-        {
-          "lat": 45.0034387,
-          "lon": 37.3673135
-        },
-        {
-          "lat": 45.0092603,
-          "lon": 37.3753331
-        },
-        {
-          "lat": 45.0116077,
-          "lon": 37.3688707
-        },
-        {
-          "lat": 45.0100766,
-          "lon": 37.3675563
-        },
-        {
-          "lat": 45.009228,
-          "lon": 37.3686464
-        },
-        {
-          "lat": 45.0085042,
-          "lon": 37.392511
-        },
-        {
-          "lat": 45.0112663,
-          "lon": 37.3620022
-        },
-        {
-          "lat": 45.0093861,
-          "lon": 37.3595813
-        }
-      ]
+      "lat": 45.0094606,
+      "lon": 37.3635130
+    },
+    {
+      "name": "Echo Spots 1",
+      "lat": 45.0102612,
+      "lon": 37.3691373
+    },
+    {
+      "name": "Echo Spots 2",
+      "lat": 45.0072648,
+      "lon": 37.3679661
     }
   ],
 
@@ -228,38 +120,62 @@
     },
     {
       "name": "Bravo",
-      "source": "Runway 0 4",
+      "source": "Bravo Runway",
       "target": "Bravo Mike Whiskey",
       "cost": 1
     },
     {
       "name": "Bravo",
       "source": "Bravo Mike Whiskey",
-      "target": "Runway 0 4",
+      "target": "Bravo Runway",
       "cost": 999
     },
     {
       "name": "Charlie",
-      "source": "Runway 0 4",
+      "source": "Charlie Runway",
       "target": "Charlie Mike",
       "cost": 1
     },
     {
       "name": "Charlie",
       "source": "Charlie Mike",
-      "target": "Runway 0 4",
+      "target": "Charlie Runway",
       "cost": 999
     },
     {
       "name": "Runway",
       "source": "Runway 0 4",
-      "target": "Runway 2 2",
+      "target": "Bravo Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Bravo Runway",
+      "target": "Runway 0 4",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Bravo Runway",
+      "target": "Charlie Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Charlie Runway",
+      "target": "Bravo Runway",
       "cost": 999
     },
     {
       "name": "Runway",
       "source": "Runway 2 2",
-      "target": "Runway 0 4",
+      "target": "Charlie Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Charlie Runway",
+      "target": "Runway 2 2",
       "cost": 999
     },
     {
@@ -356,6 +272,30 @@
       "name": "Echo",
       "source": "Runway 2 2",
       "target": "Echo Spots",
+      "cost": 999
+    },
+    {
+      "name": "Echo",
+      "source": "Echo Spots 1",
+      "target": "Runway 2 2",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Runway 2 2",
+      "target": "Echo Spots 1",
+      "cost": 999
+    },
+    {
+      "name": "Echo",
+      "source": "Echo Spots 2",
+      "target": "Runway 2 2",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Runway 2 2",
+      "target": "Echo Spots 2",
       "cost": 999
     },
     {

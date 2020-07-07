@@ -1,17 +1,30 @@
-﻿using QuikGraph;
+﻿using Geo.Geometries;
+using NLog;
+using QuikGraph;
 using QuikGraph.Algorithms;
 using RurouniJones.DCS.Airfields.Structure;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RurouniJones.DCS.Airfields.Controllers
 {
     public class GroundController
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         private readonly Airfield Airfield;
 
         public GroundController(Airfield airfield)
         {
             Airfield = airfield;
+        }
+
+        public string GetTaxiInstructions(Point callerPosition, TaxiPoint target)
+        {
+            var source = Airfield.TaxiPoints.OrderBy(taxiPoint => taxiPoint.DistanceTo(callerPosition.Coordinate)).First();
+            Logger.Debug($"Player is at {callerPosition.Coordinate}, nearest Taxi point is {source}");
+            return GetTaxiInstructions(source, target);
         }
 
         public string GetTaxiInstructions(TaxiPoint source, TaxiPoint target)
@@ -25,12 +38,18 @@ namespace RurouniJones.DCS.Airfields.Controllers
                 foreach (TaggedEdge<TaxiPoint, string> edge in path)
                 {
                     taxiways.Add(edge.Tag);
-                    if (edge.Source is Runway runway)
+                    if (edge.Source is Runway runway && edge != path.First())
                     {
                         comments.Add($"Cross {runway.Name}");
                     }
                 }
-                string instructions = $"Taxi to {target.Name} via {string.Join(" ", RemoveRepeating(taxiways))}";
+                string instructions = $"Taxi to {target.Name}";
+                
+                if(taxiways.Count > 0)
+                {
+                    instructions += $"via {string.Join(" ", RemoveRepeating(taxiways))}";
+                }
+
                 if (comments.Count > 0)
                 {
                     instructions += $", {string.Join(", ", comments)}";
@@ -62,6 +81,5 @@ namespace RurouniJones.DCS.Airfields.Controllers
 
             return dedupedTaxiways;
         }
-
     }
 }

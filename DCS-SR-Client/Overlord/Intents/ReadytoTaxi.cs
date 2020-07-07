@@ -21,26 +21,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
             var airbaseName = luisResponse.Entities.First(x => x.Type == "airbase").Resolution.Values[0];
             var airfield = Airfields.First(x => x.Name == airbaseName);
 
-            // Find where this player is
-            TaxiPoint source = airfield.ParkingSpots.Find(parkingSpot => IsPlayerInBounds(parkingSpot.Area, sender.Position));
-
-            if(source == null)
-            {
-                return $"I could not find you in any of the parking areas";
-            }
-
             TaxiPoint target = airfield.Runways[0];
 
-            return new GroundController(airfield).GetTaxiInstructions(source, target);
-        }
-
-        private static bool IsPlayerInBounds(Polygon area, Point player)
-        {
-            if(area == null)
-            {
-                return false;
-            }
-            return area.GetBounds().Contains(player);
+            return new GroundController(airfield).GetTaxiInstructions(sender.Position, target);
         }
 
     }

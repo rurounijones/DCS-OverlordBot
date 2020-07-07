@@ -9,6 +9,7 @@ using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord;
 using NLog;
 using Npgsql;
 using Npgsql.Logging;
+using RurouniJones.DCS.Airfields;
 
 namespace DCS_SR_Client
 {
@@ -56,6 +57,8 @@ namespace DCS_SR_Client
             NpgsqlLogManager.IsParameterLoggingEnabled = true;
 
             Task.Run(async () => await DiscordClient.Connect());
+
+            Populator.Airfields[0].OutputDotGraph();
         }
 
         private void InitNotificationIcon()

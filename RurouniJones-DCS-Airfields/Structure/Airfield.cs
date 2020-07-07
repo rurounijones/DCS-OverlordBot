@@ -144,7 +144,7 @@ namespace RurouniJones.DCS.Airfields.Structure
         /**
          * TODO: Get rid of this when we have a nice little separate tool that does all the creation of the graphs.
          */
-        private void OutputDotGraph()
+        public void OutputDotGraph()
         {
             string dotGraph = TaxiNavigationGraph.ToGraphviz(algorithm =>
             {
