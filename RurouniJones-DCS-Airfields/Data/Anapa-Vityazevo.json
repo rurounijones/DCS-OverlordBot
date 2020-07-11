@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "Anapa-Vityazevo",
   "lon": 37.35978347755592,
   "lat": 45.01317473377168,
@@ -7,15 +7,13 @@
   "runways": [
     {
       "name": "Runway 0 4",
-      "direction": 4,
-      "lat": 0,
-      "lon": 0
+      "lat": 44.99635264512,
+      "lon": 37.335871691948
     },
     {
       "name": "Runway 2 2",
-      "direction": 220,
-      "lat": 0,
-      "lon": 0
+      "lat": 45.013562231472,
+      "lon": 37.359744919983
     }
   ],
 
@@ -80,8 +78,13 @@
     },
     {
       "name": "East Apron",
-      "lat": 45.0052733,
-      "lon": 37.3415787
+      "lat": 45.011298718132,
+      "lon": 37.364347816973
+    },
+    {
+      "name": "East Apron 1",
+      "lat": 45.009448531727,
+      "lon": 37.367123153259
     },
     {
       "name": "Maintenance Area",
@@ -332,6 +335,18 @@
       "name": "Echo",
       "source": "Runway 2 2",
       "target": "East Apron",
+      "cost": 999
+    },
+	{
+      "name": "Echo",
+      "source": "East Apron 1",
+      "target": "Runway 2 2",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Runway 2 2",
+      "target": "East Apron 1",
       "cost": 999
     },
     {
