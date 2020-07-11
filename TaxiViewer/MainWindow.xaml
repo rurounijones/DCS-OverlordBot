@@ -1,0 +1,19 @@
+﻿<Window x:Class="TaxiViewer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TaxiViewer"
+        mc:Ignorable="d"
+        Title="TaxiViewer" Height="1024" Width="1680">
+
+    <DockPanel>
+        <ToolBarTray DockPanel.Dock="Top">
+            <ToolBar>
+                <Button x:Name="LoadAirfieldButton" Content="Load" Click="Load_Airfield" />
+                <Button x:Name="ReloadAirfieldButton" Content="Reload" Click="Reload_Airfield" IsEnabled="False"/>
+            </ToolBar>
+        </ToolBarTray>
+        <TextBox/>
+    </DockPanel>
+</Window>

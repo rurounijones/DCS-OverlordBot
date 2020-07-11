@@ -24,6 +24,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DCS-Airfields-Tests", "Ruro
 		{CD11CC7C-8EEE-4C38-9534-B5A7A4F6800A} = {CD11CC7C-8EEE-4C38-9534-B5A7A4F6800A}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaxiViewer", "TaxiViewer\TaxiViewer.csproj", "{F316F2F5-DB18-4C42-A084-AA66EC1E67E7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CD11CC7C-8EEE-4C38-9534-B5A7A4F6800A} = {CD11CC7C-8EEE-4C38-9534-B5A7A4F6800A}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -80,6 +85,14 @@ Global
 		{A07C1162-1E12-40EE-BF45-0A35805F6F6E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A07C1162-1E12-40EE-BF45-0A35805F6F6E}.Release|x64.ActiveCfg = Release|Any CPU
 		{A07C1162-1E12-40EE-BF45-0A35805F6F6E}.Release|x64.Build.0 = Release|Any CPU
+		{F316F2F5-DB18-4C42-A084-AA66EC1E67E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F316F2F5-DB18-4C42-A084-AA66EC1E67E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F316F2F5-DB18-4C42-A084-AA66EC1E67E7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F316F2F5-DB18-4C42-A084-AA66EC1E67E7}.Debug|x64.Build.0 = Debug|Any CPU
+		{F316F2F5-DB18-4C42-A084-AA66EC1E67E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F316F2F5-DB18-4C42-A084-AA66EC1E67E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F316F2F5-DB18-4C42-A084-AA66EC1E67E7}.Release|x64.ActiveCfg = Release|Any CPU
+		{F316F2F5-DB18-4C42-A084-AA66EC1E67E7}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
