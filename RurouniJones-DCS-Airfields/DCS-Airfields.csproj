@@ -76,6 +76,9 @@
     <None Include="Data\Anapa-Vityazevo.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Data\Krymsk.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="README.md" />
   </ItemGroup>

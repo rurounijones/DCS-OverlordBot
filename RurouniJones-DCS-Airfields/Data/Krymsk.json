@@ -1,0 +1,564 @@
+{
+  "name": "Krymsk",
+  "lat": 44.961383022734175,
+  "lon": 37.985886938697085,
+  "alt": 20.010303497314453,
+  "dotGraph": false,
+  "runways": [
+    {
+      "lat": 44.961116483111,
+      "lon": 37.986053587692,
+      "name": "Runway 0 4"
+    },
+    {
+      "lat": 44.974772000465,
+      "lon": 38.004069966231,
+      "name": "Runway 2 2"
+    }
+  ],
+
+  "junctions": [
+    {
+      "lat": 44.96445031133,
+      "lon": 37.99048312169,
+      "name": "Bravo Runway"
+    },
+    {
+      "lat": 44.957406248093,
+      "lon": 37.991649110426,
+      "name": "Alpha Charlie"
+    },
+    {
+      "lat": 44.971326227457,
+      "lon": 37.999573157402,
+      "name": "Charlie Runway"
+    },
+    {
+      "lat": 44.960824802726,
+      "lon": 37.996155771931,
+      "name": "Bravo Charlie"
+    },
+    {
+      "lat": 44.969607487805,
+      "lon": 38.00217130709,
+      "name": "Charlie Delta"
+    },
+    {
+      "lat": 44.959383467494,
+      "lon": 37.988726935774,
+      "name": "Alpha Delta"
+    },
+    {
+      "lat": 44.962747051773,
+      "lon": 37.993178089729,
+      "name": "Bravo Delta"
+    },
+    {
+      "lat": 44.966191761784,
+      "lon": 37.997657849139,
+      "name": "Delta Golf"
+    },
+    {
+      "lat": 44.971044641117,
+      "lon": 38.004070763981,
+      "name": "Delta Foxtrot"
+    },
+    {
+      "lat": 44.964993391904,
+      "lon": 37.999561350921,
+      "name": "Charlie Golf"
+    }
+  ],
+
+  "parkingSpots": [
+    {
+      "lat": 44.957827994685,
+      "lon": 37.989356088042,
+      "name": "Alpha Spots 1"
+    },
+    {
+      "lat": 44.959671325083,
+      "lon": 37.986869912652,
+      "name": "Apron 1"
+    },
+    {
+      "lat": 44.961968450612,
+      "lon": 37.994367628907,
+      "name": "Bravo Spots"
+    },
+    {
+      "lat": 44.959887447514,
+      "lon": 37.991228859171,
+      "name": "Delta Spots 1"
+    },
+    {
+      "lat": 44.963593293116,
+      "lon": 37.996059469514,
+      "name": "Delta Spots 2"
+    },
+    {
+      "lat": 44.970647657375,
+      "lon": 38.004802983045,
+      "name": "Delta Spots 3"
+    },
+    {
+      "lat": 44.974794415604,
+      "lon": 38.005261282799,
+      "name": "Apron 2"
+    },
+    {
+      "lat": 44.955366973938,
+      "lon": 37.988999658594,
+      "name": "Charlie Spots 1"
+    },
+    {
+      "lat": 44.95636171179,
+      "lon": 37.992162121771,
+      "name": "Charlie Spots 2"
+    },
+    {
+      "lat": 44.957719101777,
+      "lon": 37.993455257487,
+      "name": "Charlie Spots 3"
+    },
+    {
+      "lat": 44.959939307657,
+      "lon": 37.994579435323,
+      "name": "Charlie Spots 4"
+    },
+    {
+      "lat": 44.962017843936,
+      "lon": 37.998612413984,
+      "name": "Charlie Spots 5"
+    },
+    {
+      "lat": 44.963778110418,
+      "lon": 37.999931812939,
+      "name": "Charlie Spots 6"
+    },
+    {
+      "lat": 44.967466407319,
+      "lon": 38.003461643617,
+      "name": "Charlie Spots 7"
+    },
+    {
+      "lat": 44.958703234405,
+      "lon": 37.988329081973,
+      "name": "Alpha Spots 2"
+    },
+    {
+      "lat": 44.971340109161,
+      "lon": 38.006343928602,
+      "name": "Delta Spots 4"
+    },
+    {
+      "lat": 44.969760423037,
+      "lon": 38.006827136533,
+      "name": "Maintenance Area"
+    },
+    {
+      "lat": 44.96990411479,
+      "lon": 38.004185728988,
+      "name": "Delta Spots 3"
+    }
+  ],
+
+  "taxipaths": [
+    {
+      "name": "Alpha",
+      "source": "Alpha Charlie",
+      "target": "Alpha Delta",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Delta",
+      "target": "Alpha Charlie",
+      "cost": 999
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Delta",
+      "target": "Runway 0 4",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Runway 0 4",
+      "target": "Alpha Delta",
+      "cost": 999
+    },
+    {
+      "name": "Alpha",
+      "source": "Apron 1",
+      "target": "Runway 0 4",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Runway 0 4",
+      "target": "Apron 1",
+      "cost": 999
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Delta",
+      "target": "Apron 1",
+      "cost": 99
+    },
+    {
+      "name": "Alpha",
+      "source": "Apron 1",
+      "target": "Alpha Delta",
+      "cost": 999
+    },
+    {
+      "name": "Delta",
+      "source": "Bravo Delta",
+      "target": "Alpha Delta",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Delta",
+      "target": "Bravo Delta",
+      "cost": 999
+    },
+    {
+      "name": "Delta",
+      "source": "Delta Golf",
+      "target": "Charlie Delta",
+      "cost": 999
+    },
+    {
+      "name": "Delta",
+      "source": "Bravo Delta",
+      "target": "Delta Golf",
+      "cost": 999
+    },
+    {
+      "name": "Delta",
+      "source": "Delta Golf",
+      "target": "Bravo Delta",
+      "cost": 1
+    },
+    {
+      "name": "Delta",
+      "source": "Charlie Delta",
+      "target": "Delta Golf",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Bravo Delta",
+      "target": "Bravo Charlie",
+      "cost": 999
+    },
+    {
+      "name": "Charlie",
+      "source": "Bravo Charlie",
+      "target": "Bravo Delta",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Charlie Spots 1",
+      "target": "Alpha Charlie",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Alpha Charlie",
+      "target": "Charlie Spots 1",
+      "cost": 999
+    },
+    {
+      "name": "Charlie",
+      "source": "Charlie Spots 2",
+      "target": "Alpha Charlie",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Alpha Charlie",
+      "target": "Charlie Spots 2",
+      "cost": 999
+    },
+    {
+      "name": "Charlie",
+      "source": "Charlie Spots 3",
+      "target": "Alpha Charlie",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Alpha Charlie",
+      "target": "Charlie Spots 3",
+      "cost": 999
+    },
+    {
+      "name": "Charlie",
+      "source": "Charlie Spots 4",
+      "target": "Bravo Charlie",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Bravo Charlie",
+      "target": "Charlie Spots 4",
+      "cost": 999
+    },
+    {
+      "name": "Charlie",
+      "source": "Alpha Charlie",
+      "target": "Bravo Charlie",
+      "cost": 999
+    },
+    {
+      "name": "Charlie",
+      "source": "Bravo Charlie",
+      "target": "Alpha Charlie",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Charlie Spots 5",
+      "target": "Bravo Charlie",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Bravo Charlie",
+      "target": "Charlie Spots 5",
+      "cost": 999
+    },
+    {
+      "name": "Charlie",
+      "source": "Charlie Spots 6",
+      "target": "Charlie Golf",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Charlie Golf",
+      "target": "Charlie Spots 6",
+      "cost": 999
+    },
+    {
+      "name": "Golf",
+      "source": "Delta Golf",
+      "target": "Charlie Golf",
+      "cost": 999
+    },
+    {
+      "name": "Golf",
+      "source": "Charlie Golf",
+      "target": "Delta Golf",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Charlie Spots 7",
+      "target": "Charlie Delta",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Charlie Delta",
+      "target": "Charlie Spots 7",
+      "cost": 999
+    },
+    {
+      "name": "Delta",
+      "source": "Delta Spots 3",
+      "target": "Charlie Delta",
+      "cost": 1
+    },
+    {
+      "name": "Delta",
+      "source": "Charlie Delta",
+      "target": "Delta Spots 3",
+      "cost": 999
+    },
+    {
+      "name": "Delta",
+      "source": "Delta Spots 4",
+      "target": "Delta Foxtrot",
+      "cost": 1
+    },
+    {
+      "name": "Delta",
+      "source": "Delta Foxtrot",
+      "target": "Delta Spots 4",
+      "cost": 999
+    },
+    {
+      "name": "Delta",
+      "source": "Charlie Delta",
+      "target": "Delta Foxtrot",
+      "cost": 999
+    },
+    {
+      "name": "Delta",
+      "source": "Delta Foxtrot",
+      "target": "Charlie Delta",
+      "cost": 1
+    },
+    {
+      "name": "Foxtrot",
+      "source": "Maintenance Area",
+      "target": "Delta Foxtrot",
+      "cost": 1
+    },
+    {
+      "name": "Foxtrot",
+      "source": "Delta Foxtrot",
+      "target": "Maintenance Area",
+      "cost": 999
+    },
+    {
+      "name": "Delta",
+      "source": "Apron 2",
+      "target": "Runway 2 2",
+      "cost": 1
+    },
+    {
+      "name": "Delta",
+      "source": "Runway 2 2",
+      "target": "Apron 2",
+      "cost": 99
+    },
+    {
+      "name": "Delta",
+      "source": "Delta Foxtrot",
+      "target": "Runway 2 2",
+      "cost": 999
+    },
+    {
+      "name": "Delta",
+      "source": "Runway 2 2",
+      "target": "Delta Foxtrot",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Spots 1",
+      "target": "Alpha Delta",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Delta",
+      "target": "Alpha Spots 1",
+      "cost": 999
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Spots 2",
+      "target": "Alpha Delta",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Delta",
+      "target": "Alpha Spots 2",
+      "cost": 999
+    },
+    {
+      "name": "Delta",
+      "source": "Delta Spots 1",
+      "target": "Alpha Delta",
+      "cost": 1
+    },
+    {
+      "name": "Delta",
+      "source": "Alpha Delta",
+      "target": "Delta Spots 1",
+      "cost": 999
+    },
+    {
+      "name": "Delta",
+      "source": "Delta Spots 2",
+      "target": "Bravo Delta",
+      "cost": 1
+    },
+    {
+      "name": "Delta",
+      "source": "Bravo Delta",
+      "target": "Delta Spots 2",
+      "cost": 999
+    },
+    {
+      "name": "Bravo",
+      "source": "Bravo Spots",
+      "target": "Bravo Delta",
+      "cost": 1
+    },
+    {
+      "name": "Bravo",
+      "source": "Bravo Delta",
+      "target": "Bravo Spots",
+      "cost": 999
+    },
+    {
+      "name": "Charlie",
+      "source": "Charlie Runway",
+      "target": "Charlie Delta",
+      "cost": 1
+    },
+    {
+      "name": "Bravo",
+      "source": "Charlie Delta",
+      "target": "Charlie Runway",
+      "cost": 999
+    },
+    {
+      "name": "Bravo",
+      "source": "Bravo Runway",
+      "target": "Bravo Delta",
+      "cost": 1
+    },
+    {
+      "name": "Bravo",
+      "source": "Bravo Delta",
+      "target": "Bravo Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway 0 4",
+      "target": "Bravo Runway",
+      "cost": 999
+    },
+    {
+      "name": "Bravo",
+      "source": "Bravo Runway",
+      "target": "Runway 0 4",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Charlie Runway",
+      "target": "Bravo Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Bravo Runway",
+      "target": "Charlie Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Charlie Runway",
+      "target": "Runway 2 2",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway 2 2",
+      "target": "Charlie Runway",
+      "cost": 999
+    }
+  ]
+}
