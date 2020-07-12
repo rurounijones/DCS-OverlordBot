@@ -89,7 +89,7 @@ namespace RurouniJones.DCS.Airfields.Structure
 
         public readonly AdjacencyGraph<TaxiPoint, TaggedEdge<TaxiPoint, string>> TaxiNavigationGraph = new AdjacencyGraph<TaxiPoint, TaggedEdge<TaxiPoint, string>>();
 
-        private Dictionary<TaggedEdge<TaxiPoint, string>, double> TaxiwayCost;
+        public Dictionary<TaggedEdge<TaxiPoint, string>, double> TaxiwayCost;
         public Func<TaggedEdge<TaxiPoint, string>, double> TaxiwayCostFunction
         {
             get

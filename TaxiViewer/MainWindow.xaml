@@ -14,6 +14,6 @@
                 <Button x:Name="ReloadAirfieldButton" Content="Reload" Click="Reload_Airfield" IsEnabled="False"/>
             </ToolBar>
         </ToolBarTray>
-        <TextBox/>
+        <DockPanel x:Name="GraphPanel" ClipToBounds="True"/>
     </DockPanel>
 </Window>
