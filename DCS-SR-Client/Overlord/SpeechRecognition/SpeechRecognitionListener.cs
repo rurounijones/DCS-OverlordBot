@@ -292,7 +292,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                             else if (luisResponse.Query != null && (luisResponse.TopScoringIntent["intent"] == "ReadyToTaxi"))
                             {
                                 response = $"{sender.Callsign}, {botCallsign} Ground, ";
-                                response += Task.Run(() => ReadytoTaxi.Process(luisResponse, sender)).Result;
+                                response += Task.Run(() => ReadytoTaxi.Process(botCallsign, sender)).Result;
                             }
                         }
                     }
