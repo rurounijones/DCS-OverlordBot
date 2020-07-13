@@ -57,8 +57,6 @@ namespace DCS_SR_Client
             NpgsqlLogManager.IsParameterLoggingEnabled = true;
 
             Task.Run(async () => await DiscordClient.Connect());
-
-            Populator.Airfields[0].OutputDotGraph();
         }
 
         private void InitNotificationIcon()

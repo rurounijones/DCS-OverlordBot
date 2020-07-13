@@ -3,7 +3,6 @@ using Newtonsoft.Json;
 using NLog;
 using QuikGraph;
 using QuikGraph.Algorithms;
-using QuikGraph.Graphviz;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,12 +36,6 @@ namespace RurouniJones.DCS.Airfields.Structure
         /// </summary>
         [JsonProperty(PropertyName = "alt")]
         public double Altitude { get; set; }
-
-        [JsonProperty(PropertyName = "dotGraph")]
-        /// <summary>
-        /// Name of the Airfield.
-        /// </summary>
-        public bool DotGraph { get; set; }
 
         /// <summary>
         /// A list of Parking spots
@@ -134,36 +127,6 @@ namespace RurouniJones.DCS.Airfields.Structure
 
                 TaxiwayCost.Add(edge, taxiway.Cost);
             }
-
-            if (DotGraph == true)
-            {
-                OutputDotGraph();
-            }
-        }
-
-        /**
-         * TODO: Get rid of this when we have a nice little separate tool that does all the creation of the graphs.
-         */
-        public void OutputDotGraph()
-        {
-            string dotGraph = TaxiNavigationGraph.ToGraphviz(algorithm =>
-            {
-                // Custom init example
-                algorithm.FormatVertex += (sender, vertexArgs) =>
-                {
-                    vertexArgs.VertexFormat.Label = $"{vertexArgs.Vertex.Name}";
-                };
-                algorithm.FormatEdge += (sender, edgeArgs) =>
-                {
-                    var label = new QuikGraph.Graphviz.Dot.GraphvizEdgeLabel
-                    {
-                        Value = $"{edgeArgs.Edge.Tag} : {TaxiwayCost[edgeArgs.Edge]}"
-                    };
-                    edgeArgs.EdgeFormat.Label = label;
-                };
-            });
-
-            Logger.Debug(Name + " \n" + dotGraph);
         }
     }
 }
