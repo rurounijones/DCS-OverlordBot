@@ -76,6 +76,9 @@
     <None Include="Data\Anapa-Vityazevo.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Data\Krasnodar-Pashkovsky.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Data\Krymsk.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

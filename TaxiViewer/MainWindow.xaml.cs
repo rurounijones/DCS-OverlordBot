@@ -100,7 +100,6 @@ namespace TaxiViewer
                 {
                     node.Attr.Shape = Shape.Octagon;
                     node.Attr.Color = Color.Orange;
-
                 }
             }
 
@@ -140,9 +139,11 @@ namespace TaxiViewer
 
             graphViewer.MouseUp += (s, ev) =>
             {
-                if (graphViewer.ObjectUnderMouseCursor is VNode && (bool)AddTaxiPathButton.IsChecked)
+                if (graphViewer.ObjectUnderMouseCursor is VNode && (bool)AddTaxiPathButton.IsChecked && SourceNode != null && (VNode)graphViewer.ObjectUnderMouseCursor != SourceNode)
                 {
                     TargetNode = (VNode)graphViewer.ObjectUnderMouseCursor;
+
+                    graphViewer.Graph = graph;
 
                     string taxiName = null;
 
@@ -151,29 +152,51 @@ namespace TaxiViewer
                          .FirstOrDefault();
 
                     // The main route
-                    graph.AddEdge(SourceNode.Node.Id, taxiName, TargetNode.Node.Id);
+                    var mainEdge = graph.AddEdge(SourceNode.Node.Id, taxiName, TargetNode.Node.Id);
+                    mainEdge.Attr.Color = Color.Green;
+
+                    var reverseEdge = graph.AddEdge(TargetNode.Node.Id, taxiName, SourceNode.Node.Id);
+
+                    int mainCost = 1;
+                    int reverseCost;
+
+                    if(SourceNode.Node.Id.Contains("Apron") || SourceNode.Node.Id.Contains("Ramp"))
+                    {
+                        reverseCost = 100;
+                        reverseEdge.Attr.Color = Color.Orange;
+                    }
+                    else if(SourceNode.Node.Id.Contains("Runway") && TargetNode.Node.Id.Contains("Runway"))
+                    {
+                        mainCost = 999;
+                        mainEdge.Attr.Color = Color.Red;
+                        reverseCost = 999;
+                        reverseEdge.Attr.Color = Color.Red;
+                    }
+                    else
+                    {
+                        reverseCost = 999;
+                        reverseEdge.Attr.Color = Color.Red;
+                    }
 
                     airfield.Taxiways.Add(new TaxiPath()
                     {
                         Source = SourceNode.Node.Id,
                         Target = TargetNode.Node.Id,
                         Name = taxiName,
-                        Cost = 1,
+                        Cost = mainCost,
                     });
 
-                    // And the reverse route
-                    graph.AddEdge(TargetNode.Node.Id, taxiName, SourceNode.Node.Id);
-
                     airfield.Taxiways.Add(new TaxiPath()
                     {
-                        Source = SourceNode.Node.Id,
-                        Target = TargetNode.Node.Id,
+                        Source = TargetNode.Node.Id,
+                        Target = SourceNode.Node.Id,
                         Name = taxiName,
-                        Cost = 1,
+                        Cost = reverseCost,
                     });
 
                     graphViewer.Graph = graph;
                 }
+                SourceNode = null;
             };
 
             graphViewer.Graph = graph;

@@ -1,0 +1,549 @@
+{
+  "name": "Krasnodar-Pashkovsky",
+  "lat": 45.0460996415433,
+  "lon": 39.203066906324537,
+  "alt": 34.010036468505859,
+  "parkingSpots": [
+    {
+      "name": "West Apron",
+      "lat": 45.037950110231,
+      "lon": 39.135774388174
+    },
+    {
+      "name": "Apron A 1",
+      "lat": 45.038881971882,
+      "lon": 39.14140614585
+    },
+    {
+      "name": "Apron A 2",
+      "lat": 45.043500567111,
+      "lon": 39.152561510791
+    },
+    {
+      "name": "Apron 3 1",
+      "lat": 45.031299478435,
+      "lon": 39.171912937857
+    },
+    {
+      "name": "Apron 3 2",
+      "lat": 45.032940601493,
+      "lon": 39.174934170513
+    },
+    {
+      "name": "Maintenance Area",
+      "lat": 45.037751512429,
+      "lon": 39.181216189421
+    },
+    {
+      "name": "Apron 2",
+      "lat": 45.040051461061,
+      "lon": 39.187362917883
+    },
+    {
+      "name": "Apron 1",
+      "lat": 45.047601257612,
+      "lon": 39.200777416505
+    }
+  ],
+  "runways": [
+    {
+      "heading": 0,
+      "name": "Runway 0 5 Left",
+      "lat": 45.033261958522,
+      "lon": 39.141194292915
+    },
+    {
+      "heading": 0,
+      "name": "Runway 0 5 Right",
+      "lat": 45.029417364675,
+      "lon": 39.173018208468
+    },
+    {
+      "heading": 0,
+      "name": "Runway 2 3 Left",
+      "lat": 45.04642944724,
+      "lon": 39.203099119494
+    },
+    {
+      "heading": 0,
+      "name": "Runway 2 3 Right",
+      "lat": 45.045105423967,
+      "lon": 39.162080772989
+    }
+  ],
+  "junctions": [
+    {
+      "name": "Bravo Runway",
+      "lat": 45.041328782561,
+      "lon": 39.155397787988
+    },
+    {
+      "name": "Echo November",
+      "lat": 45.030452112508,
+      "lon": 39.171911962933
+    },
+    {
+      "name": "Lima November",
+      "lat": 45.03632357954,
+      "lon": 39.182184669913
+    },
+    {
+      "name": "Hotel November",
+      "lat": 45.039150338794,
+      "lon": 39.187326123862
+    },
+    {
+      "name": "Golf November",
+      "lat": 45.037286341654,
+      "lon": 39.184007110857
+    },
+    {
+      "name": "India November",
+      "lat": 45.041240974158,
+      "lon": 39.191160327827
+    },
+    {
+      "name": "Juliett November",
+      "lat": 45.047374774054,
+      "lon": 39.202013184937
+    },
+    {
+      "name": "India Runway",
+      "lat": 45.040312339291,
+      "lon": 39.19221600488
+    },
+    {
+      "name": "Hotel Runway",
+      "lat": 45.038171787908,
+      "lon": 39.188434751495
+    },
+    {
+      "name": "Golf Runway",
+      "lat": 45.036316711122,
+      "lon": 39.185152038455
+    },
+    {
+      "name": "Foxtrot Runway",
+      "lat": 45.032757811323,
+      "lon": 39.178851172684
+    },
+    {
+      "name": "Alfa Whiskey",
+      "lat": 45.036337836603,
+      "lon": 39.139803040311
+    },
+    {
+      "name": "Alfa Bravo",
+      "lat": 45.042978524188,
+      "lon": 39.153540192828
+    },
+    {
+      "name": "Alfa Charlie",
+      "lat": 45.046599830555,
+      "lon": 39.16027160233
+    },
+    {
+      "name": "Delta Foxtrot November",
+      "lat": 45.033791702512,
+      "lon": 39.177710763028
+    }
+  ],
+  "taxipaths": [
+    {
+      "name": "Alfa",
+      "source": "Alfa Charlie",
+      "target": "Alfa Bravo",
+      "cost": 1
+    },
+    {
+      "name": "Alfa",
+      "source": "Alfa Bravo",
+      "target": "Alfa Charlie",
+      "cost": 999
+    },
+    {
+      "name": "Alfa",
+      "source": "Alfa Bravo",
+      "target": "Alfa Whiskey",
+      "cost": 1
+    },
+    {
+      "name": "Alfa",
+      "source": "Alfa Whiskey",
+      "target": "Alfa Bravo",
+      "cost": 999
+    },
+    {
+      "name": "Alfa",
+      "source": "Alfa Whiskey",
+      "target": "Runway 0 5 Left",
+      "cost": 1
+    },
+    {
+      "name": "Alfa",
+      "source": "Runway 0 5 Left",
+      "target": "Alfa Whiskey",
+      "cost": 999
+    },
+    {
+      "name": "Charlie",
+      "source": "Runway 2 3 Right",
+      "target": "Alfa Charlie",
+      "cost": 999
+    },
+    {
+      "name": "Charlie",
+      "source": "Alfa Charlie",
+      "target": "Runway 2 3 Right",
+      "cost": 1
+    },
+    {
+      "name": "Runway",
+      "source": "Runway 0 5 Left",
+      "target": "Bravo Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Bravo Runway",
+      "target": "Runway 0 5 Left",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Bravo Runway",
+      "target": "Runway 2 3 Right",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway 2 3 Right",
+      "target": "Bravo Runway",
+      "cost": 999
+    },
+    {
+      "name": "Alfa",
+      "source": "Apron A 1",
+      "target": "Alfa Bravo",
+      "cost": 1
+    },
+    {
+      "name": "Alfa",
+      "source": "Alfa Bravo",
+      "target": "Apron A 1",
+      "cost": 100
+    },
+    {
+      "name": "Alfa",
+      "source": "Apron A 2",
+      "target": "Alfa Bravo",
+      "cost": 1
+    },
+    {
+      "name": "Alfa",
+      "source": "Alfa Bravo",
+      "target": "Apron A 2",
+      "cost": 100
+    },
+    {
+      "name": "Alfa",
+      "source": "Apron A 2",
+      "target": "Alfa Whiskey",
+      "cost": 1
+    },
+    {
+      "name": "Alfa",
+      "source": "Alfa Whiskey",
+      "target": "Apron A 2",
+      "cost": 100
+    },
+    {
+      "name": "Alfa",
+      "source": "Apron A 1",
+      "target": "Alfa Whiskey",
+      "cost": 1
+    },
+    {
+      "name": "Alfa",
+      "source": "Alfa Whiskey",
+      "target": "Apron A 1",
+      "cost": 100
+    },
+    {
+      "name": "Whiskey",
+      "source": "West Apron",
+      "target": "Alfa Whiskey",
+      "cost": 1
+    },
+    {
+      "name": "Whiskey",
+      "source": "Alfa Whiskey",
+      "target": "West Apron",
+      "cost": 100
+    },
+    {
+      "name": "Juliett",
+      "source": "Runway 2 3 Left",
+      "target": "Juliett November",
+      "cost": 1
+    },
+    {
+      "name": "Juliett",
+      "source": "Juliett November",
+      "target": "Runway 2 3 Left",
+      "cost": 999
+    },
+    {
+      "name": "November",
+      "source": "Juliett November",
+      "target": "India November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "India November",
+      "target": "Juliett November",
+      "cost": 999
+    },
+    {
+      "name": "November",
+      "source": "India November",
+      "target": "Hotel November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Hotel November",
+      "target": "India November",
+      "cost": 999
+    },
+    {
+      "name": "November",
+      "source": "Hotel November",
+      "target": "Golf November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Golf November",
+      "target": "Hotel November",
+      "cost": 999
+    },
+    {
+      "name": "November",
+      "source": "Golf November",
+      "target": "Lima November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Lima November",
+      "target": "Golf November",
+      "cost": 999
+    },
+    {
+      "name": "November",
+      "source": "Lima November",
+      "target": "Delta Foxtrot November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Delta Foxtrot November",
+      "target": "Lima November",
+      "cost": 999
+    },
+    {
+      "name": "November",
+      "source": "Delta Foxtrot November",
+      "target": "Echo November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Echo November",
+      "target": "Delta Foxtrot November",
+      "cost": 999
+    },
+    {
+      "name": "Echo",
+      "source": "Echo November",
+      "target": "Runway 0 5 Right",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Runway 0 5 Right",
+      "target": "Echo November",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway 0 5 Right",
+      "target": "Foxtrot Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Foxtrot Runway",
+      "target": "Runway 0 5 Right",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Foxtrot Runway",
+      "target": "Golf Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Golf Runway",
+      "target": "Foxtrot Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Golf Runway",
+      "target": "Hotel Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Hotel Runway",
+      "target": "Golf Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Hotel Runway",
+      "target": "India Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "India Runway",
+      "target": "Hotel Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway 2 3 Left",
+      "target": "India Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "India Runway",
+      "target": "Runway 2 3 Left",
+      "cost": 999
+    },
+    {
+      "name": "Lima",
+      "source": "Maintenance Area",
+      "target": "Lima November",
+      "cost": 1
+    },
+    {
+      "name": "Lima",
+      "source": "Lima November",
+      "target": "Maintenance Area",
+      "cost": 999
+    },
+    {
+      "name": "November",
+      "source": "Apron 3 1",
+      "target": "Echo November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Echo November",
+      "target": "Apron 3 1",
+      "cost": 100
+    },
+    {
+      "name": "November",
+      "source": "Apron 3 2",
+      "target": "Echo November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Echo November",
+      "target": "Apron 3 2",
+      "cost": 100
+    },
+    {
+      "name": "November",
+      "source": "Apron 3 1",
+      "target": "Delta Foxtrot November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Delta Foxtrot November",
+      "target": "Apron 3 1",
+      "cost": 100
+    },
+    {
+      "name": "November",
+      "source": "Apron 3 2",
+      "target": "Delta Foxtrot November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Delta Foxtrot November",
+      "target": "Apron 3 2",
+      "cost": 100
+    },
+    {
+      "name": "Delta",
+      "source": "Delta Foxtrot November",
+      "target": "Runway 2 3 Right",
+      "cost": 100
+    },
+    {
+      "name": "Delta",
+      "source": "Runway 2 3 Right",
+      "target": "Delta Foxtrot November",
+      "cost": 100
+    },
+    {
+      "name": "November",
+      "source": "Apron 2",
+      "target": "Hotel November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Hotel November",
+      "target": "Apron 2",
+      "cost": 100
+    },
+    {
+      "name": "November",
+      "source": "Apron 2",
+      "target": "India November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "India November",
+      "target": "Apron 2",
+      "cost": 100
+    },
+    {
+      "name": "November",
+      "source": "Apron 1",
+      "target": "Juliett November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Juliett November",
+      "target": "Apron 1",
+      "cost": 100
+    }
+  ]
+}
