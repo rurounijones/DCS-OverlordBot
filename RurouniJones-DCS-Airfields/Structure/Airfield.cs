@@ -17,6 +17,7 @@ namespace RurouniJones.DCS.Airfields.Structure
         /// <summary>
         /// Name of the Airfield.
         /// </summary>
+        [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 
         /// <summary>
@@ -74,15 +75,20 @@ namespace RurouniJones.DCS.Airfields.Structure
         /// <summary>
         /// Blah
         /// </summary>
+        [JsonIgnore]
         public Point Position {
             get {
                 return new Point(Latitude, Longitude, Altitude);
             }
         }
 
+        [JsonIgnore]
         public readonly AdjacencyGraph<TaxiPoint, TaggedEdge<TaxiPoint, string>> TaxiNavigationGraph = new AdjacencyGraph<TaxiPoint, TaggedEdge<TaxiPoint, string>>();
 
+        [JsonIgnore]
         public Dictionary<TaggedEdge<TaxiPoint, string>, double> TaxiwayCost;
+
+        [JsonIgnore]
         public Func<TaggedEdge<TaxiPoint, string>, double> TaxiwayCostFunction
         {
             get
@@ -91,6 +97,7 @@ namespace RurouniJones.DCS.Airfields.Structure
             }
         }
 
+        [JsonIgnore]
         public IEnumerable<TaxiPoint> TaxiPoints {
             get {
                 return TaxiNavigationGraph.Vertices;

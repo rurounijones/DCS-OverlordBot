@@ -12,6 +12,10 @@
             <ToolBar>
                 <Button x:Name="LoadAirfieldButton" Content="Load" Click="Load_Airfield" />
                 <Button x:Name="ReloadAirfieldButton" Content="Reload" Click="Reload_Airfield" IsEnabled="False"/>
+                <Button x:Name="SaveAirfieldButton" Content="Save" Click="Save_Airfield" IsEnabled="False"/>
+            </ToolBar>
+            <ToolBar>
+                <ToggleButton x:Name="AddTaxiPathButton" Content="Add Taxi Path"/>
             </ToolBar>
         </ToolBarTray>
         <DockPanel x:Name="GraphPanel" ClipToBounds="True"/>
