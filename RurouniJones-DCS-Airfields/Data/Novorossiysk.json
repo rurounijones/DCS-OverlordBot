@@ -1,0 +1,328 @@
+{
+  "name": "Novorossiysk",
+  "lat": 37.786226060479564,
+  "lon": 37.786226060479564,
+  "alt": 40.010040283203125,
+  "dotGraph": false,
+  "runways": [
+    {
+      "lat": 44.662742941153,
+      "lon": 37.770617848637,
+      "name": "Runway 0 4",
+      "heading": 40
+    },
+    {
+      "lat": 44.673510893104,
+      "lon": 37.785926801069,
+      "name": "Runway 2 2",
+      "heading": 220
+    }
+  ],
+
+  "junctions": [
+    {
+      "lat": 44.674464050059,
+      "lon": 37.784964996081,
+      "name": "Alpha Tango"
+    },
+    {
+      "lat": 44.674358254339,
+      "lon": 37.782204769995,
+      "name": "Bravo Tango"
+    },
+    {
+      "lat": 44.672582621103,
+      "lon": 37.780119915972,
+      "name": "Mike Tango"
+    },
+    {
+      "lat": 44.668666503605,
+      "lon": 37.77571637189,
+      "name": "November 1 Tango"
+    },
+    {
+      "lat": 44.671152145092,
+      "lon": 37.778455486122,
+      "name": "November 2 Tango"
+    },
+    {
+      "lat": 44.663236846525,
+      "lon": 37.769599290979,
+      "name": "Charlie Tango"
+    },
+    {
+      "lat": 44.672690723191,
+      "lon": 37.784659855223,
+      "name": "Bravo Runway"
+    }
+  ],
+
+  "parkingSpots": [
+    {
+      "lat": 44.666398567368,
+      "lon": 37.772026071304,
+      "name": "Apron South 1"
+    },
+    {
+      "lat": 44.669020020174,
+      "lon": 37.775025626785,
+      "name": "November One Spots"
+    },
+    {
+      "lat": 44.671531829502,
+      "lon": 37.777770038136,
+      "name": "November Two Spots"
+    },
+    {
+      "lat": 44.672804126512,
+      "lon": 37.778050646758,
+      "name": "November Two Spots 2"
+    },
+    {
+      "lat": 44.67394263178,
+      "lon": 37.779520745619,
+      "name": "Maintenance Area"
+    },
+    {
+      "lat": 44.675207122371,
+      "lon": 37.783274590455,
+      "name": "Apron North"
+    },
+    {
+      "lat": 44.675224444591,
+      "lon": 37.78451281264,
+      "name": "Apron North 1"
+    },
+    {
+      "lat": 44.664143183583,
+      "lon": 37.769448699534,
+      "name": "Apron South"
+    }
+  ],
+
+  "taxipaths": [
+    {
+      "name": "Tango",
+      "source": "Apron South",
+      "target": "Charlie Tango",
+      "cost": 1
+    },
+    {
+      "name": "Tango",
+      "source": "Charlie Tango",
+      "target": "Apron South",
+      "cost": 100
+    },
+    {
+      "name": "Tango",
+      "source": "Apron South 1",
+      "target": "Charlie Tango",
+      "cost": 1
+    },
+
+    {
+      "name": "Tango",
+      "source": "Charlie Tango",
+      "target": "Apron South 1",
+      "cost": 100
+    },
+    {
+      "name": "Charlie",
+      "source": "Charlie Tango",
+      "target": "Runway 0 4",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Runway 0 4",
+      "target": "Charlie Tango",
+      "cost": 999
+    },
+    {
+      "name": "November 1",
+      "source": "November One Spots",
+      "target": "November 1 Tango",
+      "cost": 1
+    },
+    {
+      "name": "Tango",
+      "source": "November 1 Tango",
+      "target": "Charlie Tango",
+      "cost": 1
+    },
+    {
+      "name": "November 1",
+      "source": "November 1 Tango",
+      "target": "November One Spots",
+      "cost": 999
+    },
+    {
+      "name": "Tango",
+      "source": "Charlie Tango",
+      "target": "November 1 Tango",
+      "cost": 999
+    },
+    {
+      "name": "November 2",
+      "source": "November Two Spots",
+      "target": "November 2 Tango",
+      "cost": 1
+    },
+    {
+      "name": "Tango",
+      "source": "November 2 Tango",
+      "target": "November 1 Tango",
+      "cost": 1
+    },
+    {
+      "name": "November 2",
+      "source": "November 2 Tango",
+      "target": "November Two Spots",
+      "cost": 999
+    },
+    {
+      "name": "Tango",
+      "source": "November 1 Tango",
+      "target": "November 2 Tango",
+      "cost": 999
+    },
+    {
+      "name": "November 2",
+      "source": "November Two Spots 2",
+      "target": "November 2 Tango",
+      "cost": 1
+    },
+    {
+      "name": "November 2",
+      "source": "November 2 Tango",
+      "target": "November Two Spots 2",
+      "cost": 999
+    },
+    {
+      "name": "Mike",
+      "source": "Maintenance Area",
+      "target": "Mike Tango",
+      "cost": 1
+    },
+    {
+      "name": "Tango",
+      "source": "Mike Tango",
+      "target": "November 2 Tango",
+      "cost": 1
+    },
+    {
+      "name": "Mike",
+      "source": "Mike Tango",
+      "target": "Maintenance Area",
+      "cost": 999
+    },
+    {
+      "name": "Tango",
+      "source": "November 2 Tango",
+      "target": "Mike Tango",
+      "cost": 999
+    },
+    {
+      "name": "Tango",
+      "source": "Apron North",
+      "target": "Bravo Tango",
+      "cost": 1
+    },
+    {
+      "name": "Tango",
+      "source": "Apron North 1",
+      "target": "Bravo Tango",
+      "cost": 1
+    },
+    {
+      "name": "Tango",
+      "source": "Bravo Tango",
+      "target": "Apron North",
+      "cost": 100
+    },
+    {
+      "name": "Tango",
+      "source": "Bravo Tango",
+      "target": "Apron North 1",
+      "cost": 100
+    },
+    {
+      "name": "Tango",
+      "source": "Bravo Tango",
+      "target": "Mike Tango",
+      "cost": 1
+    },
+    {
+      "name": "Tango",
+      "source": "Mike Tango",
+      "target": "Bravo Tango",
+      "cost": 999
+    },
+    {
+      "name": "Bravo",
+      "source": "Bravo Runway",
+      "target": "Bravo Tango",
+      "cost": 1
+    },
+    {
+      "name": "Bravo",
+      "source": "Bravo Tango",
+      "target": "Bravo Runway",
+      "cost": 999
+    },
+    {
+      "name": "Tango",
+      "source": "Alpha Tango",
+      "target": "Apron North",
+      "cost": 100
+    },
+    {
+      "name": "Tango",
+      "source": "Alpha Tango",
+      "target": "Apron North 1",
+      "cost": 100
+    },
+    {
+      "name": "Alpha",
+      "source": "Runway 2 2",
+      "target": "Alpha Tango",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Tango",
+      "target": "Runway 2 2",
+      "cost": 999
+    },
+    {
+      "name": "Tango",
+      "source": "Alpha Tango",
+      "target": "Bravo Tango",
+      "cost": 1
+    },
+    {
+      "name": "Runway",
+      "source": "Bravo Runway",
+      "target": "Runway 2 2",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway 2 2",
+      "target": "Bravo Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Bravo Runway",
+      "target": "Runway 0 4",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway 0 4",
+      "target": "Bravo Runway",
+      "cost": 999
+    }
+  ]
+}

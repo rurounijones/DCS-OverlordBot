@@ -3,7 +3,6 @@ using NLog;
 using QuikGraph;
 using QuikGraph.Algorithms;
 using RurouniJones.DCS.Airfields.Structure;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 

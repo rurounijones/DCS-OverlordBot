@@ -8,12 +8,15 @@
     {
       "lat": 44.961116483111,
       "lon": 37.986053587692,
-      "name": "Runway 0 4"
+      "name": "Runway 0 4",
+      "heading": 40
+
     },
     {
       "lat": 44.974772000465,
       "lon": 38.004069966231,
-      "name": "Runway 2 2"
+      "name": "Runway 2 2",
+      "heading": 220
     }
   ],
 
