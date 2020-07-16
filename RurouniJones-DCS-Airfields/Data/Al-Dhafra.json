@@ -3,350 +3,356 @@
   "lat": 24.2577778,
   "lon": 54.5341667,
   "alt": 52,
-  "dotGraph": false,
-  "runways": [
-    {
-      "lat": 24.258139725589,
-      "lon": 54.533405420826,
-      "name": "Runway 1 3 L",
-      "heading":  130
-    },
-    {
-      "lat": 24.240812256807,
-      "lon": 54.536816652057,
-      "name": "Runway 1 3 R",
-      "heading": 130
-    },
-    {
-      "lat": 24.238553312095,
-      "lon": 54.56182193163,
-      "name": "Runway 3 1 R",
-      "heading": 310
-    },
-    {
-      "lat": 24.221190968082,
-      "lon": 54.565299214747,
-      "name": "Runway 3 1 L",
-      "heading": 310
-    }
-  ],
-
-  "junctions": [
-    {
-      "lat": 24.248978062865,
-      "lon": 54.53568439228,
-      "name": "Papa Romeo"
-    },
-    {
-      "lat": 24.254438796519,
-      "lon": 54.544865880517,
-      "name": "Alfa Golf"
-    },
-    {
-      "lat": 24.25130212892,
-      "lon": 54.532382613238,
-      "name": "Juliett 66 Papa"
-    },
-    {
-      "lat": 24.260735584449,
-      "lon": 54.535539654185,
-      "name": "Alfa Foxtrot"
-    },
-    {
-      "lat": 24.24309162153,
-      "lon": 54.544154283289,
-      "name": "Mike Papa Sierra"
-    },
-    {
-      "lat": 24.258384065411,
-      "lon": 54.539152764598,
-      "name": "Alfa Kilo 6"
-    },
-    {
-      "lat": 24.245471674111,
-      "lon": 54.540612693808,
-      "name": "Papa X-Ray 0"
-    },
-    {
-      "lat": 24.241082569186,
-      "lon": 54.563986669998,
-      "name": "Alfa Bravo"
-    },
-    {
-      "lat": 24.243994599738,
-      "lon": 54.559208765473,
-      "name": "Alfa Charlie"
-    },
-    {
-      "lat": 24.249994818595,
-      "lon": 54.551242120129,
-      "name": "Alfa Delta 1"
-    },
-    {
-      "lat": 24.254285167225,
-      "lon": 54.534892291729,
-      "name": "Juliett Juliett 6 Juliett 55 Juliett 66 Romeo"
-    },
-    {
-      "lat": 24.253202990851,
-      "lon": 54.546629129308,
-      "name": "Alfa Delta 2"
-    },
-    {
-      "lat": 24.258732562534,
-      "lon": 54.537236332659,
-      "name": "Alfa Echo"
-    },
-    {
-      "lat": 24.231933563599,
-      "lon": 54.56021810404,
-      "name": "Delta 0 Hotel 11 Papa"
-    },
-    {
-      "lat": 24.227193785575,
-      "lon": 54.551376741249,
-      "name": "Delta 3 Yankee"
-    },
-    {
-      "lat": 24.230211303683,
-      "lon": 54.547024061285,
-      "name": "Delta 4 Yankee"
-    },
-    {
-      "lat": 24.238731941957,
-      "lon": 54.557343168318,
-      "name": "Hotel Hotel 6 Hotel 55 Hotel 66 Quebec"
-    },
-    {
-      "lat": 24.233812371855,
-      "lon": 54.557538320797,
-      "name": "Hotel 33 Papa"
-    },
-    {
-      "lat": 24.235737494584,
-      "lon": 54.554996771884,
-      "name": "Hotel 66 Papa"
-    },
-    {
-      "lat": 24.225775199966,
-      "lon": 54.569207382584,
-      "name": "Papa Victor"
-    },
-    {
-      "lat": 24.237954625118,
-      "lon": 54.551664194622,
-      "name": "Papa Quebec"
-    },
-    {
-      "lat": 24.213585262922,
-      "lon": 54.57097853677,
-      "name": "Uniform Victor"
-    },
-    {
-      "lat": 24.218848390151,
-      "lon": 54.563489987093,
-      "name": "Uniform Yankee"
-    },
-    {
-      "lat": 24.223536649578,
-      "lon": 54.567144896949,
-      "name": "Victor Victor 0"
-    },
-    {
-      "lat": 24.238180278089,
-      "lon": 54.535523805415,
-      "name": "Whiskey Yankee"
-    },
-    {
-      "lat": 24.243061315518,
-      "lon": 54.538772181257,
-      "name": "X-Ray X-Ray 0"
-    },
-    {
-      "lat": 24.229475034801,
-      "lon": 54.55324038157,
-      "name": "Delta 0 Delta 3 Runway"
-    },
-    {
-      "lat": 24.232477122574,
-      "lon": 54.548872266216,
-      "name": "Delta 4 Sierra Runway"
-    },
-    {
-      "lat": 24.224355219536,
-      "lon": 54.560702641454,
-      "name": "Uniform Victor Runway"
-    },
-    {
-      "lat": 24.237590765544,
-      "lon": 54.541478249508,
-      "name": "Whiskey X-Ray Runway"
-    },
-    {
-      "lat": 24.250547537354,
-      "lon": 54.544411156174,
-      "name": "Delta 2 Runway"
-    },
-    {
-      "lat": 24.254231991914,
-      "lon": 54.539062123244,
-      "name": "Echo Juliett 6 Runway"
-    },
-    {
-      "lat": 24.247362371352,
-      "lon": 54.549038728873,
-      "name": "Delta 1 Mike Runway"
-    },
-    {
-      "lat": 24.244189543952,
-      "lon": 54.553645225624,
-      "name": "Charlie Hotel 6 Runway"
-    },
-    {
-      "lat": 24.235399281649,
-      "lon": 54.562546358861,
-      "name": "Hotel Hotel 1 Hotel 11"
-    }
-  ],
-
   "parkingSpots": [
     {
+      "name": "Maintenance Area",
       "lat": 24.233606344146,
-      "lon": 54.556231663996,
-      "name": "Maintenance Area"
+      "lon": 54.556231663996
     },
     {
+      "name": "Ramp 1 Spots",
       "lat": 24.244862290776,
-      "lon": 54.562445823216,
-      "name": "Ramp 1 Spots"
+      "lon": 54.562445823216
     },
     {
+      "name": "Ramp 1 Spots 1",
       "lat": 24.245750915349,
-      "lon": 54.558942043022,
-      "name": "Ramp 1 Spots 1"
+      "lon": 54.558942043022
     },
     {
+      "name": "Ramp 1 Spots 2",
       "lat": 24.24906481882,
-      "lon": 54.55628387744,
-      "name": "Ramp 1 Spots 2"
+      "lon": 54.55628387744
     },
     {
+      "name": "Ramp 1 Spots 3",
       "lat": 24.247932336054,
-      "lon": 54.555822671517,
-      "name": "Ramp 1 Spots 3"
+      "lon": 54.555822671517
     },
     {
+      "name": "Ramp 1 Spots 4",
       "lat": 24.250047530677,
-      "lon": 54.553167326921,
-      "name": "Ramp 1 Spots 4"
+      "lon": 54.553167326921
     },
     {
+      "name": "Ramp 2 Spots",
       "lat": 24.252657443271,
-      "lon": 54.550687470196,
-      "name": "Ramp 2 Spots"
+      "lon": 54.550687470196
     },
     {
+      "name": "Ramp 2 Spots 1",
       "lat": 24.254403331816,
-      "lon": 54.548672812955,
-      "name": "Ramp 2 Spots 1"
+      "lon": 54.548672812955
     },
     {
+      "name": "Ramp 2 Spots 2",
       "lat": 24.256069623113,
-      "lon": 54.546246124193,
-      "name": "Ramp 2 Spots 2"
+      "lon": 54.546246124193
     },
     {
+      "name": "Ramp 3 Spots",
       "lat": 24.258009475167,
-      "lon": 54.543076934544,
-      "name": "Ramp 3 Spots"
+      "lon": 54.543076934544
     },
     {
+      "name": "Ramp 4 Spots",
       "lat": 24.227769551212,
-      "lon": 54.548611480866,
-      "name": "Ramp 4 Spots"
+      "lon": 54.548611480866
     },
     {
+      "name": "Ramp 5 Spots",
       "lat": 24.234827097872,
-      "lon": 54.537657579798,
-      "name": "Ramp 5 Spots"
+      "lon": 54.537657579798
     },
     {
+      "name": "Ramp 6 Spots",
       "lat": 24.251121879893,
-      "lon": 54.530584171851,
-      "name": "Ramp 6 Spots"
+      "lon": 54.530584171851
     },
     {
+      "name": "Kilo Spots",
       "lat": 24.261281556722,
-      "lon": 54.540425511934,
-      "name": "Kilo Spots"
+      "lon": 54.540425511934
     },
     {
+      "name": "Uniform Rearm & Refuel Pad",
       "lat": 24.219079066765,
-      "lon": 54.564455243498,
-      "name": "Uniform Rearm & Refuel Pad"
+      "lon": 54.564455243498
     },
     {
+      "name": "Uniform Spots 1",
       "lat": 24.216944646008,
-      "lon": 54.563235561423,
-      "name": "Uniform Spots 1"
+      "lon": 54.563235561423
     },
     {
+      "name": "Uniform Spots 2",
       "lat": 24.215572131333,
-      "lon": 54.564025385303,
-      "name": "Uniform Spots 2"
+      "lon": 54.564025385303
     },
     {
+      "name": "Uniform Spots 3",
       "lat": 24.216432421374,
-      "lon": 54.565264841676,
-      "name": "Uniform Spots 3"
+      "lon": 54.565264841676
     },
     {
+      "name": "Uniform Spots 4",
       "lat": 24.214838497833,
-      "lon": 54.566330434514,
-      "name": "Uniform Spots 4"
+      "lon": 54.566330434514
     },
     {
+      "name": "Uniform Spots 5",
       "lat": 24.213554631646,
-      "lon": 54.567805786548,
-      "name": "Uniform Spots 5"
+      "lon": 54.567805786548
     },
     {
+      "name": "Uniform Spots 6",
       "lat": 24.213584651734,
-      "lon": 54.569279081186,
-      "name": "Uniform Spots 6"
+      "lon": 54.569279081186
     },
     {
+      "name": "Uniform Spots 7",
       "lat": 24.219365776127,
-      "lon": 54.558309402718,
-      "name": "Uniform Spots 7"
+      "lon": 54.558309402718
     },
     {
+      "name": "Victor Rearm & Refuel Pad",
       "lat": 24.222505642476,
-      "lon": 54.567241853419,
-      "name": "Victor Rearm & Refuel Pad"
+      "lon": 54.567241853419
     },
     {
+      "name": "Victor Spots 1",
       "lat": 24.227624247323,
-      "lon": 54.563599138454,
-      "name": "Victor Spots 1"
+      "lon": 54.563599138454
     },
     {
+      "name": "Whiskey Rearm & Refuel Pad",
       "lat": 24.23981434784,
-      "lon": 54.535254213826,
-      "name": "Whiskey Rearm & Refuel Pad"
+      "lon": 54.535254213826
     },
     {
+      "name": "Whiskey Spots 1",
       "lat": 24.236612136258,
-      "lon": 54.533900112753,
-      "name": "Whiskey Spots 1"
+      "lon": 54.533900112753
     },
     {
+      "name": "X-Ray Rearm & Refuel Pad",
       "lat": 24.242384176486,
-      "lon": 54.537403329561,
-      "name": "X-Ray Rearm & Refuel Pad"
+      "lon": 54.537403329561
     }
   ],
-
+  "runways": [
+    {
+      "heading": 130,
+      "name": "Runway 1 3 L",
+      "lat": 24.258139725589,
+      "lon": 54.533405420826
+    },
+    {
+      "heading": 130,
+      "name": "Runway 1 3 R",
+      "lat": 24.240812256807,
+      "lon": 54.536816652057
+    },
+    {
+      "heading": 310,
+      "name": "Runway 3 1 R",
+      "lat": 24.238553312095,
+      "lon": 54.56182193163
+    },
+    {
+      "heading": 310,
+      "name": "Runway 3 1 L",
+      "lat": 24.221190968082,
+      "lon": 54.565299214747
+    }
+  ],
+  "junctions": [
+    {
+      "name": "Juliett Juliett 11",
+      "lat": 24.257902462275,
+      "lon": 54.529815811941
+    },
+    {
+      "name": "Juliett 11 Papa",
+      "lat": 24.253115976362,
+      "lon": 54.529575139505
+    },
+    {
+      "name": "Papa Romeo",
+      "lat": 24.248978062865,
+      "lon": 54.53568439228
+    },
+    {
+      "name": "Alfa Golf",
+      "lat": 24.254438796519,
+      "lon": 54.544865880517
+    },
+    {
+      "name": "Juliett 66 Papa",
+      "lat": 24.25130212892,
+      "lon": 54.532382613238
+    },
+    {
+      "name": "Alfa Foxtrot",
+      "lat": 24.260735584449,
+      "lon": 54.535539654185
+    },
+    {
+      "name": "Mike Papa Sierra",
+      "lat": 24.24309162153,
+      "lon": 54.544154283289
+    },
+    {
+      "name": "Alfa Kilo 6",
+      "lat": 24.258384065411,
+      "lon": 54.539152764598
+    },
+    {
+      "name": "Papa X-Ray 0",
+      "lat": 24.245471674111,
+      "lon": 54.540612693808
+    },
+    {
+      "name": "Alfa Bravo",
+      "lat": 24.241082569186,
+      "lon": 54.563986669998
+    },
+    {
+      "name": "Alfa Charlie",
+      "lat": 24.243994599738,
+      "lon": 54.559208765473
+    },
+    {
+      "name": "Alfa Delta 1",
+      "lat": 24.249994818595,
+      "lon": 54.551242120129
+    },
+    {
+      "name": "Juliett Juliett 6 Juliett 55 Juliett 66 Romeo",
+      "lat": 24.254285167225,
+      "lon": 54.534892291729
+    },
+    {
+      "name": "Alfa Delta 2",
+      "lat": 24.253202990851,
+      "lon": 54.546629129308
+    },
+    {
+      "name": "Alfa Echo",
+      "lat": 24.258732562534,
+      "lon": 54.537236332659
+    },
+    {
+      "name": "Delta 0 Hotel 11 Papa",
+      "lat": 24.231933563599,
+      "lon": 54.56021810404
+    },
+    {
+      "name": "Delta 3 Yankee",
+      "lat": 24.227193785575,
+      "lon": 54.551376741249
+    },
+    {
+      "name": "Delta 4 Yankee",
+      "lat": 24.230211303683,
+      "lon": 54.547024061285
+    },
+    {
+      "name": "Hotel Hotel 6 Hotel 55 Hotel 66 Quebec",
+      "lat": 24.238731941957,
+      "lon": 54.557343168318
+    },
+    {
+      "name": "Hotel 33 Papa",
+      "lat": 24.233812371855,
+      "lon": 54.557538320797
+    },
+    {
+      "name": "Hotel 66 Papa",
+      "lat": 24.235737494584,
+      "lon": 54.554996771884
+    },
+    {
+      "name": "Papa Victor",
+      "lat": 24.225775199966,
+      "lon": 54.569207382584
+    },
+    {
+      "name": "Papa Quebec",
+      "lat": 24.237954625118,
+      "lon": 54.551664194622
+    },
+    {
+      "name": "Uniform Victor",
+      "lat": 24.213585262922,
+      "lon": 54.57097853677
+    },
+    {
+      "name": "Uniform Yankee",
+      "lat": 24.218848390151,
+      "lon": 54.563489987093
+    },
+    {
+      "name": "Victor Victor 0",
+      "lat": 24.223536649578,
+      "lon": 54.567144896949
+    },
+    {
+      "name": "Whiskey Yankee",
+      "lat": 24.238180278089,
+      "lon": 54.535523805415
+    },
+    {
+      "name": "X-Ray X-Ray 0",
+      "lat": 24.243061315518,
+      "lon": 54.538772181257
+    },
+    {
+      "name": "Delta 0 Delta 3 Runway",
+      "lat": 24.229475034801,
+      "lon": 54.55324038157
+    },
+    {
+      "name": "Delta 4 Sierra Runway",
+      "lat": 24.232477122574,
+      "lon": 54.548872266216
+    },
+    {
+      "name": "Uniform Victor Runway",
+      "lat": 24.224355219536,
+      "lon": 54.560702641454
+    },
+    {
+      "name": "Whiskey X-Ray Runway",
+      "lat": 24.237590765544,
+      "lon": 54.541478249508
+    },
+    {
+      "name": "Delta 2 Runway",
+      "lat": 24.250547537354,
+      "lon": 54.544411156174
+    },
+    {
+      "name": "Echo Juliett 6 Runway",
+      "lat": 24.254231991914,
+      "lon": 54.539062123244
+    },
+    {
+      "name": "Delta 1 Mike Runway",
+      "lat": 24.247362371352,
+      "lon": 54.549038728873
+    },
+    {
+      "name": "Charlie Hotel 6 Runway",
+      "lat": 24.244189543952,
+      "lon": 54.553645225624
+    },
+    {
+      "name": "Hotel Hotel 1 Hotel 11",
+      "lat": 24.235399281649,
+      "lon": 54.562546358861
+    }
+  ],
   "taxipaths": [
     {
       "name": "Alfa",
@@ -1248,7 +1254,6 @@
       "target": "X-Ray Rearm & Refuel Pad",
       "cost": 100
     },
-
     {
       "name": "X-Ray 0",
       "source": "X-Ray X-Ray 0",
@@ -1260,6 +1265,42 @@
       "source": "Runway 1 3 R",
       "target": "X-Ray X-Ray 0",
       "cost": 1
+    },
+    {
+      "name": "Juliett",
+      "source": "Juliett Juliett 11",
+      "target": "Juliett 11 Papa",
+      "cost": 1
+    },
+    {
+      "name": "Juliett",
+      "source": "Juliett 11 Papa",
+      "target": "Juliett Juliett 11",
+      "cost": 999
+    },
+    {
+      "name": "Juliett 11",
+      "source": "Runway 1 3 L",
+      "target": "Juliett Juliett 11",
+      "cost": 1
+    },
+    {
+      "name": "Juliett 11",
+      "source": "Juliett Juliett 11",
+      "target": "Runway 1 3 L",
+      "cost": 999
+    },
+    {
+      "name": "Papa",
+      "source": "Juliett 11 Papa",
+      "target": "Ramp 6 Spots",
+      "cost": 1
+    },
+    {
+      "name": "Papa",
+      "source": "Ramp 6 Spots",
+      "target": "Juliett 11 Papa",
+      "cost": 999
     }
   ]
 }
