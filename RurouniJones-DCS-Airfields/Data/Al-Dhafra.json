@@ -2,7 +2,7 @@
   "name": "Al Dhafra",
   "lat": 24.2577778,
   "lon": 54.5341667,
-  "alt": 52,
+  "alt": 52.0,
   "parkingSpots": [
     {
       "name": "Maintenance Area",
@@ -273,7 +273,7 @@
       "lon": 54.554996771884
     },
     {
-      "name": "Papa Victor",
+      "name": "Papa Victor Victor 0",
       "lat": 24.225775199966,
       "lon": 54.569207382584
     },
@@ -693,37 +693,37 @@
     {
       "name": "Papa",
       "source": "Victor Spots 1",
-      "target": "Papa Victor",
+      "target": "Papa Victor Victor 0",
       "cost": 1
     },
     {
       "name": "Papa",
-      "source": "Papa Victor",
+      "source": "Papa Victor Victor 0",
       "target": "Victor Spots 1",
       "cost": 999
     },
     {
       "name": "Papa",
       "source": "Delta 0 Hotel 11 Papa",
-      "target": "Papa Victor",
+      "target": "Papa Victor Victor 0",
       "cost": 1
     },
     {
       "name": "Papa",
-      "source": "Papa Victor",
+      "source": "Papa Victor Victor 0",
       "target": "Delta 0 Hotel 11 Papa",
       "cost": 999
     },
     {
       "name": "Victor 0",
       "source": "Victor Victor 0",
-      "target": "Papa Victor",
+      "target": "Papa Victor Victor 0",
       "cost": 1
     },
     {
       "name": "Victor 0",
       "source": "Victor Victor 0",
-      "target": "Papa Victor",
+      "target": "Papa Victor Victor 0",
       "cost": 999
     },
     {
@@ -1125,12 +1125,12 @@
     {
       "name": "Victor",
       "source": "Uniform Victor",
-      "target": "Papa Victor",
+      "target": "Papa Victor Victor 0",
       "cost": 999
     },
     {
       "name": "Victor",
-      "source": "Papa Victor",
+      "source": "Papa Victor Victor 0",
       "target": "Uniform Victor",
       "cost": 999
     },

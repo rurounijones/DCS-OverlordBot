@@ -82,6 +82,9 @@
     <None Include="Data\Krymsk.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Data\Mineralne Vody.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Data\Novorossiysk.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

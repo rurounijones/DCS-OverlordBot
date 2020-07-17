@@ -39,7 +39,7 @@ namespace RurouniJones.DCS.Airfields.Controllers
                     taxiways.Add(edge.Tag);
                     if (edge.Source is Runway runway && edge != path.First())
                     {
-                        comments.Add($"Cross {runway.Name}");
+                        comments.Add($"Cross {runway.Name} at your discretion");
                     }
                 }
                 string instructions = $"Taxi to {target.Name}";

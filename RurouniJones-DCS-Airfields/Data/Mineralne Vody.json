@@ -1,0 +1,300 @@
+{
+  "name": "Mineralnye Vody",
+  "lat": 44.218646823806807,
+  "lon": 43.100679733081456,
+  "alt": 320.01031494140625,
+  "parkingSpots": [
+    {
+      "name": "Apron 1 1",
+      "lat": 44.224563693954,
+      "lon": 43.079540778947
+    },
+    {
+      "name": "Apron 1 2",
+      "lat": 44.223554176379,
+      "lon": 43.081716573307
+    },
+    {
+      "name": "Apron 1 3",
+      "lat": 44.221380901104,
+      "lon": 43.086425397209
+    },
+    {
+      "name": "Apron 1 4",
+      "lat": 44.220528482901,
+      "lon": 43.088333177429
+    },
+    {
+      "name": "Maintenance Area",
+      "lat": 44.223130773545,
+      "lon": 43.104834499253
+    }
+  ],
+  "runways": [
+    {
+      "heading": 300,
+      "name": "Runway 3 0",
+      "lat": 44.218679891657,
+      "lon": 43.101339343831
+    },
+    {
+      "heading": 120,
+      "name": "Runway 1 2",
+      "lat": 44.237091079579,
+      "lon": 43.060927283709
+    }
+  ],
+  "junctions": [
+    {
+      "name": "Charlie Runway",
+      "lat": 44.227205545899,
+      "lon": 43.082604490201
+    },
+    {
+      "name": "Alfa Delta",
+      "lat": 44.221828380744,
+      "lon": 43.087611784887
+    },
+    {
+      "name": "Delta Runway",
+      "lat": 44.224032149732,
+      "lon": 43.089558124723
+    },
+    {
+      "name": "Alfa Echo",
+      "lat": 44.217681360601,
+      "lon": 43.096642031043
+    },
+    {
+      "name": "Alfa Echo 1",
+      "lat": 44.217104305803,
+      "lon": 43.097889254033
+    },
+    {
+      "name": "Alfa Bravo",
+      "lat": 44.229460055224,
+      "lon": 43.070932330875
+    },
+    {
+      "name": "Echo Echo 1",
+      "lat": 44.217941442898,
+      "lon": 43.098511732869
+    },
+    {
+      "name": "Bravo Runway",
+      "lat": 44.232844970634,
+      "lon": 43.070158203789
+    },
+    {
+      "name": "Alfa Charlie",
+      "lat": 44.225013967823,
+      "lon": 43.080660390755
+    }
+  ],
+  "taxipaths": [
+    {
+      "name": "Alfa",
+      "source": "Alfa Bravo",
+      "target": "Runway 1 2",
+      "cost": 1
+    },
+    {
+      "name": "Alfa",
+      "source": "Runway 1 2",
+      "target": "Alfa Bravo",
+      "cost": 999
+    },
+    {
+      "name": "Alfa",
+      "source": "Alfa Charlie",
+      "target": "Alfa Bravo",
+      "cost": 1
+    },
+    {
+      "name": "Alfa",
+      "source": "Alfa Bravo",
+      "target": "Alfa Charlie",
+      "cost": 999
+    },
+    {
+      "name": "Alfa",
+      "source": "Alfa Delta",
+      "target": "Alfa Charlie",
+      "cost": 1
+    },
+    {
+      "name": "Alfa",
+      "source": "Alfa Charlie",
+      "target": "Alfa Delta",
+      "cost": 999
+    },
+    {
+      "name": "Alfa",
+      "source": "Alfa Echo",
+      "target": "Alfa Delta",
+      "cost": 1
+    },
+    {
+      "name": "Alfa",
+      "source": "Alfa Delta",
+      "target": "Alfa Echo",
+      "cost": 999
+    },
+    {
+      "name": "Alfa",
+      "source": "Alfa Echo 1",
+      "target": "Alfa Echo",
+      "cost": 1
+    },
+    {
+      "name": "Alfa",
+      "source": "Alfa Echo",
+      "target": "Alfa Echo 1",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Bravo Runway",
+      "target": "Runway 1 2",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway 1 2",
+      "target": "Bravo Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Charlie Runway",
+      "target": "Bravo Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Bravo Runway",
+      "target": "Charlie Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Delta Runway",
+      "target": "Charlie Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Charlie Runway",
+      "target": "Delta Runway",
+      "cost": 999
+    },
+    {
+      "name": "Echo",
+      "source": "Runway 3 0",
+      "target": "Echo Echo 1",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Echo Echo 1",
+      "target": "Runway 3 0",
+      "cost": 999
+    },
+    {
+      "name": "Echo",
+      "source": "Echo Echo 1",
+      "target": "Alfa Echo",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Alfa Echo",
+      "target": "Echo Echo 1",
+      "cost": 999
+    },
+    {
+      "name": "Echo",
+      "source": "Echo Echo 1",
+      "target": "Alfa Echo 1",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Alfa Echo 1",
+      "target": "Echo Echo 1",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Delta Runway",
+      "target": "Runway 3 0",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway 3 0",
+      "target": "Delta Runway",
+      "cost": 999
+    },
+    {
+      "name": "November",
+      "source": "Maintenance Area",
+      "target": "Runway 3 0",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Runway 3 0",
+      "target": "Maintenance Area",
+      "cost": 999
+    },
+    {
+      "name": "Alfa",
+      "source": "Apron 1 1",
+      "target": "Alfa Charlie",
+      "cost": 1
+    },
+    {
+      "name": "Alfa",
+      "source": "Alfa Charlie",
+      "target": "Apron 1 1",
+      "cost": 100
+    },
+    {
+      "name": "Alfa",
+      "source": "Apron 1 2",
+      "target": "Alfa Charlie",
+      "cost": 1
+    },
+    {
+      "name": "Alfa",
+      "source": "Alfa Charlie",
+      "target": "Apron 1 2",
+      "cost": 100
+    },
+    {
+      "name": "Alfa",
+      "source": "Apron 1 3",
+      "target": "Alfa Delta",
+      "cost": 1
+    },
+    {
+      "name": "Alfa",
+      "source": "Alfa Delta",
+      "target": "Apron 1 3",
+      "cost": 100
+    },
+    {
+      "name": "Alfa",
+      "source": "Apron 1 4",
+      "target": "Alfa Delta",
+      "cost": 1
+    },
+    {
+      "name": "Alfa",
+      "source": "Alfa Delta",
+      "target": "Apron 1 4",
+      "cost": 100
+    }
+  ]
+}
