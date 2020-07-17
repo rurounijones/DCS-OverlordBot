@@ -1,0 +1,390 @@
+{
+  "name": "Maykop-Khanskaya",
+  "lat": 44.67144025735508,
+  "lon": 40.021427482235985,
+  "alt": 180.01019287109375,
+  "parkingSpots": [
+    {
+      "name": "Apron 1",
+      "lat": 44.667964974286,
+      "lon": 40.025961657564
+    },
+    {
+      "name": "Apron 2 2",
+      "lat": 44.672398938295,
+      "lon": 40.031172068091
+    },
+    {
+      "name": "Apron 2 1",
+      "lat": 44.671288619807,
+      "lon": 40.030771437314
+    },
+    {
+      "name": "Victor Spots 1",
+      "lat": 44.671639842672,
+      "lon": 40.028913169849
+    },
+    {
+      "name": "Victor Spots 2",
+      "lat": 44.674083875551,
+      "lon": 40.034378187741
+    },
+    {
+      "name": "Apron 3 2",
+      "lat": 44.680638919624,
+      "lon": 40.041074234006
+    },
+    {
+      "name": "Apron 3 1",
+      "lat": 44.679701417407,
+      "lon": 40.040318227224
+    },
+    {
+      "name": "Apron 4 1",
+      "lat": 44.681075360638,
+      "lon": 40.043487967706
+    },
+    {
+      "name": "Apron 4 2",
+      "lat": 44.681398000338,
+      "lon": 40.045084705459
+    },
+    {
+      "name": "Victor Spots 3",
+      "lat": 44.683138196245,
+      "lon": 40.046917262785
+    },
+    {
+      "name": "Victor Spots 4",
+      "lat": 44.684428590297,
+      "lon": 40.047661624848
+    },
+    {
+      "name": "Maintenance Area",
+      "lat": 44.675911173832,
+      "lon": 40.042729078208
+    }
+  ],
+  "runways": [
+    {
+      "heading": 0,
+      "name": "Runway 0 4",
+      "lat": 44.671094194761,
+      "lon": 40.021479312485
+    },
+    {
+      "heading": 0,
+      "name": "Runway 2 2",
+      "lat": 44.691469103678,
+      "lon": 40.049040314372
+    }
+  ],
+  "junctions": [
+    {
+      "name": "Bravo Runway",
+      "lat": 44.675228573438,
+      "lon": 40.027042426611
+    },
+    {
+      "name": "Charlie Runway",
+      "lat": 44.683820643563,
+      "lon": 40.038751113921
+    },
+    {
+      "name": "Delta Runway",
+      "lat": 44.688069396484,
+      "lon": 40.044471140161
+    },
+    {
+      "name": "Alfa Victor",
+      "lat": 44.668413875525,
+      "lon": 40.025016860675
+    },
+    {
+      "name": "Bravo Victor",
+      "lat": 44.672738558966,
+      "lon": 40.030644464964
+    },
+    {
+      "name": "Charlie Victor",
+      "lat": 44.681449359967,
+      "lon": 40.042322644602
+    },
+    {
+      "name": "Delta Echo Victor",
+      "lat": 44.685759736621,
+      "lon": 40.04793031414
+    },
+    {
+      "name": "Mike Victor",
+      "lat": 44.677275213975,
+      "lon": 40.039139400852
+    }
+  ],
+  "taxipaths": [
+    {
+      "name": "Alfa",
+      "source": "Alfa Victor",
+      "target": "Runway 0 4",
+      "cost": 1
+    },
+    {
+      "name": "Alfa",
+      "source": "Runway 0 4",
+      "target": "Alfa Victor",
+      "cost": 999
+    },
+    {
+      "name": "Victor",
+      "source": "Bravo Victor",
+      "target": "Alfa Victor",
+      "cost": 1
+    },
+    {
+      "name": "Victor",
+      "source": "Alfa Victor",
+      "target": "Bravo Victor",
+      "cost": 999
+    },
+    {
+      "name": "Victor",
+      "source": "Mike Victor",
+      "target": "Bravo Victor",
+      "cost": 1
+    },
+    {
+      "name": "Victor",
+      "source": "Bravo Victor",
+      "target": "Mike Victor",
+      "cost": 999
+    },
+    {
+      "name": "Victor",
+      "source": "Charlie Victor",
+      "target": "Mike Victor",
+      "cost": 1
+    },
+    {
+      "name": "Victor",
+      "source": "Mike Victor",
+      "target": "Charlie Victor",
+      "cost": 999
+    },
+    {
+      "name": "Victor",
+      "source": "Delta Echo Victor",
+      "target": "Charlie Victor",
+      "cost": 1
+    },
+    {
+      "name": "Victor",
+      "source": "Charlie Victor",
+      "target": "Delta Echo Victor",
+      "cost": 999
+    },
+    {
+      "name": "Echo",
+      "source": "Runway 2 2",
+      "target": "Delta Echo Victor",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Delta Echo Victor",
+      "target": "Runway 2 2",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway 0 4",
+      "target": "Bravo Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Bravo Runway",
+      "target": "Runway 0 4",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Bravo Runway",
+      "target": "Charlie Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Charlie Runway",
+      "target": "Bravo Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Charlie Runway",
+      "target": "Delta Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Delta Runway",
+      "target": "Charlie Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Delta Runway",
+      "target": "Runway 2 2",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway 2 2",
+      "target": "Delta Runway",
+      "cost": 999
+    },
+    {
+      "name": "Mike",
+      "source": "Maintenance Area",
+      "target": "Mike Victor",
+      "cost": 1
+    },
+    {
+      "name": "Mike",
+      "source": "Mike Victor",
+      "target": "Maintenance Area",
+      "cost": 999
+    },
+    {
+      "name": "Victor",
+      "source": "Apron 1",
+      "target": "Alfa Victor",
+      "cost": 1
+    },
+    {
+      "name": "Victor",
+      "source": "Alfa Victor",
+      "target": "Apron 1",
+      "cost": 100
+    },
+    {
+      "name": "Victor",
+      "source": "Apron 2 1",
+      "target": "Bravo Victor",
+      "cost": 1
+    },
+    {
+      "name": "Victor",
+      "source": "Bravo Victor",
+      "target": "Apron 2 1",
+      "cost": 100
+    },
+    {
+      "name": "Victor",
+      "source": "Apron 2 2",
+      "target": "Bravo Victor",
+      "cost": 1
+    },
+    {
+      "name": "Victor",
+      "source": "Bravo Victor",
+      "target": "Apron 2 2",
+      "cost": 100
+    },
+    {
+      "name": "Victor",
+      "source": "Apron 3 1",
+      "target": "Mike Victor",
+      "cost": 1
+    },
+    {
+      "name": "Victor",
+      "source": "Mike Victor",
+      "target": "Apron 3 1",
+      "cost": 100
+    },
+    {
+      "name": "Victor",
+      "source": "Apron 3 2",
+      "target": "Charlie Victor",
+      "cost": 1
+    },
+    {
+      "name": "Victor",
+      "source": "Charlie Victor",
+      "target": "Apron 3 2",
+      "cost": 100
+    },
+    {
+      "name": "Victor",
+      "source": "Apron 4 2",
+      "target": "Charlie Victor",
+      "cost": 1
+    },
+    {
+      "name": "Victor",
+      "source": "Charlie Victor",
+      "target": "Apron 4 2",
+      "cost": 100
+    },
+    {
+      "name": "Victor",
+      "source": "Apron 4 1",
+      "target": "Charlie Victor",
+      "cost": 1
+    },
+    {
+      "name": "Victor",
+      "source": "Charlie Victor",
+      "target": "Apron 4 1",
+      "cost": 100
+    },
+    {
+      "name": "Victor",
+      "source": "Victor Spots 1",
+      "target": "Bravo Victor",
+      "cost": 1
+    },
+    {
+      "name": "Victor",
+      "source": "Bravo Victor",
+      "target": "Victor Spots 1",
+      "cost": 999
+    },
+    {
+      "name": "Victor",
+      "source": "Victor Spots 2",
+      "target": "Bravo Victor",
+      "cost": 1
+    },
+    {
+      "name": "Victor",
+      "source": "Bravo Victor",
+      "target": "Victor Spots 2",
+      "cost": 999
+    },
+    {
+      "name": "Victor",
+      "source": "Victor Spots 3",
+      "target": "Charlie Victor",
+      "cost": 1
+    },
+    {
+      "name": "Victor",
+      "source": "Charlie Victor",
+      "target": "Victor Spots 3",
+      "cost": 999
+    },
+    {
+      "name": "Victor",
+      "source": "Victor Spots 4",
+      "target": "Delta Echo Victor",
+      "cost": 1
+    },
+    {
+      "name": "Victor",
+      "source": "Delta Echo Victor",
+      "target": "Victor Spots 4",
+      "cost": 999
+    }
+  ]
+}
