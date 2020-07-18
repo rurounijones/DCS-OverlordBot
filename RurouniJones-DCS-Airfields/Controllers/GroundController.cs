@@ -3,6 +3,8 @@ using NLog;
 using QuikGraph;
 using QuikGraph.Algorithms;
 using RurouniJones.DCS.Airfields.Structure;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,6 +12,12 @@ namespace RurouniJones.DCS.Airfields.Controllers
 {
     public class GroundController
     {
+
+        private static readonly Random randomizer = new Random();
+
+        private Array instructionsVariants = new ArrayList() {"", "taxi to", "proceed to", "head to" }.ToArray();
+        private Array viaVariants = new ArrayList() { "via", "along", "by way of", "using" }.ToArray();
+
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private readonly Airfield Airfield;
@@ -42,11 +50,11 @@ namespace RurouniJones.DCS.Airfields.Controllers
                         comments.Add($"Cross {runway.Name} at your discretion");
                     }
                 }
-                string instructions = $"Taxi to {target.Name}";
+                string instructions = $"{Random(instructionsVariants)} {target.Name} ";
                 
                 if(taxiways.Count > 0)
                 {
-                    instructions += $"via {string.Join(" ", RemoveRepeating(taxiways))}";
+                    instructions += $" {Random(viaVariants)} {string.Join("<break time=\"60ms\" /> ", RemoveRepeating(taxiways))}";
                 }
 
                 if (comments.Count > 0)
@@ -80,5 +88,11 @@ namespace RurouniJones.DCS.Airfields.Controllers
 
             return dedupedTaxiways;
         }
+
+        private string Random(Array array)
+        {
+            return array.GetValue(randomizer.Next(array.Length)).ToString();
+        }
+
     }
 }
