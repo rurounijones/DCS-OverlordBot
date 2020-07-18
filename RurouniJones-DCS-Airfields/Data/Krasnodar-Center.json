@@ -1,0 +1,375 @@
+{
+  "name": "Krasnodar-Center",
+  "lat": 45.087429883845076,
+  "lon": 38.925202300775062,
+  "alt": 30.010032653808594,
+  "parkingSpots": [
+    {
+      "name": "Ramp 1",
+      "lat": 45.083316664903,
+      "lon": 38.929982501964
+    },
+    {
+      "name": "Ramp 2",
+      "lat": 45.082947429443,
+      "lon": 38.945792359643
+    },
+    {
+      "name": "Ramp 3",
+      "lat": 45.08077765447,
+      "lon": 38.945587539255
+    },
+    {
+      "name": "Foxtrot Spots 1",
+      "lat": 45.079020032563,
+      "lon": 38.946440899184
+    },
+    {
+      "name": "Foxtrot Spots 2",
+      "lat": 45.081209615655,
+      "lon": 38.953249028223
+    },
+    {
+      "name": "Echo Spots 1",
+      "lat": 45.082339143765,
+      "lon": 38.954220071576
+    },
+    {
+      "name": "Echo Spots 2",
+      "lat": 45.082755089586,
+      "lon": 38.956699898987
+    },
+    {
+      "name": "Echo Spots 3",
+      "lat": 45.084711382672,
+      "lon": 38.957358607234
+    },
+    {
+      "name": "Foxtrot Spots 3",
+      "lat": 45.084873847245,
+      "lon": 38.960534024038
+    }
+  ],
+  "runways": [
+    {
+      "heading": 270,
+      "name": "Runway-2 7",
+      "lat": 45.086711152571,
+      "lon": 38.955540395688
+    },
+    {
+      "heading": 90,
+      "name": "Runway-0 9",
+      "lat": 45.087175633339,
+      "lon": 38.924781990096
+    }
+  ],
+  "junctions": [
+    {
+      "name": "Alpha Bravo",
+      "lat": 45.083971649092,
+      "lon": 38.929137209769
+    },
+    {
+      "name": "Alpha Charlie Delta",
+      "lat": 45.083529186269,
+      "lon": 38.951038026108
+    },
+    {
+      "name": "Alpha Echo",
+      "lat": 45.083469368555,
+      "lon": 38.955266674185
+    },
+    {
+      "name": "Alpha Foxtrot",
+      "lat": 45.083597655912,
+      "lon": 38.937132564066
+    },
+    {
+      "name": "Delta Foxtrot",
+      "lat": 45.07712527766,
+      "lon": 38.941117910712
+    },
+    {
+      "name": "Echo Foxtrot",
+      "lat": 45.081261438033,
+      "lon": 38.955358882876
+    },
+    {
+      "name": "Bravo Runway",
+      "lat": 45.087095592,
+      "lon": 38.929185152099
+    },
+    {
+      "name": "Charlie Runway",
+      "lat": 45.08675202679,
+      "lon": 38.950970007445
+    }
+  ],
+  "taxipaths": [
+    {
+      "name": "Alpha",
+      "source": "Alpha Foxtrot",
+      "target": "Alpha Charlie Delta",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Charlie Delta",
+      "target": "Alpha Foxtrot",
+      "cost": 999
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Bravo",
+      "target": "Alpha Foxtrot",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Foxtrot",
+      "target": "Alpha Bravo",
+      "cost": 999
+    },
+    {
+      "name": "Alpha",
+      "source": "Runway-0 9",
+      "target": "Alpha Bravo",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Bravo",
+      "target": "Runway-0 9",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Charlie Runway",
+      "target": "Runway-2 7",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway-2 7",
+      "target": "Charlie Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Bravo Runway",
+      "target": "Charlie Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Charlie Runway",
+      "target": "Bravo Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Bravo Runway",
+      "target": "Runway-0 9",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway-0 9",
+      "target": "Bravo Runway",
+      "cost": 999
+    },
+    {
+      "name": "Alpha",
+      "source": "Ramp 1",
+      "target": "Alpha Bravo",
+      "cost": 1
+    },
+    {
+      "name": "Ramp 1",
+      "source": "Alpha Bravo",
+      "target": "Ramp 1",
+      "cost": 100
+    },
+    {
+      "name": "Alpha",
+      "source": "Ramp 2",
+      "target": "Alpha Charlie Delta",
+      "cost": 1
+    },
+    {
+      "name": "Ramp 2",
+      "source": "Alpha Charlie Delta",
+      "target": "Ramp 2",
+      "cost": 100
+    },
+    {
+      "name": "Delta",
+      "source": "Ramp 3",
+      "target": "Alpha Charlie Delta",
+      "cost": 1
+    },
+    {
+      "name": "Ramp 3",
+      "source": "Alpha Charlie Delta",
+      "target": "Ramp 3",
+      "cost": 100
+    },
+    {
+      "name": "Echo",
+      "source": "Echo Foxtrot",
+      "target": "Alpha Echo",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Alpha Echo",
+      "target": "Echo Foxtrot",
+      "cost": 999
+    },
+    {
+      "name": "Foxtrot",
+      "source": "Foxtrot Spots 1",
+      "target": "Echo Foxtrot",
+      "cost": 1
+    },
+    {
+      "name": "Foxtrot",
+      "source": "Echo Foxtrot",
+      "target": "Foxtrot Spots 1",
+      "cost": 999
+    },
+    {
+      "name": "Foxtrot",
+      "source": "Foxtrot Spots 2",
+      "target": "Echo Foxtrot",
+      "cost": 1
+    },
+    {
+      "name": "Foxtrot",
+      "source": "Echo Foxtrot",
+      "target": "Foxtrot Spots 2",
+      "cost": 999
+    },
+    {
+      "name": "Foxtrot",
+      "source": "Foxtrot Spots 3",
+      "target": "Echo Foxtrot",
+      "cost": 1
+    },
+    {
+      "name": "Foxtrot",
+      "source": "Echo Foxtrot",
+      "target": "Foxtrot Spots 3",
+      "cost": 999
+    },
+    {
+      "name": "Foxtrot",
+      "source": "Delta Foxtrot",
+      "target": "Alpha Foxtrot",
+      "cost": 999
+    },
+    {
+      "name": "Foxtrot",
+      "source": "Alpha Foxtrot",
+      "target": "Delta Foxtrot",
+      "cost": 1
+    },
+    {
+      "name": "Ramp 3",
+      "source": "Delta Foxtrot",
+      "target": "Ramp 3",
+      "cost": 100
+    },
+    {
+      "name": "Delta",
+      "source": "Ramp 3",
+      "target": "Delta Foxtrot",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Echo Spots 1",
+      "target": "Alpha Echo",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Alpha Echo",
+      "target": "Echo Spots 1",
+      "cost": 999
+    },
+    {
+      "name": "Echo",
+      "source": "Echo Spots 2",
+      "target": "Alpha Echo",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Alpha Echo",
+      "target": "Echo Spots 2",
+      "cost": 999
+    },
+    {
+      "name": "Foxtrot",
+      "source": "Echo Foxtrot",
+      "target": "Delta Foxtrot",
+      "cost": 999
+    },
+    {
+      "name": "Foxtrot",
+      "source": "Delta Foxtrot",
+      "target": "Echo Foxtrot",
+      "cost": 1
+    },
+    {
+      "name": "Delta",
+      "source": "Delta Foxtrot",
+      "target": "Alpha Charlie Delta",
+      "cost": 1
+    },
+    {
+      "name": "Delta",
+      "source": "Alpha Charlie Delta",
+      "target": "Delta Foxtrot",
+      "cost": 999
+    },
+    {
+      "name": "Echo",
+      "source": "Echo Spots 3",
+      "target": "Runway-2 7",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Runway-2 7",
+      "target": "Echo Spots 3",
+      "cost": 999
+    },
+    {
+      "name": "Echo",
+      "source": "Alpha Echo",
+      "target": "Runway-2 7",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Runway-2 7",
+      "target": "Alpha Echo",
+      "cost": 999
+    },
+    {
+      "name": "Delta",
+      "source": "Alpha Charlie Delta",
+      "target": "Runway-2 7",
+      "cost": 1
+    },
+    {
+      "name": "Delta",
+      "source": "Runway-2 7",
+      "target": "Alpha Charlie Delta",
+      "cost": 999
+    }
+  ]
+}

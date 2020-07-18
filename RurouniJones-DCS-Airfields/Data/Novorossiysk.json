@@ -8,13 +8,13 @@
     {
       "lat": 44.662742941153,
       "lon": 37.770617848637,
-      "name": "Runway 0 4",
+      "name": "Runway-0 4",
       "heading": 40
     },
     {
       "lat": 44.673510893104,
       "lon": 37.785926801069,
-      "name": "Runway 2 2",
+      "name": "Runway-2 2",
       "heading": 220
     }
   ],
@@ -129,12 +129,12 @@
     {
       "name": "Charlie",
       "source": "Charlie Tango",
-      "target": "Runway 0 4",
+      "target": "Runway-0 4",
       "cost": 1
     },
     {
       "name": "Charlie",
-      "source": "Runway 0 4",
+      "source": "Runway-0 4",
       "target": "Charlie Tango",
       "cost": 999
     },
@@ -284,14 +284,14 @@
     },
     {
       "name": "Alpha",
-      "source": "Runway 2 2",
+      "source": "Runway-2 2",
       "target": "Alpha Tango",
       "cost": 1
     },
     {
       "name": "Alpha",
       "source": "Alpha Tango",
-      "target": "Runway 2 2",
+      "target": "Runway-2 2",
       "cost": 999
     },
     {
@@ -309,24 +309,24 @@
     {
       "name": "Runway",
       "source": "Bravo Runway",
-      "target": "Runway 2 2",
+      "target": "Runway-2 2",
       "cost": 999
     },
     {
       "name": "Runway",
-      "source": "Runway 2 2",
+      "source": "Runway-2 2",
       "target": "Bravo Runway",
       "cost": 999
     },
     {
       "name": "Runway",
       "source": "Bravo Runway",
-      "target": "Runway 0 4",
+      "target": "Runway-0 4",
       "cost": 999
     },
     {
       "name": "Runway",
-      "source": "Runway 0 4",
+      "source": "Runway-0 4",
       "target": "Bravo Runway",
       "cost": 999
     }

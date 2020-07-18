@@ -6,13 +6,13 @@
   "dotGraph": false,
   "runways": [
     {
-      "name": "Runway 0 4",
+      "name": "Runway-0 4",
       "lat": 44.99635264512,
       "lon": 37.335871691948,
       "heading":  40
     },
     {
-      "name": "Runway 2 2",
+      "name": "Runway-2 2",
       "lat": 45.013562231472,
       "lon": 37.359744919983,
       "heading": 220
@@ -114,12 +114,12 @@
     {
       "name": "Alpha",
       "source": "Alpha Mike",
-      "target": "Runway 0 4",
+      "target": "Runway-0 4",
       "cost": 1
     },
     {
       "name": "Alpha",
-      "source": "Runway 0 4",
+      "source": "Runway-0 4",
       "target": "Alpha Mike",
       "cost": 999
     },
@@ -149,14 +149,14 @@
     },
     {
       "name": "Runway",
-      "source": "Runway 0 4",
+      "source": "Runway-0 4",
       "target": "Bravo Runway",
       "cost": 999
     },
     {
       "name": "Runway",
       "source": "Bravo Runway",
-      "target": "Runway 0 4",
+      "target": "Runway-0 4",
       "cost": 999
     },
     {
@@ -173,26 +173,26 @@
     },
     {
       "name": "Runway",
-      "source": "Runway 2 2",
+      "source": "Runway-2 2",
       "target": "Charlie Runway",
       "cost": 999
     },
     {
       "name": "Runway",
       "source": "Charlie Runway",
-      "target": "Runway 2 2",
+      "target": "Runway-2 2",
       "cost": 999
     },
     {
       "name": "Delta",
-      "source": "Runway 2 2",
+      "source": "Runway-2 2",
       "target": "Delta Mike",
       "cost": 1
     },
     {
       "name": "Delta",
       "source": "Delta Mike",
-      "target": "Runway 2 2",
+      "target": "Runway-2 2",
       "cost": 999
     },
     {
@@ -270,36 +270,36 @@
     {
       "name": "Echo",
       "source": "Echo Spots",
-      "target": "Runway 2 2",
+      "target": "Runway-2 2",
       "cost": 1
     },
     {
       "name": "Echo",
-      "source": "Runway 2 2",
+      "source": "Runway-2 2",
       "target": "Echo Spots",
       "cost": 999
     },
     {
       "name": "Echo",
       "source": "Echo Spots 1",
-      "target": "Runway 2 2",
+      "target": "Runway-2 2",
       "cost": 1
     },
     {
       "name": "Echo",
-      "source": "Runway 2 2",
+      "source": "Runway-2 2",
       "target": "Echo Spots 1",
       "cost": 999
     },
     {
       "name": "Echo",
       "source": "Echo Spots 2",
-      "target": "Runway 2 2",
+      "target": "Runway-2 2",
       "cost": 1
     },
     {
       "name": "Echo",
-      "source": "Runway 2 2",
+      "source": "Runway-2 2",
       "target": "Echo Spots 2",
       "cost": 999
     },
@@ -330,24 +330,24 @@
     {
       "name": "Echo",
       "source": "East Apron",
-      "target": "Runway 2 2",
+      "target": "Runway-2 2",
       "cost": 1
     },
     {
       "name": "Echo",
-      "source": "Runway 2 2",
+      "source": "Runway-2 2",
       "target": "East Apron",
       "cost": 999
     },
 	{
       "name": "Echo",
       "source": "East Apron 1",
-      "target": "Runway 2 2",
+      "target": "Runway-2 2",
       "cost": 1
     },
     {
       "name": "Echo",
-      "source": "Runway 2 2",
+      "source": "Runway-2 2",
       "target": "East Apron 1",
       "cost": 999
     },

@@ -76,6 +76,9 @@
     <None Include="Data\Anapa-Vityazevo.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Data\Krasnodar-Center.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Data\Krasnodar-Pashkovsky.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -91,6 +94,7 @@
     <None Include="Data\Novorossiysk.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Data\Sochi-Adler.json" />
     <None Include="packages.config" />
     <None Include="README.md" />
   </ItemGroup>

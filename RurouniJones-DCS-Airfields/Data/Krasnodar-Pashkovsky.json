@@ -47,26 +47,26 @@
   ],
   "runways": [
     {
-      "heading": 0,
-      "name": "Runway 0 5 Left",
+      "heading": 50,
+      "name": "Runway-0 5 Left",
       "lat": 45.033261958522,
       "lon": 39.141194292915
     },
     {
-      "heading": 0,
-      "name": "Runway 0 5 Right",
+      "heading": 50,
+      "name": "Runway-0 5 Right",
       "lat": 45.029417364675,
       "lon": 39.173018208468
     },
     {
-      "heading": 0,
-      "name": "Runway 2 3 Left",
+      "heading": 230,
+      "name": "Runway-2 3 Left",
       "lat": 45.04642944724,
       "lon": 39.203099119494
     },
     {
-      "heading": 0,
-      "name": "Runway 2 3 Right",
+      "heading": 230,
+      "name": "Runway-2 3 Right",
       "lat": 45.045105423967,
       "lon": 39.162080772989
     }
@@ -176,48 +176,48 @@
     {
       "name": "Alfa",
       "source": "Alfa Whiskey",
-      "target": "Runway 0 5 Left",
+      "target": "Runway-0 5 Left",
       "cost": 1
     },
     {
       "name": "Alfa",
-      "source": "Runway 0 5 Left",
+      "source": "Runway-0 5 Left",
       "target": "Alfa Whiskey",
       "cost": 999
     },
     {
       "name": "Charlie",
-      "source": "Runway 2 3 Right",
+      "source": "Runway-2 3 Right",
       "target": "Alfa Charlie",
       "cost": 999
     },
     {
       "name": "Charlie",
       "source": "Alfa Charlie",
-      "target": "Runway 2 3 Right",
+      "target": "Runway-2 3 Right",
       "cost": 1
     },
     {
       "name": "Runway",
-      "source": "Runway 0 5 Left",
+      "source": "Runway-0 5 Left",
       "target": "Bravo Runway",
       "cost": 999
     },
     {
       "name": "Runway",
       "source": "Bravo Runway",
-      "target": "Runway 0 5 Left",
+      "target": "Runway-0 5 Left",
       "cost": 999
     },
     {
       "name": "Runway",
       "source": "Bravo Runway",
-      "target": "Runway 2 3 Right",
+      "target": "Runway-2 3 Right",
       "cost": 999
     },
     {
       "name": "Runway",
-      "source": "Runway 2 3 Right",
+      "source": "Runway-2 3 Right",
       "target": "Bravo Runway",
       "cost": 999
     },
@@ -283,14 +283,14 @@
     },
     {
       "name": "Juliett",
-      "source": "Runway 2 3 Left",
+      "source": "Runway-2 3 Left",
       "target": "Juliett November",
       "cost": 1
     },
     {
       "name": "Juliett",
       "source": "Juliett November",
-      "target": "Runway 2 3 Left",
+      "target": "Runway-2 3 Left",
       "cost": 999
     },
     {
@@ -368,25 +368,25 @@
     {
       "name": "Echo",
       "source": "Echo November",
-      "target": "Runway 0 5 Right",
+      "target": "Runway-0 5 Right",
       "cost": 1
     },
     {
       "name": "Echo",
-      "source": "Runway 0 5 Right",
+      "source": "Runway-0 5 Right",
       "target": "Echo November",
       "cost": 999
     },
     {
       "name": "Runway",
-      "source": "Runway 0 5 Right",
+      "source": "Runway-0 5 Right",
       "target": "Foxtrot Runway",
       "cost": 999
     },
     {
       "name": "Runway",
       "source": "Foxtrot Runway",
-      "target": "Runway 0 5 Right",
+      "target": "Runway-0 5 Right",
       "cost": 999
     },
     {
@@ -427,14 +427,14 @@
     },
     {
       "name": "Runway",
-      "source": "Runway 2 3 Left",
+      "source": "Runway-2 3 Left",
       "target": "India Runway",
       "cost": 999
     },
     {
       "name": "Runway",
       "source": "India Runway",
-      "target": "Runway 2 3 Left",
+      "target": "Runway-2 3 Left",
       "cost": 999
     },
     {
@@ -500,12 +500,12 @@
     {
       "name": "Delta",
       "source": "Delta Foxtrot November",
-      "target": "Runway 2 3 Right",
+      "target": "Runway-2 3 Right",
       "cost": 100
     },
     {
       "name": "Delta",
-      "source": "Runway 2 3 Right",
+      "source": "Runway-2 3 Right",
       "target": "Delta Foxtrot November",
       "cost": 100
     },

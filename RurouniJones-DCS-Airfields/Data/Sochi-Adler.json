@@ -1,0 +1,613 @@
+{
+  "name": "Sochi-Adler",
+  "lat": 43.439378434050852,
+  "lon": 39.924231880466095,
+  "alt": 30.010034561157227,
+  "parkingSpots": [
+    {
+      "name": "Apron 2 1",
+      "lat": 43.441148195794,
+      "lon": 39.924334332716
+    },
+    {
+      "name": "Apron 2 2",
+      "lat": 43.441732361122,
+      "lon": 39.926181632602
+    },
+    {
+      "name": "Apron 1 1",
+      "lat": 43.445024193046,
+      "lon": 39.936100565652
+    },
+    {
+      "name": "Apron 1 2",
+      "lat": 43.446650387465,
+      "lon": 39.941315680331
+    },
+    {
+      "name": "Apron 1 4",
+      "lat": 43.448226253299,
+      "lon": 39.946390556219
+    },
+    {
+      "name": "Apron 1 3",
+      "lat": 43.447625713124,
+      "lon": 39.944374578269
+    },
+    {
+      "name": "Apron 1 5",
+      "lat": 43.448806069708,
+      "lon": 39.948181042281
+    },
+    {
+      "name": "Apron 1 6",
+      "lat": 43.449452788073,
+      "lon": 39.950390817149
+    },
+    {
+      "name": "Shelters 1",
+      "lat": 43.444500562621,
+      "lon": 39.954313777794
+    },
+    {
+      "name": "Shelters 2",
+      "lat": 43.44711118124,
+      "lon": 39.956558140729
+    },
+    {
+      "name": "Maintenance Area 1",
+      "lat": 43.450803485074,
+      "lon": 39.948873354477
+    },
+    {
+      "name": "Maintenance Area 2",
+      "lat": 43.450020243838,
+      "lon": 39.946233965788
+    }
+  ],
+  "runways": [
+    {
+      "heading": 0,
+      "name": "Runway-2 0",
+      "lat": 43.45147996822,
+      "lon": 39.956604601344
+    },
+    {
+      "heading": 0,
+      "name": "Runway-0 2",
+      "lat": 43.436349336387,
+      "lon": 39.944479309483
+    },
+    {
+      "heading": 0,
+      "name": "Runway-0 6",
+      "lat": 43.439066192912,
+      "lon": 39.924158270154
+    },
+    {
+      "heading": 0,
+      "name": "Runway-2 4",
+      "lat": 43.449689229034,
+      "lon": 39.958152284088
+    }
+  ],
+  "junctions": [
+    {
+      "name": "Alpha Mike",
+      "lat": 43.440249008056,
+      "lon": 39.92344342438
+    },
+    {
+      "name": "Bravo Mike",
+      "lat": 43.441127319097,
+      "lon": 39.926685514739
+    },
+    {
+      "name": "Charlie Mike",
+      "lat": 43.442232610304,
+      "lon": 39.930164121846
+    },
+    {
+      "name": "Delta Mike",
+      "lat": 43.444153369523,
+      "lon": 39.93643024544
+    },
+    {
+      "name": "Echo Mike",
+      "lat": 43.445866765543,
+      "lon": 39.941919369973
+    },
+    {
+      "name": "Foxtrot Mike",
+      "lat": 43.446907267613,
+      "lon": 39.945301911164
+    },
+    {
+      "name": "Golf Mike",
+      "lat": 43.447923346681,
+      "lon": 39.948587561822
+    },
+    {
+      "name": "Hotell Mike",
+      "lat": 43.448698072235,
+      "lon": 39.951017813087
+    },
+    {
+      "name": "India Mike",
+      "lat": 43.449518681127,
+      "lon": 39.953175050417
+    },
+    {
+      "name": "India Juliett",
+      "lat": 43.450308093435,
+      "lon": 39.952721557711
+    },
+    {
+      "name": "Bravo Runway 2 4/0 6",
+      "lat": 43.440064659539,
+      "lon": 39.927320664964
+    },
+    {
+      "name": "Charlie Runway 2 4/0 6",
+      "lat": 43.441157339464,
+      "lon": 39.930809739272
+    },
+    {
+      "name": "Delta Runway 2 4/0 6",
+      "lat": 43.443087396035,
+      "lon": 39.937010435874
+    },
+    {
+      "name": "Echo Runway 2 4/0 6",
+      "lat": 43.444809721689,
+      "lon": 39.942532542922
+    },
+    {
+      "name": "Foxtrot Runway 2 4/0 6",
+      "lat": 43.445876596154,
+      "lon": 39.945943544275
+    },
+    {
+      "name": "Golf Runway 2 4/0 6",
+      "lat": 43.446893974918,
+      "lon": 39.949196095286
+    },
+    {
+      "name": "Hotell Runway 2 4/0 6",
+      "lat": 43.447664703005,
+      "lon": 39.951643223518
+    },
+    {
+      "name": "India Runway 2 4/0 6",
+      "lat": 43.448347364094,
+      "lon": 39.953852882569
+    },
+    {
+      "name": "Golf Runway 2 0/0 2",
+      "lat": 43.445449083813,
+      "lon": 39.951769662578
+    }
+  ],
+  "taxipaths": [
+    {
+      "name": "Runway-0 6",
+      "source": "Alpha Mike",
+      "target": "Runway-0 6",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Runway-0 6",
+      "target": "Alpha Mike",
+      "cost": 999
+    },
+    {
+      "name": "Mike",
+      "source": "Bravo Mike",
+      "target": "Alpha Mike",
+      "cost": 1
+    },
+    {
+      "name": "Mike",
+      "source": "Alpha Mike",
+      "target": "Bravo Mike",
+      "cost": 999
+    },
+    {
+      "name": "Mike",
+      "source": "Charlie Mike",
+      "target": "Bravo Mike",
+      "cost": 1
+    },
+    {
+      "name": "Mike",
+      "source": "Bravo Mike",
+      "target": "Charlie Mike",
+      "cost": 999
+    },
+    {
+      "name": "Mike",
+      "source": "Delta Mike",
+      "target": "Charlie Mike",
+      "cost": 1
+    },
+    {
+      "name": "Mike",
+      "source": "Charlie Mike",
+      "target": "Delta Mike",
+      "cost": 999
+    },
+    {
+      "name": "Mike",
+      "source": "Echo Mike",
+      "target": "Delta Mike",
+      "cost": 1
+    },
+    {
+      "name": "Mike",
+      "source": "Delta Mike",
+      "target": "Echo Mike",
+      "cost": 999
+    },
+    {
+      "name": "Mike",
+      "source": "Foxtrot Mike",
+      "target": "Echo Mike",
+      "cost": 1
+    },
+    {
+      "name": "Mike",
+      "source": "Echo Mike",
+      "target": "Foxtrot Mike",
+      "cost": 999
+    },
+    {
+      "name": "Mike",
+      "source": "Golf Mike",
+      "target": "Foxtrot Mike",
+      "cost": 1
+    },
+    {
+      "name": "Mike",
+      "source": "Foxtrot Mike",
+      "target": "Golf Mike",
+      "cost": 999
+    },
+    {
+      "name": "Mike",
+      "source": "Hotell Mike",
+      "target": "Golf Mike",
+      "cost": 1
+    },
+    {
+      "name": "Mike",
+      "source": "Golf Mike",
+      "target": "Hotell Mike",
+      "cost": 999
+    },
+    {
+      "name": "Mike",
+      "source": "India Mike",
+      "target": "Hotell Mike",
+      "cost": 1
+    },
+    {
+      "name": "Mike",
+      "source": "Hotell Mike",
+      "target": "India Mike",
+      "cost": 999
+    },
+    {
+      "name": "India",
+      "source": "India Juliett",
+      "target": "India Mike",
+      "cost": 1
+    },
+    {
+      "name": "India",
+      "source": "India Mike",
+      "target": "India Juliett",
+      "cost": 999
+    },
+    {
+      "name": "Juliett",
+      "source": "Runway-2 4",
+      "target": "India Juliett",
+      "cost": 1
+    },
+    {
+      "name": "Runway-2 4",
+      "source": "India Juliett",
+      "target": "Runway-2 4",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Bravo Runway 2 4/0 6",
+      "target": "Runway-0 6",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway-0 6",
+      "target": "Bravo Runway 2 4/0 6",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Charlie Runway 2 4/0 6",
+      "target": "Bravo Runway 2 4/0 6",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Bravo Runway 2 4/0 6",
+      "target": "Charlie Runway 2 4/0 6",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Delta Runway 2 4/0 6",
+      "target": "Charlie Runway 2 4/0 6",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Charlie Runway 2 4/0 6",
+      "target": "Delta Runway 2 4/0 6",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Echo Runway 2 4/0 6",
+      "target": "Delta Runway 2 4/0 6",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Delta Runway 2 4/0 6",
+      "target": "Echo Runway 2 4/0 6",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Foxtrot Runway 2 4/0 6",
+      "target": "Echo Runway 2 4/0 6",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Echo Runway 2 4/0 6",
+      "target": "Foxtrot Runway 2 4/0 6",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Golf Runway 2 4/0 6",
+      "target": "Foxtrot Runway 2 4/0 6",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Foxtrot Runway 2 4/0 6",
+      "target": "Golf Runway 2 4/0 6",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Hotell Runway 2 4/0 6",
+      "target": "Golf Runway 2 4/0 6",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Golf Runway 2 4/0 6",
+      "target": "Hotell Runway 2 4/0 6",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "India Runway 2 4/0 6",
+      "target": "Hotell Runway 2 4/0 6",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Hotell Runway 2 4/0 6",
+      "target": "India Runway 2 4/0 6",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "India Runway 2 4/0 6",
+      "target": "Runway-2 4",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway-2 4",
+      "target": "India Runway 2 4/0 6",
+      "cost": 999
+    },
+    {
+      "name": "Juliett",
+      "source": "Runway-2 0",
+      "target": "India Juliett",
+      "cost": 1
+    },
+    {
+      "name": "Runway-2 0",
+      "source": "India Juliett",
+      "target": "Runway-2 0",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Golf Runway 2 0/0 2",
+      "target": "Runway-2 0",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway-2 0",
+      "target": "Golf Runway 2 0/0 2",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway-0 2",
+      "target": "Golf Runway 2 0/0 2",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Golf Runway 2 0/0 2",
+      "target": "Runway-0 2",
+      "cost": 999
+    },
+    {
+      "name": "Juliett",
+      "source": "Shelters 1",
+      "target": "India Juliett",
+      "cost": 1
+    },
+    {
+      "name": "Shelters",
+      "source": "India Juliett",
+      "target": "Shelters 1",
+      "cost": 999
+    },
+    {
+      "name": "Juliett",
+      "source": "Shelters 2",
+      "target": "India Juliett",
+      "cost": 1
+    },
+    {
+      "name": "Shelters",
+      "source": "India Juliett",
+      "target": "Shelters 2",
+      "cost": 999
+    },
+    {
+      "name": "India",
+      "source": "Maintenance Area 1",
+      "target": "India Juliett",
+      "cost": 1
+    },
+    {
+      "name": "Maintenance",
+      "source": "India Juliett",
+      "target": "Maintenance Area 1",
+      "cost": 999
+    },
+    {
+      "name": "India",
+      "source": "Maintenance Area 2",
+      "target": "India Juliett",
+      "cost": 1
+    },
+    {
+      "name": "Maintenance",
+      "source": "India Juliett",
+      "target": "Maintenance Area 2",
+      "cost": 999
+    },
+    {
+      "name": "Mike",
+      "source": "Apron 2 1",
+      "target": "Alpha Mike",
+      "cost": 1
+    },
+    {
+      "name": "Apron 2",
+      "source": "Alpha Mike",
+      "target": "Apron 2 1",
+      "cost": 100
+    },
+    {
+      "name": "Mike",
+      "source": "Apron 2 2",
+      "target": "Alpha Mike",
+      "cost": 1
+    },
+    {
+      "name": "Apron 2",
+      "source": "Alpha Mike",
+      "target": "Apron 2 2",
+      "cost": 100
+    },
+    {
+      "name": "Mike",
+      "source": "Apron 1 1",
+      "target": "Delta Mike",
+      "cost": 1
+    },
+    {
+      "name": "Apron 1",
+      "source": "Delta Mike",
+      "target": "Apron 1 1",
+      "cost": 100
+    },
+    {
+      "name": "Mike",
+      "source": "Apron 1 2",
+      "target": "Echo Mike",
+      "cost": 1
+    },
+    {
+      "name": "Apron 1",
+      "source": "Echo Mike",
+      "target": "Apron 1 2",
+      "cost": 100
+    },
+    {
+      "name": "Mike",
+      "source": "Apron 1 3",
+      "target": "Echo Mike",
+      "cost": 1
+    },
+    {
+      "name": "Apron 1",
+      "source": "Echo Mike",
+      "target": "Apron 1 3",
+      "cost": 100
+    },
+    {
+      "name": "Mike",
+      "source": "Apron 1 4",
+      "target": "Foxtrot Mike",
+      "cost": 1
+    },
+    {
+      "name": "Apron 1",
+      "source": "Foxtrot Mike",
+      "target": "Apron 1 4",
+      "cost": 100
+    },
+    {
+      "name": "Mike",
+      "source": "Apron 1 5",
+      "target": "Golf Mike",
+      "cost": 1
+    },
+    {
+      "name": "Apron 1",
+      "source": "Golf Mike",
+      "target": "Apron 1 5",
+      "cost": 100
+    },
+    {
+      "name": "Mike",
+      "source": "Apron 1 6",
+      "target": "Hotell Mike",
+      "cost": 1
+    },
+    {
+      "name": "Apron 1",
+      "source": "Hotell Mike",
+      "target": "Apron 1 6",
+      "cost": 100
+    }
+  ]
+}

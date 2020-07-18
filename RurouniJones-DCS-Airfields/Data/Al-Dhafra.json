@@ -143,25 +143,25 @@
   "runways": [
     {
       "heading": 130,
-      "name": "Runway 1 3 L",
+      "name": "Runway-1 3 Left",
       "lat": 24.258139725589,
       "lon": 54.533405420826
     },
     {
       "heading": 130,
-      "name": "Runway 1 3 R",
+      "name": "Runway-1 3 Right",
       "lat": 24.240812256807,
       "lon": 54.536816652057
     },
     {
       "heading": 310,
-      "name": "Runway 3 1 R",
+      "name": "Runway-3 1 Right",
       "lat": 24.238553312095,
       "lon": 54.56182193163
     },
     {
       "heading": 310,
-      "name": "Runway 3 1 L",
+      "name": "Runway-3 1 Left",
       "lat": 24.221190968082,
       "lon": 54.565299214747
     }
@@ -369,12 +369,12 @@
     {
       "name": "Alfa",
       "source": "Alfa Bravo",
-      "target": "Runway 3 1 R",
+      "target": "Runway-3 1 Right",
       "cost": 1
     },
     {
       "name": "Alfa",
-      "source": "Runway 3 1 R",
+      "source": "Runway-3 1 Right",
       "target": "Alfa Bravo",
       "cost": 999
     },
@@ -729,48 +729,48 @@
     {
       "name": "Victor 0",
       "source": "Victor Victor 0",
-      "target": "Runway 3 1 L",
+      "target": "Runway-3 1 Left",
       "cost": 1
     },
     {
       "name": "Victor 0",
-      "source": "Runway 3 1 L",
+      "source": "Runway-3 1 Left",
       "target": "Victor Victor 0",
       "cost": 999
     },
     {
       "name": "Victor 0",
       "source": "Victor Rearm & Refuel Pad",
-      "target": "Runway 3 1 L",
+      "target": "Runway-3 1 Left",
       "cost": 1
     },
     {
       "name": "Victor 0",
-      "source": "Runway 3 1 L",
+      "source": "Runway-3 1 Left",
       "target": "Victor Rearm & Refuel Pad",
       "cost": 100
     },
     {
       "name": "Uniform 0",
       "source": "Uniform Rearm & Refuel Pad",
-      "target": "Runway 3 1 L",
+      "target": "Runway-3 1 Left",
       "cost": 1
     },
     {
       "name": "Uniform 0",
-      "source": "Runway 3 1 L",
+      "source": "Runway-3 1 Left",
       "target": "Uniform Rearm & Refuel Pad",
       "cost": 100
     },
     {
       "name": "Uniform 0",
       "source": "Uniform Yankee",
-      "target": "Runway 3 1 L",
+      "target": "Runway-3 1 Left",
       "cost": 1
     },
     {
       "name": "Uniform 0",
-      "source": "Runway 3 1 L",
+      "source": "Runway-3 1 Left",
       "target": "Uniform Yankee",
       "cost": 999
     },
@@ -944,14 +944,14 @@
     },
     {
       "name": "Runway",
-      "source": "Runway 1 3 R",
+      "source": "Runway-1 3 Right",
       "target": "Whiskey X-Ray Runway",
       "cost": 999
     },
     {
       "name": "Runway",
       "source": "Whiskey X-Ray Runway",
-      "target": "Runway 1 3 R",
+      "target": "Runway-1 3 Right",
       "cost": 999
     },
     {
@@ -993,25 +993,25 @@
     {
       "name": "Runway",
       "source": "Uniform Victor Runway",
-      "target": "Runway 3 1 L",
+      "target": "Runway-3 1 Left",
       "cost": 999
     },
     {
       "name": "Runway",
-      "source": "Runway 3 1 L",
+      "source": "Runway-3 1 Left",
       "target": "Uniform Victor Runway",
       "cost": 999
     },
     {
       "name": "Runway",
-      "source": "Runway 1 3 L",
+      "source": "Runway-1 3 Left",
       "target": "Echo Juliett 6 Runway",
       "cost": 999
     },
     {
       "name": "Runway",
       "source": "Echo Juliett 6 Runway",
-      "target": "Runway 1 3 L",
+      "target": "Runway-1 3 Left",
       "cost": 999
     },
     {
@@ -1053,25 +1053,25 @@
     {
       "name": "Runway",
       "source": "Charlie Hotel 6 Runway",
-      "target": "Runway 3 1 R",
+      "target": "Runway-3 1 Right",
       "cost": 999
     },
     {
       "name": "Runway",
-      "source": "Runway 3 1 R",
+      "source": "Runway-3 1 Right",
       "target": "Charlie Hotel 6 Runway",
       "cost": 999
     },
     {
       "name": "Foxtrot",
-      "source": "Runway 1 3 L",
+      "source": "Runway-1 3 Left",
       "target": "Alfa Foxtrot",
       "cost": 1
     },
     {
       "name": "Foxtrot",
       "source": "Alfa Foxtrot",
-      "target": "Runway 1 3 L",
+      "target": "Runway-1 3 Left",
       "cost": 999
     },
     {
@@ -1197,12 +1197,12 @@
     {
       "name": "Hotel 1",
       "source": "Hotel Hotel 1 Hotel 11",
-      "target": "Runway 3 1 R",
+      "target": "Runway-3 1 Right",
       "cost": 1
     },
     {
       "name": "Hotel 1",
-      "source": "Runway 3 1 R",
+      "source": "Runway-3 1 Right",
       "target": "Hotel Hotel 1 Hotel 11",
       "cost": 999
     },
@@ -1221,48 +1221,48 @@
     {
       "name": "Whiskey 0",
       "source": "Whiskey Yankee",
-      "target": "Runway 1 3 R",
+      "target": "Runway-1 3 Right",
       "cost": 999
     },
     {
       "name": "Whiskey 0",
-      "source": "Runway 1 3 R",
+      "source": "Runway-1 3 Right",
       "target": "Whiskey Yankee",
       "cost": 1
     },
     {
       "name": "Whiskey 0",
       "source": "Whiskey Rearm & Refuel Pad",
-      "target": "Runway 1 3 R",
+      "target": "Runway-1 3 Right",
       "cost": 999
     },
     {
       "name": "Whiskey 0",
-      "source": "Runway 1 3 R",
+      "source": "Runway-1 3 Right",
       "target": "Whiskey Rearm & Refuel Pad",
       "cost": 100
     },
     {
       "name": "X-Ray 0",
       "source": "X-Ray Rearm & Refuel Pad",
-      "target": "Runway 1 3 R",
+      "target": "Runway-1 3 Right",
       "cost": 999
     },
     {
       "name": "X-Ray 0",
-      "source": "Runway 1 3 R",
+      "source": "Runway-1 3 Right",
       "target": "X-Ray Rearm & Refuel Pad",
       "cost": 100
     },
     {
       "name": "X-Ray 0",
       "source": "X-Ray X-Ray 0",
-      "target": "Runway 1 3 R",
+      "target": "Runway-1 3 Right",
       "cost": 999
     },
     {
       "name": "X-Ray 0",
-      "source": "Runway 1 3 R",
+      "source": "Runway-1 3 Right",
       "target": "X-Ray X-Ray 0",
       "cost": 1
     },
@@ -1280,14 +1280,14 @@
     },
     {
       "name": "Juliett 11",
-      "source": "Runway 1 3 L",
+      "source": "Runway-1 3 Left",
       "target": "Juliett Juliett 11",
       "cost": 1
     },
     {
       "name": "Juliett 11",
       "source": "Juliett Juliett 11",
-      "target": "Runway 1 3 L",
+      "target": "Runway-1 3 Left",
       "cost": 999
     },
     {

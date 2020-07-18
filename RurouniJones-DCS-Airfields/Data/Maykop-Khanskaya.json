@@ -67,14 +67,14 @@
   ],
   "runways": [
     {
-      "heading": 0,
-      "name": "Runway 0 4",
+      "heading": 40,
+      "name": "Runway-0 4",
       "lat": 44.671094194761,
       "lon": 40.021479312485
     },
     {
-      "heading": 0,
-      "name": "Runway 2 2",
+      "heading": 220,
+      "name": "Runway-2 2",
       "lat": 44.691469103678,
       "lon": 40.049040314372
     }
@@ -125,12 +125,12 @@
     {
       "name": "Alfa",
       "source": "Alfa Victor",
-      "target": "Runway 0 4",
+      "target": "Runway-0 4",
       "cost": 1
     },
     {
       "name": "Alfa",
-      "source": "Runway 0 4",
+      "source": "Runway-0 4",
       "target": "Alfa Victor",
       "cost": 999
     },
@@ -184,26 +184,26 @@
     },
     {
       "name": "Echo",
-      "source": "Runway 2 2",
+      "source": "Runway-2 2",
       "target": "Delta Echo Victor",
       "cost": 1
     },
     {
       "name": "Echo",
       "source": "Delta Echo Victor",
-      "target": "Runway 2 2",
+      "target": "Runway-2 2",
       "cost": 999
     },
     {
       "name": "Runway",
-      "source": "Runway 0 4",
+      "source": "Runway-0 4",
       "target": "Bravo Runway",
       "cost": 999
     },
     {
       "name": "Runway",
       "source": "Bravo Runway",
-      "target": "Runway 0 4",
+      "target": "Runway-0 4",
       "cost": 999
     },
     {
@@ -233,12 +233,12 @@
     {
       "name": "Runway",
       "source": "Delta Runway",
-      "target": "Runway 2 2",
+      "target": "Runway-2 2",
       "cost": 999
     },
     {
       "name": "Runway",
-      "source": "Runway 2 2",
+      "source": "Runway-2 2",
       "target": "Delta Runway",
       "cost": 999
     },
