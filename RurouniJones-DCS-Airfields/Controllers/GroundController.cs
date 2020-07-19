@@ -16,7 +16,7 @@ namespace RurouniJones.DCS.Airfields.Controllers
         private static readonly Random randomizer = new Random();
 
         private Array instructionsVariants = new ArrayList() {"", "taxi to", "proceed to", "head to" }.ToArray();
-        private Array viaVariants = new ArrayList() { "via", "along", "by way of", "using" }.ToArray();
+        private Array viaVariants = new ArrayList() { "via", "along", "using" }.ToArray();
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
@@ -27,8 +27,33 @@ namespace RurouniJones.DCS.Airfields.Controllers
             Airfield = airfield;
         }
 
-        public string GetTaxiInstructions(Point callerPosition, TaxiPoint target)
+        /// <summary>
+        /// Returns a list of the active runways based on where the wind is coming from. At the moment, very simplistic.
+        /// We will need to make this airport specific since some airfields have other considerations
+        /// </summary>
+        /// <param name="windSourceHeading"></param>
+        /// <returns></returns>
+        public List<Runway> GetActiveRunways()
         {
+            var adjustedWindSource = Airfield.WindSource + 360;
+            var activeRunways = new List<Runway>();
+
+            foreach(Runway runway in Airfield.Runways)
+            {
+                var runwayHeading = runway.Heading + 360;
+
+                if(runwayHeading <= adjustedWindSource + 90 && runwayHeading >= adjustedWindSource - 90)
+                {
+                    activeRunways.Add(runway);
+                }
+            }
+
+            return activeRunways;
+        }
+
+        public string GetTaxiInstructions(Point callerPosition)
+        {
+            var target = GetActiveRunways().First();
             var source = Airfield.TaxiPoints.OrderBy(taxiPoint => taxiPoint.DistanceTo(callerPosition.Coordinate)).First();
             Logger.Debug($"Player is at {callerPosition.Coordinate}, nearest Taxi point is {source}");
             return GetTaxiInstructions(source, target);

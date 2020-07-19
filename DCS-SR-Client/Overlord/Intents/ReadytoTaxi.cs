@@ -1,7 +1,4 @@
 ﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.LuisModels;
-using Geo.Geometries;
-using NLog;
 using RurouniJones.DCS.Airfields;
 using RurouniJones.DCS.Airfields.Controllers;
 using RurouniJones.DCS.Airfields.Structure;
@@ -21,9 +18,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
             try
             {
                 var airfield = Airfields.First(x => x.Name == airbaseName);
-                TaxiPoint target = airfield.Runways[0];
-
-                return new GroundController(airfield).GetTaxiInstructions(sender.Position, target);
+                return new GroundController(airfield).GetTaxiInstructions(sender.Position);
             } catch (InvalidOperationException)
             {
                 return "There are no ATC services currently available at this airfield";

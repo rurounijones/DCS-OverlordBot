@@ -1,6 +1,9 @@
 ﻿using Geo.Geometries;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RurouniJones.DCS.Airfields.Structure;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace RurouniJones.DCS.Airfields.Controllers.Tests
@@ -12,27 +15,29 @@ namespace RurouniJones.DCS.Airfields.Controllers.Tests
         private static GroundController Controller;
 
         [ClassInitialize]
-        public static void SetAirfield(TestContext _)
+        public static void Setup(TestContext _)
         {
             Airfield = Populator.Airfields.First(airfield => airfield.Name.Equals("Anapa-Vityazevo"));
             Controller = new GroundController(Airfield);
         }
 
-
         [TestMethod]
-        public void TestApronOnenToRunwayFour()
+        public void TestApronOneToRunwayFour()
         {
-            Point position = new Point(45.0101581, 37.3481765); // On Apron 1
-            Runway target = (Runway)GetTaxiPoint("Runway 0 4");
+            Airfield.WindSource = 90;
+            Point startPoint = new Point(45.0101581, 37.3481765); // On Apron 1
+            var expectedRunway = "Runway-0 4";
+            var expectedTaxiWays = new List<string>() { "Mike", "Alpha" };
 
-            string instructions = Controller.GetTaxiInstructions(position, target);
+            string instructions = Controller.GetTaxiInstructions(startPoint);
 
-            Assert.AreEqual("Taxi to Runway 0 4 via Mike Alpha", instructions);
+            StringAssert.Contains(instructions, expectedRunway);
+            StringAssert.Contains(instructions, SayTaxiways(expectedTaxiWays) );
         }
 
-        private TaxiPoint GetTaxiPoint(string name)
+        private string SayTaxiways(List<string> taxiways)
         {
-            return Airfield.TaxiPoints.First(taxiPoint => taxiPoint.Name.Equals(name));
+            return string.Join("<break time=\"60ms\" /> ", taxiways);
         }
     }
 }

@@ -73,7 +73,7 @@ namespace RurouniJones.DCS.Airfields.Structure
         public List<TaxiPath> Taxiways { get; set; }
 
         /// <summary>
-        /// Blah
+        /// Position of the airfield 
         /// </summary>
         [JsonIgnore]
         public Point Position {
@@ -81,6 +81,12 @@ namespace RurouniJones.DCS.Airfields.Structure
                 return new Point(Latitude, Longitude, Altitude);
             }
         }
+
+        /// <summary>
+        /// Direciton the wind is COMING from
+        /// </summary>
+        [JsonIgnore]
+        public int WindSource { get; set; } = 90;
 
         [JsonIgnore]
         public readonly AdjacencyGraph<TaxiPoint, TaggedEdge<TaxiPoint, string>> TaxiNavigationGraph = new AdjacencyGraph<TaxiPoint, TaggedEdge<TaxiPoint, string>>();
@@ -107,6 +113,7 @@ namespace RurouniJones.DCS.Airfields.Structure
         [OnDeserialized]
         public void BuildTaxiGraph(StreamingContext context)
         {
+            Logger.Debug($"{this.Name} airfield JSON deserialized");
             foreach(Runway runway in Runways)
             {
                 TaxiNavigationGraph.AddVertex(runway);
@@ -134,6 +141,8 @@ namespace RurouniJones.DCS.Airfields.Structure
 
                 TaxiwayCost.Add(edge, taxiway.Cost);
             }
+            Logger.Debug($"{this.Name} airfield navigation graph built");
+
         }
     }
 }
