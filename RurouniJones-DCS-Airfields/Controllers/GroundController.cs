@@ -15,8 +15,8 @@ namespace RurouniJones.DCS.Airfields.Controllers
 
         private static readonly Random randomizer = new Random();
 
-        private Array instructionsVariants = new ArrayList() {"", "taxi to", "proceed to", "head to" }.ToArray();
-        private Array viaVariants = new ArrayList() { "via", "along", "using" }.ToArray();
+        private readonly Array instructionsVariants = new ArrayList() {"", "taxi to", "proceed to", "head to" }.ToArray();
+        private readonly Array viaVariants = new ArrayList() { "via", "along", "using" }.ToArray();
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
@@ -53,46 +53,91 @@ namespace RurouniJones.DCS.Airfields.Controllers
 
         public string GetTaxiInstructions(Point callerPosition)
         {
-            var target = GetActiveRunways().First();
             var source = Airfield.TaxiPoints.OrderBy(taxiPoint => taxiPoint.DistanceTo(callerPosition.Coordinate)).First();
             Logger.Debug($"Player is at {callerPosition.Coordinate}, nearest Taxi point is {source}");
-            return GetTaxiInstructions(source, target);
+
+            var runways = GetActiveRunways();
+            if(runways.Count == 1)
+            {
+                return GetTaxiInstructionsWhenSingleRunway(source, runways.First());
+            } else
+            {
+                return GetTaxiInstructionsWhenMultipleRunways(source, runways);
+            }
         }
 
-        public string GetTaxiInstructions(TaxiPoint source, TaxiPoint target)
+        private string GetTaxiInstructionsWhenMultipleRunways(TaxiPoint source, List<Runway> runways)
         {
             TryFunc<TaxiPoint, IEnumerable<TaggedEdge<TaxiPoint, string>>> tryGetPaths = Airfield.TaxiNavigationGraph.ShortestPathsDijkstra(Airfield.TaxiwayCostFunction, source);
-            List<string> comments = new List<string>();
 
-            if (tryGetPaths(target, out IEnumerable<TaggedEdge<TaxiPoint, string>> path))
+            var cheapestPathCost = double.PositiveInfinity;
+            IEnumerable<TaggedEdge<TaxiPoint, string>> cheapestPath = new List<TaggedEdge<TaxiPoint, string>>();
+            Runway closestRunway = null;
+
+            foreach(Runway runway in runways)
             {
-                List<string> taxiways = new List<string>();
-                foreach (TaggedEdge<TaxiPoint, string> edge in path)
+                if (tryGetPaths(runway, out IEnumerable<TaggedEdge<TaxiPoint, string>> path))
                 {
-                    taxiways.Add(edge.Tag);
-                    if (edge.Source is Runway runway && edge != path.First())
+                    var pathCost = PathCost(path);
+                    if (pathCost < cheapestPathCost)
                     {
-                        comments.Add($"Cross {runway.Name} at your discretion");
+                        closestRunway = runway;
+                        cheapestPath = path;
+                        cheapestPathCost = pathCost;
                     }
                 }
-                string instructions = $"{Random(instructionsVariants)} {target.Name} ";
-                
-                if(taxiways.Count > 0)
-                {
-                    instructions += $" {Random(viaVariants)} {string.Join("<break time=\"60ms\" /> ", RemoveRepeating(taxiways))}";
-                }
+            }
+            return CompileInstructions(closestRunway, cheapestPath);
+        }
 
-                if (comments.Count > 0)
-                {
-                    instructions += $", {string.Join(", ", comments)}";
-                }
-
-                return instructions;
+        private string GetTaxiInstructionsWhenSingleRunway(TaxiPoint source, TaxiPoint target)
+        {
+            TryFunc<TaxiPoint, IEnumerable<TaggedEdge<TaxiPoint, string>>> tryGetPaths = Airfield.TaxiNavigationGraph.ShortestPathsDijkstra(Airfield.TaxiwayCostFunction, source);
+            if (tryGetPaths(target, out IEnumerable<TaggedEdge<TaxiPoint, string>> path))
+            {
+                return CompileInstructions(target, path);
             }
             else
             {
                 return $"Could not find a path from {source.Name} to {target.Name}";
             }
+        }
+
+        private double PathCost(IEnumerable<TaggedEdge<TaxiPoint, string>> path)
+        {
+            double pathCost = 0;
+            foreach(TaggedEdge<TaxiPoint, string> edge in path)
+            {
+                pathCost += Airfield.TaxiwayCost[edge];
+            }
+            return pathCost;
+        }
+
+        private string CompileInstructions(TaxiPoint target, IEnumerable<TaggedEdge<TaxiPoint, string>> path)
+        {
+            List<string> comments = new List<string>();
+            List<string> taxiways = new List<string>();
+            foreach (TaggedEdge<TaxiPoint, string> edge in path)
+            {
+                taxiways.Add(edge.Tag);
+                if (edge.Source is Runway runway && edge != path.First())
+                {
+                    comments.Add($"Cross {runway.Name} at your discretion");
+                }
+            }
+            string instructions = $"{Random(instructionsVariants)} {target.Name} ";
+
+            if (taxiways.Count > 0)
+            {
+                instructions += $" {Random(viaVariants)} {string.Join(" <break time=\"60ms\" /> ", RemoveRepeating(taxiways))}";
+            }
+
+            if (comments.Count > 0)
+            {
+                instructions += $", {string.Join(", ", comments)}";
+            }
+
+            return instructions;
         }
 
         private List<string> RemoveRepeating(List<string> taxiways)

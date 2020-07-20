@@ -1,19 +1,14 @@
 ﻿using Geo.Geometries;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RurouniJones.DCS.Airfields.Structure;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace RurouniJones.DCS.Airfields.Controllers.Tests
 {
     [TestClass]
-    public class AnapaTests
+    public class AnapaTests : GroundControllerAbstractTests
     {
-        private static Airfield Airfield;
-        private static GroundController Controller;
-
         [ClassInitialize]
         public static void Setup(TestContext _)
         {
@@ -33,11 +28,6 @@ namespace RurouniJones.DCS.Airfields.Controllers.Tests
 
             StringAssert.Contains(instructions, expectedRunway);
             StringAssert.Contains(instructions, SayTaxiways(expectedTaxiWays) );
-        }
-
-        private string SayTaxiways(List<string> taxiways)
-        {
-            return string.Join("<break time=\"60ms\" /> ", taxiways);
         }
     }
 }
