@@ -9,9 +9,9 @@ using System.Windows;
 [assembly: AssemblyTitle("OverlordBot for DCS-SimpleRadio")]
 [assembly: AssemblyDescription("OverlordBot AWACS Bot for DCS-SimpleRadio Standalone")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Jeffrey Jones")]
 [assembly: AssemblyProduct("OverlordBot for DCS-SimpleRadio")]
-[assembly: AssemblyCopyright("")]
+[assembly: AssemblyCopyright("Copyright © Jeffrey Jones 2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -52,5 +52,5 @@ using System.Windows;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion("1.9.1.0")]
-[assembly: AssemblyFileVersion("1.9.1.0")]
+[assembly: AssemblyVersion("1.10.0.0")]
+[assembly: AssemblyFileVersion("1.10.0.0")]
