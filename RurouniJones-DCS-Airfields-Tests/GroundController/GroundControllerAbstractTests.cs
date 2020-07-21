@@ -1,6 +1,5 @@
-﻿using RurouniJones.DCS.Airfields.Structure;
-using System.Collections.Generic;
-
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using RurouniJones.DCS.Airfields.Structure;
 
 namespace RurouniJones.DCS.Airfields.Controllers.Tests
 {
@@ -9,9 +8,11 @@ namespace RurouniJones.DCS.Airfields.Controllers.Tests
         protected static Airfield Airfield;
         protected static GroundController Controller;
 
-        protected string SayTaxiways(List<string> taxiways)
+        public static void AssertInstructions(TaxiInstructions expected, TaxiInstructions actual)
         {
-            return string.Join(" <break time=\"60ms\" /> ", taxiways);
+            StringAssert.Contains(expected.DestinationName, actual.DestinationName);
+            CollectionAssert.AreEqual(expected.TaxiwayNames, actual.TaxiwayNames);
+            CollectionAssert.AreEqual(expected.Comments, actual.Comments);
         }
     }
 }

@@ -18,6 +18,9 @@ namespace RurouniJones.DCS.Airfields.Tests
 
             // Apply config           
             LogManager.Configuration = config;
+
+            // Populate all the airfields
+            var airfields = Populator.Airfields;
         }
     }
 }

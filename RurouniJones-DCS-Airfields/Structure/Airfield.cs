@@ -113,7 +113,7 @@ namespace RurouniJones.DCS.Airfields.Structure
         [OnDeserialized]
         public void BuildTaxiGraph(StreamingContext context)
         {
-            Logger.Debug($"{this.Name} airfield JSON deserialized");
+            Logger.Debug($"{Name} airfield JSON deserialized");
             foreach(Runway runway in Runways)
             {
                 TaxiNavigationGraph.AddVertex(runway);
@@ -141,7 +141,7 @@ namespace RurouniJones.DCS.Airfields.Structure
 
                 TaxiwayCost.Add(edge, taxiway.Cost);
             }
-            Logger.Debug($"{this.Name} airfield navigation graph built");
+            Logger.Debug($"{Name} airfield navigation graph built");
 
         }
     }

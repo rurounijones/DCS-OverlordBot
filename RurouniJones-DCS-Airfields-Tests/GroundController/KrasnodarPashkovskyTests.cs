@@ -21,13 +21,13 @@ namespace RurouniJones.DCS.Airfields.Controllers.Tests
         {
             Airfield.WindSource = 90;
             Point startPoint = new Point(45.038881971882, 39.14140614585);
-            var expectedRunway = "Runway-0 5 Left";
-            var expectedTaxiWays = new List<string>() { "Alfa" };
+            TaxiInstructions expected = new TaxiInstructions()
+            {
+                DestinationName = "Runway-0 5 Left",
+                TaxiwayNames = new List<string>() { "Alfa" }
+            };
 
-            string instructions = Controller.GetTaxiInstructions(startPoint);
-
-            StringAssert.Contains(instructions, expectedRunway);
-            StringAssert.Contains(instructions, SayTaxiways(expectedTaxiWays));
+            AssertInstructions(expected, Controller.GetTaxiInstructions(startPoint));
         }
 
         [TestMethod]
@@ -35,13 +35,13 @@ namespace RurouniJones.DCS.Airfields.Controllers.Tests
         {
             Airfield.WindSource = 90;
             Point startPoint = new Point(45.047601257612, 39.200777416505);
-            var expectedRunway = "Runway-0 5 Right";
-            var expectedTaxiWays = new List<string>() { "November", "Echo" };
+            TaxiInstructions expected = new TaxiInstructions()
+            {
+                DestinationName = "Runway-0 5 Right",
+                TaxiwayNames = new List<string>() { "November", "Echo" }
+            };
 
-            string instructions = Controller.GetTaxiInstructions(startPoint);
-
-            StringAssert.Contains(instructions, expectedRunway);
-            StringAssert.Contains(instructions, SayTaxiways(expectedTaxiWays) );
+            AssertInstructions(expected, Controller.GetTaxiInstructions(startPoint));
         }
     }
 }

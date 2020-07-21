@@ -20,14 +20,14 @@ namespace RurouniJones.DCS.Airfields.Controllers.Tests
         public void TestApronOneToRunwayFour()
         {
             Airfield.WindSource = 90;
-            Point startPoint = new Point(45.0101581, 37.3481765); // On Apron 1
-            var expectedRunway = "Runway-0 4";
-            var expectedTaxiWays = new List<string>() { "Mike", "Alpha" };
+            Point startPoint = new Point(45.0101581, 37.3481765);
+            TaxiInstructions expected = new TaxiInstructions()
+            {
+                DestinationName = "Runway-0 4",
+                TaxiwayNames = new List<string>() { "Mike", "Alpha" }
+            };
 
-            string instructions = Controller.GetTaxiInstructions(startPoint);
-
-            StringAssert.Contains(instructions, expectedRunway);
-            StringAssert.Contains(instructions, SayTaxiways(expectedTaxiWays) );
+            AssertInstructions(expected, Controller.GetTaxiInstructions(startPoint));
         }
     }
 }

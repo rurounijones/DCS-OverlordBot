@@ -60,6 +60,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\GroundController.cs" />
+    <Compile Include="Controllers\TaxiInstructions.cs" />
+    <Compile Include="Controllers\TaxiPathNotFoundException.cs" />
     <Compile Include="Populator.cs" />
     <Compile Include="Structure\Airfield.cs" />
     <Compile Include="Structure\Junction.cs" />

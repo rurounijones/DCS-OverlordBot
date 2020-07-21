@@ -3,8 +3,6 @@ using NLog;
 using QuikGraph;
 using QuikGraph.Algorithms;
 using RurouniJones.DCS.Airfields.Structure;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,12 +10,6 @@ namespace RurouniJones.DCS.Airfields.Controllers
 {
     public class GroundController
     {
-
-        private static readonly Random randomizer = new Random();
-
-        private readonly Array instructionsVariants = new ArrayList() {"", "taxi to", "proceed to", "head to" }.ToArray();
-        private readonly Array viaVariants = new ArrayList() { "via", "along", "using" }.ToArray();
-
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private readonly Airfield Airfield;
@@ -51,7 +43,7 @@ namespace RurouniJones.DCS.Airfields.Controllers
             return activeRunways;
         }
 
-        public string GetTaxiInstructions(Point callerPosition)
+        public TaxiInstructions GetTaxiInstructions(Point callerPosition)
         {
             var source = Airfield.TaxiPoints.OrderBy(taxiPoint => taxiPoint.DistanceTo(callerPosition.Coordinate)).First();
             Logger.Debug($"Player is at {callerPosition.Coordinate}, nearest Taxi point is {source}");
@@ -66,7 +58,7 @@ namespace RurouniJones.DCS.Airfields.Controllers
             }
         }
 
-        private string GetTaxiInstructionsWhenMultipleRunways(TaxiPoint source, List<Runway> runways)
+        private TaxiInstructions GetTaxiInstructionsWhenMultipleRunways(TaxiPoint source, List<Runway> runways)
         {
             TryFunc<TaxiPoint, IEnumerable<TaggedEdge<TaxiPoint, string>>> tryGetPaths = Airfield.TaxiNavigationGraph.ShortestPathsDijkstra(Airfield.TaxiwayCostFunction, source);
 
@@ -90,7 +82,7 @@ namespace RurouniJones.DCS.Airfields.Controllers
             return CompileInstructions(closestRunway, cheapestPath);
         }
 
-        private string GetTaxiInstructionsWhenSingleRunway(TaxiPoint source, TaxiPoint target)
+        private TaxiInstructions GetTaxiInstructionsWhenSingleRunway(TaxiPoint source, TaxiPoint target)
         {
             TryFunc<TaxiPoint, IEnumerable<TaggedEdge<TaxiPoint, string>>> tryGetPaths = Airfield.TaxiNavigationGraph.ShortestPathsDijkstra(Airfield.TaxiwayCostFunction, source);
             if (tryGetPaths(target, out IEnumerable<TaggedEdge<TaxiPoint, string>> path))
@@ -99,7 +91,7 @@ namespace RurouniJones.DCS.Airfields.Controllers
             }
             else
             {
-                return $"Could not find a path from {source.Name} to {target.Name}";
+                throw new TaxiPathNotFoundException($"No taxi path found from {source.Name} to {target.Name}");
             }
         }
 
@@ -113,31 +105,25 @@ namespace RurouniJones.DCS.Airfields.Controllers
             return pathCost;
         }
 
-        private string CompileInstructions(TaxiPoint target, IEnumerable<TaggedEdge<TaxiPoint, string>> path)
+        private TaxiInstructions CompileInstructions(TaxiPoint target, IEnumerable<TaggedEdge<TaxiPoint, string>> path)
         {
-            List<string> comments = new List<string>();
-            List<string> taxiways = new List<string>();
+            TaxiInstructions taxiInstructions = new TaxiInstructions()
+            {
+                DestinationName = target.Name
+            };
+
             foreach (TaggedEdge<TaxiPoint, string> edge in path)
             {
-                taxiways.Add(edge.Tag);
+                taxiInstructions.TaxiwayNames.Add(edge.Tag);
                 if (edge.Source is Runway runway && edge != path.First())
                 {
-                    comments.Add($"Cross {runway.Name} at your discretion");
+                    taxiInstructions.Comments.Add($"Cross {runway.Name} at your discretion");
                 }
             }
-            string instructions = $"{Random(instructionsVariants)} {target.Name} ";
 
-            if (taxiways.Count > 0)
-            {
-                instructions += $" {Random(viaVariants)} {string.Join(" <break time=\"60ms\" /> ", RemoveRepeating(taxiways))}";
-            }
+            taxiInstructions.TaxiwayNames = RemoveRepeating(taxiInstructions.TaxiwayNames);
 
-            if (comments.Count > 0)
-            {
-                instructions += $", {string.Join(", ", comments)}";
-            }
-
-            return instructions;
+            return taxiInstructions;
         }
 
         private List<string> RemoveRepeating(List<string> taxiways)
@@ -158,11 +144,5 @@ namespace RurouniJones.DCS.Airfields.Controllers
 
             return dedupedTaxiways;
         }
-
-        private string Random(Array array)
-        {
-            return array.GetValue(randomizer.Next(array.Length)).ToString();
-        }
-
     }
 }
