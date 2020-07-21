@@ -19,36 +19,12 @@ namespace RurouniJones.DCS.Airfields.Controllers
             Airfield = airfield;
         }
 
-        /// <summary>
-        /// Returns a list of the active runways based on where the wind is coming from. At the moment, very simplistic.
-        /// We will need to make this airport specific since some airfields have other considerations
-        /// </summary>
-        /// <param name="windSourceHeading"></param>
-        /// <returns></returns>
-        public List<Runway> GetActiveRunways()
-        {
-            var adjustedWindSource = Airfield.WindSource + 360;
-            var activeRunways = new List<Runway>();
-
-            foreach(Runway runway in Airfield.Runways)
-            {
-                var runwayHeading = runway.Heading + 360;
-
-                if(runwayHeading <= adjustedWindSource + 90 && runwayHeading >= adjustedWindSource - 90)
-                {
-                    activeRunways.Add(runway);
-                }
-            }
-
-            return activeRunways;
-        }
-
         public TaxiInstructions GetTaxiInstructions(Point callerPosition)
         {
             var source = Airfield.TaxiPoints.OrderBy(taxiPoint => taxiPoint.DistanceTo(callerPosition.Coordinate)).First();
             Logger.Debug($"Player is at {callerPosition.Coordinate}, nearest Taxi point is {source}");
 
-            var runways = GetActiveRunways();
+            var runways = ActiveRunwayDecider.GetActiveRunways(Airfield);
             if(runways.Count == 1)
             {
                 return GetTaxiInstructionsWhenSingleRunway(source, runways.First());
@@ -122,6 +98,8 @@ namespace RurouniJones.DCS.Airfields.Controllers
             }
 
             taxiInstructions.TaxiwayNames = RemoveRepeating(taxiInstructions.TaxiwayNames);
+
+            Logger.Debug(taxiInstructions);
 
             return taxiInstructions;
         }

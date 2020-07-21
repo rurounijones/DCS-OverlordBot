@@ -59,6 +59,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\ActiveRunwayDecider.cs" />
     <Compile Include="Controllers\GroundController.cs" />
     <Compile Include="Controllers\TaxiInstructions.cs" />
     <Compile Include="Controllers\TaxiPathNotFoundException.cs" />
@@ -90,7 +91,7 @@
     <None Include="Data\Maykop-Khanskaya.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Mineralne Vody.json">
+    <None Include="Data\Mineralnye Vody.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Data\Novorossiysk.json">

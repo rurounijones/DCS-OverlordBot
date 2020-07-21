@@ -19,8 +19,10 @@ namespace RurouniJones.DCS.Airfields.Tests
             // Apply config           
             LogManager.Configuration = config;
 
-            // Populate all the airfields
+#pragma warning disable IDE0059 // Populate all the airfields before any tests are run.
+                                // It removes initialization logs from the test output
             var airfields = Populator.Airfields;
+#pragma warning restore IDE0059
         }
     }
 }
