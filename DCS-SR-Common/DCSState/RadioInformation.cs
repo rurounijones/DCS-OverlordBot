@@ -89,6 +89,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
         [JsonNetworkIgnoreSerialization]
         public string voice = null;
 
+        [JsonNetworkIgnoreSerialization]
+        public string botType = null;
+
         /**
          * Used to determine if we should send an update to the server or not
          * We only need to do that if something that would stop us Receiving happens which
