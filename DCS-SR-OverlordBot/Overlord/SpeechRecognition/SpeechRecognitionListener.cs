@@ -70,8 +70,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                         Callsign = radioInfo.name
                     };
                     break;
-                default:
+                case "AWACS":
                     controller = new AwacsController()
+                    {
+                        Callsign = radioInfo.name
+                    };
+                    break;
+                default:
+                    controller = new MuteController()
                     {
                         Callsign = radioInfo.name
                     };
@@ -225,9 +231,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                             $"Intent: {radioCall.Intent}:\n" +
                             $"Incoming: {e.Result.Text}\n" +
                             $"Outgoing: {response ?? "INGORED"}\n" +
-                            $"Total SRS Clients: {ConnectedClientsSingleton.Instance.Total}\n" +
-                            $"Clients on freq: ({_radioInfo.freq / 1000000} MHz): {string.Join(", ", GetClientsOnFrequency())}";
-
+                            $"Clients on freq: ({_radioInfo.freq / 1000000} MHz): {string.Join(", ", GetClientsOnFrequency())}" +
+                            $"Total players on SRS: {GetHumanSRSClients().Count}\n";
                         _ = DiscordClient.SendTransmission(transmission).ConfigureAwait(false);
                         break;
                     case ResultReason.NoMatch:
@@ -241,7 +246,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                 _responses.Enqueue(_failureMessage);
                 response = null;
             }
-
             if (!string.IsNullOrEmpty(response))
             {
                 var audioResponse = await Task.Run(() => Speaker.CreateResponse($"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{_voice}\">{response}</voice></speak>"));
@@ -259,54 +263,48 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
         private string CreateResponse(BaseRadioCall radioCall)
         {
             if (radioCall.Sender == null)
-            {
-                Logger.Debug($"SENDER IS NULL");
-                return "Last transmitter, I could not recognise your call-sign.";
-            }
+                return Task.Run(() => controller.None(radioCall)).Result;
 
-            bool senderVerified = Task.Run(() => GameQuerier.GetPilotData(radioCall)).Result;
-            string response;
-
-            if (senderVerified == false)
-            {
-                Logger.Trace($"SenderVerified: false");
-                return $"{radioCall.Sender.Callsign}, I can't find you on scope.";
-            }
+            if (!Task.Run(() => GameQuerier.GetPilotData(radioCall)).Result)
+                return Task.Run(() => controller.UnverifiedSender(radioCall)).Result;
 
             switch (radioCall.Intent)
             {
                 case "None":
-                    response = Task.Run(() => controller.None(radioCall)).Result;
-                    break;
+                    return Task.Run(() => controller.None(radioCall)).Result;
                 case "RadioCheck":
-                    response = Task.Run(() => controller.RadioCheck(radioCall)).Result;
-                    break;
+                    return Task.Run(() => controller.RadioCheck(radioCall)).Result;
                 case "BogeyDope":
-                    response = Task.Run(() => controller.BogeyDope(radioCall)).Result;
-                    break;
+                    return Task.Run(() => controller.BogeyDope(radioCall)).Result;
                 case "BearingToAirbase":
-                    response = Task.Run(() => controller.BearingToAirbase(radioCall)).Result;
-                    break;
+                    return Task.Run(() => controller.BearingToAirbase(radioCall)).Result;
                 case "BearingToFriendlyPlayer":
-                    response = Task.Run(() => controller.BearingToFriendlyPlayer(radioCall)).Result;
-                    break;
+                    return Task.Run(() => controller.BearingToFriendlyPlayer(radioCall)).Result;
                 case "SetWarningRadius":
-                    response = Task.Run(() => controller.SetWarningRadius(radioCall, _voice, _responses)).Result;
-                    break;
+                    return Task.Run(() => controller.SetWarningRadius(radioCall, _voice, _responses)).Result;
                 case "Picture":
-                    response = Task.Run(() => controller.Declare(radioCall)).Result;
-                    break;
+                    return Task.Run(() => controller.Declare(radioCall)).Result;
                 case "Declare":
-                    response = Task.Run(() => controller.Declare(radioCall)).Result;
-                    break;
+                    return Task.Run(() => controller.Declare(radioCall)).Result;
                 case "ReadyToTaxi":
-                    response = Task.Run(() => controller.ReadyToTaxi(radioCall)).Result;
-                    break;
+                    return Task.Run(() => controller.ReadyToTaxi(radioCall)).Result;
                 default:
-                    response = $"{radioCall.Sender.Callsign}, I could not understand your transmission";
-                    break;
+                    return Task.Run(() => controller.Unknown(radioCall)).Result;
             };
-            return response;
+        }
+
+        private List<string> GetHumanSRSClients()
+        {
+            var allClients = ConnectedClientsSingleton.Instance.Values;
+            List<string> humanClients = new List<string>();
+            foreach (var client in allClients)
+            {
+                if (client.Name != "OverlordBot" && !client.Name.Contains("ATIS"))
+                {
+                    humanClients.Add(client.Name);
+                }
+            }
+            return humanClients;
         }
 
         private List<string> GetClientsOnFrequency()

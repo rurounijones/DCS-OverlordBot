@@ -1,5 +1,6 @@
 ﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls;
 using System.Collections.Concurrent;
+using System.Threading.Tasks;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
 {
@@ -11,7 +12,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
         /// </summary>
         public string Callsign { get; set; }
 
+        public abstract string NullSender(BaseRadioCall radioCall);
+
+        public abstract string UnverifiedSender(BaseRadioCall radioCall);
+
         public abstract string None(BaseRadioCall radioCall);
+
+        public abstract string Unknown(BaseRadioCall radioCall);
 
         public abstract string RadioCheck(BaseRadioCall radioCall);
 

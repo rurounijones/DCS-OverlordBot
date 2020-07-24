@@ -2,7 +2,6 @@
 using RurouniJones.DCS.Airfields;
 using System.Collections.Concurrent;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
 {
@@ -12,6 +11,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
         public override string None(BaseRadioCall radioCall)
         {
             return null;
+        }
+
+        public override string Unknown(BaseRadioCall radioCall)
+        {
+            return ResponsePrefix(radioCall) + "I could not understand your transmission";
         }
 
         public override string RadioCheck(BaseRadioCall radioCall)
@@ -59,13 +63,39 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
             {
                 name = "ATC";
             }
-            return $"{radioCall.Sender.Callsign}, {name} ground, " + Intents.ReadytoTaxi.Process(radioCall).Result;
+            return ResponsePrefix(radioCall) + "ground, " + Intents.ReadytoTaxi.Process(radioCall).Result;
         }
+
+        public override string NullSender(BaseRadioCall radioCall)
+        {
+            return "Last transmitter, I could not recognise your call-sign.";
+        }
+
+        public override string UnverifiedSender(BaseRadioCall radioCall)
+        {
+            return ResponsePrefix(radioCall) + "I could not find you on scope.";
+        }
+
 
         protected override bool IsAddressedToController(BaseRadioCall radioCall)
         {
             // TODO, make this return false unless a known airbase name has been used.
             return true;
+        }
+
+        private string ResponsePrefix(BaseRadioCall radioCall)
+        {
+            string name;
+            if (Populator.Airfields.Where(airfield => airfield.Name.Equals(radioCall.ReceiverName)).ToList().Count > 0)
+            {
+                name = Intents.BearingToAirbase.PronounceAirbase(radioCall.ReceiverName);
+            }
+            else
+            {
+                name = "ATC";
+            }
+
+            return $"{radioCall.Sender.Callsign}, {name} ";
         }
     }
 }
