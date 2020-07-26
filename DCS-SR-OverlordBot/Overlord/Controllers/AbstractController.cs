@@ -11,6 +11,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
         /// </summary>
         public string Callsign { get; set; }
 
+        public abstract string None(BaseRadioCall radioCall);
+
         public abstract string RadioCheck(BaseRadioCall radioCall);
 
         public abstract string BogeyDope(BaseRadioCall radioCall);

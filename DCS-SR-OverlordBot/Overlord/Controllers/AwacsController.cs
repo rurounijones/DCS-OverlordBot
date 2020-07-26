@@ -8,6 +8,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
+        public override string None(BaseRadioCall radioCall)
+        {
+            return null;
+        }
+
         public override string RadioCheck(BaseRadioCall radioCall)
         {
             if (!IsAddressedToController(radioCall))

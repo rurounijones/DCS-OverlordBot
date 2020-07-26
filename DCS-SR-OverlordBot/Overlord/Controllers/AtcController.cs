@@ -2,11 +2,18 @@
 using RurouniJones.DCS.Airfields;
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
 {
     class AtcController : AbstractController
     {
+
+        public override string None(BaseRadioCall radioCall)
+        {
+            return null;
+        }
+
         public override string RadioCheck(BaseRadioCall radioCall)
         {
             return $"{radioCall.Sender.Callsign}, ATC Ground, five-by-five";

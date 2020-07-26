@@ -205,46 +205,34 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
         private async Task ProcessRadioCall(SpeechRecognitionEventArgs e) {
             string response = null;
-            string clientMessage = "";
 
             try
             {
-                if (e.Result.Reason == ResultReason.RecognizedSpeech)
+                switch (e.Result.Reason)
                 {
-                    Logger.Info($"Incoming Transmission: {e.Result.Text}");
-                    string luisJson = Task.Run(() => LuisService.ParseIntent(e.Result.Text)).Result;
-                    Logger.Debug($"LIVE LUIS RESPONSE: {luisJson}");
+                    case ResultReason.RecognizedSpeech:
+                        Logger.Info($"Incoming Transmission: {e.Result.Text}");
+                        string luisJson = Task.Run(() => LuisService.ParseIntent(e.Result.Text)).Result;
+                        Logger.Debug($"LUIS Response: {luisJson}");
 
-                    var radioCall = new BaseRadioCall(luisJson);
+                        var radioCall = new BaseRadioCall(luisJson);
 
-                    var clientsOnFreq = ConnectedClientsSingleton.Instance.ClientsOnFreq(_radioInfo.freq, RadioInformation.Modulation.AM);
-                    List<string> clients = new List<string>();
-                    foreach (var client in clientsOnFreq)
-                    {
-                        if (client.Name != "OverlordBot")
-                        {
-                            clients.Add(client.Name);
-                        }
-                    }
-                    clientMessage = string.Join(", ", clients);
-
-                    if (radioCall.Intent == "None" || radioCall.ReceiverName == null)
-                    {
-                        Logger.Debug($"RESPONSE NO-OP");
-                        string transmission = $"Transmission Ignored\nClients on freq {_radioInfo.freq / 1000000}: {clientMessage}\nIncoming: " + e.Result.Text;
-                        _ = DiscordClient.SendTransmission(transmission).ConfigureAwait(false);
-                        response = "";
-                    }
-                    else
-                    {
                         response = CreateResponse(radioCall);
-                    }
 
+                        Logger.Info($"Outgoing Transmission: {response}");
 
-                }
-                else if (e.Result.Reason == ResultReason.NoMatch)
-                {
-                    Logger.Debug($"NOMATCH: Speech could not be recognized.");
+                        string transmission = "Transmission\n" +
+                            $"Intent: {radioCall.Intent}:\n" +
+                            $"Incoming: {e.Result.Text}\n" +
+                            $"Outgoing: {response ?? "INGORED"}\n" +
+                            $"Total SRS Clients: {ConnectedClientsSingleton.Instance.Total}\n" +
+                            $"Clients on freq: ({_radioInfo.freq / 1000000} MHz): {string.Join(", ", GetClientsOnFrequency())}";
+
+                        _ = DiscordClient.SendTransmission(transmission).ConfigureAwait(false);
+                        break;
+                    case ResultReason.NoMatch:
+                        Logger.Debug($"NOMATCH: Speech could not be recognized.");
+                        break;
                 }
             }
             catch (Exception ex)
@@ -253,11 +241,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                 _responses.Enqueue(_failureMessage);
                 response = null;
             }
+
             if (!string.IsNullOrEmpty(response))
             {
-                Logger.Info($"Outgoing Transmission: {response}");
-                string transmission = $"Transmission pair\nClients on freq {_radioInfo.freq / 1000000}: {clientMessage}\nIncoming: {e.Result.Text}\nOutgoing: {response}";
-                _ = DiscordClient.SendTransmission(transmission).ConfigureAwait(false);
                 var audioResponse = await Task.Run(() => Speaker.CreateResponse($"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{_voice}\">{response}</voice></speak>"));
                 if (audioResponse != null)
                 {
@@ -289,6 +275,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
             switch (radioCall.Intent)
             {
+                case "None":
+                    response = Task.Run(() => controller.None(radioCall)).Result;
+                    break;
                 case "RadioCheck":
                     response = Task.Run(() => controller.RadioCheck(radioCall)).Result;
                     break;
@@ -318,6 +307,20 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                     break;
             };
             return response;
+        }
+
+        private List<string> GetClientsOnFrequency()
+        {
+            var clientsOnFreq = ConnectedClientsSingleton.Instance.ClientsOnFreq(_radioInfo.freq, RadioInformation.Modulation.AM);
+            List<string> clients = new List<string>();
+            foreach (var client in clientsOnFreq)
+            {
+                if (client.Name != "OverlordBot")
+                {
+                    clients.Add(client.Name);
+                }
+            }
+            return clients;
         }
 
         public async Task SendTransmission(string message)
