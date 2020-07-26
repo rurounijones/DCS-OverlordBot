@@ -92,6 +92,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
         [JsonNetworkIgnoreSerialization]
         public string botType = null;
 
+        [JsonNetworkIgnoreSerialization]
+        public ulong discordTransmissionLogChannelId = 0;
+
         /**
          * Used to determine if we should send an update to the server or not
          * We only need to do that if something that would stop us Receiving happens which

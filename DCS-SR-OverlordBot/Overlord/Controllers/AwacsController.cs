@@ -99,7 +99,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
 
         public override string UnverifiedSender(BaseRadioCall radioCall)
         {
-            return $"{ResponsePrefix(radioCall)}, I cannot find you on scope.";
+            return $"{ResponsePrefix(radioCall)} I cannot find you on scope.";
         }
 
         private string ResponsePrefix(BaseRadioCall radioCall)

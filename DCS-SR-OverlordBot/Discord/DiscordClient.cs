@@ -1,10 +1,13 @@
 ﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
+using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Discord;
 using Discord.WebSocket;
 using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Discord
@@ -15,10 +18,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Discord
         private static DiscordSocketClient _socket;
 
         private static readonly string _token = Properties.Settings.Default.DiscordToken;
-        private static readonly ulong _transmissionLogGuildId = Properties.Settings.Default.TransmissionLogDiscordGuild;
-        private static readonly ulong _transmissionLogChannelId = Properties.Settings.Default.TransmissionLogDiscordChannel;
-        private static readonly ulong _atcLogGuildId = Properties.Settings.Default.AtcLogDiscordGuild;
-        private static readonly ulong _atcLogChannelId = Properties.Settings.Default.AtcLogDiscordChannel;
+        private static readonly ulong _transmissionLogDiscordGuildId = Properties.Settings.Default.TransmissionLogDiscordGuild;
 
         public static async Task Connect()
         {
@@ -67,41 +67,35 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Discord
                 Logger.Info($"Discord message recieved for transmission on radio {radioId}: {messageText}");
                 try
                 {
-                    await AudioManager.Instance.BotAudioProviders[int.Parse(radioId)].SendTransmission(messageText);
-                    await SendTransmission($"Outgoing Transmission:\n{messageText}");
+                    var audioProvider = AudioManager.Instance.BotAudioProviders[int.Parse(radioId)];
+                    await audioProvider.SendTransmission(messageText);
+                    var radioInfo = audioProvider._speechRecognitionListener._radioInfo.discordTransmissionLogChannelId;
+                    await LogTransmissionToDiscord($"Outgoing Transmission:\n{messageText}", audioProvider._speechRecognitionListener._radioInfo);
                 }
                 catch (KeyNotFoundException ex)
                 {
                     Logger.Error(ex, $"Could not find radio with key {radioId}");
+                } catch(Exception ex)
+                {
+                    Logger.Error(ex, $"Could not send transmission to radio {radioId}");
                 }
             }
         }
 
-        public static async Task SendTransmission(string transmission)
+        public static async Task LogTransmissionToDiscord(string transmission, RadioInformation radioInfo)
         {
-            if (_socket == null || _socket.ConnectionState != ConnectionState.Connected)
-            {
-                return;
-            }
-            try
-            {
-                await _socket.GetGuild(_transmissionLogGuildId).GetTextChannel(_transmissionLogChannelId).SendMessageAsync(transmission);
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-            }
-        }
+            transmission += $"\nClients on freq {radioInfo.freq / 1000000}MHz: {string.Join(", ", GetClientsOnFrequency(radioInfo))}\n" +
+            $"Total / Compatible / On Freq Callsigns : {GetHumanSRSClients().Count} / {GetBotCallsignCompatibleClients().Count} / {GetClientsOnFrequency(radioInfo).Count}\n" +
+            $"On Freq percentage of Total / Compatible: { Math.Round((double)GetClientsOnFrequency(radioInfo).Count / (double)GetHumanSRSClients().Count * 100, 2) }% / " +
+            $"{ Math.Round((double)GetClientsOnFrequency(radioInfo).Count / (double)GetBotCallsignCompatibleClients().Count * 100, 2) }%";
 
-        public static async Task SendToAtcLogChannel(string navigationMessage)
-        {
             if (_socket == null || _socket.ConnectionState != ConnectionState.Connected)
             {
                 return;
             }
             try
             {
-                await _socket.GetGuild(_atcLogGuildId).GetTextChannel(_atcLogChannelId).SendMessageAsync(navigationMessage);
+                await _socket.GetGuild(_transmissionLogDiscordGuildId).GetTextChannel(radioInfo.discordTransmissionLogChannelId).SendMessageAsync(transmission);
             }
             catch (Exception e)
             {
@@ -132,6 +126,53 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Discord
         {
             Console.WriteLine(msg.ToString());
             return Task.CompletedTask;
+        }
+
+        private static List<string> GetHumanSRSClients()
+        {
+            var allClients = ConnectedClientsSingleton.Instance.Values;
+            List<string> humanClients = new List<string>();
+            foreach (var client in allClients)
+            {
+                if (client.Name != "OverlordBot" && !client.Name.Contains("ATIS"))
+                {
+                    humanClients.Add(client.Name);
+                }
+            }
+            return humanClients;
+        }
+
+        private static List<string> GetBotCallsignCompatibleClients()
+        {
+            var allClients = ConnectedClientsSingleton.Instance.Values;
+            List<string> compatibleClients = new List<string>();
+            foreach (var client in allClients)
+            {
+                if (client.Name != "OverlordBot" && !client.Name.Contains("ATIS") && IsClientNameCompatible(client.Name))
+                {
+                    compatibleClients.Add(client.Name);
+                }
+            }
+            return compatibleClients;
+        }
+
+        private static bool IsClientNameCompatible(string name)
+        {
+            return Regex.Match(name, @"[a-zA-Z]{3,} \d-\d{1,2}").Success || Regex.Match(name, @"[a-zA-Z]{3,} \d{2,3}").Success;
+        }
+
+        private static List<string> GetClientsOnFrequency(RadioInformation radioInfo)
+        {
+            var clientsOnFreq = ConnectedClientsSingleton.Instance.ClientsOnFreq(radioInfo.freq, RadioInformation.Modulation.AM);
+            List<string> clients = new List<string>();
+            foreach (var client in clientsOnFreq)
+            {
+                if (client.Name != "OverlordBot")
+                {
+                    clients.Add(client.Name);
+                }
+            }
+            return clients;
         }
     }
 }

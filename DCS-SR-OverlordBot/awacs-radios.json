@@ -34,7 +34,8 @@
     "channel": -1,
     "simul": false,
     "voice": "en-US-JessaRUS",
-    "botType":  "AWACS"
+    "botType": "AWACS",
+    "discordTransmissionLogChannelId":  0
   },
   {
     "enc": false,
@@ -53,6 +54,7 @@
     "channel": -1,
     "simul": false,
     "voice": "en-US-BenjaminRUS",
-    "botType": "ATC"
+    "botType": "ATC",
+    "discordTransmissionLogChannelId": 0
   }
 ]

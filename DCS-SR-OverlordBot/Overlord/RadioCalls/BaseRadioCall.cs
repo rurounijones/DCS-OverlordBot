@@ -22,6 +22,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls
             }
         }
 
+        public string Message
+        {
+            get
+            {
+                return LuisResponse.Query;
+            }
+        }
+
         /// <summary>
         /// The player that sent the radio call.
         /// </summary>

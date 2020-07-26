@@ -55,15 +55,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
 
         public override string ReadyToTaxi(BaseRadioCall radioCall)
         {
-            string name;
-            if (Populator.Airfields.Where(airfield => airfield.Name.Equals(radioCall.ReceiverName)).ToList().Count > 0)
-            {
-                name = Intents.BearingToAirbase.PronounceAirbase(radioCall.ReceiverName);
-            }
-            else
-            {
-                name = "ATC";
-            }
             return ResponsePrefix(radioCall) + "ground, " + Intents.ReadytoTaxi.Process(radioCall).Result;
         }
 
@@ -74,9 +65,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
 
         public override string UnverifiedSender(BaseRadioCall radioCall)
         {
-            return ResponsePrefix(radioCall) + "I could not find you on scope.";
+            return ResponsePrefix(radioCall) + "I cannot find you on scope.";
         }
-
 
         protected override bool IsAddressedToController(BaseRadioCall radioCall)
         {
@@ -96,7 +86,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
                 name = "ATC";
             }
 
-            return $"{radioCall.Sender.Callsign}, {name} ";
+            return $"{radioCall.Sender.Callsign}, {name}, ";
         }
     }
 }

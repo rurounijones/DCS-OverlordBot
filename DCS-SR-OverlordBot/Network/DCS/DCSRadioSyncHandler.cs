@@ -171,6 +171,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
                     clientRadio.freqMax = updateRadio.freqMax;
                     clientRadio.voice = updateRadio.voice;
                     clientRadio.botType = updateRadio.botType;
+                    clientRadio.discordTransmissionLogChannelId = updateRadio.discordTransmissionLogChannelId;
 
                     if (playerRadioInfo.simultaneousTransmissionControl == DCSPlayerRadioInfo.SimultaneousTransmissionControl.EXTERNAL_DCS_CONTROL)
                     {

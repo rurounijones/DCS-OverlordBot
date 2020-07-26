@@ -5,7 +5,6 @@ using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechOutput;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using FragLabs.Audio.Codecs;
 using Microsoft.CognitiveServices.Speech;
@@ -14,7 +13,6 @@ using NAudio.Wave;
 using NLog;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Threading;
@@ -44,7 +42,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
         private readonly ConcurrentQueue<byte[]> _responses;
 
-        private readonly RadioInformation _radioInfo;
+        public readonly RadioInformation _radioInfo;
 
         public bool TimedOut;
 
@@ -225,16 +223,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                         var radioCall = new BaseRadioCall(luisJson);
 
                         response = CreateResponse(radioCall);
-
                         Logger.Info($"Outgoing Transmission: {response}");
 
-                        string transmission = "Transmission\n" +
-                            $"Intent: {radioCall.Intent}:\n" +
-                            $"Incoming: {e.Result.Text}\n" +
-                            $"Outgoing: {response ?? "INGORED"}\n" +
-                            $"Clients on freq: ({_radioInfo.freq / 1000000} MHz): {string.Join(", ", GetClientsOnFrequency())}" +
-                            $"Total players on SRS: {GetHumanSRSClients().Count}\n";
-                        _ = DiscordClient.SendTransmission(transmission).ConfigureAwait(false);
+                        if (_radioInfo.discordTransmissionLogChannelId > 0)
+                            LogTransmissionToDiscord(radioCall, response);
                         break;
                     case ResultReason.NoMatch:
                         Logger.Debug($"NOMATCH: Speech could not be recognized.");
@@ -264,7 +256,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
         private string CreateResponse(BaseRadioCall radioCall)
         {
             if (radioCall.Sender == null)
-                return Task.Run(() => controller.None(radioCall)).Result;
+                return Task.Run(() => controller.NullSender(radioCall)).Result;
 
             if (!Task.Run(() => GameQuerier.GetPilotData(radioCall)).Result)
                 return Task.Run(() => controller.UnverifiedSender(radioCall)).Result;
@@ -294,32 +286,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
             };
         }
 
-        private List<string> GetHumanSRSClients()
+        private void LogTransmissionToDiscord(BaseRadioCall radioCall, string response)
         {
-            var allClients = ConnectedClientsSingleton.Instance.Values;
-            List<string> humanClients = new List<string>();
-            foreach (var client in allClients)
-            {
-                if (client.Name != "OverlordBot" && !client.Name.Contains("ATIS"))
-                {
-                    humanClients.Add(client.Name);
-                }
-            }
-            return humanClients;
-        }
-
-        private List<string> GetClientsOnFrequency()
-        {
-            var clientsOnFreq = ConnectedClientsSingleton.Instance.ClientsOnFreq(_radioInfo.freq, RadioInformation.Modulation.AM);
-            List<string> clients = new List<string>();
-            foreach (var client in clientsOnFreq)
-            {
-                if (client.Name != "OverlordBot")
-                {
-                    clients.Add(client.Name);
-                }
-            }
-            return clients;
+            string transmission = $"Transmission Intent: {radioCall.Intent}\n" +
+                $"Request: {radioCall.Message}\n" +
+                $"Response: {response ?? "INGORED"}\n";
+            _ = DiscordClient.LogTransmissionToDiscord(transmission, _radioInfo).ConfigureAwait(false);
         }
 
         public async Task SendTransmission(string message)
