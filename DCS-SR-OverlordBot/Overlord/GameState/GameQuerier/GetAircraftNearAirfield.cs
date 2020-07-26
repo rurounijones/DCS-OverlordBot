@@ -1,9 +1,9 @@
-﻿using Npgsql;
+﻿using NetTopologySuite.Geometries;
+using Npgsql;
+using RurouniJones.DCS.Airfields.Structure;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading.Tasks;
-using NetTopologySuite.Geometries;
-using RurouniJones.DCS.Airfields.Structure;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
 {
@@ -14,7 +14,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
 
         public static async Task<List<GameObject>> GetAircraftNearAirfield(Airfield airfield)
         {
-           var gameObjects = new List<GameObject>();
+            var gameObjects = new List<GameObject>();
 
             var command = @"SELECT contact.id, contact.pilot, contact.position, contact.altitude, contact.heading
             FROM units as contact

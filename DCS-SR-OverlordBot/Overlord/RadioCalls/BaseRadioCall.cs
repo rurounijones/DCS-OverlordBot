@@ -29,7 +29,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls
         {
             get
             {
-                if(_sender != null)
+                if (_sender != null)
                 {
                     return _sender;
                 }
@@ -58,7 +58,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls
         /// For an AWACS bot this is the Callsign such as "Overlord" or "Magic".
         /// For an ATC bot this is the normalized name of an airfield such as "Krasnodar-Center"
         /// </example>
-        public string ReceiverName {
+        public string ReceiverName
+        {
             get
             {
                 if (LuisResponse.Entities.Find(x => x.Type == "awacs_callsign") != null)

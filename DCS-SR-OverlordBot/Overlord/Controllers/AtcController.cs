@@ -59,7 +59,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
             if (Populator.Airfields.Where(airfield => airfield.Name.Equals(radioCall.ReceiverName)).ToList().Count > 0)
             {
                 name = Intents.BearingToAirbase.PronounceAirbase(radioCall.ReceiverName);
-            } else
+            }
+            else
             {
                 name = "ATC";
             }

@@ -1,9 +1,8 @@
-﻿using System.CodeDom;
+﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
 {
@@ -14,7 +13,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
         {
             string response;
 
-            if ( radioCall.Airbase == null)
+            if (radioCall.Airbase == null)
             {
                 return "I could not recognise the airbase";
             }

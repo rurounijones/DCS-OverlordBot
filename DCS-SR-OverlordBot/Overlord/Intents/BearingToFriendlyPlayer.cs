@@ -1,7 +1,7 @@
-﻿using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
+﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
 {
@@ -27,10 +27,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
                     string range = contact.Range.ToString();
                     int altitude = (int)contact.Altitude;
                     int angels;
-                    if(altitude < 1000)
+                    if (altitude < 1000)
                     {
                         angels = 1;
-                    } else
+                    }
+                    else
                     {
                         angels = (altitude % 1000 >= 500 ? altitude + 1000 - altitude % 1000 : altitude - altitude % 1000) / 1000;
                     }

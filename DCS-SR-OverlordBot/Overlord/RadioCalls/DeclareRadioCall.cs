@@ -15,7 +15,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls
                 // on their nose
                 if (LuisResponse.Entities.Find(x => x.Role == "bearing") == null)
                 {
-                    return (int) Sender.Heading;
+                    return (int)Sender.Heading;
                 }
                 string bearingString = LuisResponse.Entities.Find(x => x.Role == "bearing").Entity;
                 int.TryParse(bearingString, out int bearing);
@@ -40,9 +40,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls
             }
         }
 
-        public DeclareRadioCall(string luisResponse) : base(luisResponse) {}
+        public DeclareRadioCall(string luisResponse) : base(luisResponse) { }
 
-        public DeclareRadioCall(BaseRadioCall baseRadioCall) : base(baseRadioCall) {}
+        public DeclareRadioCall(BaseRadioCall baseRadioCall) : base(baseRadioCall) { }
 
     }
 }

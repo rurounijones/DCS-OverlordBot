@@ -17,7 +17,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
 
             Logger.Debug($"Setting up Warning Radius for {radioCall.Sender.Id} - {radioCall.Sender}");
 
-            if (radioCall.WarningRadius == -1) {
+            if (radioCall.WarningRadius == -1)
+            {
                 return $"I did not catch the warning distance";
             }
             else

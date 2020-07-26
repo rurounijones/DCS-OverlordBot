@@ -1,9 +1,9 @@
-﻿using NLog;
+﻿using NetTopologySuite.Geometries;
+using NLog;
 using Npgsql;
 using System;
 using System.Data.Common;
 using System.Threading.Tasks;
-using NetTopologySuite.Geometries;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
 {
@@ -22,7 +22,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
                 FROM public.units AS requester
                 WHERE (requester.pilot ILIKE '" + $"%{group} {flight}-{plane}%" + @"' OR requester.pilot ILIKE '" + $"%{group} {flight}{plane}%" + @"' )
               ) as request
-            WHERE bogey.coalition = " + (int) coalition.GetOpposingCoalition() + @"
+            WHERE bogey.coalition = " + (int)coalition.GetOpposingCoalition() + @"
             AND bogey.type LIKE 'Air+%'
             AND bogey.speed >= 26
             ORDER BY request.position<-> bogey.position ASC
@@ -55,7 +55,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
                         try
                         {
                             name = dbDataReader.GetString(7);
-                        } catch (Exception)
+                        }
+                        catch (Exception)
                         {
                             name = "unknown";
                         }

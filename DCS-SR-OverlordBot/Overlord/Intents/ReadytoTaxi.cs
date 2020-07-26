@@ -44,7 +44,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
             catch (TaxiPathNotFoundException)
             {
                 return $"We could not find a path from your position to {taxiInstructions.DestinationName}";
-            }           
+            }
         }
 
         private static string ConvertTaxiInstructionsToSSML(TaxiInstructions taxiInstructions)

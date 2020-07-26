@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
+﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls;
 using Newtonsoft.Json;
-using System.Linq;
-using System;
 using NLog;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
 {
@@ -31,7 +31,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
             {
                 response = "Picture is clean";
             }
-            
+
             return response;
         }
 
@@ -45,7 +45,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
 
             var response = $"Bra, {bearing}, {range}, {altitude}{aspect}";
 
-            if(name != null)
+            if (name != null)
             {
                 response += $", type <break time=\"50\" /> {name}";
             }
@@ -113,7 +113,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
                 {
                     return contact.Name;
                 }
-            } catch (NullReferenceException ex)
+            }
+            catch (NullReferenceException ex)
             {
                 Logger.Error(ex, "Exception pronouncing name of contact");
                 return "unknown";

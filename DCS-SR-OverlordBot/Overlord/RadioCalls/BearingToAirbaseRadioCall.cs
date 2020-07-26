@@ -11,7 +11,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls
         {
             get
             {
-                if(LuisResponse.Entities.Find(x => x.Type == "airbase") == null)
+                if (LuisResponse.Entities.Find(x => x.Type == "airbase") == null)
                 {
                     return null;
                 }
@@ -19,8 +19,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls
             }
         }
 
-        public BearingToAirbaseRadioCall(string luisResponse) : base(luisResponse) {}
-        public BearingToAirbaseRadioCall(BaseRadioCall baseRadioCall) : base(baseRadioCall) {}
+        public BearingToAirbaseRadioCall(string luisResponse) : base(luisResponse) { }
+        public BearingToAirbaseRadioCall(BaseRadioCall baseRadioCall) : base(baseRadioCall) { }
 
     }
 }

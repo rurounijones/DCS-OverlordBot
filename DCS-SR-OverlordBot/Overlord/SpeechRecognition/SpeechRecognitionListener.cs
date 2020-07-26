@@ -1,24 +1,24 @@
-﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Network;
+﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Discord;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Network;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechOutput;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
+using Ciribob.DCS.SimpleRadio.Standalone.Common;
+using FragLabs.Audio.Codecs;
 using Microsoft.CognitiveServices.Speech;
 using Microsoft.CognitiveServices.Speech.Audio;
 using NAudio.Wave;
+using NLog;
 using System;
-using System.Threading.Tasks;
-using FragLabs.Audio.Codecs;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Threading;
-using NLog;
-using System.IO;
-using System.Collections.Concurrent;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Discord;
-using Ciribob.DCS.SimpleRadio.Standalone.Common;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls;
-using System.Collections.Generic;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers;
+using System.Threading.Tasks;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 {
@@ -49,8 +49,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
         public bool TimedOut;
 
 #pragma warning disable IDE0051 // Allows OverlordBot to listen for a specific word to start listening. Currently not used although the setup has all been done.
-                                // This is due to wierd state transition errors that I cannot be bothered to debug. Possible benefit is less calls to Speech endpoint but
-                                // not sure if that is good enough or not to keep investigating.
+        // This is due to wierd state transition errors that I cannot be bothered to debug. Possible benefit is less calls to Speech endpoint but
+        // not sure if that is good enough or not to keep investigating.
         private readonly KeywordRecognitionModel _wakeWord;
 #pragma warning restore IDE0051
 
@@ -62,7 +62,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
             Logger.Debug("VOICE: " + _voice);
 
-            switch(radioInfo.botType)
+            switch (radioInfo.botType)
             {
                 case "ATC":
                     controller = new AtcController()
@@ -209,7 +209,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
             TimedOut = true;
         }
 
-        private async Task ProcessRadioCall(SpeechRecognitionEventArgs e) {
+        private async Task ProcessRadioCall(SpeechRecognitionEventArgs e)
+        {
             string response = null;
 
             try

@@ -29,7 +29,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
 
         public override string BogeyDope(BaseRadioCall radioCall)
         {
-            if(!IsAddressedToController(radioCall) || radioCall.Sender.Coalition == Coalition.Neutral)
+            if (!IsAddressedToController(radioCall) || radioCall.Sender.Coalition == Coalition.Neutral)
                 return null;
             return ResponsePrefix(radioCall) + Intents.BogeyDope.Process(radioCall).Result;
         }

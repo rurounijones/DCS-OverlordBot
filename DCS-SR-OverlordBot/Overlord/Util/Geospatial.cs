@@ -62,7 +62,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Util
         public static double TrueToMagnetic(Geo.Geometries.Point position, double trueBearing)
         {
             double magneticBearing;
-            if (IsCaucasus(position)) {
+            if (IsCaucasus(position))
+            {
                 magneticBearing = trueBearing - ((2 * CalculateOffset(position)) - CAUCASUS_FUDGE_FACTOR);
             }
             else
@@ -70,7 +71,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Util
                 magneticBearing = trueBearing - CalculateOffset(position);
             }
 
-            if(magneticBearing < 0)
+            if (magneticBearing < 0)
             {
                 magneticBearing += 360;
             }

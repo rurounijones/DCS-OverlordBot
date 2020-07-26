@@ -43,7 +43,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
             bool friendlies = false;
             bool enemies = false;
 
-            if(coalitionContacts[radioCall.Sender.Coalition] > 0)
+            if (coalitionContacts[radioCall.Sender.Coalition] > 0)
             {
                 friendlies = true;
             }
@@ -58,7 +58,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
                 neutrals = true;
             }
 
-            if(enemies == true && ( friendlies == true || neutrals == true ))
+            if (enemies == true && (friendlies == true || neutrals == true))
             {
                 return "furball";
             }
@@ -69,7 +69,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
             else if (enemies == true && (friendlies == false && neutrals == false))
             {
                 return "hostile";
-            } else
+            }
+            else
             {
                 return "unknown";
             }

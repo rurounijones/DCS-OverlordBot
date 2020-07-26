@@ -1,8 +1,8 @@
 ﻿using Microsoft.CognitiveServices.Speech;
 using Microsoft.CognitiveServices.Speech.Audio;
 using NLog;
-using System.Threading.Tasks;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechOutput
 {
@@ -14,7 +14,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechOutput
 
         private static RadioStreamWriter _streamWriter = new RadioStreamWriter(null);
         private static AudioConfig _audioConfig = AudioConfig.FromStreamOutput(_streamWriter);
-        
+
         public static async Task<byte[]> CreateResponse(string text)
         {
             using (Semaphore semaphore = new Semaphore(1, 1, "SpeechOutputSemaphore"))

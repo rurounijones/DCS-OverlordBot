@@ -1,9 +1,9 @@
-﻿using NLog;
+﻿using NetTopologySuite.Geometries;
+using NLog;
 using Npgsql;
 using System;
 using System.Data.Common;
 using System.Threading.Tasks;
-using NetTopologySuite.Geometries;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
 {

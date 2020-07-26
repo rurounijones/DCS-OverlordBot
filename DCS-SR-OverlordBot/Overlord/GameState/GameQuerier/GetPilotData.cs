@@ -1,9 +1,8 @@
-﻿using Npgsql;
+﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls;
+using NetTopologySuite.Geometries;
+using Npgsql;
 using System.Data.Common;
 using System.Threading.Tasks;
-using NetTopologySuite.Geometries;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls;
-using NetTopologySuite.Mathematics;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
 {
@@ -15,7 +14,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
         }
 
         public static async Task<bool> GetPilotData(Player sender)
-        { 
+        {
             var group = sender.Group;
             var flight = sender.Flight;
             var plane = sender.Plane;

@@ -26,7 +26,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
 
         private static readonly double CHECK_INTERVAL = 5000; // milliseconds
 
-        public WarningRadiusChecker(Player sender, string awacs, string voice, int distance, ConcurrentQueue<byte[]> responseQueue) 
+        public WarningRadiusChecker(Player sender, string awacs, string voice, int distance, ConcurrentQueue<byte[]> responseQueue)
         {
             _sender = sender;
             _awacs = awacs;
@@ -34,7 +34,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
             _distance = distance;
             _responseQueue = responseQueue;
 
-            if(WarningChecks.ContainsKey(_sender.Id))
+            if (WarningChecks.ContainsKey(_sender.Id))
             {
                 WarningChecks[_sender.Id].Stop();
                 WarningChecks.TryRemove(_sender.Id, out _);
@@ -111,7 +111,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
                     _warningStates[_sender.Id].Add(contact.Id);
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Logger.Error(ex, "Error checking warning radius");
             }
         }

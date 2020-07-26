@@ -22,7 +22,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls
                 return BuildPlayer(luisEntity);
             }
         }
-        public BearingToFriendlyPlayerRadioCall(string luisResponse) : base(luisResponse) {}
-        public BearingToFriendlyPlayerRadioCall(BaseRadioCall baseRadioCall) : base(baseRadioCall) {}
+        public BearingToFriendlyPlayerRadioCall(string luisResponse) : base(luisResponse) { }
+        public BearingToFriendlyPlayerRadioCall(BaseRadioCall baseRadioCall) : base(baseRadioCall) { }
     }
 }
