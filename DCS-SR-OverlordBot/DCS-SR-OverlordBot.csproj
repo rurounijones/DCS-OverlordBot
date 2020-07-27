@@ -403,7 +403,6 @@
     <Compile Include="Overlord\Controllers\AtcController.cs" />
     <Compile Include="Overlord\Controllers\MuteController.cs" />
     <Compile Include="Overlord\Controllers\AwacsController.cs" />
-    <Compile Include="Overlord\RadioCalls\BearingToAirbaseRadioCall.cs" />
     <Compile Include="Overlord\RadioCalls\BaseRadioCall.cs" />
     <Compile Include="Overlord\Intents\ReadytoTaxi.cs" />
     <Compile Include="Overlord\Constants.cs" />

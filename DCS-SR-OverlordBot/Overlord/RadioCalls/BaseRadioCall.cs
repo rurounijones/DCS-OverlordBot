@@ -14,7 +14,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls
         /// <summary>
         /// The intent of the radio transmission
         /// </summary>
-        public string Intent
+        public virtual string Intent
         {
             get
             {
@@ -33,7 +33,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls
         /// <summary>
         /// The player that sent the radio call.
         /// </summary>
-        public Player Sender
+        public virtual Player Sender
         {
             get
             {
@@ -66,7 +66,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls
         /// For an AWACS bot this is the Callsign such as "Overlord" or "Magic".
         /// For an ATC bot this is the normalized name of an airfield such as "Krasnodar-Center"
         /// </example>
-        public string ReceiverName
+        public virtual string ReceiverName
+        {
+            get
+            {
+                return AwacsCallsign ?? AirbaseName;
+            }
+        }
+
+        public virtual string AwacsCallsign
         {
             get
             {
@@ -74,7 +82,18 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls
                 {
                     return LuisResponse.Entities.Find(x => x.Type == "awacs_callsign").Resolution.Values[0];
                 }
-                else if (LuisResponse.Entities.Find(x => x.Type == "airbase") != null)
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
+        public virtual string AirbaseName
+        {
+            get
+            {
+                if (LuisResponse.Entities.Find(x => x.Type == "airbase") != null)
                 {
                     return LuisResponse.Entities.Find(x => x.Type == "airbase").Resolution.Values[0];
                 }
@@ -88,7 +107,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls
         public BaseRadioCall(string luisJson)
         {
             LuisResponse = JsonConvert.DeserializeObject<LuisResponse>(luisJson);
-
         }
 
         public BaseRadioCall(BaseRadioCall baseRadioCall)

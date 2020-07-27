@@ -9,26 +9,26 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
 
     class BearingToAirbase
     {
-        public static async Task<string> Process(BearingToAirbaseRadioCall radioCall)
+        public static async Task<string> Process(BaseRadioCall radioCall)
         {
             string response;
 
-            if (radioCall.Airbase == null)
+            if (radioCall.AirbaseName == null)
             {
                 return "I could not recognise the airbase";
             }
 
-            Dictionary<string, int> braData = await GameQuerier.GetBearingToAirbase(radioCall.Sender.Position, radioCall.Sender.Group, radioCall.Sender.Flight, radioCall.Sender.Plane, radioCall.Airbase);
+            Dictionary<string, int> braData = await GameQuerier.GetBearingToAirbase(radioCall.Sender.Position, radioCall.Sender.Group, radioCall.Sender.Flight, radioCall.Sender.Plane, radioCall.AirbaseName);
 
             if (braData != null)
             {
                 var bearing = Regex.Replace(Util.Geospatial.TrueToMagnetic(radioCall.Sender.Position, braData["bearing"]).ToString("000"), "\\d{1}", " $0");
                 var range = braData["range"];
-                response = $"{PronounceAirbase(radioCall.Airbase)} bearing {bearing}, {range} miles";
+                response = $"{PronounceAirbase(radioCall.AirbaseName)} bearing {bearing}, {range} miles";
             }
             else
             {
-                response = $"I Could not find {PronounceAirbase(radioCall.Airbase)}";
+                response = $"I Could not find {PronounceAirbase(radioCall.AirbaseName)}.";
             }
 
             return response;

@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
 {
-    class MuteController : AbstractController
+    public class MuteController : AbstractController
     {
         public override string None(BaseRadioCall radioCall)
         {

@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
 {
-    class AtcController : AbstractController
+    public class AtcController : AbstractController
     {
 
         public override string None(BaseRadioCall radioCall)
@@ -20,7 +20,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
 
         public override string RadioCheck(BaseRadioCall radioCall)
         {
-            return $"{radioCall.Sender.Callsign}, ATC Ground, five-by-five";
+            return ResponsePrefix(radioCall) + $" ground, five-by-five";
         }
 
         public override string BogeyDope(BaseRadioCall radioCall)
@@ -55,12 +55,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
 
         public override string ReadyToTaxi(BaseRadioCall radioCall)
         {
+            if (!IsAddressedToController(radioCall))
+                return null;
             return ResponsePrefix(radioCall) + "ground, " + Intents.ReadytoTaxi.Process(radioCall).Result;
         }
 
-        public override string NullSender(BaseRadioCall radioCall)
+        public override string NullSender(BaseRadioCall _)
         {
-            return "Last transmitter, I could not recognise your call-sign.";
+            return "Last transmitter, I could not recognise your call-sign";
         }
 
         public override string UnverifiedSender(BaseRadioCall radioCall)
@@ -77,9 +79,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
         private string ResponsePrefix(BaseRadioCall radioCall)
         {
             string name;
-            if (Populator.Airfields.Where(airfield => airfield.Name.Equals(radioCall.ReceiverName)).ToList().Count > 0)
+            if (Populator.Airfields.Where(airfield => airfield.Name.Equals(radioCall.AirbaseName)).ToList().Count > 0)
             {
-                name = Intents.BearingToAirbase.PronounceAirbase(radioCall.ReceiverName);
+                name = Intents.BearingToAirbase.PronounceAirbase(radioCall.AirbaseName);
             }
             else
             {

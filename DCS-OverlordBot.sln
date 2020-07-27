@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaxiViewer", "TaxiViewer\Ta
 		{CD11CC7C-8EEE-4C38-9534-B5A7A4F6800A} = {CD11CC7C-8EEE-4C38-9534-B5A7A4F6800A}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DCS-SR-OverlordBot-Tests", "DCS-SR-OverlordBot-Tests\DCS-SR-OverlordBot-Tests.csproj", "{75E39994-EACE-4E82-A8B1-BE9DB9A5579E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -93,6 +95,14 @@ Global
 		{F316F2F5-DB18-4C42-A084-AA66EC1E67E7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F316F2F5-DB18-4C42-A084-AA66EC1E67E7}.Release|x64.ActiveCfg = Release|Any CPU
 		{F316F2F5-DB18-4C42-A084-AA66EC1E67E7}.Release|x64.Build.0 = Release|Any CPU
+		{75E39994-EACE-4E82-A8B1-BE9DB9A5579E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75E39994-EACE-4E82-A8B1-BE9DB9A5579E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75E39994-EACE-4E82-A8B1-BE9DB9A5579E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{75E39994-EACE-4E82-A8B1-BE9DB9A5579E}.Debug|x64.Build.0 = Debug|Any CPU
+		{75E39994-EACE-4E82-A8B1-BE9DB9A5579E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75E39994-EACE-4E82-A8B1-BE9DB9A5579E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75E39994-EACE-4E82-A8B1-BE9DB9A5579E}.Release|x64.ActiveCfg = Release|Any CPU
+		{75E39994-EACE-4E82-A8B1-BE9DB9A5579E}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

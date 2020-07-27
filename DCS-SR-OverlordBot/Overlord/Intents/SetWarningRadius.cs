@@ -19,12 +19,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
 
             if (radioCall.WarningRadius == -1)
             {
-                return $"I did not catch the warning distance";
+                return $"I did not catch the warning distance.";
             }
             else
             {
                 new WarningRadiusChecker(radioCall.Sender, radioCall.ReceiverName, voice, radioCall.WarningRadius, responseQueue);
-                return $"warning set for {radioCall.WarningRadius} miles";
+                return $"warning set for {radioCall.WarningRadius} miles.";
             }
         }
     }

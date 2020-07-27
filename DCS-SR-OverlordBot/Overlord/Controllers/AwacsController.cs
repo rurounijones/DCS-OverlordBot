@@ -4,7 +4,7 @@ using System.Collections.Concurrent;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
 {
-    class AwacsController : AbstractController
+    public class AwacsController : AbstractController
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
@@ -17,14 +17,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
         {
             if (!IsAddressedToController(radioCall))
                 return null;
-            return ResponsePrefix(radioCall) + "I could not understand your transmission";
+            return ResponsePrefix(radioCall) + "I could not understand your transmission.";
         }
 
         public override string RadioCheck(BaseRadioCall radioCall)
         {
             if (!IsAddressedToController(radioCall))
                 return null;
-            return ResponsePrefix(radioCall) + "five-by-five";
+            return ResponsePrefix(radioCall) + "five-by-five.";
         }
 
         public override string BogeyDope(BaseRadioCall radioCall)
@@ -38,7 +38,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
         {
             if (!IsAddressedToController(radioCall) || radioCall.Sender.Coalition == Coalition.Neutral)
                 return null;
-            return ResponsePrefix(radioCall) + Intents.BearingToAirbase.Process(new BearingToAirbaseRadioCall(radioCall)).Result;
+            return ResponsePrefix(radioCall) + Intents.BearingToAirbase.Process(radioCall).Result;
         }
 
         public override string BearingToFriendlyPlayer(BaseRadioCall radioCall)
@@ -61,7 +61,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
         {
             if (!IsAddressedToController(radioCall))
                 return null;
-            return ResponsePrefix(radioCall) + "We do not support picture calls.";
+            return ResponsePrefix(radioCall) + "we do not support picture calls.";
         }
 
         public override string SetWarningRadius(BaseRadioCall radioCall, string voice, ConcurrentQueue<byte[]> responseQueue)
@@ -73,14 +73,26 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
 
         public override string ReadyToTaxi(BaseRadioCall radioCall)
         {
+            return ResponsePrefix(radioCall) + "this is an AWACS frequency.";
+        }
+
+        public override string NullSender(BaseRadioCall radioCall)
+        {
             if (!IsAddressedToController(radioCall))
                 return null;
-            return ResponsePrefix(radioCall) + "This is an AWACS Frequency";
+            return "Last transmitter, I could not recognise your call-sign.";
+        }
+
+        public override string UnverifiedSender(BaseRadioCall radioCall)
+        {
+            if (!IsAddressedToController(radioCall))
+                return null;
+            return ResponsePrefix(radioCall) + "I cannot find you on scope.";
         }
 
         protected override bool IsAddressedToController(BaseRadioCall radioCall)
         {
-            Logger.Debug($"Callsign is {Callsign.ToLower()}, Receiver is {radioCall.ReceiverName.ToLower()}");
+            Logger.Debug($"Callsign is {Callsign}, Receiver is {radioCall.ReceiverName}");
             if (string.IsNullOrEmpty(Callsign) == true)
             {
                 return true;
@@ -92,16 +104,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
             return result;
         }
 
-        public override string NullSender(BaseRadioCall radioCall)
-        {
-            return "Last transmitter, I could not recognise your call-sign.";
-        }
-
-        public override string UnverifiedSender(BaseRadioCall radioCall)
-        {
-            return $"{ResponsePrefix(radioCall)} I cannot find you on scope.";
-        }
-
         private string ResponsePrefix(BaseRadioCall radioCall)
         {
             string responseCallsign;
@@ -109,13 +111,17 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
             {
                 responseCallsign = Callsign;
             }
-            else if (radioCall.ReceiverName.ToLower().Equals("anyface"))
+            else if (radioCall.AwacsCallsign != null && radioCall.AwacsCallsign.ToLower().Equals("anyface"))
+            {
+                responseCallsign = "Overlord"; // Overlord is the default callsign;
+            }
+            else if (radioCall.AirbaseName != null) // AirbaseName not null happens it someone calls ATC on AWACS freq
             {
                 responseCallsign = "Overlord"; // Overlord is the default callsign;
             }
             else
             {
-                responseCallsign = radioCall.ReceiverName;
+                responseCallsign = radioCall.AwacsCallsign;
             }
             return $"{radioCall.Sender.Callsign}, {responseCallsign}, ";
         }

@@ -34,7 +34,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
             }
             catch (InvalidOperationException)
             {
-                return "There are no ATC services currently available at this airfield";
+                return "There are no ATC services currently available at this airfield.";
             }
             try
             {
@@ -43,7 +43,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
             }
             catch (TaxiPathNotFoundException)
             {
-                return $"We could not find a path from your position to {taxiInstructions.DestinationName}";
+                return $"We could not find a path from your position to {taxiInstructions.DestinationName}.";
             }
         }
 
@@ -61,7 +61,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
                 spokenInstructions += $", {string.Join(", ", taxiInstructions.Comments)}";
             }
 
-            return spokenInstructions;
+            return spokenInstructions+ ".";
         }
 
         private static string Random(Array array)

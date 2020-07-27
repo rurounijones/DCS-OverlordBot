@@ -29,7 +29,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
             }
             else
             {
-                response = "Picture is clean";
+                response = "Picture is clean.";
             }
 
             return response;
@@ -47,7 +47,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
 
             if (name != null)
             {
-                response += $", type <break time=\"50\" /> {name}";
+                response += $", type <break time=\"50\" /> {name}.";
             }
 
             return response;

@@ -290,7 +290,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
         {
             string transmission = $"Transmission Intent: {radioCall.Intent}\n" +
                 $"Request: {radioCall.Message}\n" +
-                $"Response: {response ?? "INGORED"}\n";
+                $"Response: {response ?? "INGORED"}";
             _ = DiscordClient.LogTransmissionToDiscord(transmission, _radioInfo).ConfigureAwait(false);
         }
 

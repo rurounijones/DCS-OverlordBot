@@ -36,11 +36,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
                         angels = (altitude % 1000 >= 500 ? altitude + 1000 - altitude % 1000 : altitude - altitude % 1000) / 1000;
                     }
 
-                    response = $"Bra, {bearing}, {range}, angels {angels}";
+                    response = $"Bra, {bearing}, {range}, angels {angels}.";
                 }
                 else
                 {
-                    response = $"I cannot find {""} {0} {0}";
+                    response = $"I cannot find {""} {0} {0}.";
                 }
             }
 

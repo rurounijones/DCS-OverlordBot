@@ -60,19 +60,19 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
 
             if (enemies == true && (friendlies == true || neutrals == true))
             {
-                return "furball";
+                return "furball.";
             }
             else if (enemies == false && (friendlies == true || neutrals == true))
             {
-                return "friendly";
+                return "friendly.";
             }
             else if (enemies == true && (friendlies == false && neutrals == false))
             {
-                return "hostile";
+                return "hostile.";
             }
             else
             {
-                return "unknown";
+                return "unknown.";
             }
         }
         private static double NauticalMilesToMeters(double nauticalMiles)
