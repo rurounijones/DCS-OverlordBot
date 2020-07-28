@@ -83,6 +83,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
 
                 Contact contact = await GameQuerier.GetBogeyDope(_sender.Coalition, _sender.Group, _sender.Flight, _sender.Plane);
 
+                if (contact == null)
+                {
+                    Logger.Debug($"No contacts found for {_sender.Id})");
+                    return;
+                }
+
                 if (contact.Range > _distance)
                 {
                     Logger.Debug($"Contact {contact.Id} is more than {_distance} miles ({contact.Range})");
