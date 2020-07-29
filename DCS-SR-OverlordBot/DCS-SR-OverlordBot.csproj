@@ -601,6 +601,7 @@
     <None Include="Overlord\Data\Airfields.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Overlord\Data\sort_airfields.rb" />
     <None Include="Overlord\luis-app-definition.json" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
