@@ -255,6 +255,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
         private string CreateResponse(BaseRadioCall radioCall)
         {
+            if(radioCall.Intent == "None")
+                return Task.Run(() => controller.None(radioCall)).Result;
+
             if (radioCall.Sender == null)
                 return Task.Run(() => controller.NullSender(radioCall)).Result;
 
@@ -263,8 +266,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
             switch (radioCall.Intent)
             {
-                case "None":
-                    return Task.Run(() => controller.None(radioCall)).Result;
                 case "RadioCheck":
                     return Task.Run(() => controller.RadioCheck(radioCall)).Result;
                 case "BogeyDope":
