@@ -423,6 +423,7 @@
     <Compile Include="Overlord\RadioCalls\DeclareRadioCall.cs" />
     <Compile Include="Overlord\RadioCalls\SetWarningRadiusRadioCall.cs" />
     <Compile Include="Overlord\SpeechOutput\AirbasePronouncer.cs" />
+    <Compile Include="Overlord\SpeechOutput\AircraftReportingNamePronouncer.cs" />
     <Compile Include="Overlord\SpeechRecognition\LuisServiceV3.cs" />
     <Compile Include="Overlord\GameState\Player.cs" />
     <Compile Include="Overlord\SpeechOutput\RadioStreamWriter.cs" />
