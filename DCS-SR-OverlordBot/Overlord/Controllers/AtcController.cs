@@ -1,4 +1,5 @@
 ﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechOutput;
 using RurouniJones.DCS.Airfields;
 using System.Collections.Concurrent;
 using System.Linq;
@@ -81,7 +82,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
             string name;
             if (Populator.Airfields.Where(airfield => airfield.Name.Equals(radioCall.AirbaseName)).ToList().Count > 0)
             {
-                name = Intents.BearingToAirbase.PronounceAirbase(radioCall.AirbaseName);
+                name = AirbasePronouncer.PronounceAirbase(radioCall.AirbaseName);
             }
             else
             {
