@@ -35,6 +35,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
 
         public abstract string ReadyToTaxi(BaseRadioCall radioCall);
 
+        public abstract string InboundToAirbase(BaseRadioCall radioCall);
+
         protected abstract bool IsAddressedToController(BaseRadioCall radioCall);
 
     }

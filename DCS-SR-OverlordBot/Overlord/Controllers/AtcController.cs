@@ -66,6 +66,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
             return "Last transmitter, I could not recognise your call-sign";
         }
 
+        public override string InboundToAirbase(BaseRadioCall radioCall)
+        {
+            return ResponsePrefix(radioCall) + "copy inbound.";
+        }
+
         public override string UnverifiedSender(BaseRadioCall radioCall)
         {
             return ResponsePrefix(radioCall) + "I cannot find you on scope.";

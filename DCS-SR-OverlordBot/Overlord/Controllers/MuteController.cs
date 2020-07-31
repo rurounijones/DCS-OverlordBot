@@ -55,6 +55,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
             return null;
         }
 
+        public override string InboundToAirbase(BaseRadioCall radioCall)
+        {
+            return null;
+        }
+
         public override string NullSender(BaseRadioCall radioCall)
         {
             return null;

@@ -76,6 +76,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
             return ResponsePrefix(radioCall) + "this is an AWACS frequency.";
         }
 
+        public override string InboundToAirbase(BaseRadioCall radioCall)
+        {
+            return ResponsePrefix(radioCall) + "this is an AWACS frequency.";
+        }
+
         public override string NullSender(BaseRadioCall radioCall)
         {
             if (!IsAddressedToController(radioCall))
