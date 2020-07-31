@@ -8,7 +8,6 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Windows;
-using System.Windows.Input;
 
 namespace TaxiViewer
 {
@@ -174,7 +173,7 @@ namespace TaxiViewer
                     }
                     else
                     {
-                        reverseCost = 999;
+                        reverseCost = 1;
                         reverseEdge.Attr.Color = Color.Red;
                     }
 
