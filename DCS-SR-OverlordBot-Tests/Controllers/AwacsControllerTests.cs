@@ -27,7 +27,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
                 var mock = new Mock<BaseRadioCall>("");
                 var radioCall = mock.Object;
 
-                string response = Controller.None(radioCall);
+                string response = Controller.ProcessRadioCall(radioCall);
 
                 Assert.IsNull(response);
             }
@@ -66,7 +66,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
                 var radioCall = _mock.Object;
 
                 string expected = "dolt 1 2, Overlord, this is an AWACS frequency.";
-                string response = _controller.ReadyToTaxi(radioCall);
+                string response = _controller.ProcessRadioCall(radioCall);
 
                 Assert.AreEqual(expected, response);
             }
@@ -84,7 +84,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
                 var radioCall = _mock.Object;
 
                 string expected = "dolt 1 2, Magic, this is an AWACS frequency.";
-                string response = _controller.ReadyToTaxi(radioCall);
+                string response = _controller.ProcessRadioCall(radioCall);
 
                 Assert.AreEqual(expected, response);
             }
@@ -111,7 +111,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
                 var radioCall = _mock.Object;
 
                 string expected = "Last transmitter, I could not recognise your call-sign.";
-                string response = _controller.NullSender(radioCall);
+                string response = _controller.ProcessRadioCall(radioCall);
 
                 Assert.AreEqual(expected, response);
             }
@@ -129,7 +129,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
 
                 var radioCall = _mock.Object;
 
-                string response = _controller.NullSender(radioCall);
+                string response = _controller.ProcessRadioCall(radioCall);
 
                 Assert.IsNull(response);
             }
@@ -167,7 +167,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
                 var radioCall = _mock.Object;
 
                 string expected = "dolt 1 2, Darkstar, I cannot find you on scope.";
-                string response = _controller.UnverifiedSender(radioCall);
+                string response = _controller.ProcessRadioCall(radioCall);
 
                 Assert.AreEqual(expected, response);
             }
@@ -182,7 +182,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
                 var radioCall = _mock.Object;
 
                 string expected = "dolt 1 2, Overlord, I cannot find you on scope.";
-                string response = _controller.UnverifiedSender(radioCall);
+                string response = _controller.ProcessRadioCall(radioCall);
 
                 Assert.AreEqual(expected, response);
             }
@@ -199,7 +199,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
                 var radioCall = _mock.Object;
 
                 string expected = "dolt 1 2, Magic, I cannot find you on scope.";
-                string response = _controller.UnverifiedSender(radioCall);
+                string response = _controller.ProcessRadioCall(radioCall);
 
                 Assert.AreEqual(expected, response);
             }
@@ -215,7 +215,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
 
                 var radioCall = _mock.Object;
 
-                string response = _controller.UnverifiedSender(radioCall);
+                string response = _controller.ProcessRadioCall(radioCall);
 
                 Assert.IsNull(response);
             }
@@ -253,7 +253,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
                 var radioCall = _mock.Object;
 
                 string expected = "dolt 1 2, Darkstar, we do not support picture calls.";
-                string response = _controller.Picture(radioCall);
+                string response = _controller.ProcessRadioCall(radioCall);
 
                 Assert.AreEqual(expected, response);
             }
@@ -268,7 +268,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
                 var radioCall = _mock.Object;
 
                 string expected = "dolt 1 2, Overlord, we do not support picture calls.";
-                string response = _controller.Picture(radioCall);
+                string response = _controller.ProcessRadioCall(radioCall);
 
                 Assert.AreEqual(expected, response);
             }
@@ -285,7 +285,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
                 var radioCall = _mock.Object;
 
                 string expected = "dolt 1 2, Magic, we do not support picture calls.";
-                string response = _controller.Picture(radioCall);
+                string response = _controller.ProcessRadioCall(radioCall);
 
                 Assert.AreEqual(expected, response);
             }
@@ -301,7 +301,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
 
                 var radioCall = _mock.Object;
 
-                string response = _controller.Picture(radioCall);
+                string response = _controller.ProcessRadioCall(radioCall);
 
                 Assert.IsNull(response);
             }
@@ -339,7 +339,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
                 var radioCall = _mock.Object;
 
                 string expected = "dolt 1 2, Darkstar, I could not understand your transmission.";
-                string response = _controller.Unknown(radioCall);
+                string response = _controller.ProcessRadioCall(radioCall);
 
                 Assert.AreEqual(expected, response);
             }
@@ -354,7 +354,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
                 var radioCall = _mock.Object;
 
                 string expected = "dolt 1 2, Overlord, I could not understand your transmission.";
-                string response = _controller.Unknown(radioCall);
+                string response = _controller.ProcessRadioCall(radioCall);
 
                 Assert.AreEqual(expected, response);
             }
@@ -371,7 +371,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
                 var radioCall = _mock.Object;
 
                 string expected = "dolt 1 2, Magic, I could not understand your transmission.";
-                string response = _controller.Unknown(radioCall);
+                string response = _controller.ProcessRadioCall(radioCall);
 
                 Assert.AreEqual(expected, response);
             }
@@ -387,7 +387,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
 
                 var radioCall = _mock.Object;
 
-                string response = _controller.Unknown(radioCall);
+                string response = _controller.ProcessRadioCall(radioCall);
 
                 Assert.IsNull(response);
             }

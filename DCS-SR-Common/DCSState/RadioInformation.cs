@@ -1,5 +1,6 @@
 ﻿using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
 using Newtonsoft.Json;
+using System.Collections.Concurrent;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common
 {
@@ -91,6 +92,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
 
         [JsonNetworkIgnoreSerialization]
         public string botType = null;
+
+        [JsonNetworkIgnoreSerialization]
+        public ConcurrentQueue<byte[]> TransmissionQueue { get; set; }
 
         [JsonNetworkIgnoreSerialization]
         public ulong discordTransmissionLogChannelId = 0;

@@ -8,40 +8,40 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public override string None(BaseRadioCall radioCall)
+        protected override string None(BaseRadioCall radioCall)
         {
             return null;
         }
 
-        public override string Unknown(BaseRadioCall radioCall)
+        protected override string Unknown(BaseRadioCall radioCall)
         {
             if (!IsAddressedToController(radioCall))
                 return null;
             return ResponsePrefix(radioCall) + "I could not understand your transmission.";
         }
 
-        public override string RadioCheck(BaseRadioCall radioCall)
+        protected override string RadioCheck(BaseRadioCall radioCall)
         {
             if (!IsAddressedToController(radioCall))
                 return null;
             return ResponsePrefix(radioCall) + "five-by-five.";
         }
 
-        public override string BogeyDope(BaseRadioCall radioCall)
+        protected override string BogeyDope(BaseRadioCall radioCall)
         {
             if (!IsAddressedToController(radioCall) || radioCall.Sender.Coalition == Coalition.Neutral)
                 return null;
             return ResponsePrefix(radioCall) + Intents.BogeyDope.Process(radioCall).Result;
         }
 
-        public override string BearingToAirbase(BaseRadioCall radioCall)
+        protected override string BearingToAirbase(BaseRadioCall radioCall)
         {
             if (!IsAddressedToController(radioCall) || radioCall.Sender.Coalition == Coalition.Neutral)
                 return null;
             return ResponsePrefix(radioCall) + Intents.BearingToAirbase.Process(radioCall).Result;
         }
 
-        public override string BearingToFriendlyPlayer(BaseRadioCall radioCall)
+        protected override string BearingToFriendlyPlayer(BaseRadioCall radioCall)
         {
             if (!IsAddressedToController(radioCall) || radioCall.Sender.Coalition == Coalition.Neutral)
                 return null;
@@ -49,7 +49,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
 
         }
 
-        public override string Declare(BaseRadioCall radioCall)
+        protected override string Declare(BaseRadioCall radioCall)
         {
             if (!IsAddressedToController(radioCall) || radioCall.Sender.Coalition == Coalition.Neutral)
                 return null;
@@ -57,38 +57,38 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
 
         }
 
-        public override string Picture(BaseRadioCall radioCall)
+        protected override string Picture(BaseRadioCall radioCall)
         {
             if (!IsAddressedToController(radioCall))
                 return null;
             return ResponsePrefix(radioCall) + "we do not support picture calls.";
         }
 
-        public override string SetWarningRadius(BaseRadioCall radioCall, string voice, ConcurrentQueue<byte[]> responseQueue)
+        protected override string SetWarningRadius(BaseRadioCall radioCall, string voice, ConcurrentQueue<byte[]> responseQueue)
         {
             if (!IsAddressedToController(radioCall) || radioCall.Sender.Coalition == Coalition.Neutral)
                 return null;
             return ResponsePrefix(radioCall) + Intents.SetWarningRadius.Process(new SetWarningRadiusRadioCall(radioCall), voice, responseQueue).Result;
         }
 
-        public override string ReadyToTaxi(BaseRadioCall radioCall)
+        protected override string ReadyToTaxi(BaseRadioCall radioCall)
         {
             return ResponsePrefix(radioCall) + "this is an AWACS frequency.";
         }
 
-        public override string InboundToAirbase(BaseRadioCall radioCall)
+        protected override string InboundToAirbase(BaseRadioCall radioCall)
         {
             return ResponsePrefix(radioCall) + "this is an AWACS frequency.";
         }
 
-        public override string NullSender(BaseRadioCall radioCall)
+        protected override string NullSender(BaseRadioCall radioCall)
         {
             if (!IsAddressedToController(radioCall))
                 return null;
             return "Last transmitter, I could not recognise your call-sign.";
         }
 
-        public override string UnverifiedSender(BaseRadioCall radioCall)
+        protected override string UnverifiedSender(BaseRadioCall radioCall)
         {
             if (!IsAddressedToController(radioCall))
                 return null;

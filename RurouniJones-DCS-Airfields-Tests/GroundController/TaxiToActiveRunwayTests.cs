@@ -10,8 +10,8 @@ namespace RurouniJones.DCS.Airfields.Controllers.Tests
     {
         public static IEnumerable<object[]> TaxiScenarios()
         {
-            yield return new object[] { new TaxiScenario("Al-Dhafra", "Ramp 1", 90, new Point(24.244862290776, 54.562445823216), "Runway-3 1 Right", new List<string>() { "Alfa" }) };
-            yield return new object[] { new TaxiScenario("Al-Dhafra", "Uniform Slots 1", 90, new Point(24.216944646008, 54.563235561423), "Runway-3 1 Left", new List<string>() { "Uniform", "Uniform 0" }) };
+            yield return new object[] { new TaxiScenario("Al Dhafra AB", "Ramp 1", 310, new Point(24.244862290776, 54.562445823216), "Runway-3 1 Right", new List<string>() { "Alfa" }) };
+            yield return new object[] { new TaxiScenario("Al Dhafra AB", "Uniform Spots 1", 310, new Point(24.216944646008, 54.563235561423), "Runway-3 1 Left", new List<string>() { "Uniform", "Uniform 0" }) };
 
             yield return new object[] { new TaxiScenario("Anapa-Vityazevo", "Apron 1", 90, new Point(45.0101581, 37.3481765), "Runway-0 4", new List<string>() { "Mike", "Alpha" }) };
 
