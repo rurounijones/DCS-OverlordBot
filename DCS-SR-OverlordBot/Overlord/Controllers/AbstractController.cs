@@ -21,8 +21,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
         public string Voice { get; set; }
 
         /// <summary>
-        /// The voice that the controller users to speak. 
-        /// <see cref="https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support#standard-voices"/>
+        /// The radio the controller is listening to.
         /// </summary>
         public RadioInformation Radio { get; set; }
 
@@ -50,7 +49,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
                 case "SetWarningRadius":
                     return Task.Run(() => SetWarningRadius(radioCall, Voice, Radio.TransmissionQueue)).Result;
                 case "Picture":
-                    return Task.Run(() => Declare(radioCall)).Result;
+                    return Task.Run(() => Picture(radioCall)).Result;
                 case "Declare":
                     return Task.Run(() => Declare(radioCall)).Result;
                 case "ReadyToTaxi":
