@@ -8,12 +8,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
 {
     partial class GameQuerier
     {
-        public static async Task<bool> GetPilotData(BaseRadioCall radioCall)
+        public static async Task PopulatePilotData(BaseRadioCall radioCall)
         {
-            return GetPilotData(radioCall.Sender).Result;
+            await PopulatePilotData(radioCall.Sender);
         }
 
-        public static async Task<bool> GetPilotData(Player sender)
+        public static async Task PopulatePilotData(Player sender)
         {
             var group = sender.Group;
             var flight = sender.Flight;
@@ -40,13 +40,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
                         sender.Coalition = (Coalition)coalition;
                         sender.Pilot = pilot;
                         sender.Altitude = altitude;
-                        return true;
                     }
                     else
                     {
                         sender.Id = null;
                         dbDataReader.Close();
-                        return false;
                     }
                 }
             }

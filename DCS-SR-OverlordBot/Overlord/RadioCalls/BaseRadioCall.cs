@@ -1,6 +1,7 @@
 ﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls.LuisModels;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls
 {
@@ -107,6 +108,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls
         public BaseRadioCall(string luisJson)
         {
             LuisResponse = JsonConvert.DeserializeObject<LuisResponse>(luisJson);
+            Task.Run(() => GameQuerier.PopulatePilotData(this));
         }
 
         public BaseRadioCall(BaseRadioCall baseRadioCall)

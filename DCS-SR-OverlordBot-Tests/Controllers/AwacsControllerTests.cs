@@ -25,6 +25,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
             public void IgnoresTheCall()
             {
                 var mock = new Mock<BaseRadioCall>("");
+                mock.SetupGet(call => call.Intent).Returns("None");
+
                 var radioCall = mock.Object;
 
                 string response = Controller.ProcessRadioCall(radioCall);
@@ -47,12 +49,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
 
                 _sender = new Player()
                 {
+                    Id = "a1",
                     Group = "dolt",
                     Flight = 1,
                     Plane = 2
                 };
 
                 _mock = new Mock<BaseRadioCall>("");
+                _mock.SetupGet(call => call.Intent).Returns("ReadyToTaxi");
+
             }
 
             [TestMethod]
@@ -78,7 +83,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
 
                 _mock.SetupGet(call => call.Sender).Returns(_sender);
                 _mock.SetupGet(call => call.ReceiverName).Returns("Krymsk");
-                _mock.SetupGet(call => call.AwacsCallsign).Returns((string)null);
+                _mock.SetupGet(call => call.AwacsCallsign).Returns("Magic");
                 _mock.SetupGet(call => call.AirbaseName).Returns("Krymsk");
 
                 var radioCall = _mock.Object;
@@ -149,6 +154,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
 
                 _sender = new Player()
                 {
+                    Id = null,
                     Group = "dolt",
                     Flight = 1,
                     Plane = 2
@@ -235,12 +241,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
 
                 _sender = new Player()
                 {
+                    Id = "a1",
                     Group = "dolt",
                     Flight = 1,
                     Plane = 2
                 };
 
                 _mock = new Mock<BaseRadioCall>("");
+                _mock.SetupGet(call => call.Intent).Returns("Picture");
+
             }
 
             [TestMethod]
@@ -321,6 +330,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
 
                 _sender = new Player()
                 {
+                    Id = "a1",
                     Group = "dolt",
                     Flight = 1,
                     Plane = 2

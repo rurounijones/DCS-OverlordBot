@@ -33,7 +33,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
             if (radioCall.Sender == null)
                 return Task.Run(() => NullSender(radioCall)).Result;
 
-            if (!Task.Run(() => GameQuerier.GetPilotData(radioCall)).Result)
+            if (radioCall.Sender.Id == null)
                 return Task.Run(() => UnverifiedSender(radioCall)).Result;
 
             switch (radioCall.Intent)

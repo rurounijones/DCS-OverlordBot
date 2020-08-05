@@ -69,7 +69,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
                     _warningStates.TryAdd(_sender.Id, new List<string>());
                 }
                 var previousId = _sender.Id;
-                await GameQuerier.GetPilotData(_sender);
+                await GameQuerier.PopulatePilotData(_sender);
 
                 // If the caller does not exist any more or the ID has been reused for a different object
                 // then cancel the check.
