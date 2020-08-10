@@ -13,7 +13,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
             var queryString = HttpUtility.ParseQueryString(string.Empty);
 
             // The request header contains your subscription key
-            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", Settings.LUIS_ENDPOINT_KEY);
+            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", Properties.Settings.Default.LuisEndpointKey);
 
             // The "q" parameter contains the utterance to send to LUIS
             queryString["q"] = text;
@@ -24,7 +24,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
             queryString["spellCheck"] = "false";
             queryString["staging"] = "false";
 
-            var endpointUri = $"https://{Settings.SPEECH_REGION}.api.cognitive.microsoft.com/luis/v2.0/apps/{Settings.LUIS_APP_ID}?{queryString}";
+            var endpointUri = $"https://{Properties.Settings.Default.SpeechRegion}.api.cognitive.microsoft.com/luis/v2.0/apps/{Properties.Settings.Default.LuisAppId}?{queryString}";
             var response = await client.GetAsync(endpointUri);
 
             return await response.Content.ReadAsStringAsync();

@@ -8,10 +8,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
 
         private static string ConnectionString()
         {
-            var connectionString = $"Host={Settings.TAC_SCRIBE_HOST};Port={Settings.TAC_SCRIBE_PORT};Database={Settings.TAC_SCRIBE_DATABASE};" +
-                                                 $"Username={Settings.TAC_SCRIBE_USERNAME};Password={Settings.TAC_SCRIBE_PASSWORD};";
+            var connectionString = $"Host={Properties.Settings.Default.TacScribeHost};Port={Properties.Settings.Default.TacScribePort};Database={Properties.Settings.Default.TacScribeDatabase};" +
+                                                 $"Username={Properties.Settings.Default.TacScribeUsername};Password={Properties.Settings.Default.TacScribePassword};";
 
-            if (Settings.TAC_SCRIBE_FORCE_SSL == true)
+            if (Properties.Settings.Default.TacScribeForceSSL)
             {
                 connectionString += "sslmode=Require;";
             }
