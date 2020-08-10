@@ -18,6 +18,6 @@
 
         public SetWarningRadiusRadioCall(string luisResponse) : base(luisResponse) { }
 
-        public SetWarningRadiusRadioCall(BaseRadioCall baseRadioCall) : base(baseRadioCall) { }
+        public SetWarningRadiusRadioCall(IRadioCall baseRadioCall) : base(baseRadioCall) { }
     }
 }

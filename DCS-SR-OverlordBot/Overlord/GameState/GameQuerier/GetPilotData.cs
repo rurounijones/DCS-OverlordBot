@@ -15,6 +15,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
 
         public static async Task PopulatePilotData(Player sender)
         {
+            if (sender == null)
+                return;
             var group = sender.Group;
             var flight = sender.Flight;
             var plane = sender.Plane;

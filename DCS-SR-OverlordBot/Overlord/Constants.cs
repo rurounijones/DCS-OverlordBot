@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using RurouniJones.DCS.Airfields;
+using RurouniJones.DCS.Airfields.Structure;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
 {
@@ -6,7 +9,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
     {
         public static readonly List<Airfield> Airfields = Populator.Airfields;
     }
-
     public enum Coalition
     {
         Neutral,

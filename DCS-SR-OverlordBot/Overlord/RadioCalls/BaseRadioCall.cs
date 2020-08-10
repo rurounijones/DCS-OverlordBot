@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls
 {
-    public class BaseRadioCall
+    public class BaseRadioCall : IRadioCall
     {
         /// <summary>
         /// The deserialized response from the Azure Language Understanding application.
         /// </summary>
-        public LuisResponse LuisResponse;
+        public LuisResponse LuisResponse { get; }
 
         /// <summary>
         /// The intent of the radio transmission
@@ -108,10 +108,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls
         public BaseRadioCall(string luisJson)
         {
             LuisResponse = JsonConvert.DeserializeObject<LuisResponse>(luisJson);
-            Task.Run(() => GameQuerier.PopulatePilotData(this));
+            Task.Run(async () => await GameQuerier.PopulatePilotData(this)).Wait();
         }
 
-        public BaseRadioCall(BaseRadioCall baseRadioCall)
+        public BaseRadioCall(IRadioCall baseRadioCall)
         {
             LuisResponse = baseRadioCall.LuisResponse;
             Sender = baseRadioCall.Sender;

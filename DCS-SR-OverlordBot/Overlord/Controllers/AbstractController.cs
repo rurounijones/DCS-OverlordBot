@@ -25,7 +25,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
         /// </summary>
         public RadioInformation Radio { get; set; }
 
-        public string ProcessRadioCall(BaseRadioCall radioCall)
+        public string ProcessRadioCall(IRadioCall radioCall)
         {
             if (radioCall.Intent == "None")
                 return Task.Run(() => None(radioCall)).Result;
@@ -61,33 +61,33 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
             };
         }
 
-        protected abstract string NullSender(BaseRadioCall radioCall);
+        protected abstract string NullSender(IRadioCall radioCall);
 
-        protected abstract string UnverifiedSender(BaseRadioCall radioCall);
+        protected abstract string UnverifiedSender(IRadioCall radioCall);
 
-        protected abstract string None(BaseRadioCall radioCall);
+        protected abstract string None(IRadioCall radioCall);
 
-        protected abstract string Unknown(BaseRadioCall radioCall);
+        protected abstract string Unknown(IRadioCall radioCall);
 
-        protected abstract string RadioCheck(BaseRadioCall radioCall);
+        protected abstract string RadioCheck(IRadioCall radioCall);
 
-        protected abstract string BogeyDope(BaseRadioCall radioCall);
+        protected abstract string BogeyDope(IRadioCall radioCall);
 
-        protected abstract string BearingToAirbase(BaseRadioCall radioCall);
+        protected abstract string BearingToAirbase(IRadioCall radioCall);
 
-        protected abstract string BearingToFriendlyPlayer(BaseRadioCall radioCall);
+        protected abstract string BearingToFriendlyPlayer(IRadioCall radioCall);
 
-        protected abstract string Declare(BaseRadioCall radioCall);
+        protected abstract string Declare(IRadioCall radioCall);
 
-        protected abstract string Picture(BaseRadioCall radioCall);
+        protected abstract string Picture(IRadioCall radioCall);
 
-        protected abstract string SetWarningRadius(BaseRadioCall radioCall, string voice, ConcurrentQueue<byte[]> responseQueue);
+        protected abstract string SetWarningRadius(IRadioCall radioCall, string voice, ConcurrentQueue<byte[]> responseQueue);
 
-        protected abstract string ReadyToTaxi(BaseRadioCall radioCall);
+        protected abstract string ReadyToTaxi(IRadioCall radioCall);
 
-        protected abstract string InboundToAirbase(BaseRadioCall radioCall);
+        protected abstract string InboundToAirbase(IRadioCall radioCall);
 
-        protected abstract bool IsAddressedToController(BaseRadioCall radioCall);
+        protected abstract bool IsAddressedToController(IRadioCall radioCall);
 
     }
 }

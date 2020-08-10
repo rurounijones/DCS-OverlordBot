@@ -6,10 +6,10 @@ using System.Windows;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Discord;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Util;
 using NLog;
 using Npgsql;
 using Npgsql.Logging;
-using RurouniJones.DCS.Airfields;
 
 namespace DCS_SR_Client
 {
@@ -20,6 +20,7 @@ namespace DCS_SR_Client
     {
         private System.Windows.Forms.NotifyIcon _notifyIcon;
         private readonly bool loggingReady = false;
+        private Timer airfieldUpdateTimer;
 
         private static readonly CancellationTokenSource _tokenSource = new CancellationTokenSource();
 
@@ -57,6 +58,13 @@ namespace DCS_SR_Client
             NpgsqlLogManager.IsParameterLoggingEnabled = true;
 
             Task.Run(async () => await DiscordClient.Connect());
+
+            airfieldUpdateTimer = new Timer(UpdateAirfields, null, 0, 60000);
+        }
+
+        private void UpdateAirfields(object stateInfo)
+        {
+            AirfieldUpdater.UpdateAirfields();
         }
 
         private void InitNotificationIcon()

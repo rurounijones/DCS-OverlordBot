@@ -17,12 +17,12 @@ namespace RurouniJones.DCS.Airfields.Controllers.Tests
             yield return new object[] { new TaxiScenario("Anapa-Vityazevo", "Echo Spots", 90, new Point(45.0094606, 37.3635130), "Runway-0 4", new List<string>() { "Echo", "Delta", "Mike", "Alpha" },
                 new List<string>() { "Cross Runway-2 2 at your discretion" }) };
 
+            yield return new object[] { new TaxiScenario("Anapa-Vityazevo", "Apron 1", -1, new Point(45.0101581, 37.3481765), "Runway-0 4", new List<string>() { "Mike", "Alpha" }) };
+            
             yield return new object[] { new TaxiScenario("Anapa-Vityazevo", "Apron 1", 270, new Point(45.0101581, 37.3481765), "Runway-2 2", new List<string>() { "Mike", "Delta" }) };
             yield return new object[] { new TaxiScenario("Anapa-Vityazevo", "Echo Spots", 270, new Point(45.0094606, 37.3635130), "Runway-2 2", new List<string>() { "Echo" }) };
-
-
-            yield return new object[] { new TaxiScenario("Krasnodar-Center", "Echo Spots 1", 90, new Point(45.082339143765, 38.954220071576), "Runway-2 7", new List<string>() { "Echo" }) };
-
+            
+            yield return new object[] { new TaxiScenario("Krasnodar-Center", "Echo Spots 1", 270, new Point(45.082339143765, 38.954220071576), "Runway-2 7", new List<string>() { "Echo" }) };
 
             yield return new object[] { new TaxiScenario("Krasnodar-Pashkovsky", "Apron A", 90, new Point(45.038881971882, 39.14140614585), "Runway-0 5 Left", new List<string>() { "Alfa" }) };
             yield return new object[] { new TaxiScenario("Krasnodar-Pashkovsky", "Apron 1", 90, new Point(45.047601257612, 39.200777416505), "Runway-0 5 Right", new List<string>() { "November", "Echo" }) };
@@ -39,7 +39,7 @@ namespace RurouniJones.DCS.Airfields.Controllers.Tests
             var airfield = Populator.Airfields.First(af => af.Name.Equals(scenario.Airfield));
             var controller = new GroundController(airfield);
 
-            airfield.WindSource = scenario.Wind;
+            airfield.WindHeading = scenario.Wind;
             TaxiInstructions expected = new TaxiInstructions()
             {
                 DestinationName = scenario.Destination,

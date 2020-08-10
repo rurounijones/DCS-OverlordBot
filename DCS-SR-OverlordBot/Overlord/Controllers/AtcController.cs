@@ -1,6 +1,7 @@
-﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls;
+﻿using static Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Constants;
+
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechOutput;
-using RurouniJones.DCS.Airfields;
 using System.Collections.Concurrent;
 using System.Linq;
 
@@ -8,93 +9,83 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
 {
     public class AtcController : AbstractController
     {
-
-        protected override string None(BaseRadioCall radioCall)
+        protected override string None(IRadioCall radioCall)
         {
             return null;
         }
 
-        protected override string Unknown(BaseRadioCall radioCall)
+        protected override string Unknown(IRadioCall radioCall)
         {
-            return ResponsePrefix(radioCall) + "I could not understand your transmission";
+            return ResponsePrefix(radioCall) + ", I could not understand your transmission";
         }
 
-        protected override string RadioCheck(BaseRadioCall radioCall)
+        protected override string RadioCheck(IRadioCall radioCall)
         {
-            return ResponsePrefix(radioCall) + $" ground, five-by-five";
+            return ResponsePrefix(radioCall) + "ground, five-by-five";
         }
 
-        protected override string BogeyDope(BaseRadioCall radioCall)
-        {
-            return $"{radioCall.Sender.Callsign}, This is an ATC frequency";
-        }
-
-        protected override string BearingToAirbase(BaseRadioCall radioCall)
+        protected override string BogeyDope(IRadioCall radioCall)
         {
             return $"{radioCall.Sender.Callsign}, This is an ATC frequency";
         }
 
-        protected override string BearingToFriendlyPlayer(BaseRadioCall radioCall)
+        protected override string BearingToAirbase(IRadioCall radioCall)
         {
             return $"{radioCall.Sender.Callsign}, This is an ATC frequency";
         }
 
-        protected override string Declare(BaseRadioCall radioCall)
+        protected override string BearingToFriendlyPlayer(IRadioCall radioCall)
         {
             return $"{radioCall.Sender.Callsign}, This is an ATC frequency";
         }
 
-        protected override string Picture(BaseRadioCall radioCall)
+        protected override string Declare(IRadioCall radioCall)
         {
             return $"{radioCall.Sender.Callsign}, This is an ATC frequency";
         }
 
-        protected override string SetWarningRadius(BaseRadioCall radioCall, string voice, ConcurrentQueue<byte[]> responseQueue)
+        protected override string Picture(IRadioCall radioCall)
         {
             return $"{radioCall.Sender.Callsign}, This is an ATC frequency";
         }
 
-        protected override string ReadyToTaxi(BaseRadioCall radioCall)
+        protected override string SetWarningRadius(IRadioCall radioCall, string voice, ConcurrentQueue<byte[]> responseQueue)
+        {
+            return $"{radioCall.Sender.Callsign}, This is an ATC frequency";
+        }
+
+        protected override string ReadyToTaxi(IRadioCall radioCall)
         {
             if (!IsAddressedToController(radioCall))
                 return null;
             return ResponsePrefix(radioCall) + "ground, " + Intents.ReadytoTaxi.Process(radioCall).Result;
         }
 
-        protected override string NullSender(BaseRadioCall _)
+        protected override string NullSender(IRadioCall _)
         {
-            return "Last transmitter, I could not recognise your call-sign";
+            return "Last transmitter, I could not recognize your call-sign";
         }
 
-        protected override string InboundToAirbase(BaseRadioCall radioCall)
+        protected override string InboundToAirbase(IRadioCall radioCall)
         {
-            return ResponsePrefix(radioCall) + "copy inbound.";
+            return ResponsePrefix(radioCall) + "tower , copy inbound.";
         }
 
-        protected override string UnverifiedSender(BaseRadioCall radioCall)
+        protected override string UnverifiedSender(IRadioCall radioCall)
         {
-            return ResponsePrefix(radioCall) + "I cannot find you on scope.";
+            return ResponsePrefix(radioCall) + ", I cannot find you on scope.";
         }
 
-        protected override bool IsAddressedToController(BaseRadioCall radioCall)
+        protected override bool IsAddressedToController(IRadioCall radioCall)
         {
             // TODO, make this return false unless a known airbase name has been used.
             return true;
         }
 
-        private string ResponsePrefix(BaseRadioCall radioCall)
+        private static string ResponsePrefix(IRadioCall radioCall)
         {
-            string name;
-            if (Populator.Airfields.Where(airfield => airfield.Name.Equals(radioCall.AirbaseName)).ToList().Count > 0)
-            {
-                name = AirbasePronouncer.PronounceAirbase(radioCall.AirbaseName);
-            }
-            else
-            {
-                name = "ATC";
-            }
-
-            return $"{radioCall.Sender.Callsign}, {name}, ";
+            var name = Airfields.Where(airfield => airfield.Name.Equals(radioCall.AirbaseName)).ToList().Count > 0 ? AirbasePronouncer.PronounceAirbase(radioCall.AirbaseName) : "ATC";
+            return $"{radioCall.Sender.Callsign}, {name} ";
         }
     }
 }

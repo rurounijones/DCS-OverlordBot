@@ -5,72 +5,72 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
 {
     public class MuteController : AbstractController
     {
-        protected override string None(BaseRadioCall radioCall)
+        protected override string None(IRadioCall radioCall)
         {
             return null;
         }
 
-        protected override string Unknown(BaseRadioCall radioCall)
+        protected override string Unknown(IRadioCall radioCall)
         {
             return null;
         }
 
-        protected override string RadioCheck(BaseRadioCall radioCall)
+        protected override string RadioCheck(IRadioCall radioCall)
         {
             return null;
         }
 
-        protected override string BogeyDope(BaseRadioCall radioCall)
+        protected override string BogeyDope(IRadioCall radioCall)
         {
             return null;
         }
 
-        protected override string BearingToAirbase(BaseRadioCall radioCall)
+        protected override string BearingToAirbase(IRadioCall radioCall)
         {
             return null;
         }
 
-        protected override string BearingToFriendlyPlayer(BaseRadioCall radioCall)
+        protected override string BearingToFriendlyPlayer(IRadioCall radioCall)
         {
             return null;
         }
 
-        protected override string Declare(BaseRadioCall radioCall)
+        protected override string Declare(IRadioCall radioCall)
         {
             return null;
         }
 
-        protected override string Picture(BaseRadioCall radioCall)
+        protected override string Picture(IRadioCall radioCall)
         {
             return null;
         }
 
-        protected override string SetWarningRadius(BaseRadioCall radioCall, string voice, ConcurrentQueue<byte[]> responseQueue)
+        protected override string SetWarningRadius(IRadioCall radioCall, string voice, ConcurrentQueue<byte[]> responseQueue)
         {
             return null;
         }
 
-        protected override string ReadyToTaxi(BaseRadioCall radioCall)
+        protected override string ReadyToTaxi(IRadioCall radioCall)
         {
             return null;
         }
 
-        protected override string InboundToAirbase(BaseRadioCall radioCall)
+        protected override string InboundToAirbase(IRadioCall radioCall)
         {
             return null;
         }
 
-        protected override string NullSender(BaseRadioCall radioCall)
+        protected override string NullSender(IRadioCall radioCall)
         {
             return null;
         }
 
-        protected override string UnverifiedSender(BaseRadioCall radioCall)
+        protected override string UnverifiedSender(IRadioCall radioCall)
         {
             return null;
         }
 
-        protected override bool IsAddressedToController(BaseRadioCall radioCall)
+        protected override bool IsAddressedToController(IRadioCall radioCall)
         {
             return false;
         }

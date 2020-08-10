@@ -403,6 +403,7 @@
     <Compile Include="Overlord\Controllers\AtcController.cs" />
     <Compile Include="Overlord\Controllers\MuteController.cs" />
     <Compile Include="Overlord\Controllers\AwacsController.cs" />
+    <Compile Include="Overlord\GameState\GameQuerier\GetAirfields.cs" />
     <Compile Include="Overlord\RadioCalls\BaseRadioCall.cs" />
     <Compile Include="Overlord\Intents\ReadytoTaxi.cs" />
     <Compile Include="Overlord\Constants.cs" />
@@ -421,6 +422,7 @@
     <Compile Include="Overlord\NLogLoggingProvider.cs" />
     <Compile Include="Overlord\RadioCalls\BearingToFriendlyPlayerRadioCall.cs" />
     <Compile Include="Overlord\RadioCalls\DeclareRadioCall.cs" />
+    <Compile Include="Overlord\RadioCalls\IRadioCall.cs" />
     <Compile Include="Overlord\RadioCalls\SetWarningRadiusRadioCall.cs" />
     <Compile Include="Overlord\SpeechOutput\AirbasePronouncer.cs" />
     <Compile Include="Overlord\SpeechOutput\AircraftReportingNamePronouncer.cs" />
@@ -438,6 +440,7 @@
     <Compile Include="Overlord\RadioCalls\LuisModels\LuisCompositeEntity.cs" />
     <Compile Include="Overlord\RadioCalls\LuisModels\LuisEntity.cs" />
     <Compile Include="Overlord\RadioCalls\LuisModels\LuisResponse.cs" />
+    <Compile Include="Overlord\Util\AirfieldUpdater.cs" />
     <Compile Include="Overlord\Util\Geospatial.cs" />
     <Compile Include="Overlord\Controllers\WarningRadiusChecker.cs" />
     <Compile Include="Settings.cs" />

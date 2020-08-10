@@ -9,7 +9,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
     class BogeyDope
     {
 
-        public static async Task<string> Process(BaseRadioCall radioCall)
+        public static async Task<string> Process(IRadioCall radioCall)
         {
             string response;
             Player sender = radioCall.Sender;

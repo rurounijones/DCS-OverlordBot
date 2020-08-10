@@ -10,7 +10,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
 
     class BearingToAirbase
     {
-        public static async Task<string> Process(BaseRadioCall radioCall)
+        public static async Task<string> Process(IRadioCall radioCall)
         {
             string response;
 

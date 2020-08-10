@@ -14,7 +14,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
 
             private AwacsController _controller;
             private Player _sender;
-            private Mock<BaseRadioCall> _mock;
+            private Mock<IRadioCall> _mock;
 
             [TestInitialize]
             public void Init()
@@ -29,7 +29,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
                     Plane = 2
                 };
 
-                _mock = new Mock<BaseRadioCall>("");
+                _mock = new Mock<IRadioCall>();
                 _mock.SetupGet(call => call.Intent).Returns("BogeyDope");
 
             }
@@ -63,7 +63,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
             [TestMethod]
             public void IgnoresTheCall()
             {
-                var mock = new Mock<BaseRadioCall>("");
+                var mock = new Mock<IRadioCall>();
                 mock.SetupGet(call => call.Intent).Returns("None");
 
                 var radioCall = mock.Object;
@@ -79,7 +79,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
         {
             private AwacsController _controller;
             private Player _sender;
-            private Mock<BaseRadioCall> _mock;
+            private Mock<IRadioCall> _mock;
 
             [TestInitialize]
             public void Init()
@@ -94,7 +94,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
                     Plane = 2
                 };
 
-                _mock = new Mock<BaseRadioCall>("");
+                _mock = new Mock<IRadioCall>();
                 _mock.SetupGet(call => call.Intent).Returns("ReadyToTaxi");
 
             }
@@ -138,13 +138,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
         public class NullSenderMethod {
 
             private AwacsController _controller;
-            private Mock<BaseRadioCall> _mock;
+            private Mock<IRadioCall> _mock;
 
             [TestInitialize]
             public void Init()
             {
                 _controller = new AwacsController();
-                _mock = new Mock<BaseRadioCall>("");
+                _mock = new Mock<IRadioCall>();
             }
 
             [TestMethod]
@@ -155,16 +155,16 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
 
                 var radioCall = _mock.Object;
 
-                string expected = "Last transmitter, I could not recognise your call-sign.";
+                string expected = "Last transmitter, I could not recognize your call-sign.";
                 string response = _controller.ProcessRadioCall(radioCall);
 
                 Assert.AreEqual(expected, response);
             }
 
             [TestMethod]
-            public void WhenAssignedAwacsCallSign_AndSenderAdressesWrongAwacs_IgnoresTheTransmission()
+            public void WhenAssignedAwacsCallSign_AndSenderAddressesWrongAwacs_IgnoresTheTransmission()
             {
-                _mock = new Mock<BaseRadioCall>("");
+                _mock = new Mock<IRadioCall>();
                 
                 _controller.Callsign = "Darkstar";
 
@@ -185,7 +185,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
         {
             private AwacsController _controller;
             private Player _sender;
-            private Mock<BaseRadioCall> _mock;
+            private Mock<IRadioCall> _mock;
 
             [TestInitialize]
             public void Init()
@@ -200,7 +200,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
                     Plane = 2
                 };
 
-                _mock = new Mock<BaseRadioCall>("");
+                _mock = new Mock<IRadioCall>();
             }
 
             [TestMethod]
@@ -272,7 +272,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
         {
             private AwacsController _controller;
             private Player _sender;
-            private Mock<BaseRadioCall> _mock;
+            private Mock<IRadioCall> _mock;
 
             [TestInitialize]
             public void Init()
@@ -287,7 +287,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
                     Plane = 2
                 };
 
-                _mock = new Mock<BaseRadioCall>("");
+                _mock = new Mock<IRadioCall>();
                 _mock.SetupGet(call => call.Intent).Returns("Picture");
 
             }
@@ -361,7 +361,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
         {
             private AwacsController _controller;
             private Player _sender;
-            private Mock<BaseRadioCall> _mock;
+            private Mock<IRadioCall> _mock;
 
             [TestInitialize]
             public void Init()
@@ -376,7 +376,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
                     Plane = 2
                 };
 
-                _mock = new Mock<BaseRadioCall>("");
+                _mock = new Mock<IRadioCall>();
             }
 
             [TestMethod]

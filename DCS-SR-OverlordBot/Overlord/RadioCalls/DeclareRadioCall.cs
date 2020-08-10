@@ -40,9 +40,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls
             }
         }
 
-        public DeclareRadioCall(string luisResponse) : base(luisResponse) { }
-
-        public DeclareRadioCall(BaseRadioCall baseRadioCall) : base(baseRadioCall) { }
+        public DeclareRadioCall(IRadioCall baseRadioCall) : base(baseRadioCall) { }
 
     }
 }

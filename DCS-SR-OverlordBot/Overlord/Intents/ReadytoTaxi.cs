@@ -1,10 +1,10 @@
-﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls;
-using RurouniJones.DCS.Airfields;
+﻿using static Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Constants;
+
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls;
 using RurouniJones.DCS.Airfields.Controllers;
 using RurouniJones.DCS.Airfields.Structure;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -12,10 +12,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
 {
     class ReadytoTaxi
     {
-        private static readonly List<Airfield> Airfields = Populator.Airfields;
-
-        private static readonly Array instructionsVariants = new ArrayList() { "", "taxi to", "proceed to", "head to" }.ToArray();
-        private static readonly Array viaVariants = new ArrayList() { "via", "along", "using" }.ToArray();
+        private static readonly Array instructionsVariants = new ArrayList { "", "taxi to", "proceed to", "head to" }.ToArray();
+        private static readonly Array viaVariants = new ArrayList { "via", "along", "using" }.ToArray();
 
         private static readonly Random randomizer = new Random();
 
@@ -24,7 +22,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
             DestinationName = "Unknown Destination"
         };
 
-        public static async Task<string> Process(BaseRadioCall radioCall)
+        public static async Task<string> Process(IRadioCall radioCall)
         {
             TaxiInstructions taxiInstructions = DummyInstructions;
             Airfield airfield;
@@ -38,6 +36,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
             }
             try
             {
+                if(airfield.Runways.Count == 0)
+                    return "There are no ATC services currently available at this airfield.";
+
                 taxiInstructions = new GroundController(airfield).GetTaxiInstructions(radioCall.Sender.Position);
                 return ConvertTaxiInstructionsToSSML(taxiInstructions);
             }

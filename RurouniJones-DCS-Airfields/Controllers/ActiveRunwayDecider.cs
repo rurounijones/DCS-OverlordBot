@@ -7,41 +7,27 @@ namespace RurouniJones.DCS.Airfields.Controllers
     {
 
         /// <summary>
-        /// Some Airfields will have special considerations, right now we only care about the making sure
-        /// the active runways are the one the graphs have been setup to use. Since the wind is always from
-        /// the east we just need to make sure the Airfields that do not have eastward facing actives are
-        /// specially handled
+        /// Some Airfields will have special considerations. For example some will only switch end
+        /// if the wind speed is high enough. For the moment we will stick with wind direction.
         /// </summary>
         /// <param name="Airfield"></param>
         /// <returns>A list of active runways</returns>
         public static List<Runway> GetActiveRunways(Airfield Airfield)
         {
-            if (Airfield.Name.Equals("Al-Dhafra"))
-            {
-                return GetActiveRunwaysByHeading(Airfield, 310);
-            }
-            else if (Airfield.Name.Equals("Krasnodar-Center"))
-            {
-                return GetActiveRunwaysByHeading(Airfield, 270);
-            }
-            else if (Airfield.Name.Equals("Mineralnye Vody"))
-            {
-                return GetActiveRunwaysByHeading(Airfield, 120);
-            }
-            else
-            {
-                return GetActiveRunwaysByWind(Airfield);
-            }
+            return GetActiveRunwaysByWind(Airfield);
         }
 
         private static List<Runway> GetActiveRunwaysByWind(Airfield Airfield)
         {
-            return GetActiveRunwaysByHeading(Airfield, Airfield.WindSource);
+            return GetActiveRunwaysByHeading(Airfield);
         }
 
-        private static List<Runway> GetActiveRunwaysByHeading(Airfield Airfield, int heading)
+        private static List<Runway> GetActiveRunwaysByHeading(Airfield Airfield)
         {
-            var desiredHeading = heading + 360;
+            int desiredHeading;
+            desiredHeading = Airfield.WindHeading == -1 ? 90 : Airfield.WindHeading;
+            desiredHeading += 360;
+
             var activeRunways = new List<Runway>();
 
             foreach (Runway runway in Airfield.Runways)

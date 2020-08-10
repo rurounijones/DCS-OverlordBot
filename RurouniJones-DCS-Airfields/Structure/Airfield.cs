@@ -77,16 +77,28 @@ namespace RurouniJones.DCS.Airfields.Structure
         /// </summary>
         [JsonIgnore]
         public Point Position {
-            get {
-                return new Point(Latitude, Longitude, Altitude);
-            }
+            get => _position != null ? _position : new Point(Latitude, Longitude, Altitude);
+            set => _position = value;
         }
+        private Point _position;
 
         /// <summary>
-        /// Direciton the wind is COMING from
+        /// Direction the wind is COMING from
         /// </summary>
         [JsonIgnore]
-        public int WindSource { get; set; } = 90;
+        public int WindHeading { get; set; } = 90;
+
+        /// <summary>
+        /// Wind speed 33ft (the standard measurement point) above the airfield in meters / second.
+        /// </summary>
+        [JsonIgnore]
+        public double WindSpeed { get; set; } = 0;
+
+        /// <summary>
+        /// The coalition the airbase belongs to.
+        /// </summary>
+        [JsonIgnore]
+        public int Coalition { get; set; } = 0;
 
         [JsonIgnore]
         public readonly AdjacencyGraph<TaxiPoint, TaggedEdge<TaxiPoint, string>> TaxiNavigationGraph = new AdjacencyGraph<TaxiPoint, TaggedEdge<TaxiPoint, string>>();
