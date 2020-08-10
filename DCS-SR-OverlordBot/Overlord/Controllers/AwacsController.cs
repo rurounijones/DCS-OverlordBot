@@ -98,12 +98,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
         protected override bool IsAddressedToController(BaseRadioCall radioCall)
         {
             Logger.Debug($"Callsign is {Callsign}, Receiver is {radioCall.ReceiverName}");
-            if (string.IsNullOrEmpty(Callsign) == true)
-            {
-                return true;
-            }
 
-            bool result = string.IsNullOrEmpty(Callsign) != true && (radioCall.ReceiverName.ToLower() == "anyface" || radioCall.ReceiverName.ToLower() == Callsign.ToLower());
+            if (string.IsNullOrEmpty(radioCall.ReceiverName)) // If there is no received name then nope!
+                return false;
+
+            if (string.IsNullOrEmpty(Callsign)) // We will answer to anything that LUIS has deemed an AWACS Callsign
+                return true;
+
+            var result = string.IsNullOrEmpty(Callsign) != true && (radioCall.ReceiverName.ToLower() == "anyface" || radioCall.ReceiverName.ToLower() == Callsign.ToLower());
             Logger.Debug($"Addressed to Controller is {result}");
 
             return result;

@@ -9,6 +9,45 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
     [TestClass]
     public class AwacsControllerTests
     {
+        [TestClass]
+        public class NoReceiver {
+
+            private AwacsController _controller;
+            private Player _sender;
+            private Mock<BaseRadioCall> _mock;
+
+            [TestInitialize]
+            public void Init()
+            {
+                _controller = new AwacsController();
+
+                _sender = new Player()
+                {
+                    Id = "a1",
+                    Group = "dolt",
+                    Flight = 1,
+                    Plane = 2
+                };
+
+                _mock = new Mock<BaseRadioCall>("");
+                _mock.SetupGet(call => call.Intent).Returns("BogeyDope");
+
+            }
+
+            [TestMethod]
+            public void WhenNoNoReceiverName_ReturnsNull()
+            {
+                _mock.SetupGet(call => call.Sender).Returns(_sender);
+                _mock.SetupGet(call => call.ReceiverName).Returns("");
+                _mock.SetupGet(call => call.AwacsCallsign).Returns((string) null);
+
+                var radioCall = _mock.Object;
+
+                string response = _controller.ProcessRadioCall(radioCall);
+
+                Assert.IsNull(response);
+            }
+        }
 
         [TestClass]
         public class NoneMethod
@@ -111,6 +150,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
             [TestMethod]
             public void WhenNoAssignedAwacsCallSign_TellsTheSenderItCouldNotRecogniseTheCallsign()
             {
+                _mock.SetupGet(call => call.ReceiverName).Returns("Magic");
                 _mock.SetupGet(call => call.Sender).Returns((Player)null);
 
                 var radioCall = _mock.Object;
