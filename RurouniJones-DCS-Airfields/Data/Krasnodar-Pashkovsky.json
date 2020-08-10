@@ -159,7 +159,7 @@
       "name": "Alfa",
       "source": "Alfa Bravo",
       "target": "Alfa Charlie",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Alfa",
@@ -171,7 +171,7 @@
       "name": "Alfa",
       "source": "Alfa Whiskey",
       "target": "Alfa Bravo",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Alfa",
@@ -303,7 +303,7 @@
       "name": "November",
       "source": "India November",
       "target": "Juliett November",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "November",
@@ -315,7 +315,7 @@
       "name": "November",
       "source": "Hotel November",
       "target": "India November",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "November",
@@ -327,7 +327,7 @@
       "name": "November",
       "source": "Golf November",
       "target": "Hotel November",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "November",
@@ -339,7 +339,7 @@
       "name": "November",
       "source": "Lima November",
       "target": "Golf November",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "November",
@@ -351,7 +351,7 @@
       "name": "November",
       "source": "Delta Foxtrot November",
       "target": "Lima November",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "November",
@@ -363,7 +363,7 @@
       "name": "November",
       "source": "Echo November",
       "target": "Delta Foxtrot November",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Echo",
