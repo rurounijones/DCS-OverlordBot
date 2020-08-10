@@ -255,7 +255,7 @@
       "name": "Tango",
       "source": "Mike Tango",
       "target": "Bravo Tango",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Bravo",
@@ -303,7 +303,7 @@
       "name": "Tango",
       "source": "Bravo Tango",
       "target": "Alpha Tango",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Runway",
