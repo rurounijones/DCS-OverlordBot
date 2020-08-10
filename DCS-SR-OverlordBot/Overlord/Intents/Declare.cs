@@ -8,18 +8,18 @@ using System.Threading.Tasks;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
 {
-    class Declare
+    internal class Declare
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public static async Task<string> Process(DeclareRadioCall radioCall)
         {
-            int bearing = radioCall.BearingToTarget;
-            double distance = radioCall.DistanceToTarget;
+            var bearing = radioCall.BearingToTarget;
+            var distance = radioCall.DistanceToTarget;
 
-            Geo.Geometries.Point declarePoint = Geospatial.CalculatePointFromSource(radioCall.Sender.Position, NauticalMilesToMeters(distance), Geospatial.MagneticToTrue(radioCall.Sender.Position, bearing));
+            var declarePoint = Geospatial.CalculatePointFromSource(radioCall.Sender.Position, NauticalMilesToMeters(distance), Geospatial.MagneticToTrue(radioCall.Sender.Position, bearing));
 
-            double radius = 1 + (distance * 0.05);
+            var radius = 1 + (distance * 0.05);
 
             Logger.Info($"Declare Source (Lon/Lat): {radioCall.Sender.Position}, Magnetic Bearing {bearing}, True Bearing {Geospatial.MagneticToTrue(radioCall.Sender.Position, bearing)},\n Declare Target (Lon/Lat): {declarePoint}, Search radius: {radius} miles");
 
@@ -32,16 +32,16 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
                 return "no contacts found";
             }
 
-            Dictionary<Coalition, int> coalitionContacts = new Dictionary<Coalition, int>
+            var coalitionContacts = new Dictionary<Coalition, int>
             {
-                { Coalition.Neutral, contacts.Where(contact => contact.Coalition == Coalition.Neutral).Count() },
-                { Coalition.Redfor, contacts.Where(contact => contact.Coalition == Coalition.Redfor).Count() },
-                { Coalition.Bluefor, contacts.Where(contact => contact.Coalition == Coalition.Bluefor).Count() },
+                { Coalition.Neutral, contacts.Count(contact => contact.Coalition == Coalition.Neutral) },
+                { Coalition.Redfor, contacts.Count(contact => contact.Coalition == Coalition.Redfor) },
+                { Coalition.Bluefor, contacts.Count(contact => contact.Coalition == Coalition.Bluefor) },
             };
 
-            bool neutrals = false;
-            bool friendlies = false;
-            bool enemies = false;
+            var neutrals = false;
+            var friendlies = false;
+            var enemies = false;
 
             if (coalitionContacts[radioCall.Sender.Coalition] > 0)
             {
@@ -58,22 +58,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
                 neutrals = true;
             }
 
-            if (enemies == true && (friendlies == true || neutrals == true))
+            if (enemies && (friendlies || neutrals))
             {
                 return "furball.";
             }
-            else if (enemies == false && (friendlies == true || neutrals == true))
+            if (!enemies && (friendlies || neutrals))
             {
                 return "friendly.";
             }
-            else if (enemies == true && (friendlies == false && neutrals == false))
-            {
-                return "hostile.";
-            }
-            else
-            {
-                return "unknown.";
-            }
+            return enemies ? "hostile." : "unknown.";
         }
         private static double NauticalMilesToMeters(double nauticalMiles)
         {
