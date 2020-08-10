@@ -3,7 +3,7 @@ using System;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Util
 {
-    class Geospatial
+    public class Geospatial
     {
         // Fudge factor to try and bring the bot inline with what we are seeing in game.
         private static readonly double CAUCASUS_FUDGE_FACTOR = 1.5;
@@ -56,15 +56,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Util
         // The TRUE bearing, on the caucuses, in DCS is the same as the MAGNETIC bearing in real-life
         // so for things like bearings to match up correctly using haversine calculations we need to
         // convert the result to magnetic TWICE.
-        //
-        // At some point we will need to flag this based on the position because this "twice" thing
-        // only happens on Caucuses while other maps are real-world accurate.,
         public static double TrueToMagnetic(Geo.Geometries.Point position, double trueBearing)
         {
             double magneticBearing;
             if (IsCaucasus(position))
             {
-                magneticBearing = trueBearing - ((2 * CalculateOffset(position)) - CAUCASUS_FUDGE_FACTOR);
+                magneticBearing = trueBearing - (2 * CalculateOffset(position) - CAUCASUS_FUDGE_FACTOR);
             }
             else
             {
@@ -84,7 +81,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Util
             double magneticBearing;
             if (IsCaucasus(position))
             {
-                magneticBearing = trueBearing + ((2 * CalculateOffset(position)) - CAUCASUS_FUDGE_FACTOR);
+                magneticBearing = trueBearing + (2 * CalculateOffset(position) - CAUCASUS_FUDGE_FACTOR);
             }
             else
             {
@@ -105,9 +102,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Util
             return result.Declination;
         }
 
-        private static bool IsCaucasus(Geo.Geometries.Point position)
+        public static bool IsCaucasus(Geo.Geometries.Point position)
         {
-            bool isCaucasus = position.Coordinate.Latitude >= 27 && position.Coordinate.Latitude <= 47 && position.Coordinate.Longitude >= 39 && position.Coordinate.Longitude <= 48;
+            var isCaucasus = position.Coordinate.Latitude >= 39 && position.Coordinate.Latitude <= 48 && position.Coordinate.Longitude >= 27 && position.Coordinate.Longitude <= 48;
             Logger.Debug($"Position within Caucasus? {isCaucasus}");
             return isCaucasus;
         }
