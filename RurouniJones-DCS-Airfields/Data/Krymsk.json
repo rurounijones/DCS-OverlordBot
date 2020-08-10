@@ -176,7 +176,7 @@
       "name": "Alpha",
       "source": "Alpha Delta",
       "target": "Alpha Charlie",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Alpha",
@@ -224,19 +224,19 @@
       "name": "Alpha",
       "source": "Alpha Delta",
       "target": "Bravo Delta",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Delta",
       "source": "Delta Golf",
       "target": "Charlie Delta",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Delta",
       "source": "Bravo Delta",
       "target": "Delta Golf",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Delta",
@@ -254,7 +254,7 @@
       "name": "Charlie",
       "source": "Bravo Delta",
       "target": "Bravo Charlie",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Charlie",
@@ -314,7 +314,7 @@
       "name": "Charlie",
       "source": "Alpha Charlie",
       "target": "Bravo Charlie",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Charlie",
@@ -398,7 +398,7 @@
       "name": "Delta",
       "source": "Charlie Delta",
       "target": "Delta Foxtrot",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Delta",
