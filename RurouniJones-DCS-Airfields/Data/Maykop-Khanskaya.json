@@ -144,7 +144,7 @@
       "name": "Victor",
       "source": "Alfa Victor",
       "target": "Bravo Victor",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Victor",
@@ -156,7 +156,7 @@
       "name": "Victor",
       "source": "Bravo Victor",
       "target": "Mike Victor",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Victor",
@@ -168,7 +168,7 @@
       "name": "Victor",
       "source": "Mike Victor",
       "target": "Charlie Victor",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Victor",
@@ -180,7 +180,7 @@
       "name": "Victor",
       "source": "Charlie Victor",
       "target": "Delta Echo Victor",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Echo",

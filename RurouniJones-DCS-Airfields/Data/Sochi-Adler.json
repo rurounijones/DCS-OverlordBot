@@ -211,7 +211,7 @@
       "name": "Mike",
       "source": "Alpha Mike",
       "target": "Bravo Mike",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Mike",
@@ -223,7 +223,7 @@
       "name": "Mike",
       "source": "Bravo Mike",
       "target": "Charlie Mike",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Mike",
@@ -235,7 +235,7 @@
       "name": "Mike",
       "source": "Charlie Mike",
       "target": "Delta Mike",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Mike",
@@ -247,7 +247,7 @@
       "name": "Mike",
       "source": "Delta Mike",
       "target": "Echo Mike",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Mike",
@@ -259,7 +259,7 @@
       "name": "Mike",
       "source": "Echo Mike",
       "target": "Foxtrot Mike",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Mike",
@@ -271,7 +271,7 @@
       "name": "Mike",
       "source": "Foxtrot Mike",
       "target": "Golf Mike",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Mike",
@@ -283,7 +283,7 @@
       "name": "Mike",
       "source": "Golf Mike",
       "target": "Hotell Mike",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Mike",
@@ -295,7 +295,7 @@
       "name": "Mike",
       "source": "Hotell Mike",
       "target": "India Mike",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "India",
@@ -307,7 +307,7 @@
       "name": "India",
       "source": "India Mike",
       "target": "India Juliett",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Juliett",

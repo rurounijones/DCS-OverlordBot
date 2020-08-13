@@ -388,7 +388,7 @@
       "name": "Alfa",
       "source": "Alfa Bravo",
       "target": "Alfa Charlie",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Alfa",
@@ -472,7 +472,7 @@
       "name": "Alfa",
       "source": "Alfa Charlie",
       "target": "Alfa Delta 1",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Alfa",
@@ -508,7 +508,7 @@
       "name": "Alfa",
       "source": "Alfa Delta 2",
       "target": "Alfa Golf",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Alfa",
@@ -520,7 +520,7 @@
       "name": "Alfa",
       "source": "Alfa Delta 1",
       "target": "Alfa Delta 2",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Alfa",
@@ -556,7 +556,7 @@
       "name": "Alfa",
       "source": "Alfa Golf",
       "target": "Alfa Kilo 6",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Papa",
@@ -580,7 +580,7 @@
       "name": "Papa",
       "source": "Delta 0 Hotel 11 Papa",
       "target": "Hotel 33 Papa",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Papa",
@@ -604,7 +604,7 @@
       "name": "Papa",
       "source": "Papa Romeo",
       "target": "Juliett 66 Papa",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Papa",
@@ -628,7 +628,7 @@
       "name": "Papa",
       "source": "Mike Papa Sierra",
       "target": "Papa X-Ray 0",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Papa",
@@ -640,7 +640,7 @@
       "name": "Papa",
       "source": "Papa Quebec",
       "target": "Mike Papa Sierra",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Papa",
@@ -652,7 +652,7 @@
       "name": "Papa",
       "source": "Hotel 66 Papa",
       "target": "Papa Quebec",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Papa",
@@ -664,7 +664,7 @@
       "name": "Papa",
       "source": "Hotel 33 Papa",
       "target": "Hotel 66 Papa",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "X-Ray 0",
@@ -688,7 +688,7 @@
       "name": "X-Ray 0",
       "source": "Papa X-Ray 0",
       "target": "X-Ray X-Ray 0",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Papa",
@@ -712,7 +712,7 @@
       "name": "Papa",
       "source": "Papa Victor Victor 0",
       "target": "Delta 0 Hotel 11 Papa",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Victor 0",
@@ -724,7 +724,7 @@
       "name": "Victor 0",
       "source": "Victor Victor 0",
       "target": "Papa Victor Victor 0",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Victor 0",
@@ -880,7 +880,7 @@
       "name": "Yankee",
       "source": "Uniform Yankee",
       "target": "Delta 3 Yankee",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Yankee",
@@ -892,7 +892,7 @@
       "name": "Yankee",
       "source": "Delta 3 Yankee",
       "target": "Delta 4 Yankee",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Yankee",
@@ -940,7 +940,7 @@
       "name": "Yankee",
       "source": "Delta 4 Yankee",
       "target": "Whiskey Yankee",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Runway",
@@ -1078,7 +1078,7 @@
       "name": "Alfa",
       "source": "Alfa Echo",
       "target": "Alfa Foxtrot",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Alfa",
@@ -1096,79 +1096,79 @@
       "name": "Alfa",
       "source": "Alfa Kilo 6",
       "target": "Alfa Echo",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Juliett 66",
       "source": "Juliett 66 Papa",
       "target": "Juliett Juliett 6 Juliett 55 Juliett 66 Romeo",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Juliett 66",
       "source": "Juliett Juliett 6 Juliett 55 Juliett 66 Romeo",
       "target": "Juliett 66 Papa",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Romeo",
       "source": "Papa Romeo",
       "target": "Juliett Juliett 6 Juliett 55 Juliett 66 Romeo",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Romeo",
       "source": "Juliett Juliett 6 Juliett 55 Juliett 66 Romeo",
       "target": "Papa Romeo",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Victor",
       "source": "Uniform Victor",
       "target": "Papa Victor Victor 0",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Victor",
       "source": "Papa Victor Victor 0",
       "target": "Uniform Victor",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Uniform",
       "source": "Uniform Victor",
       "target": "Uniform Yankee",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Uniform",
       "source": "Uniform Victor",
       "target": "Uniform Yankee",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Quebec",
       "source": "Papa Quebec",
       "target": "Hotel Hotel 6 Hotel 55 Hotel 66 Quebec",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Quebec",
       "source": "Hotel Hotel 6 Hotel 55 Hotel 66 Quebec",
       "target": "Papa Quebec",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Hotel 66",
       "source": "Hotel 66 Papa",
       "target": "Hotel Hotel 6 Hotel 55 Hotel 66 Quebec",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Hotel 66",
       "source": "Hotel Hotel 6 Hotel 55 Hotel 66 Quebec",
       "target": "Hotel 66 Papa",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Hotel 6",
@@ -1192,7 +1192,7 @@
       "name": "Hotel 11",
       "source": "Hotel Hotel 1 Hotel 11",
       "target": "Delta 0 Hotel 11 Papa",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Hotel 1",
@@ -1210,13 +1210,13 @@
       "name": "Hotel",
       "source": "Hotel Hotel 1 Hotel 11",
       "target": "Hotel Hotel 6 Hotel 55 Hotel 66 Quebec",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Hotel",
       "source": "Hotel Hotel 6 Hotel 55 Hotel 66 Quebec",
       "target": "Hotel Hotel 1 Hotel 11",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Whiskey 0",
@@ -1276,7 +1276,7 @@
       "name": "Juliett",
       "source": "Juliett 11 Papa",
       "target": "Juliett Juliett 11",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Juliett 11",

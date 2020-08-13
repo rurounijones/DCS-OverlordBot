@@ -114,7 +114,7 @@
       "name": "Alfa",
       "source": "Alfa Bravo",
       "target": "Alfa Charlie",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Alfa",
@@ -126,7 +126,7 @@
       "name": "Alfa",
       "source": "Alfa Charlie",
       "target": "Alfa Delta",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Alfa",
@@ -138,7 +138,7 @@
       "name": "Alfa",
       "source": "Alfa Delta",
       "target": "Alfa Echo",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Alfa",
@@ -150,7 +150,7 @@
       "name": "Alfa",
       "source": "Alfa Echo",
       "target": "Alfa Echo 1",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Runway",
@@ -210,7 +210,7 @@
       "name": "Echo",
       "source": "Alfa Echo",
       "target": "Echo Echo 1",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Echo",
@@ -222,7 +222,7 @@
       "name": "Echo",
       "source": "Alfa Echo 1",
       "target": "Echo Echo 1",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Runway",

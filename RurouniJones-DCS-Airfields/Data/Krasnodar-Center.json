@@ -117,7 +117,7 @@
       "name": "Alpha",
       "source": "Alpha Charlie Delta",
       "target": "Alpha Foxtrot",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Alpha",
@@ -129,7 +129,7 @@
       "name": "Alpha",
       "source": "Alpha Foxtrot",
       "target": "Alpha Bravo",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Alpha",
@@ -225,7 +225,7 @@
       "name": "Echo",
       "source": "Alpha Echo",
       "target": "Echo Foxtrot",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Foxtrot",
@@ -267,7 +267,7 @@
       "name": "Foxtrot",
       "source": "Delta Foxtrot",
       "target": "Alpha Foxtrot",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Foxtrot",
@@ -315,7 +315,7 @@
       "name": "Foxtrot",
       "source": "Echo Foxtrot",
       "target": "Delta Foxtrot",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Foxtrot",
@@ -333,7 +333,7 @@
       "name": "Delta",
       "source": "Alpha Charlie Delta",
       "target": "Delta Foxtrot",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Echo",
