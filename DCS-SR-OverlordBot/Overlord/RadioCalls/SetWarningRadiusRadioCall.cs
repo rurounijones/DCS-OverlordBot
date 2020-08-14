@@ -1,6 +1,6 @@
 ﻿namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls
 {
-    class SetWarningRadiusRadioCall : BaseRadioCall
+    internal class SetWarningRadiusRadioCall : BaseRadioCall
     {
         public int WarningRadius
         {
@@ -10,14 +10,11 @@
                 {
                     return -1;
                 }
-                string distanceString = LuisResponse.Entities.Find(x => x.Role == "distance").Entity;
-                int.TryParse(distanceString, out int distance);
+                var distanceString = LuisResponse.Entities.Find(x => x.Role == "distance").Entity;
+                int.TryParse(distanceString, out var distance);
                 return distance;
             }
         }
-
-        public SetWarningRadiusRadioCall(string luisResponse) : base(luisResponse) { }
-
         public SetWarningRadiusRadioCall(IRadioCall baseRadioCall) : base(baseRadioCall) { }
     }
 }

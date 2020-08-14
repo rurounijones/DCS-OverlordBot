@@ -50,5 +50,8 @@
     <Setting Name="ServerName" Type="System.String" Scope="Application">
       <Value Profile="(Default)">add_server_name_here</Value>
     </Setting>
+    <Setting Name="WindHeading" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">90</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

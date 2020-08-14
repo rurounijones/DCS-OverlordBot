@@ -25,7 +25,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Util
                     // The following three fields are the ones that are dynamic and can change during a game session.
                     // Although wind is very unlikely to change enough to influence active runway settings.
                     airfield.Coalition = gameAirfield.Coalition;
-                    airfield.WindHeading = gameAirfield.WindHeading;
+                    airfield.WindHeading = airfield.WindHeading == -1 ? Properties.Settings.Default.WindHeading : gameAirfield.WindHeading;
                     airfield.WindSpeed = airfield.WindSpeed;
                     Logger.Debug($"Updated {gameAirfield.Name}");
                 }

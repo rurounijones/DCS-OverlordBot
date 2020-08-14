@@ -1,8 +1,6 @@
-﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls.LuisModels;
-
-namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls
+﻿namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls
 {
-    class DeclareRadioCall : BaseRadioCall
+    internal class DeclareRadioCall : BaseRadioCall
     {
         /// <summary>
         /// The bearing given by the player, hopefully towards the target if the player is accurate
@@ -17,8 +15,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls
                 {
                     return (int)Sender.Heading;
                 }
-                string bearingString = LuisResponse.Entities.Find(x => x.Role == "bearing").Entity;
-                int.TryParse(bearingString, out int bearing);
+                var bearingString = LuisResponse.Entities.Find(x => x.Role == "bearing").Entity;
+                int.TryParse(bearingString, out var bearing);
                 return bearing;
             }
         }
@@ -34,8 +32,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls
                 {
                     return 1;
                 }
-                string distanceString = LuisResponse.Entities.Find(x => x.Role == "distance").Entity;
-                double.TryParse(distanceString, out double distance);
+                var distanceString = LuisResponse.Entities.Find(x => x.Role == "distance").Entity;
+                double.TryParse(distanceString, out var distance);
                 return distance;
             }
         }

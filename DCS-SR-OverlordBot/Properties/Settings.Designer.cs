@@ -166,5 +166,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Properties {
                 return ((string)(this["ServerName"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("90")]
+        public int WindHeading {
+            get {
+                return ((int)(this["WindHeading"]));
+            }
+        }
     }
 }

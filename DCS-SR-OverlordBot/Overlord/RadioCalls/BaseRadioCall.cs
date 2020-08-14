@@ -15,47 +15,30 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls
         /// <summary>
         /// The intent of the radio transmission
         /// </summary>
-        public virtual string Intent
-        {
-            get
-            {
-                return LuisResponse.TopScoringIntent["intent"];
-            }
-        }
+        public virtual string Intent => LuisResponse.TopScoringIntent["intent"];
 
-        public string Message
-        {
-            get
-            {
-                return LuisResponse.Query;
-            }
-        }
+        public string Message => LuisResponse.Query;
 
         /// <summary>
         /// The player that sent the radio call.
         /// </summary>
-        public virtual Player Sender
+        public Player Sender
         {
             get
             {
                 if (_sender != null)
-                {
                     return _sender;
-                }
                 if (LuisResponse.CompositeEntities == null || LuisResponse.CompositeEntities.Count == 0)
-                {
                     return null;
-                }
 
-                var sender = LuisResponse.CompositeEntities.Find(x => x.ParentType == "learned_sender" || x.ParentType == "defined_sender" || x.ParentType == "airbase_caller");
+                _sender = BuildPlayer(LuisResponse.CompositeEntities.Find(x => x.ParentType == "learned_sender" || 
+                                                                               x.ParentType == "defined_sender" || 
+                                                                               x.ParentType == "airbase_caller"));
 
-                _sender = BuildPlayer(sender);
+
                 return _sender;
             }
-            set
-            {
-                _sender = value;
-            }
+            set => _sender = value;
         }
         private Player _sender;
 
@@ -67,43 +50,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls
         /// For an AWACS bot this is the Callsign such as "Overlord" or "Magic".
         /// For an ATC bot this is the normalized name of an airfield such as "Krasnodar-Center"
         /// </example>
-        public virtual string ReceiverName
-        {
-            get
-            {
-                return AwacsCallsign ?? AirbaseName;
-            }
-        }
+        public virtual string ReceiverName => AwacsCallsign ?? AirbaseName;
 
-        public virtual string AwacsCallsign
-        {
-            get
-            {
-                if (LuisResponse.Entities.Find(x => x.Type == "awacs_callsign") != null)
-                {
-                    return LuisResponse.Entities.Find(x => x.Type == "awacs_callsign").Resolution.Values[0];
-                }
-                else
-                {
-                    return null;
-                }
-            }
-        }
+        public virtual string AwacsCallsign => LuisResponse.Entities.Find(x => x.Type == "awacs_callsign")?.Resolution.Values[0];
 
-        public virtual string AirbaseName
-        {
-            get
-            {
-                if (LuisResponse.Entities.Find(x => x.Type == "airbase") != null)
-                {
-                    return LuisResponse.Entities.Find(x => x.Type == "airbase").Resolution.Values[0];
-                }
-                else
-                {
-                    return null;
-                }
-            }
-        }
+        public virtual string AirbaseName => LuisResponse.Entities.Find(x => x.Type == "airbase")?.Resolution.Values[0];
 
         public BaseRadioCall(string luisJson)
         {
@@ -120,47 +71,62 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls
         protected static Player BuildPlayer(LuisCompositeEntity luisEntity)
         {
             string group = null;
-            int flight = -1;
-            int element = -1;
+            var flight = -1;
+            var element = -1;
 
             luisEntity.Children.ForEach(x =>
             {
-                if (x["type"] == "learned_group" || x["type"] == "defined_group")
+                switch (x["type"])
                 {
-                    group = x["value"];
-                }
-                else if (x["type"] == "awacs_callsign" || x["type"] == "airbase" || x["type"] == "airbase_control_name")
-                {
-                    // No-op
-                }
-                else if (x["role"] == "flight_and_element")
-                {
-                    int.TryParse(x["value"][0].ToString(), out flight);
-                    int.TryParse(x["value"][1].ToString(), out element);
-                }
-                else if (x["role"] == "flight")
-                {
-                    int value = MapToInt(x["value"]);
-                    if (value == -1)
+                    case "learned_group":
+                    case "defined_group":
+                        @group = x["value"];
+                        break;
+                    case "awacs_callsign":
+                    case "airbase":
+                    case "airbase_control_name":
+                        // No-op
+                        break;
+                    default:
                     {
-                        int.TryParse(x["value"], out flight);
-                    }
-                    else
-                    {
-                        flight = value;
-                    }
-                }
-                else if (x["role"] == "element")
-                {
-                    int value = MapToInt(x["value"]);
+                        switch (x["role"])
+                        {
+                            case "flight_and_element":
+                                int.TryParse(x["value"][0].ToString(), out flight);
+                                int.TryParse(x["value"][1].ToString(), out element);
+                                break;
+                            case "flight":
+                            {
+                                var value = MapToInt(x["value"]);
+                                if (value == -1)
+                                {
+                                    int.TryParse(x["value"], out flight);
+                                }
+                                else
+                                {
+                                    flight = value;
+                                }
 
-                    if (value == -1)
-                    {
-                        int.TryParse(x["value"], out element);
-                    }
-                    else
-                    {
-                        element = value;
+                                break;
+                            }
+                            case "element":
+                            {
+                                var value = MapToInt(x["value"]);
+
+                                if (value == -1)
+                                {
+                                    int.TryParse(x["value"], out element);
+                                }
+                                else
+                                {
+                                    element = value;
+                                }
+
+                                break;
+                            }
+                        }
+
+                        break;
                     }
                 }
             });
