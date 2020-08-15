@@ -15,6 +15,10 @@
         {
           "modelName": "defined_sender",
           "isRequired": false
+        },
+        {
+          "modelName": "airbase_bearing_request",
+          "isRequired": false
         }
       ]
     },
@@ -70,6 +74,10 @@
       "features": [
         {
           "modelName": "airbase_caller",
+          "isRequired": false
+        },
+        {
+          "modelName": "airbase_inbound_request",
           "isRequired": false
         }
       ]
@@ -146,6 +154,12 @@
           "isRequired": false
         }
       ]
+    },
+    {
+      "name": "airbase_inbound_request",
+      "children": [],
+      "roles": [],
+      "features": []
     },
     {
       "name": "learned_group",
@@ -294,7 +308,11 @@
         },
         {
           "canonicalForm": "Gelendzhik",
-          "list": []
+          "list": [
+            "Gelend",
+            "gelen",
+            "G Lensic"
+          ]
         },
         {
           "canonicalForm": "Gudauta",
@@ -348,7 +366,9 @@
           "canonicalForm": "Mineralnye Vody",
           "list": [
             "minvody",
-            "mineralnye"
+            "mineralnye",
+            "Vody",
+            "mineral vody"
           ]
         },
         {
@@ -363,7 +383,8 @@
           "canonicalForm": "Novorossiysk",
           "list": [
             "novo",
-            "nova"
+            "nova",
+            "know though"
           ]
         },
         {
@@ -384,7 +405,8 @@
           "canonicalForm": "Sukhumi-Babushara",
           "list": [
             "sukhumi",
-            "sukhumi babushara"
+            "sukhumi babushara",
+            "babushara"
           ]
         },
         {
@@ -399,7 +421,10 @@
         },
         {
           "canonicalForm": "Kuznetsov",
-          "list": []
+          "list": [
+            "the kuz",
+            "kuz"
+          ]
         },
         {
           "canonicalForm": "Stennis",
@@ -410,10 +435,274 @@
           ]
         },
         {
-          "canonicalForm": "Al-Dhafra",
+          "canonicalForm": "Al Dhafra AB",
           "list": [
-            "Al Dhafra"
+            "Al Dhafra",
+            "Dhafra"
           ]
+        },
+        {
+          "canonicalForm": "Aba Musa Island Airport",
+          "list": [
+            "aba musa",
+            "aba musa island"
+          ]
+        },
+        {
+          "canonicalForm": "Abu Dhabi Intl Airport",
+          "list": [
+            "abu dhabi international airport",
+            "abu dhabi international",
+            "abu dhabi"
+          ]
+        },
+        {
+          "canonicalForm": "Al Ain Intl Airport",
+          "list": [
+            "al ain international airport",
+            "al ain international",
+            "al ain"
+          ]
+        },
+        {
+          "canonicalForm": "Al Maktoum Intl",
+          "list": [
+            "al maktoum international",
+            "al maktoum"
+          ]
+        },
+        {
+          "canonicalForm": "Al Minhad AB",
+          "list": [
+            "al minhad airbase",
+            "al minhad"
+          ]
+        },
+        {
+          "canonicalForm": "Al-Bateen Airport",
+          "list": [
+            "al-bateen"
+          ]
+        },
+        {
+          "canonicalForm": "Bandar Abbas Intl",
+          "list": [
+            "bandar abbas international",
+            "bandar abbas"
+          ]
+        },
+        {
+          "canonicalForm": "Bandar Lengeh",
+          "list": []
+        },
+        {
+          "canonicalForm": "Bander-e-Jask Airfield",
+          "list": [
+            "bandar-e-jask"
+          ]
+        },
+        {
+          "canonicalForm": "Beatty Airport",
+          "list": [
+            "beatty"
+          ]
+        },
+        {
+          "canonicalForm": "Boulder City Airport",
+          "list": [
+            "boulder",
+            "boulder city"
+          ]
+        },
+        {
+          "canonicalForm": "Creech AFB",
+          "list": [
+            "creech",
+            "creech airforce base"
+          ]
+        },
+        {
+          "canonicalForm": "Dubai International",
+          "list": [
+            "dubai"
+          ]
+        },
+        {
+          "canonicalForm": "Echo Bay",
+          "list": []
+        },
+        {
+          "canonicalForm": "Fujairah Intl",
+          "list": [
+            "fujairah",
+            "fujairah international"
+          ]
+        },
+        {
+          "canonicalForm": "Groom Lake AFB",
+          "list": [
+            "groom lake"
+          ]
+        },
+        {
+          "canonicalForm": "Henderson Executive",
+          "list": [
+            "henderson"
+          ]
+        },
+        {
+          "canonicalForm": "Jean Airport",
+          "list": [
+            "jean"
+          ]
+        },
+        {
+          "canonicalForm": "Jiroft Airport",
+          "list": [
+            "jiroft"
+          ]
+        },
+        {
+          "canonicalForm": "Kerman Airport",
+          "list": [
+            "kerman"
+          ]
+        },
+        {
+          "canonicalForm": "Kish Intl Airport",
+          "list": [
+            "kish",
+            "kish international"
+          ]
+        },
+        {
+          "canonicalForm": "Lar Airbase",
+          "list": [
+            "lar"
+          ]
+        },
+        {
+          "canonicalForm": "Laughlin Airport",
+          "list": [
+            "laughlin"
+          ]
+        },
+        {
+          "canonicalForm": "Lavan Island Airport",
+          "list": [
+            "lavan",
+            "lavan island"
+          ]
+        },
+        {
+          "canonicalForm": "Lincoln County",
+          "list": [
+            "lincoln"
+          ]
+        },
+        {
+          "canonicalForm": "Liwa Airbase",
+          "list": [
+            "liwa"
+          ]
+        },
+        {
+          "canonicalForm": "McCarren Intl Airport",
+          "list": [
+            "McCarren",
+            "McCarren International"
+          ]
+        },
+        {
+          "canonicalForm": "Mesquite",
+          "list": []
+        },
+        {
+          "canonicalForm": "Mina Airport",
+          "list": [
+            "mina"
+          ]
+        },
+        {
+          "canonicalForm": "Nellis AFB",
+          "list": [
+            "nellis"
+          ]
+        },
+        {
+          "canonicalForm": "North Las Vegas",
+          "list": [
+            "las vegas"
+          ]
+        },
+        {
+          "canonicalForm": "Pahute Mesa Airstrip",
+          "list": [
+            "pahute",
+            "pahute mesa"
+          ]
+        },
+        {
+          "canonicalForm": "Qeshm Island",
+          "list": [
+            "qeshm"
+          ]
+        },
+        {
+          "canonicalForm": "Ras Al Khaimah",
+          "list": []
+        },
+        {
+          "canonicalForm": "Sas Al Nakheel Airport",
+          "list": [
+            "sas al nakheel"
+          ]
+        },
+        {
+          "canonicalForm": "Sharjah Intl",
+          "list": [
+            "sharjah"
+          ]
+        },
+        {
+          "canonicalForm": "Shiraz Intl Airport",
+          "list": [
+            "shiraz"
+          ]
+        },
+        {
+          "canonicalForm": "Sir Abu Nuayr",
+          "list": [
+            "abu nuayr"
+          ]
+        },
+        {
+          "canonicalForm": "Sirri Island",
+          "list": [
+            "sirri"
+          ]
+        },
+        {
+          "canonicalForm": "Tonopah Airport",
+          "list": [
+            "tonopah"
+          ]
+        },
+        {
+          "canonicalForm": "Tonopah Test Range Airfield",
+          "list": [
+            "tonopah test range"
+          ]
+        },
+        {
+          "canonicalForm": "Tunb Island AFB",
+          "list": [
+            "tunb island"
+          ]
+        },
+        {
+          "canonicalForm": "Tunb Kochak",
+          "list": []
         }
       ],
       "roles": []
@@ -439,10 +728,6 @@
         },
         {
           "canonicalForm": "control",
-          "list": []
-        },
-        {
-          "canonicalForm": "traffic",
           "list": []
         }
       ],
@@ -482,6 +767,12 @@
         {
           "canonicalForm": "skynet",
           "list": []
+        },
+        {
+          "canonicalForm": "anyface",
+          "list": [
+            "any face"
+          ]
         }
       ],
       "roles": []
@@ -634,6 +925,26 @@
         {
           "canonicalForm": "bin chicken",
           "list": []
+        },
+        {
+          "canonicalForm": "Fiesta",
+          "list": []
+        },
+        {
+          "canonicalForm": "outhouse",
+          "list": [
+            "out house"
+          ]
+        },
+        {
+          "canonicalForm": "gamer",
+          "list": []
+        },
+        {
+          "canonicalForm": "hook",
+          "list": [
+            "hooked"
+          ]
         }
       ],
       "roles": []
@@ -665,6 +976,7 @@
         "distance",
         "altitude",
         "flight_and_element",
+        "none",
         "bearing",
         "flight"
       ]
@@ -717,24 +1029,6 @@
       "entities": []
     },
     {
-      "text": "al dhafra, traffic dolt 12. ready to taxi.",
-      "intent": "ReadyToTaxi",
-      "entities": [
-        {
-          "entity": "airbase_caller",
-          "startPos": 0,
-          "endPos": 25,
-          "children": []
-        },
-        {
-          "entity": "taxi_request",
-          "startPos": 28,
-          "endPos": 40,
-          "children": []
-        }
-      ]
-    },
-    {
       "text": "all right thanks.",
       "intent": "None",
       "entities": []
@@ -760,6 +1054,12 @@
           "startPos": 20,
           "endPos": 21,
           "children": []
+        },
+        {
+          "entity": "airbase_inbound_request",
+          "startPos": 23,
+          "endPos": 41,
+          "children": []
         }
       ]
     },
@@ -782,7 +1082,7 @@
       ]
     },
     {
-      "text": "anapa traffic dolt 11 permission to taxi",
+      "text": "anapa ground, dolt 12. ready to taxi",
       "intent": "ReadyToTaxi",
       "entities": [
         {
@@ -793,50 +1093,33 @@
         },
         {
           "entity": "taxi_request",
-          "startPos": 22,
-          "endPos": 39,
+          "startPos": 23,
+          "endPos": 35,
           "children": []
         }
       ]
     },
     {
-      "text": "anapa traffic dolt 11 ready to taxi",
-      "intent": "ReadyToTaxi",
+      "text": "anapa traffic jazz 11 taxi 2 two anapa.",
+      "intent": "None",
       "entities": [
         {
           "entity": "airbase_caller",
           "startPos": 0,
           "endPos": 20,
-          "children": []
-        },
-        {
-          "entity": "taxi_request",
-          "startPos": 22,
-          "endPos": 34,
-          "children": []
-        }
-      ]
-    },
-    {
-      "text": "anapa traffic porter 11. ready to taxi.",
-      "intent": "ReadyToTaxi",
-      "entities": [
-        {
-          "entity": "airbase_caller",
-          "startPos": 0,
-          "endPos": 22,
           "children": []
         },
         {
           "entity": "learned_group",
           "startPos": 14,
-          "endPos": 19,
+          "endPos": 17,
           "children": []
         },
         {
-          "entity": "taxi_request",
-          "startPos": 25,
-          "endPos": 37,
+          "entity": "number",
+          "role": "bearing",
+          "startPos": 27,
+          "endPos": 31,
           "children": []
         }
       ]
@@ -850,6 +1133,24 @@
       "text": "and proper call for the declare function, because the ai has to like search, the area is declare bearing at exact miles and then it searches within a one mile radius.",
       "intent": "None",
       "entities": []
+    },
+    {
+      "text": "any face goblin 11 radio check",
+      "intent": "RadioCheck",
+      "entities": [
+        {
+          "entity": "learned_sender",
+          "startPos": 0,
+          "endPos": 17,
+          "children": []
+        },
+        {
+          "entity": "learned_group",
+          "startPos": 9,
+          "endPos": 14,
+          "children": []
+        }
+      ]
     },
     {
       "text": "area now can i take care of?",
@@ -907,6 +1208,12 @@
           "role": "flight_and_element",
           "startPos": 22,
           "endPos": 23,
+          "children": []
+        },
+        {
+          "entity": "airbase_inbound_request",
+          "startPos": 25,
+          "endPos": 45,
           "children": []
         },
         {
@@ -1159,6 +1466,19 @@
       "entities": []
     },
     {
+      "text": "good answer traffic rating inbound runway 3 three about 5 miles out",
+      "intent": "None",
+      "entities": [
+        {
+          "entity": "number",
+          "role": "bearing",
+          "startPos": 42,
+          "endPos": 48,
+          "children": []
+        }
+      ]
+    },
+    {
       "text": "good i'm glad you giving it ago.",
       "intent": "None",
       "entities": []
@@ -1339,6 +1659,47 @@
       "entities": []
     },
     {
+      "text": "jarhead fix 1136p advise current loadout four times. agm 84 ds two times fox 3 is 2 times fox news.",
+      "intent": "None",
+      "entities": [
+        {
+          "entity": "number",
+          "role": "none",
+          "startPos": 41,
+          "endPos": 44,
+          "children": []
+        },
+        {
+          "entity": "number",
+          "role": "none",
+          "startPos": 57,
+          "endPos": 58,
+          "children": []
+        },
+        {
+          "entity": "number",
+          "role": "none",
+          "startPos": 63,
+          "endPos": 65,
+          "children": []
+        },
+        {
+          "entity": "number",
+          "role": "none",
+          "startPos": 77,
+          "endPos": 77,
+          "children": []
+        },
+        {
+          "entity": "number",
+          "role": "none",
+          "startPos": 82,
+          "endPos": 82,
+          "children": []
+        }
+      ]
+    },
+    {
       "text": "joker three one checking in on 278.",
       "intent": "None",
       "entities": [
@@ -1361,24 +1722,6 @@
       "entities": []
     },
     {
-      "text": "kras center traffic anvil three one inbound from the north",
-      "intent": "InboundToAirbase",
-      "entities": [
-        {
-          "entity": "airbase_caller",
-          "startPos": 0,
-          "endPos": 34,
-          "children": []
-        },
-        {
-          "entity": "learned_group",
-          "startPos": 20,
-          "endPos": 24,
-          "children": []
-        }
-      ]
-    },
-    {
       "text": "kras pash tower dagger 1 one request permission to taxi",
       "intent": "ReadyToTaxi",
       "entities": [
@@ -1398,24 +1741,6 @@
           "entity": "taxi_request",
           "startPos": 29,
           "endPos": 54,
-          "children": []
-        }
-      ]
-    },
-    {
-      "text": "kras pash traffic viper 11 inbound",
-      "intent": "InboundToAirbase",
-      "entities": [
-        {
-          "entity": "airbase_caller",
-          "startPos": 0,
-          "endPos": 25,
-          "children": []
-        },
-        {
-          "entity": "learned_group",
-          "startPos": 18,
-          "endPos": 22,
           "children": []
         }
       ]
@@ -1670,6 +1995,38 @@
       ]
     },
     {
+      "text": "magic flatline 11. certain warning 30. mouse.",
+      "intent": "SetWarningRadius",
+      "entities": [
+        {
+          "entity": "learned_sender",
+          "startPos": 0,
+          "endPos": 16,
+          "children": []
+        },
+        {
+          "entity": "learned_group",
+          "startPos": 6,
+          "endPos": 13,
+          "children": []
+        },
+        {
+          "entity": "number",
+          "role": "flight_and_element",
+          "startPos": 15,
+          "endPos": 16,
+          "children": []
+        },
+        {
+          "entity": "number",
+          "role": "distance",
+          "startPos": 35,
+          "endPos": 36,
+          "children": []
+        }
+      ]
+    },
+    {
       "text": "magic flatline 11. healing to krymsk.",
       "intent": "BearingToAirbase",
       "entities": [
@@ -1689,6 +2046,63 @@
           "entity": "airbase_bearing_request",
           "startPos": 19,
           "endPos": 35,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "magic flatline 11. set warning 30. maus.",
+      "intent": "SetWarningRadius",
+      "entities": [
+        {
+          "entity": "learned_sender",
+          "startPos": 0,
+          "endPos": 16,
+          "children": []
+        },
+        {
+          "entity": "learned_group",
+          "startPos": 6,
+          "endPos": 13,
+          "children": []
+        },
+        {
+          "entity": "number",
+          "role": "flight_and_element",
+          "startPos": 15,
+          "endPos": 16,
+          "children": []
+        },
+        {
+          "entity": "number",
+          "role": "distance",
+          "startPos": 31,
+          "endPos": 32,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "magic flatline 11. set warning 40 miles.",
+      "intent": "SetWarningRadius",
+      "entities": [
+        {
+          "entity": "learned_sender",
+          "startPos": 0,
+          "endPos": 16,
+          "children": []
+        },
+        {
+          "entity": "learned_group",
+          "startPos": 6,
+          "endPos": 13,
+          "children": []
+        },
+        {
+          "entity": "number",
+          "role": "flight_and_element",
+          "startPos": 15,
+          "endPos": 16,
           "children": []
         }
       ]
@@ -1810,6 +2224,24 @@
           "entity": "airbase_bearing_request",
           "startPos": 19,
           "endPos": 42,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "magic is scion 22 radio check.",
+      "intent": "RadioCheck",
+      "entities": [
+        {
+          "entity": "learned_sender",
+          "startPos": 0,
+          "endPos": 16,
+          "children": []
+        },
+        {
+          "entity": "learned_group",
+          "startPos": 9,
+          "endPos": 13,
           "children": []
         }
       ]
@@ -2256,6 +2688,12 @@
           "entity": "learned_group",
           "startPos": 12,
           "endPos": 16,
+          "children": []
+        },
+        {
+          "entity": "airbase_inbound_request",
+          "startPos": 22,
+          "endPos": 56,
           "children": []
         }
       ]
@@ -3061,6 +3499,18 @@
       ]
     },
     {
+      "text": "overlord bin chicken 1 one bogey dope.",
+      "intent": "BogeyDope",
+      "entities": [
+        {
+          "entity": "defined_sender",
+          "startPos": 0,
+          "endPos": 25,
+          "children": []
+        }
+      ]
+    },
+    {
       "text": "overlord bin chicken 1 one declare 120 at 20 miles",
       "intent": "Declare",
       "entities": []
@@ -3073,6 +3523,42 @@
           "entity": "defined_sender",
           "startPos": 0,
           "endPos": 25,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "overlord boner 438 bogey dope",
+      "intent": "BogeyDope",
+      "entities": [
+        {
+          "entity": "learned_sender",
+          "startPos": 0,
+          "endPos": 17,
+          "children": []
+        },
+        {
+          "entity": "learned_group",
+          "startPos": 9,
+          "endPos": 13,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "overlord boner 438 set threat radius 15 miles",
+      "intent": "SetWarningRadius",
+      "entities": [
+        {
+          "entity": "learned_sender",
+          "startPos": 0,
+          "endPos": 17,
+          "children": []
+        },
+        {
+          "entity": "learned_group",
+          "startPos": 9,
+          "endPos": 13,
           "children": []
         }
       ]
@@ -6191,6 +6677,24 @@
       ]
     },
     {
+      "text": "overlord hammer 14. requesting bogey doe",
+      "intent": "BogeyDope",
+      "entities": [
+        {
+          "entity": "learned_sender",
+          "startPos": 0,
+          "endPos": 17,
+          "children": []
+        },
+        {
+          "entity": "learned_group",
+          "startPos": 9,
+          "endPos": 14,
+          "children": []
+        }
+      ]
+    },
+    {
       "text": "overlord hawk 6 one bogey dope.",
       "intent": "BogeyDope",
       "entities": [
@@ -6381,6 +6885,24 @@
           "role": "element",
           "startPos": 18,
           "endPos": 20,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "overlord is spooky 21. radio check.",
+      "intent": "RadioCheck",
+      "entities": [
+        {
+          "entity": "learned_sender",
+          "startPos": 0,
+          "endPos": 20,
+          "children": []
+        },
+        {
+          "entity": "learned_group",
+          "startPos": 12,
+          "endPos": 17,
           "children": []
         }
       ]
@@ -8903,6 +9425,18 @@
           "entity": "defined_sender",
           "startPos": 0,
           "endPos": 19,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "overlord sabre 6. one request bogey dope.",
+      "intent": "BogeyDope",
+      "entities": [
+        {
+          "entity": "defined_sender",
+          "startPos": 0,
+          "endPos": 20,
           "children": []
         }
       ]
@@ -12174,6 +12708,11 @@
       "entities": []
     },
     {
+      "text": "this program flight flight radio check",
+      "intent": "None",
+      "entities": []
+    },
+    {
       "text": "to request for get out",
       "intent": "None",
       "entities": []
@@ -12230,6 +12769,11 @@
     },
     {
       "text": "well, you doubted me too. i clear the air space between me and my target and then got guns to buy a embarrassing as he 25.",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "what are the 5 one long final runway two to make up traffic",
       "intent": "None",
       "entities": []
     },
