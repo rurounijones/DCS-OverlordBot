@@ -68,7 +68,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
 
         protected override string InboundToAirbase(IRadioCall radioCall)
         {
-            return ResponsePrefix(radioCall) + "tower , copy inbound.";
+            return ResponsePrefix(radioCall) + " tower, copy inbound.";
         }
 
         protected override string UnverifiedSender(IRadioCall radioCall)
@@ -78,13 +78,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
 
         protected override bool IsAddressedToController(IRadioCall radioCall)
         {
-            // TODO, make this return false unless a known airbase name has been used.
-            return true;
+            return Airfields.Any(airfield => airfield.Name.Equals(radioCall.AirbaseName));
         }
 
         private static string ResponsePrefix(IRadioCall radioCall)
         {
-            var name = Airfields.Where(airfield => airfield.Name.Equals(radioCall.AirbaseName)).ToList().Count > 0 ? AirbasePronouncer.PronounceAirbase(radioCall.AirbaseName) : "ATC";
+            var name = Airfields.Any(airfield => airfield.Name.Equals(radioCall.AirbaseName)) ? AirbasePronouncer.PronounceAirbase(radioCall.AirbaseName) : "ATC";
             return $"{radioCall.Sender.Callsign}, {name} ";
         }
     }

@@ -35,6 +35,10 @@ namespace RurouniJones.DCS.Airfields.Controllers
                     desiredHeading += 360;
                     runwayHeading = runway.Heading + 360;
                 }
+                else if (desiredHeading < 360 && desiredHeading + 90 > 360 && runway.Heading < 90 )
+                {
+                    runwayHeading = runway.Heading + 360;
+                }
 
                 if (runwayHeading < desiredHeading + 90 && runwayHeading > desiredHeading - 90)
                 {
