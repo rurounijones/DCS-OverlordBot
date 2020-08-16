@@ -232,7 +232,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
                 var receivedRadioInfo = _clientStateSingleton.DcsPlayerRadioInfo.radios[audio.ReceivedRadio];
                 var responseQueue = ResponseQueues[audio.ReceivedRadio];
                 bot = new BotAudioProvider(receivedRadioInfo, responseQueue);
-                bot._speechRecognitionListener._voiceHandler = _udpVoiceHandler;
+                bot.SpeechRecognitionListener.VoiceHandler = _udpVoiceHandler;
                 BotAudioProviders[audio.ReceivedRadio] = bot;
             }
             bot.AddClientAudioSamples(audio);

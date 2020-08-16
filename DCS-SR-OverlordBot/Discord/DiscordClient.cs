@@ -69,8 +69,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Discord
                 {
                     var audioProvider = AudioManager.Instance.BotAudioProviders[int.Parse(radioId)];
                     await audioProvider.SendTransmission(messageText);
-                    var radioInfo = audioProvider._speechRecognitionListener.controller.Radio.discordTransmissionLogChannelId;
-                    await LogTransmissionToDiscord($"Outgoing Transmission:\n{messageText}", audioProvider._speechRecognitionListener.controller.Radio);
+                    var radioInfo = audioProvider.SpeechRecognitionListener.Controller.Radio.discordTransmissionLogChannelId;
+                    await LogTransmissionToDiscord($"Outgoing Transmission:\n{messageText}", audioProvider.SpeechRecognitionListener.Controller.Radio);
                 }
                 catch (KeyNotFoundException ex)
                 {

@@ -1,5 +1,4 @@
 ﻿using Ciribob.DCS.SimpleRadio.Standalone.Common.Helpers;
-using Newtonsoft.Json;
 using System.Collections.Concurrent;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Common

@@ -15,46 +15,44 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
         //https://trac.ffmpeg.org/wiki/audio%20types
         public static readonly WaveFormat PCM_MONO_16K_S16LE = new WaveFormat(16000, 1);
 
-        BufferedWaveProvider _SpeechAudioProvider;
-        public SpeechRecognitionListener _speechRecognitionListener { get; set; }
+        readonly BufferedWaveProvider _speechAudioProvider;
+        public SpeechRecognitionListener SpeechRecognitionListener { get; set; }
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         public double Frequency;
 
-        public BotAudioProvider(RadioInformation recievedRadioInfo, ConcurrentQueue<byte[]> responseQueue)
+        public BotAudioProvider(RadioInformation receivedRadioInfo, ConcurrentQueue<byte[]> responseQueue)
         {
-            _SpeechAudioProvider = new BufferedWaveProvider(PCM_MONO_16K_S16LE)
+            _speechAudioProvider = new BufferedWaveProvider(PCM_MONO_16K_S16LE)
             {
                 BufferDuration = new TimeSpan(0, 1, 0),
                 DiscardOnBufferOverflow = true,
                 ReadFully = false
             };
 
-            var callsign = recievedRadioInfo.name;
-            var voice = recievedRadioInfo.voice;
-            Frequency = recievedRadioInfo.freq;
+            var callsign = receivedRadioInfo.name;
+            var voice = receivedRadioInfo.voice;
+            Frequency = receivedRadioInfo.freq;
 
-            _speechRecognitionListener = new SpeechRecognitionListener(_SpeechAudioProvider, responseQueue, recievedRadioInfo);
-            Task.Run(() => _speechRecognitionListener.StartListeningAsync());
+            SpeechRecognitionListener = new SpeechRecognitionListener(_speechAudioProvider, responseQueue, receivedRadioInfo);
+            Task.Run(() => SpeechRecognitionListener.StartListeningAsync());
         }
 
         public async Task SendTransmission(string message)
         {
-            await _speechRecognitionListener.SendTransmission(message);
+            await SpeechRecognitionListener.SendTransmission(message);
         }
 
         public bool SpeechRecognitionActive()
         {
-            return _speechRecognitionListener.TimedOut == false;
+            return SpeechRecognitionListener.TimedOut == false;
         }
 
         public void AddClientAudioSamples(ClientAudio audio)
         {
-            bool newTransmission = LikelyNewTransmission();
-
-            int decodedLength = 0;
+            var newTransmission = LikelyNewTransmission();
 
             var decoded = _decoder.Decode(audio.EncodedAudio,
-                audio.EncodedAudio.Length, out decodedLength, newTransmission);
+                audio.EncodedAudio.Length, out var decodedLength, newTransmission);
 
             if (decodedLength > 0)
             {
@@ -83,7 +81,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                 LastUpdate = DateTime.Now.Ticks;
 
                 var pcmAudio = ConversionHelpers.ShortArrayToByteArray(audio.PcmAudioShort);
-                _SpeechAudioProvider.AddSamples(pcmAudio, 0, pcmAudio.Length);
+                _speechAudioProvider.AddSamples(pcmAudio, 0, pcmAudio.Length);
             }
             else
             {
@@ -94,7 +92,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
         public void EndTransmission()
         {
             var silence = new byte[AudioManager.INPUT_SAMPLE_RATE / 1000 * 2000];
-            _SpeechAudioProvider.AddSamples(silence, 0, silence.Length);
+            _speechAudioProvider.AddSamples(silence, 0, silence.Length);
         }
 
         //destructor to clear up opus
