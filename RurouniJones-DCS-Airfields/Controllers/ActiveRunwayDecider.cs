@@ -1,33 +1,41 @@
-﻿using RurouniJones.DCS.Airfields.Structure;
+﻿using System;
+using RurouniJones.DCS.Airfields.Structure;
 using System.Collections.Generic;
 
 namespace RurouniJones.DCS.Airfields.Controllers
 {
-    class ActiveRunwayDecider
+    internal class ActiveRunwayDecider
     {
 
         /// <summary>
         /// Some Airfields will have special considerations. For example some will only switch end
         /// if the wind speed is high enough. For the moment we will stick with wind direction.
         /// </summary>
-        /// <param name="Airfield"></param>
+        /// <param name="airfield"></param>
         /// <returns>A list of active runways</returns>
-        public static List<Runway> GetActiveRunways(Airfield Airfield)
+        public static List<Runway> GetActiveRunways(Airfield airfield)
         {
-            return GetActiveRunwaysByWind(Airfield);
+
+            var activeRunways = GetActiveRunwaysByWind(airfield);
+
+            if (activeRunways.Count == 0 && airfield.Runways.Count > 0)
+            {
+                throw new NoActiveRunwaysFoundException($"Could not find active runways for {airfield.Name} with wind heading {airfield.WindHeading}");
+            }
+            return activeRunways;
         }
 
-        private static List<Runway> GetActiveRunwaysByWind(Airfield Airfield)
+        private static List<Runway> GetActiveRunwaysByWind(Airfield airfield)
         {
-            return GetActiveRunwaysByHeading(Airfield);
+            return GetActiveRunwaysByHeading(airfield);
         }
 
-        private static List<Runway> GetActiveRunwaysByHeading(Airfield Airfield)
+        private static List<Runway> GetActiveRunwaysByHeading(Airfield airfield)
         {
-            int desiredHeading = Airfield.WindHeading == -1 ? 90 : Airfield.WindHeading;
+            var desiredHeading = airfield.WindHeading == -1 ? 90 : airfield.WindHeading;
             var activeRunways = new List<Runway>();
 
-            foreach (Runway runway in Airfield.Runways)
+            foreach (var runway in airfield.Runways)
             {
                 var runwayHeading = runway.Heading;
                 if (desiredHeading - 90 < 0)
@@ -46,6 +54,12 @@ namespace RurouniJones.DCS.Airfields.Controllers
                 }
             }
             return activeRunways;
+        }
+    }
+    public class NoActiveRunwaysFoundException : Exception
+    {
+        public NoActiveRunwaysFoundException(string message) : base(message)
+        {
         }
     }
 }

@@ -7,11 +7,14 @@ using System;
 using System.Collections;
 using System.Linq;
 using System.Threading.Tasks;
+using NLog;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
 {
     class ReadytoTaxi
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         private static readonly Array instructionsVariants = new ArrayList { "", "taxi to", "proceed to", "head to" }.ToArray();
         private static readonly Array viaVariants = new ArrayList { "via", "along", "using" }.ToArray();
 
@@ -36,14 +39,20 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
             }
             try
             {
-                if(airfield.Runways.Count == 0)
+                if (airfield.Runways.Count == 0)
                     return "There are no ATC services currently available at this airfield.";
 
                 taxiInstructions = new GroundController(airfield).GetTaxiInstructions(radioCall.Sender.Position);
                 return ConvertTaxiInstructionsToSSML(taxiInstructions);
             }
-            catch (TaxiPathNotFoundException)
+            catch (NoActiveRunwaysFoundException ex)
             {
+                Logger.Error(ex, "No Active Runways found");
+                return $"We could not find any active runways.";
+            }
+            catch (TaxiPathNotFoundException ex)
+            {
+                Logger.Error(ex, "No Path found");
                 return $"We could not find a path from your position to {taxiInstructions.DestinationName}.";
             }
         }

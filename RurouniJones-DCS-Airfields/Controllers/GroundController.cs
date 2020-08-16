@@ -57,7 +57,6 @@ namespace RurouniJones.DCS.Airfields.Controllers
                 return CompileInstructions(target, path);
             }
             throw new TaxiPathNotFoundException($"No taxi path found from {source.Name} to {target.Name}");
-
         }
 
         private double PathCost(IEnumerable<TaggedEdge<TaxiPoint, string>> path)
@@ -104,7 +103,6 @@ namespace RurouniJones.DCS.Airfields.Controllers
                     dedupedTaxiways.Add(taxiways[i]);
                 }
             }
-
             return dedupedTaxiways;
         }
     }
