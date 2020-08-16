@@ -10,25 +10,28 @@ namespace RurouniJones.DCS.Airfields.Controllers.Tests
     {
         public static IEnumerable<object[]> TaxiScenarios()
         {
-            yield return new object[] { new TaxiScenario("Al Dhafra AB", "Ramp 1", 310, new Point(24.244862290776, 54.562445823216), "Runway-3 1 Right", new List<string>() { "Alfa" }) };
-            yield return new object[] { new TaxiScenario("Al Dhafra AB", "Uniform Spots 1", 310, new Point(24.216944646008, 54.563235561423), "Runway-3 1 Left", new List<string>() { "Uniform", "Uniform 0" }) };
+            yield return new object[] { new TaxiScenario("Al Dhafra AB", "Ramp 1", 310, new Point(24.244862290776, 54.562445823216), "Runway-3 1 Right", new List<string> { "Alfa" }) };
+            yield return new object[] { new TaxiScenario("Al Dhafra AB", "Ramp 1", 170, new Point(24.244862290776, 54.562445823216), "Runway-1 3 Left", new List<string> { "Alfa", "Foxtrot" }) };
 
-            yield return new object[] { new TaxiScenario("Anapa-Vityazevo", "Apron 1", 90, new Point(45.0101581, 37.3481765), "Runway-0 4", new List<string>() { "Mike", "Alpha" }) };
-            yield return new object[] { new TaxiScenario("Anapa-Vityazevo", "Echo Spots", 90, new Point(45.0094606, 37.3635130), "Runway-0 4", new List<string>() { "Echo", "Delta", "Mike", "Alpha" },
-                new List<string>() { "Cross Runway-2 2 at your discretion" }) };
-
-            yield return new object[] { new TaxiScenario("Anapa-Vityazevo", "Apron 1", -1, new Point(45.0101581, 37.3481765), "Runway-0 4", new List<string>() { "Mike", "Alpha" }) };
+            yield return new object[] { new TaxiScenario("Al Dhafra AB", "Uniform Spots 1", 310, new Point(24.216944646008, 54.563235561423), "Runway-3 1 Left", new List<string> { "Uniform", "Uniform 0" }) };
+            yield return new object[] { new TaxiScenario("Al Dhafra AB", "Uniform Spots 1", 10, new Point(24.216944646008, 54.563235561423), "Runway-3 1 Left", new List<string> { "Uniform", "Uniform 0" }) };
             
-            yield return new object[] { new TaxiScenario("Anapa-Vityazevo", "Apron 1", 270, new Point(45.0101581, 37.3481765), "Runway-2 2", new List<string>() { "Mike", "Delta" }) };
-            yield return new object[] { new TaxiScenario("Anapa-Vityazevo", "Echo Spots", 270, new Point(45.0094606, 37.3635130), "Runway-2 2", new List<string>() { "Echo" }) };
+            yield return new object[] { new TaxiScenario("Anapa-Vityazevo", "Apron 1", 90, new Point(45.0101581, 37.3481765), "Runway-0 4", new List<string> { "Mike", "Alpha" }) };
+            yield return new object[] { new TaxiScenario("Anapa-Vityazevo", "Echo Spots", 90, new Point(45.0094606, 37.3635130), "Runway-0 4", new List<string> { "Echo", "Delta", "Mike", "Alpha" },
+                new List<string> { "Cross Runway-2 2 at your discretion" }) };
+
+            yield return new object[] { new TaxiScenario("Anapa-Vityazevo", "Apron 1", -1, new Point(45.0101581, 37.3481765), "Runway-0 4", new List<string> { "Mike", "Alpha" }) };
             
-            yield return new object[] { new TaxiScenario("Krasnodar-Center", "Echo Spots 1", 270, new Point(45.082339143765, 38.954220071576), "Runway-2 7", new List<string>() { "Echo" }) };
+            yield return new object[] { new TaxiScenario("Anapa-Vityazevo", "Apron 1", 270, new Point(45.0101581, 37.3481765), "Runway-2 2", new List<string> { "Mike", "Delta" }) };
+            yield return new object[] { new TaxiScenario("Anapa-Vityazevo", "Echo Spots", 270, new Point(45.0094606, 37.3635130), "Runway-2 2", new List<string> { "Echo" }) };
+            
+            yield return new object[] { new TaxiScenario("Krasnodar-Center", "Echo Spots 1", 270, new Point(45.082339143765, 38.954220071576), "Runway-2 7", new List<string> { "Echo" }) };
 
-            yield return new object[] { new TaxiScenario("Krasnodar-Pashkovsky", "Apron A", 90, new Point(45.038881971882, 39.14140614585), "Runway-0 5 Left", new List<string>() { "Alfa" }) };
-            yield return new object[] { new TaxiScenario("Krasnodar-Pashkovsky", "Apron 1", 90, new Point(45.047601257612, 39.200777416505), "Runway-0 5 Right", new List<string>() { "November", "Echo" }) };
+            yield return new object[] { new TaxiScenario("Krasnodar-Pashkovsky", "Apron A", 90, new Point(45.038881971882, 39.14140614585), "Runway-0 5 Left", new List<string> { "Alfa" }) };
+            yield return new object[] { new TaxiScenario("Krasnodar-Pashkovsky", "Apron 1", 90, new Point(45.047601257612, 39.200777416505), "Runway-0 5 Right", new List<string> { "November", "Echo" }) };
 
-            yield return new object[] { new TaxiScenario("Mineralnye Vody", "Maintenance Area", 90, new Point(44.223130773545, 43.104834499253), "Runway-1 2", new List<string>() { "November", "Echo", "Alfa", },
-                new List<string>() { "Cross Runway-3 0 at your discretion" }) };
+            yield return new object[] { new TaxiScenario("Mineralnye Vody", "Maintenance Area", 90, new Point(44.223130773545, 43.104834499253), "Runway-1 2", new List<string> { "November", "Echo", "Alfa" },
+                new List<string> { "Cross Runway-3 0 at your discretion" }) };
 
         }
 

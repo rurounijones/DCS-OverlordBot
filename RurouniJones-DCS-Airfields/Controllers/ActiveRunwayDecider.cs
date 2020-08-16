@@ -24,17 +24,19 @@ namespace RurouniJones.DCS.Airfields.Controllers
 
         private static List<Runway> GetActiveRunwaysByHeading(Airfield Airfield)
         {
-            int desiredHeading;
-            desiredHeading = Airfield.WindHeading == -1 ? 90 : Airfield.WindHeading;
-            desiredHeading += 360;
-
+            int desiredHeading = Airfield.WindHeading == -1 ? 90 : Airfield.WindHeading;
             var activeRunways = new List<Runway>();
 
             foreach (Runway runway in Airfield.Runways)
             {
-                var runwayHeading = runway.Heading + 360;
+                var runwayHeading = runway.Heading;
+                if (desiredHeading - 90 < 0)
+                {
+                    desiredHeading += 360;
+                    runwayHeading = runway.Heading + 360;
+                }
 
-                if (runwayHeading <= desiredHeading + 90 && runwayHeading >= desiredHeading - 90)
+                if (runwayHeading < desiredHeading + 90 && runwayHeading > desiredHeading - 90)
                 {
                     activeRunways.Add(runway);
                 }
