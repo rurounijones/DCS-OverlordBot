@@ -11,30 +11,26 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechOutput
     public static class AircraftReportingNamePronouncer
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        public static readonly List<Aircraft> AircraftMapping = JsonConvert.DeserializeObject<List<Aircraft>>(File.ReadAllText("Overlord/Data/Aircraft.json"));
+        public static readonly List<Aircraft> AircraftMapping = JsonConvert.DeserializeObject<List<Aircraft>>(File.ReadAllText("Data/Aircraft.json"));
 
         public static string PronounceName(Contact contact)
         {
-            Aircraft aircraft;
             try
             {
-                if (contact.Name == null || contact.Name.Length == 0)
+                if (string.IsNullOrEmpty(contact.Name))
                 {
                     return "unknown";
                 }
-                aircraft = AircraftMapping.FirstOrDefault(ac => ac.DcsId.Equals(contact.Name));
-                if (aircraft != null && aircraft.NatoName != null && aircraft.NatoName.Length > 0)
+                var aircraft = AircraftMapping.FirstOrDefault(ac => ac.DcsId.Equals(contact.Name));
+                if (aircraft?.NatoName != null && aircraft.NatoName.Length > 0)
                 {
                     return aircraft.NatoName;
                 }
-                else
-                {
-                    return contact.Name;
-                }
+                return contact.Name;
             }
             catch (NullReferenceException ex)
             {
-                Logger.Error(ex, "Exception pronouncing name of contact");
+                Logger.Error(ex, $"Exception pronouncing name of contact for {contact.Name}");
                 return "unknown";
             }
         }

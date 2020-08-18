@@ -600,12 +600,10 @@
     <EmbeddedResource Include="Overlord\WakeWords\Magic.table">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <None Include="Overlord\Data\Aircraft.json">
+    <None Include="Data\Aircraft.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Overlord\Data\Airfields.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Include="Overlord\Data\Airfields.json" />
     <None Include="Overlord\Data\sort_airfields.rb" />
     <None Include="Overlord\luis-app-definition.json" />
     <None Include="packages.config">
