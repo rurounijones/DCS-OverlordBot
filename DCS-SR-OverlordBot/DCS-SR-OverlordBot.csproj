@@ -503,7 +503,6 @@
     </Compile>
     <Compile Include="Settings\SettingsStore.cs" />
     <Compile Include="UI\RadioOverlayWindow\WindowHelper.cs" />
-    <Compile Include="UI\Sounds.cs" />
     <Compile Include="UI\ToolTips.cs" />
     <Compile Include="Utils\DelegateCommand.cs" />
     <Compile Include="Utils\RadioHelper.cs" />
@@ -588,18 +587,12 @@
     <None Include="awacs-radios.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <EmbeddedResource Include="Overlord\WakeWords\Overlord.table">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
+    <EmbeddedResource Include="Overlord\WakeWords\Overlord.table" />
     <None Include="nlog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <EmbeddedResource Include="Overlord\WakeWords\AnapaApproach.table">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Overlord\WakeWords\Magic.table">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
+    <EmbeddedResource Include="Overlord\WakeWords\AnapaApproach.table" />
+    <EmbeddedResource Include="Overlord\WakeWords\Magic.table" />
     <None Include="Data\Aircraft.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -665,25 +658,7 @@
     <Resource Include="status-connected.png" />
     <Resource Include="status-disconnected-error.png" />
     <Resource Include="status-disconnected.png" />
-    <None Include="AudioEffects\KY-58-RX-1600.wav">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="AudioEffects\KY-58-TX-1600.wav">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="AudioEffects\Radio-RX-1600.wav">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="AudioEffects\Radio-TX-1600.wav">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <Content Include="AudioEffects\beep-disconnected.wav">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="AudioEffects\beep-connected.wav">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Overlord\equipment-failure.wav">
+    <Content Include="Data\equipment-failure.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="speexdsp.dll">

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -10,7 +9,6 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Input;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network;
@@ -82,9 +80,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
             // Initialize images/icons
             Images.Init();
-
-            // Initialise sounds
-            Sounds.Init();
 
             // Set up tooltips that are always defined
             InitToolTips();

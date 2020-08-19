@@ -24,7 +24,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         // Used when an exception is thrown so that the caller isn't left wondering.
-        private static readonly byte[] FailureMessage = File.ReadAllBytes("Overlord/equipment-failure.wav");
+        private static readonly byte[] FailureMessage = File.ReadAllBytes("Data/equipment-failure.wav");
 
         // Authorization token expires every 10 minutes. Renew it every 9 minutes.
         private static readonly TimeSpan RefreshTokenDuration = TimeSpan.FromMinutes(9);
