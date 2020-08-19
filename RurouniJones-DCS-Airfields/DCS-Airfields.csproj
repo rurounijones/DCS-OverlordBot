@@ -73,36 +73,37 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\Al Dhafra AB.json">
+    <None Include="Data\Airfields\Al Dhafra AB.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Anapa-Vityazevo.json">
+    <None Include="Data\Airfields\Anapa-Vityazevo.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Krasnodar-Center.json">
+    <None Include="Data\Airfields\Krasnodar-Center.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Krasnodar-Pashkovsky.json">
+    <None Include="Data\Airfields\Krasnodar-Pashkovsky.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Krymsk.json">
+    <None Include="Data\Airfields\Krymsk.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Maykop-Khanskaya.json">
+    <None Include="Data\Airfields\Maykop-Khanskaya.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Mineralnye Vody.json">
+    <None Include="Data\Airfields\Mineralnye Vody.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Novorossiysk.json">
+    <None Include="Data\Airfields\Novorossiysk.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Sochi-Adler.json" />
+    <None Include="Data\Airfields\Sochi-Adler.json" />
     <None Include="packages.config" />
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="LICENSE.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

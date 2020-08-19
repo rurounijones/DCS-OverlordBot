@@ -13,7 +13,7 @@ namespace RurouniJones.DCS.Airfields
         {
             List<Airfield> airfields = new List<Airfield>();
 
-            string[] fileArray = Directory.GetFiles("Data/", "*.json");
+            string[] fileArray = Directory.GetFiles("Data/Airfields", "*.json");
 
             foreach (string file in fileArray)
             {
