@@ -32,7 +32,7 @@ namespace TaxiViewer
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
                 Filter = "JSON files (*.json)|*.json",
-                InitialDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data")
+                InitialDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\Airfields")
         };
             if (openFileDialog.ShowDialog() == true)
             {
@@ -174,7 +174,7 @@ namespace TaxiViewer
                     else
                     {
                         reverseCost = 1;
-                        reverseEdge.Attr.Color = Color.Red;
+                        reverseEdge.Attr.Color = Color.Green;
                     }
 
                     airfield.Taxiways.Add(new TaxiPath()
