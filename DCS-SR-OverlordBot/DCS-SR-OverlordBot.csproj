@@ -404,6 +404,7 @@
     <Compile Include="Overlord\Controllers\MuteController.cs" />
     <Compile Include="Overlord\Controllers\AwacsController.cs" />
     <Compile Include="Overlord\GameState\GameQuerier\GetAirfields.cs" />
+    <Compile Include="Overlord\GameState\GameQuerier\GetBearingToNearestFriendlyAirbase.cs" />
     <Compile Include="Overlord\RadioCalls\BaseRadioCall.cs" />
     <Compile Include="Overlord\Intents\ReadytoTaxi.cs" />
     <Compile Include="Overlord\Constants.cs" />
@@ -412,7 +413,7 @@
     <Compile Include="Overlord\GameState\GameQuerier\GetAircraftNearAirfield.cs" />
     <Compile Include="Overlord\GameState\GameQuerier\GetContactsWithinCircle.cs" />
     <Compile Include="Overlord\GameState\GameQuerier\GetPilotData.cs" />
-    <Compile Include="Overlord\GameState\GameQuerier\GetBearingToAirbase.cs" />
+    <Compile Include="Overlord\GameState\GameQuerier\GetBearingToNamedAirbase.cs" />
     <Compile Include="Overlord\GameState\GameQuerier\GetBogeyDope.cs" />
     <Compile Include="Overlord\GameState\GameQuerier\GetFriendlyPlayer.cs" />
     <Compile Include="Overlord\Intents\BearingToAirbase.cs" />

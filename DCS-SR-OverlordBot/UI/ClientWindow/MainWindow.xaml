@@ -4,8 +4,6 @@
                       xmlns:clientWindow="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow"
                       xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                      xmlns:devices="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Client"
-                      xmlns:input="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Client.Input"
                       xmlns:local="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Client.UI"
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                       xmlns:converters="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Client.Utils.ValueConverters"
