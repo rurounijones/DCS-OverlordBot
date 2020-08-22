@@ -93,7 +93,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls
                         {
                             case "flight_and_element":
                                 int.TryParse(x["value"][0].ToString(), out flight);
-                                int.TryParse(x["value"][1].ToString(), out element);
+                                int.TryParse(x["value"].Substring(1), out element);
                                 break;
                             case "flight":
                             {
