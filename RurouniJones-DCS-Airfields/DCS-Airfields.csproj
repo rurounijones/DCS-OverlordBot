@@ -79,6 +79,9 @@
     <None Include="Data\Airfields\Anapa-Vityazevo.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Data\Airfields\Incirlik AB.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Data\Airfields\Krasnodar-Center.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
