@@ -3,7 +3,7 @@
     public static class AirbasePronouncer
     {
         /// <summary>
-        /// Pronounces the airbase as a human GCI / ATC without *all* the words and using correct IPA pronuncuation
+        /// Pronounces the airbase as a human GCI / ATC without *all* the words and using correct IPA pronunciation
         /// </summary>
         /// <remarks>
         /// The output of this method is intended to be used in an SSML string for pronunciation by the Azure Speech Service.
@@ -28,6 +28,8 @@
                     return "<phoneme alphabet=\"ipa\" ph=\"mʲɪnʲɪˈralʲnɨjə ˈvodɨ\">Mineralnye Vody</phoneme>";
                 case "gelendzhik":
                     return "<phoneme alphabet=\"ipa\" ph=\"ɡʲɪlʲɪnd͡ʐˈʐɨk\">Gelendzhik</phoneme>";
+                case "kobuleti":
+                    return "<phoneme alphabet=\"ipa\" ph=\"kʰɔbulɛtʰi\">Kobuleti</phoneme>";
             }
             // Remove all the ancillery words that we do not care about when spoken. Include the leading space. This is a 
             // catch-all for reducing the length of airfields that do not have a specific pronunciation defined above.
