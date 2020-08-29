@@ -46,13 +46,13 @@ namespace RurouniJones.DCS.Airfields.Structure
         /// the Maintenance Area as Harriers are spawned there on GAW.
         /// </summary>
         [JsonProperty(PropertyName = "parkingSpots")]
-        public List<ParkingSpot> ParkingSpots { get; set; }
+        public List<ParkingSpot> ParkingSpots { get; set; } = new List<ParkingSpot>();
 
         /// <summary>
         /// A list of Runways 
         /// </summary>
         [JsonProperty(PropertyName = "runways")]
-        public List<Runway> Runways { get; set; }
+        public List<Runway> Runways { get; set; } = new List<Runway>();
 
         /// <summary>
         /// A list of Taxi Junctions
@@ -61,7 +61,7 @@ namespace RurouniJones.DCS.Airfields.Structure
         /// or a Runway
         /// </summary>
         [JsonProperty(PropertyName = "junctions")]
-        public List<Junction> Junctions { get; set; }
+        public List<Junction> Junctions { get; set; } = new List<Junction>();
 
         /// <summary>
         /// A list of Taxipaths
@@ -70,7 +70,7 @@ namespace RurouniJones.DCS.Airfields.Structure
         /// If a taxiway is to be navigated in both directions then it needs two taxipaths, one going each way.
         /// </summary>
         [JsonProperty(PropertyName = "taxipaths")]
-        public List<TaxiPath> Taxiways { get; set; }
+        public List<TaxiPath> Taxiways { get; set; } = new List<TaxiPath>();
 
         /// <summary>
         /// Position of the airfield 

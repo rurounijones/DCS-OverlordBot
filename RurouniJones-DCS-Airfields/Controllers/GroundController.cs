@@ -1,4 +1,5 @@
-﻿using Geo.Geometries;
+﻿using System;
+using Geo.Geometries;
 using NLog;
 using QuikGraph;
 using QuikGraph.Algorithms;
@@ -21,9 +22,18 @@ namespace RurouniJones.DCS.Airfields.Controllers
 
         public TaxiInstructions GetTaxiInstructions(Point callerPosition)
         {
-            var source = _airfield.TaxiPoints.OrderBy(taxiPoint => taxiPoint.DistanceTo(callerPosition.Coordinate)).First();
-            Logger.Debug($"Player is at {callerPosition.Coordinate}, nearest Taxi point is {source}");
+            TaxiPoint source;
+            try
+            {
+                source = _airfield.TaxiPoints.OrderBy(taxiPoint => taxiPoint.DistanceTo(callerPosition.Coordinate))
+                    .First();
+            }
+            catch (NullReferenceException)
+            {
+                throw new TaxiPathNotFoundException($"Taxi path not available because no TaxiPoints found");
+            }
 
+            Logger.Debug($"Player is at {callerPosition.Coordinate}, nearest Taxi point is {source}");
             var runways = ActiveRunwayDecider.GetActiveRunways(_airfield);
             return runways.Count == 1 ? GetTaxiInstructionsWhenSingleRunway(source, runways.First()) : GetTaxiInstructionsWhenMultipleRunways(source, runways);
         }
