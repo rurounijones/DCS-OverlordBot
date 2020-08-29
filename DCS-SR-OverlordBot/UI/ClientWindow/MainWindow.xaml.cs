@@ -92,7 +92,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             Left = _settings.GetPositionSetting(SettingsKeys.ClientX).DoubleValue;
             Top = _settings.GetPositionSetting(SettingsKeys.ClientY).DoubleValue;
 
-            Title = Title + " - 1.11.1.0";
+            Title += " - 1.11.2.0";
 
             CheckWindowVisibility();
 
