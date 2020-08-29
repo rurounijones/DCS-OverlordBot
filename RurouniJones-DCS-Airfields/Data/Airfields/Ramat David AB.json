@@ -1,0 +1,945 @@
+{
+  "name": "Ramat David AB",
+  "lat": 32.6658333,
+  "lon": 35.1652778,
+  "alt": 105.0,
+  "parkingSpots": [
+    {
+      "name": "Hardened Aircraft Shelters 6",
+      "lat": 32.662388648986,
+      "lon": 35.180604388003
+    },
+    {
+      "name": "Hangars",
+      "lat": 32.667906619838,
+      "lon": 35.177508928378
+    },
+    {
+      "name": "Hardened Aircraft Shelters 7",
+      "lat": 32.66488884046,
+      "lon": 35.179369067798
+    },
+    {
+      "name": "Hangars 1",
+      "lat": 32.669626711402,
+      "lon": 35.183657532419
+    },
+    {
+      "name": "Hardened Aircraft Shelters 8",
+      "lat": 32.664902038629,
+      "lon": 35.191766325028
+    },
+    {
+      "name": "Hangars 2",
+      "lat": 32.668927232433,
+      "lon": 35.190223309855
+    },
+    {
+      "name": "Hardened Aircraft Shelters 9",
+      "lat": 32.6629243894,
+      "lon": 35.192819385034
+    },
+    {
+      "name": "Hangars 3",
+      "lat": 32.659509374404,
+      "lon": 35.19373796195
+    },
+    {
+      "name": "Hardened Aircraft Shelters 3",
+      "lat": 32.659819003326,
+      "lon": 35.192619530404
+    },
+    {
+      "name": "Hardened Aircraft Shelters",
+      "lat": 32.668444307086,
+      "lon": 35.165651081011
+    },
+    {
+      "name": "Hardened Aircraft Shelters 4",
+      "lat": 32.658717511966,
+      "lon": 35.187764930466
+    },
+    {
+      "name": "Hardened Aircraft Shelters 1",
+      "lat": 32.67252134976,
+      "lon": 35.172022709289
+    },
+    {
+      "name": "Hardened Aircraft Shelters 5",
+      "lat": 32.660358013833,
+      "lon": 35.184820132661
+    },
+    {
+      "name": "Hardened Aircraft Shelters 2",
+      "lat": 32.672805899745,
+      "lon": 35.17529524379
+    }
+  ],
+  "runways": [
+    {
+      "heading": 268,
+      "name": "Runway 2 7",
+      "lat": 32.667093311125,
+      "lon": 35.191408536847
+    },
+    {
+      "heading": 111,
+      "name": "Runway 1 1",
+      "lat": 32.662602821112,
+      "lon": 35.162934815014
+    },
+    {
+      "heading": 146,
+      "name": "Runway 1 5",
+      "lat": 32.67497086252,
+      "lon": 35.176952093606
+    },
+    {
+      "heading": 291,
+      "name": "Runway 2 9",
+      "lat": 32.655963176447,
+      "lon": 35.186810141755
+    },
+    {
+      "heading": 326,
+      "name": "Runway 3 3",
+      "lat": 32.657791659893,
+      "lon": 35.191416054402
+    },
+    {
+      "heading": 88,
+      "name": "Runway 0 9",
+      "lat": 32.665713811386,
+      "lon": 35.163933994469
+    }
+  ],
+  "junctions": [
+    {
+      "name": "Echo Foxtrot Runway",
+      "lat": 32.667065552845,
+      "lon": 35.190805707705
+    },
+    {
+      "name": "Bravo Foxtrot Runway",
+      "lat": 32.669426582116,
+      "lon": 35.181618238463
+    },
+    {
+      "name": "Hotel Runway",
+      "lat": 32.666647527097,
+      "lon": 35.182501595807
+    },
+    {
+      "name": "Alfa Hotel",
+      "lat": 32.674522795376,
+      "lon": 35.175836023205
+    },
+    {
+      "name": "Charlie Runway",
+      "lat": 32.662484896713,
+      "lon": 35.187455690567
+    },
+    {
+      "name": "Alfa Juliett",
+      "lat": 32.669972575821,
+      "lon": 35.170789068789
+    },
+    {
+      "name": "Alfa Runway",
+      "lat": 32.665849252143,
+      "lon": 35.166519223945
+    },
+    {
+      "name": "Juliett Runway 1",
+      "lat": 32.666081719407,
+      "lon": 35.171119741323
+    },
+    {
+      "name": "Juliett Runway 2",
+      "lat": 32.660946146667,
+      "lon": 35.168938591993
+    },
+    {
+      "name": "Golf Kilo Runway",
+      "lat": 32.666505886618,
+      "lon": 35.179863871072
+    },
+    {
+      "name": "Charlie Hotel",
+      "lat": 32.661931315634,
+      "lon": 35.186478544376
+    },
+    {
+      "name": "Charlie Golf",
+      "lat": 32.661092550145,
+      "lon": 35.185251012639
+    },
+    {
+      "name": "Charlie 1 Hotel",
+      "lat": 32.659516758391,
+      "lon": 35.188504129176
+    },
+    {
+      "name": "Charlie 1 Golf",
+      "lat": 32.658198738678,
+      "lon": 35.186950478834
+    },
+    {
+      "name": "Delta Golf",
+      "lat": 32.656575998934,
+      "lon": 35.188003612605
+    },
+    {
+      "name": "Delta Hotel",
+      "lat": 32.657200005818,
+      "lon": 35.19041299707
+    },
+    {
+      "name": "Bravo Hotel Kilo",
+      "lat": 32.668911245441,
+      "lon": 35.1805899002
+    },
+    {
+      "name": "Kilo Mike",
+      "lat": 32.667631228217,
+      "lon": 35.179787117526
+    },
+    {
+      "name": "Charlie Hotel",
+      "lat": 32.661931315634,
+      "lon": 35.186478544376
+    },
+    {
+      "name": "Alfa Mike",
+      "lat": 32.667144078626,
+      "lon": 35.167803716832
+    },
+    {
+      "name": "Juliett Mike",
+      "lat": 32.667315888513,
+      "lon": 35.171268311738
+    }
+  ],
+  "taxipaths": [
+    {
+      "name": "Runway",
+      "source": "Runway 1 1",
+      "target": "Juliett Runway 2",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Juliett Runway 2",
+      "target": "Runway 1 1",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Juliett Runway 2",
+      "target": "Runway 2 9",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway 2 9",
+      "target": "Juliett Runway 2",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway 0 9",
+      "target": "Alfa Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Alfa Runway",
+      "target": "Runway 0 9",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Alfa Runway",
+      "target": "Juliett Runway 1",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Juliett Runway 1",
+      "target": "Alfa Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Juliett Runway 1",
+      "target": "Golf Kilo Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Golf Kilo Runway",
+      "target": "Juliett Runway 1",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Golf Kilo Runway",
+      "target": "Hotel Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Hotel Runway",
+      "target": "Golf Kilo Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Echo Foxtrot Runway",
+      "target": "Runway 2 7",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway 2 7",
+      "target": "Echo Foxtrot Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Echo Foxtrot Runway",
+      "target": "Hotel Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Hotel Runway",
+      "target": "Echo Foxtrot Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway 1 5",
+      "target": "Bravo Foxtrot Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Bravo Foxtrot Runway",
+      "target": "Runway 1 5",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Bravo Foxtrot Runway",
+      "target": "Charlie Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Charlie Runway",
+      "target": "Bravo Foxtrot Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Charlie Runway",
+      "target": "Runway 3 3",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway 3 3",
+      "target": "Charlie Runway",
+      "cost": 999
+    },
+    {
+      "name": "Lima",
+      "source": "Runway 0 9",
+      "target": "Runway 1 1",
+      "cost": 1
+    },
+    {
+      "name": "Lima",
+      "source": "Runway 1 1",
+      "target": "Runway 0 9",
+      "cost": 1
+    },
+    {
+      "name": "Mike",
+      "source": "Hardened Aircraft Shelters",
+      "target": "Runway 0 9",
+      "cost": 1
+    },
+    {
+      "name": "Mike",
+      "source": "Runway 0 9",
+      "target": "Hardened Aircraft Shelters",
+      "cost": 999
+    },
+    {
+      "name": "Mike",
+      "source": "Alfa Mike",
+      "target": "Runway 0 9",
+      "cost": 1
+    },
+    {
+      "name": "Mike",
+      "source": "Runway 0 9",
+      "target": "Alfa Mike",
+      "cost": 1
+    },
+    {
+      "name": "Alfa",
+      "source": "Alfa Mike",
+      "target": "Alfa Runway",
+      "cost": 1
+    },
+    {
+      "name": "Alfa",
+      "source": "Alfa Runway",
+      "target": "Alfa Mike",
+      "cost": 1
+    },
+    {
+      "name": "Alfa",
+      "source": "Alfa Juliett",
+      "target": "Alfa Mike",
+      "cost": 1
+    },
+    {
+      "name": "Alfa",
+      "source": "Alfa Mike",
+      "target": "Alfa Juliett",
+      "cost": 1
+    },
+    {
+      "name": "Juliett",
+      "source": "Alfa Juliett",
+      "target": "Juliett Mike",
+      "cost": 1
+    },
+    {
+      "name": "Juliett",
+      "source": "Juliett Mike",
+      "target": "Alfa Juliett",
+      "cost": 1
+    },
+    {
+      "name": "Juliett",
+      "source": "Juliett Mike",
+      "target": "Juliett Runway 1",
+      "cost": 1
+    },
+    {
+      "name": "Juliett",
+      "source": "Juliett Runway 1",
+      "target": "Juliett Mike",
+      "cost": 1
+    },
+    {
+      "name": "Juliett",
+      "source": "Juliett Runway 1",
+      "target": "Juliett Runway 2",
+      "cost": 999
+    },
+    {
+      "name": "Juliett",
+      "source": "Juliett Runway 2",
+      "target": "Juliett Runway 1",
+      "cost": 999
+    },
+    {
+      "name": "Kilo",
+      "source": "Kilo Mike",
+      "target": "Golf Kilo Runway",
+      "cost": 1
+    },
+    {
+      "name": "Kilo",
+      "source": "Golf Kilo Runway",
+      "target": "Kilo Mike",
+      "cost": 1
+    },
+    {
+      "name": "Kilo",
+      "source": "Bravo Hotel Kilo",
+      "target": "Kilo Mike",
+      "cost": 1
+    },
+    {
+      "name": "Kilo",
+      "source": "Kilo Mike",
+      "target": "Bravo Hotel Kilo",
+      "cost": 1
+    },
+    {
+      "name": "Bravo",
+      "source": "Bravo Hotel Kilo",
+      "target": "Bravo Foxtrot Runway",
+      "cost": 1
+    },
+    {
+      "name": "Bravo",
+      "source": "Bravo Foxtrot Runway",
+      "target": "Bravo Hotel Kilo",
+      "cost": 1
+    },
+    {
+      "name": "Hotel",
+      "source": "Bravo Hotel Kilo",
+      "target": "Hotel Runway",
+      "cost": 1
+    },
+    {
+      "name": "Hotel",
+      "source": "Hotel Runway",
+      "target": "Bravo Hotel Kilo",
+      "cost": 1
+    },
+    {
+      "name": "Hotel",
+      "source": "Charlie Hotel",
+      "target": "Hotel Runway",
+      "cost": 1
+    },
+    {
+      "name": "Hotel",
+      "source": "Hotel Runway",
+      "target": "Charlie Hotel",
+      "cost": 1
+    },
+    {
+      "name": "Golf",
+      "source": "Charlie Golf",
+      "target": "Golf Kilo Runway",
+      "cost": 1
+    },
+    {
+      "name": "Golf",
+      "source": "Golf Kilo Runway",
+      "target": "Charlie Golf",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Charlie Golf",
+      "target": "Charlie Hotel",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Charlie Hotel",
+      "target": "Charlie Golf",
+      "cost": 1
+    },
+    {
+      "name": "Charlie 1",
+      "source": "Charlie 1 Golf",
+      "target": "Charlie 1 Hotel",
+      "cost": 1
+    },
+    {
+      "name": "Charlie 1",
+      "source": "Charlie 1 Hotel",
+      "target": "Charlie 1 Golf",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Charlie 1 Hotel",
+      "target": "Charlie Hotel",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Charlie Hotel",
+      "target": "Charlie 1 Hotel",
+      "cost": 1
+    },
+    {
+      "name": "Hotel",
+      "source": "Charlie 1 Hotel",
+      "target": "Delta Hotel",
+      "cost": 1
+    },
+    {
+      "name": "Hotel",
+      "source": "Delta Hotel",
+      "target": "Charlie 1 Hotel",
+      "cost": 1
+    },
+    {
+      "name": "Delta",
+      "source": "Delta Hotel",
+      "target": "Delta Golf",
+      "cost": 1
+    },
+    {
+      "name": "Delta",
+      "source": "Delta Golf",
+      "target": "Delta Hotel",
+      "cost": 1
+    },
+    {
+      "name": "Delta",
+      "source": "Delta Golf",
+      "target": "Runway 2 9",
+      "cost": 1
+    },
+    {
+      "name": "Delta",
+      "source": "Runway 2 9",
+      "target": "Delta Golf",
+      "cost": 1
+    },
+    {
+      "name": "Alfa",
+      "source": "Alfa Hotel",
+      "target": "Alfa Juliett",
+      "cost": 1
+    },
+    {
+      "name": "Alfa",
+      "source": "Alfa Juliett",
+      "target": "Alfa Hotel",
+      "cost": 1
+    },
+    {
+      "name": "Hotel",
+      "source": "Alfa Hotel",
+      "target": "Runway 1 5",
+      "cost": 1
+    },
+    {
+      "name": "Hotel",
+      "source": "Runway 1 5",
+      "target": "Alfa Hotel",
+      "cost": 1
+    },
+    {
+      "name": "Alfa",
+      "source": "Hardened Aircraft Shelters 1",
+      "target": "Alfa Hotel",
+      "cost": 1
+    },
+    {
+      "name": "Alfa",
+      "source": "Alfa Hotel",
+      "target": "Hardened Aircraft Shelters 1",
+      "cost": 999
+    },
+    {
+      "name": "Alfa",
+      "source": "Hardened Aircraft Shelters 2",
+      "target": "Alfa Hotel",
+      "cost": 1
+    },
+    {
+      "name": "Alfa",
+      "source": "Alfa Hotel",
+      "target": "Hardened Aircraft Shelters 2",
+      "cost": 999
+    },
+    {
+      "name": "Alfa",
+      "source": "Hardened Aircraft Shelters 1",
+      "target": "Alfa Juliett",
+      "cost": 1
+    },
+    {
+      "name": "Alfa",
+      "source": "Alfa Juliett",
+      "target": "Hardened Aircraft Shelters 1",
+      "cost": 999
+    },
+    {
+      "name": "Alfa",
+      "source": "Hardened Aircraft Shelters 2",
+      "target": "Alfa Juliett",
+      "cost": 1
+    },
+    {
+      "name": "Alfa",
+      "source": "Alfa Juliett",
+      "target": "Hardened Aircraft Shelters 2",
+      "cost": 999
+    },
+    {
+      "name": "Mike",
+      "source": "Hardened Aircraft Shelters",
+      "target": "Alfa Mike",
+      "cost": 1
+    },
+    {
+      "name": "Mike",
+      "source": "Alfa Mike",
+      "target": "Hardened Aircraft Shelters",
+      "cost": 999
+    },
+    {
+      "name": "Mike",
+      "source": "Hangars",
+      "target": "Kilo Mike",
+      "cost": 1
+    },
+    {
+      "name": "Mike",
+      "source": "Kilo Mike",
+      "target": "Hangars",
+      "cost": 999
+    },
+    {
+      "name": "Mike",
+      "source": "Hangars",
+      "target": "Juliett Mike",
+      "cost": 1
+    },
+    {
+      "name": "Mike",
+      "source": "Juliett Mike",
+      "target": "Hangars",
+      "cost": 999
+    },
+    {
+      "name": "Foxtrot",
+      "source": "Hangars 1",
+      "target": "Bravo Foxtrot Runway",
+      "cost": 1
+    },
+    {
+      "name": "Foxtrot",
+      "source": "Bravo Foxtrot Runway",
+      "target": "Hangars 1",
+      "cost": 999
+    },
+    {
+      "name": "Foxtrot",
+      "source": "Hangars 1",
+      "target": "Echo Foxtrot Runway",
+      "cost": 1
+    },
+    {
+      "name": "Foxtrot",
+      "source": "Echo Foxtrot Runway",
+      "target": "Hangars 1",
+      "cost": 999
+    },
+    {
+      "name": "Foxtrot",
+      "source": "Hangars 2",
+      "target": "Echo Foxtrot Runway",
+      "cost": 1
+    },
+    {
+      "name": "Foxtrot",
+      "source": "Echo Foxtrot Runway",
+      "target": "Hangars 2",
+      "cost": 999
+    },
+    {
+      "name": "Foxtrot",
+      "source": "Hangars 2",
+      "target": "Bravo Foxtrot Runway",
+      "cost": 1
+    },
+    {
+      "name": "Foxtrot",
+      "source": "Bravo Foxtrot Runway",
+      "target": "Hangars 2",
+      "cost": 999
+    },
+    {
+      "name": "Echo",
+      "source": "Hangars 3",
+      "target": "Runway 3 3",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Runway 3 3",
+      "target": "Hangars 3",
+      "cost": 999
+    },
+    {
+      "name": "Echo",
+      "source": "Hangars 3",
+      "target": "Echo Foxtrot Runway",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Echo Foxtrot Runway",
+      "target": "Hangars 3",
+      "cost": 999
+    },
+    {
+      "name": "Echo",
+      "source": "Hardened Aircraft Shelters 3",
+      "target": "Runway 3 3",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Runway 3 3",
+      "target": "Hardened Aircraft Shelters 3",
+      "cost": 999
+    },
+    {
+      "name": "Echo",
+      "source": "Hardened Aircraft Shelters 3",
+      "target": "Echo Foxtrot Runway",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Echo Foxtrot Runway",
+      "target": "Hardened Aircraft Shelters 3",
+      "cost": 999
+    },
+    {
+      "name": "Echo",
+      "source": "Hardened Aircraft Shelters 8",
+      "target": "Runway 3 3",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Runway 3 3",
+      "target": "Hardened Aircraft Shelters 8",
+      "cost": 999
+    },
+    {
+      "name": "Echo",
+      "source": "Hardened Aircraft Shelters 8",
+      "target": "Echo Foxtrot Runway",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Echo Foxtrot Runway",
+      "target": "Hardened Aircraft Shelters 8",
+      "cost": 999
+    },
+    {
+      "name": "Echo",
+      "source": "Hardened Aircraft Shelters 9",
+      "target": "Runway 3 3",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Runway 3 3",
+      "target": "Hardened Aircraft Shelters 9",
+      "cost": 999
+    },
+    {
+      "name": "Echo",
+      "source": "Hardened Aircraft Shelters 9",
+      "target": "Echo Foxtrot Runway",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Echo Foxtrot Runway",
+      "target": "Hardened Aircraft Shelters 9",
+      "cost": 999
+    },
+    {
+      "name": "Charlie 1",
+      "source": "Hardened Aircraft Shelters 4",
+      "target": "Charlie 1 Hotel",
+      "cost": 1
+    },
+    {
+      "name": "Charlie 1",
+      "source": "Charlie 1 Hotel",
+      "target": "Hardened Aircraft Shelters 4",
+      "cost": 999
+    },
+    {
+      "name": "Charlie 1",
+      "source": "Hardened Aircraft Shelters 4",
+      "target": "Charlie 1 Golf",
+      "cost": 1
+    },
+    {
+      "name": "Charlie 1",
+      "source": "Charlie 1 Golf",
+      "target": "Hardened Aircraft Shelters 4",
+      "cost": 999
+    },
+    {
+      "name": "Golf",
+      "source": "Hardened Aircraft Shelters 5",
+      "target": "Charlie Golf",
+      "cost": 1
+    },
+    {
+      "name": "Golf",
+      "source": "Charlie Golf",
+      "target": "Hardened Aircraft Shelters 5",
+      "cost": 999
+    },
+    {
+      "name": "Golf",
+      "source": "Hardened Aircraft Shelters 5",
+      "target": "Charlie 1 Golf",
+      "cost": 1
+    },
+    {
+      "name": "Golf",
+      "source": "Charlie 1 Golf",
+      "target": "Hardened Aircraft Shelters 5",
+      "cost": 999
+    },
+    {
+      "name": "Golf",
+      "source": "Hardened Aircraft Shelters 6",
+      "target": "Charlie Golf",
+      "cost": 1
+    },
+    {
+      "name": "Golf",
+      "source": "Charlie Golf",
+      "target": "Hardened Aircraft Shelters 6",
+      "cost": 999
+    },
+    {
+      "name": "Golf",
+      "source": "Hardened Aircraft Shelters 6",
+      "target": "Golf Kilo Runway",
+      "cost": 1
+    },
+    {
+      "name": "Golf",
+      "source": "Golf Kilo Runway",
+      "target": "Hardened Aircraft Shelters 6",
+      "cost": 999
+    },
+    {
+      "name": "Golf",
+      "source": "Hardened Aircraft Shelters 7",
+      "target": "Golf Kilo Runway",
+      "cost": 1
+    },
+    {
+      "name": "Golf",
+      "source": "Golf Kilo Runway",
+      "target": "Hardened Aircraft Shelters 7",
+      "cost": 999
+    },
+    {
+      "name": "Golf",
+      "source": "Hardened Aircraft Shelters 7",
+      "target": "Charlie Golf",
+      "cost": 1
+    },
+    {
+      "name": "Golf",
+      "source": "Charlie Golf",
+      "target": "Hardened Aircraft Shelters 7",
+      "cost": 999
+    }
+  ]
+}
