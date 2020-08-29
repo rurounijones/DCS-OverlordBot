@@ -295,7 +295,8 @@
             "anapa vityazevo",
             "a napa",
             "onapa",
-            "napa"
+            "napa",
+            "And Apple"
           ]
         },
         {
@@ -431,7 +432,8 @@
           "list": [
             "the stennis",
             "cvn 74",
-            "stennis"
+            "stennis",
+            "carrier 74"
           ]
         },
         {
@@ -703,6 +705,42 @@
         {
           "canonicalForm": "Tunb Kochak",
           "list": []
+        },
+        {
+          "canonicalForm": "nearest",
+          "list": [
+            "nearest airbase",
+            "nearest airfield",
+            "nearest friendly airbase",
+            "nearest friendly airfield"
+          ]
+        },
+        {
+          "canonicalForm": "CVN_73",
+          "list": [
+            "cvn 73",
+            "carrier 73",
+            "george washington",
+            "washington"
+          ]
+        },
+        {
+          "canonicalForm": "CVN_71",
+          "list": [
+            "cvn 71",
+            "carrier 71",
+            "theodore roosevelt",
+            "roosevelt"
+          ]
+        },
+        {
+          "canonicalForm": "CVN_72",
+          "list": [
+            "cvn 72",
+            "carrier 72",
+            "abraham lincoln",
+            "lincoln"
+          ]
         }
       ],
       "roles": []
@@ -845,10 +883,6 @@
           "list": [
             "links"
           ]
-        },
-        {
-          "canonicalForm": "wombat",
-          "list": []
         },
         {
           "canonicalForm": "sprat",
@@ -1794,6 +1828,30 @@
       ]
     },
     {
+      "text": "kutaisi tower ascot 11. ready to taxi.",
+      "intent": "ReadyToTaxi",
+      "entities": [
+        {
+          "entity": "airbase_caller",
+          "startPos": 0,
+          "endPos": 21,
+          "children": []
+        },
+        {
+          "entity": "learned_group",
+          "startPos": 14,
+          "endPos": 18,
+          "children": []
+        },
+        {
+          "entity": "taxi_request",
+          "startPos": 24,
+          "endPos": 36,
+          "children": []
+        }
+      ]
+    },
+    {
       "text": "last chance",
       "intent": "None",
       "entities": []
@@ -1887,6 +1945,37 @@
           "entity": "learned_group",
           "startPos": 6,
           "endPos": 10,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "magic circus 14 alpha check to ravager 11",
+      "intent": "BearingToFriendlyPlayer",
+      "entities": [
+        {
+          "entity": "learned_sender",
+          "startPos": 0,
+          "endPos": 14,
+          "children": []
+        },
+        {
+          "entity": "learned_group",
+          "startPos": 6,
+          "endPos": 11,
+          "children": []
+        },
+        {
+          "entity": "learned_group",
+          "startPos": 31,
+          "endPos": 37,
+          "children": []
+        },
+        {
+          "entity": "player_callsign",
+          "role": "target",
+          "startPos": 31,
+          "endPos": 40,
           "children": []
         }
       ]
@@ -2103,6 +2192,13 @@
           "role": "flight_and_element",
           "startPos": 15,
           "endPos": 16,
+          "children": []
+        },
+        {
+          "entity": "number",
+          "role": "distance",
+          "startPos": 31,
+          "endPos": 32,
           "children": []
         }
       ]
@@ -3524,6 +3620,13 @@
           "startPos": 0,
           "endPos": 25,
           "children": []
+        },
+        {
+          "entity": "number",
+          "role": "distance",
+          "startPos": 45,
+          "endPos": 46,
+          "children": []
         }
       ]
     },
@@ -3559,6 +3662,20 @@
           "entity": "learned_group",
           "startPos": 9,
           "endPos": 13,
+          "children": []
+        },
+        {
+          "entity": "number",
+          "role": "flight_and_element",
+          "startPos": 15,
+          "endPos": 17,
+          "children": []
+        },
+        {
+          "entity": "number",
+          "role": "distance",
+          "startPos": 37,
+          "endPos": 38,
           "children": []
         }
       ]
@@ -3796,6 +3913,98 @@
           "entity": "learned_group",
           "startPos": 9,
           "endPos": 14,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "overlord bunny 169 are where is shocker 11",
+      "intent": "BearingToFriendlyPlayer",
+      "entities": [
+        {
+          "entity": "learned_sender",
+          "startPos": 0,
+          "endPos": 17,
+          "children": []
+        },
+        {
+          "entity": "learned_group",
+          "startPos": 9,
+          "endPos": 13,
+          "children": []
+        },
+        {
+          "entity": "learned_group",
+          "startPos": 32,
+          "endPos": 38,
+          "children": []
+        },
+        {
+          "entity": "player_callsign",
+          "role": "target",
+          "startPos": 32,
+          "endPos": 41,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "overlord bunny 169 request intercept to bunny 336.",
+      "intent": "BearingToFriendlyPlayer",
+      "entities": [
+        {
+          "entity": "learned_sender",
+          "startPos": 0,
+          "endPos": 17,
+          "children": []
+        },
+        {
+          "entity": "learned_group",
+          "startPos": 9,
+          "endPos": 13,
+          "children": []
+        },
+        {
+          "entity": "learned_group",
+          "startPos": 40,
+          "endPos": 44,
+          "children": []
+        },
+        {
+          "entity": "player_callsign",
+          "role": "target",
+          "startPos": 40,
+          "endPos": 48,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "overlord bunny 169 wheres circus 14",
+      "intent": "BearingToFriendlyPlayer",
+      "entities": [
+        {
+          "entity": "learned_sender",
+          "startPos": 0,
+          "endPos": 17,
+          "children": []
+        },
+        {
+          "entity": "learned_group",
+          "startPos": 9,
+          "endPos": 13,
+          "children": []
+        },
+        {
+          "entity": "learned_group",
+          "startPos": 26,
+          "endPos": 31,
+          "children": []
+        },
+        {
+          "entity": "player_callsign",
+          "startPos": 26,
+          "endPos": 34,
           "children": []
         }
       ]
@@ -4142,6 +4351,45 @@
           "entity": "learned_group",
           "startPos": 9,
           "endPos": 14,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "overlord chicken 6 seven set threat. radius 40 miles.",
+      "intent": "SetWarningRadius",
+      "entities": [
+        {
+          "entity": "learned_sender",
+          "startPos": 0,
+          "endPos": 23,
+          "children": []
+        },
+        {
+          "entity": "learned_group",
+          "startPos": 9,
+          "endPos": 15,
+          "children": []
+        },
+        {
+          "entity": "number",
+          "role": "flight",
+          "startPos": 17,
+          "endPos": 17,
+          "children": []
+        },
+        {
+          "entity": "number",
+          "role": "element",
+          "startPos": 19,
+          "endPos": 23,
+          "children": []
+        },
+        {
+          "entity": "number",
+          "role": "distance",
+          "startPos": 44,
+          "endPos": 45,
           "children": []
         }
       ]
@@ -5022,6 +5270,25 @@
           "role": "target",
           "startPos": 27,
           "endPos": 34,
+          "children": []
+        }
+      ]
+    },
+    {
+      "text": "overlord dolt 11 alpha check to dolt 12",
+      "intent": "BearingToFriendlyPlayer",
+      "entities": [
+        {
+          "entity": "defined_sender",
+          "startPos": 0,
+          "endPos": 15,
+          "children": []
+        },
+        {
+          "entity": "player_callsign",
+          "role": "target",
+          "startPos": 32,
+          "endPos": 38,
           "children": []
         }
       ]
@@ -7266,6 +7533,38 @@
       ]
     },
     {
+      "text": "overlord knight 11. set tripwire 50 miles",
+      "intent": "SetWarningRadius",
+      "entities": [
+        {
+          "entity": "learned_sender",
+          "startPos": 0,
+          "endPos": 17,
+          "children": []
+        },
+        {
+          "entity": "learned_group",
+          "startPos": 9,
+          "endPos": 14,
+          "children": []
+        },
+        {
+          "entity": "number",
+          "role": "flight_and_element",
+          "startPos": 16,
+          "endPos": 17,
+          "children": []
+        },
+        {
+          "entity": "number",
+          "role": "distance",
+          "startPos": 33,
+          "endPos": 34,
+          "children": []
+        }
+      ]
+    },
+    {
       "text": "overlord kraut, one one bogey dope.",
       "intent": "BogeyDope",
       "entities": [
@@ -8470,6 +8769,20 @@
           "startPos": 9,
           "endPos": 14,
           "children": []
+        },
+        {
+          "entity": "number",
+          "role": "flight_and_element",
+          "startPos": 16,
+          "endPos": 17,
+          "children": []
+        },
+        {
+          "entity": "number",
+          "role": "distance",
+          "startPos": 34,
+          "endPos": 35,
+          "children": []
         }
       ]
     },
@@ -8722,6 +9035,13 @@
           "entity": "learned_group",
           "startPos": 9,
           "endPos": 14,
+          "children": []
+        },
+        {
+          "entity": "number",
+          "role": "distance",
+          "startPos": 40,
+          "endPos": 40,
           "children": []
         }
       ]
@@ -11550,6 +11870,20 @@
           "startPos": 14,
           "endPos": 19,
           "children": []
+        },
+        {
+          "entity": "number",
+          "role": "flight_and_element",
+          "startPos": 21,
+          "endPos": 22,
+          "children": []
+        },
+        {
+          "entity": "number",
+          "role": "distance",
+          "startPos": 47,
+          "endPos": 48,
+          "children": []
         }
       ]
     },
@@ -12119,6 +12453,20 @@
           "startPos": 0,
           "endPos": 17,
           "children": []
+        },
+        {
+          "entity": "number",
+          "role": "flight_and_element",
+          "startPos": 16,
+          "endPos": 17,
+          "children": []
+        },
+        {
+          "entity": "number",
+          "role": "distance",
+          "startPos": 28,
+          "endPos": 29,
+          "children": []
         }
       ]
     },
@@ -12435,6 +12783,31 @@
       "text": "overlord's not going request bogey dope.",
       "intent": "None",
       "entities": []
+    },
+    {
+      "text": "overlrod wombat 12. warn me at 40.",
+      "intent": "SetWarningRadius",
+      "entities": [
+        {
+          "entity": "learned_sender",
+          "startPos": 0,
+          "endPos": 17,
+          "children": []
+        },
+        {
+          "entity": "learned_group",
+          "startPos": 9,
+          "endPos": 14,
+          "children": []
+        },
+        {
+          "entity": "number",
+          "role": "distance",
+          "startPos": 31,
+          "endPos": 32,
+          "children": []
+        }
+      ]
     },
     {
       "text": "overwrought springfield want to request for get up",
