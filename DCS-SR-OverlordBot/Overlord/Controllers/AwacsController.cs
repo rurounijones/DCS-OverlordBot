@@ -7,6 +7,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
     public class AwacsController : AbstractController
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private const string DEFAULT_CALLSIGN = "Overlord"; 
 
         protected override string None(IRadioCall radioCall)
         {
@@ -83,9 +84,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
 
         protected override string NullSender(IRadioCall radioCall)
         {
-            if (!IsAddressedToController(radioCall))
-                return null;
-            return "Last transmitter, I could not recognize your call-sign.";
+            return !IsAddressedToController(radioCall) ? null : "Last transmitter, I could not recognize your call-sign.";
         }
 
         protected override string UnverifiedSender(IRadioCall radioCall)
@@ -97,16 +96,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
 
         protected override bool IsAddressedToController(IRadioCall radioCall)
         {
-            Logger.Debug($"Callsign is {Callsign}, Receiver is {radioCall.ReceiverName}");
+            Logger.Debug($"Defined Callsign is {Callsign}, Received Callsign is {radioCall.AwacsCallsign}");
 
-            if (string.IsNullOrEmpty(radioCall.ReceiverName)) // If there is no received name then nope!
+            if (string.IsNullOrEmpty(radioCall.AwacsCallsign))
                 return false;
 
-            if (string.IsNullOrEmpty(Callsign)) // We will answer to anything that LUIS has deemed an AWACS Callsign
+            if (string.IsNullOrEmpty(Callsign)) 
                 return true;
 
             var result = string.IsNullOrEmpty(Callsign) != true && (radioCall.ReceiverName.ToLower() == "anyface" || radioCall.ReceiverName.ToLower().Equals(Callsign.ToLower()));
-            Logger.Debug($"Addressed to Controller is {result}");
 
             return result;
         }
@@ -120,11 +118,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
             }
             else if (radioCall.AwacsCallsign != null && radioCall.AwacsCallsign.ToLower().Equals("anyface"))
             {
-                responseCallsign = "Overlord"; // Overlord is the default callsign;
+                responseCallsign = DEFAULT_CALLSIGN; // Overlord is the default callsign;
             }
-            else if (radioCall.AirbaseName != null) // AirbaseName not null happens it someone calls ATC on AWACS freq
+            else if (string.IsNullOrEmpty(Callsign) && string.IsNullOrEmpty(radioCall.AwacsCallsign))
             {
-                responseCallsign = "Overlord"; // Overlord is the default callsign;
+                responseCallsign = DEFAULT_CALLSIGN; // Overlord is the default callsign;
             }
             else
             {

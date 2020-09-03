@@ -30,6 +30,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
             if (radioCall.Intent == "None")
                 return Task.Run(() => None(radioCall)).Result;
 
+            if(string.IsNullOrEmpty(radioCall.ReceiverName))
+                return Task.Run(() => None(radioCall)).Result;
+
             if (radioCall.Sender == null)
                 return Task.Run(() => NullSender(radioCall)).Result;
 
