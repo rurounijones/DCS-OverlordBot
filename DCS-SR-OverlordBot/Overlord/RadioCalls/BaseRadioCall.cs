@@ -1,7 +1,7 @@
-﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
+﻿using System.Threading.Tasks;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls.LuisModels;
 using Newtonsoft.Json;
-using System.Threading.Tasks;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls
 {
@@ -80,7 +80,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls
                 {
                     case "learned_group":
                     case "defined_group":
-                        @group = x["value"];
+                        group = x["value"];
                         break;
                     case "awacs_callsign":
                     case "airbase":
@@ -136,7 +136,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls
                 return null;
             }
 
-            return new Player()
+            return new Player
             {
                 Group = group,
                 Flight = flight,

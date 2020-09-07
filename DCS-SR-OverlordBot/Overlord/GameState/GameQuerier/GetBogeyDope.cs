@@ -1,9 +1,8 @@
-﻿using NetTopologySuite.Geometries;
-using NLog;
-using Npgsql;
-using System;
+﻿using System;
 using System.Data.Common;
 using System.Threading.Tasks;
+using NetTopologySuite.Geometries;
+using Npgsql;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
 {
@@ -46,8 +45,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
                         // West == negative numbers so convert
                         if (bearing < 0) { bearing += 360; }
 
-                        var range = (int)Math.Round((dbDataReader.GetDouble(2) * 0.539957d) / 1000); // Nautical Miles
-                        var altitude = (int)Math.Round((dbDataReader.GetDouble(3) * 3.28d) / 1000d, 0) * 1000; // Feet
+                        var range = (int)Math.Round(dbDataReader.GetDouble(2) * 0.539957d / 1000); // Nautical Miles
+                        var altitude = (int)Math.Round(dbDataReader.GetDouble(3) * 3.28d / 1000d, 0) * 1000; // Feet
                         var heading = dbDataReader.GetDouble(4);
                         var position = (Point)dbDataReader[8];
 
@@ -61,7 +60,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
                             name = "unknown";
                         }
 
-                        output = new Contact()
+                        output = new Contact
                         {
                             Id = id,
                             Position = new Geo.Geometries.Point(position.Y, position.X),

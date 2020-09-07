@@ -1,5 +1,5 @@
-﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
 {

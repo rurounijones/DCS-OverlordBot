@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Preferences;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
@@ -12,7 +13,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.Favourites
 {
     public class FavouriteServersViewModel
     {
-        private readonly ObservableCollection<ServerAddress> _addresses = new ObservableCollection<ServerAddress>();
         private readonly IFavouriteServerStore _favouriteServerStore;
         private readonly SettingsStore _settings = SettingsStore.Instance;
 
@@ -20,11 +20,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.Favourites
         {
             _favouriteServerStore = favouriteServerStore;
 
-            _addresses.CollectionChanged += OnServerAddressesCollectionChanged;
+            Addresses.CollectionChanged += OnServerAddressesCollectionChanged;
 
             foreach (var favourite in _favouriteServerStore.LoadFromStore())
             {
-                _addresses.Add(favourite);
+                Addresses.Add(favourite);
             }
 
             NewAddressCommand = new DelegateCommand(OnNewAddress);
@@ -32,17 +32,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.Favourites
             OnDefaultChangedCommand = new DelegateCommand(OnDefaultChanged);
         }
 
-        public ObservableCollection<ServerAddress> Addresses => _addresses;
+        public ObservableCollection<ServerAddress> Addresses { get; } = new ObservableCollection<ServerAddress>();
 
         public string NewName { get; set; }
 
         public string NewAddress { get; set; }
 
-        public string NewEAMCoalitionPassword { get; set; }
+        public string NewEamCoalitionPassword { get; set; }
 
         public ICommand NewAddressCommand { get; }
-
-        public ICommand SaveCommand { get; set; }
 
         public ICommand RemoveSelectedCommand { get; set; }
 
@@ -54,10 +52,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.Favourites
         {
             get
             {
-                var defaultAddress = _addresses.FirstOrDefault(x => x.IsDefault);
-                if (defaultAddress == null && _addresses.Count > 0)
+                var defaultAddress = Addresses.FirstOrDefault(x => x.IsDefault);
+                if (defaultAddress == null && Addresses.Count > 0)
                 {
-                    defaultAddress = _addresses.First();
+                    defaultAddress = Addresses.First();
                 }
                 return defaultAddress;
             }
@@ -65,8 +63,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.Favourites
 
         private void OnNewAddress()
         {
-            var isDefault = _addresses.Count == 0;
-            _addresses.Add(new ServerAddress(NewName, NewAddress, string.IsNullOrWhiteSpace(NewEAMCoalitionPassword) ? null : NewEAMCoalitionPassword, isDefault));
+            var isDefault = Addresses.Count == 0;
+            Addresses.Add(new ServerAddress(NewName, NewAddress, string.IsNullOrWhiteSpace(NewEamCoalitionPassword) ? null : NewEamCoalitionPassword, isDefault));
 
             Save();
         }
@@ -78,13 +76,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.Favourites
                 return;
             }
 
-            _addresses.Remove(SelectedItem);
+            Addresses.Remove(SelectedItem);
 
-            if (_addresses.Count == 0 && !string.IsNullOrEmpty(_settings.GetClientSetting(SettingsKeys.LastServer).StringValue))
+            if (Addresses.Count == 0 && !string.IsNullOrEmpty(_settings.GetClientSetting(SettingsKeys.LastServer).StringValue))
             {
                 var oldAddress = new ServerAddress(_settings.GetClientSetting(SettingsKeys.LastServer).StringValue,
                     _settings.GetClientSetting(SettingsKeys.LastServer).StringValue, null, true);
-                _addresses.Add(oldAddress);
+                Addresses.Add(oldAddress);
             }
 
             Save();
@@ -92,7 +90,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.Favourites
 
         private void Save()
         {
-            var saveSucceeded = _favouriteServerStore.SaveToStore(_addresses);
+            var saveSucceeded = _favouriteServerStore.SaveToStore(Addresses);
             if (!saveSucceeded)
             {
                 MessageBox.Show(Application.Current.MainWindow,
@@ -105,8 +103,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.Favourites
 
         private void OnDefaultChanged(object obj)
         {
-            var address = obj as ServerAddress;
-            if (address == null)
+            if (!(obj is ServerAddress address))
             {
                 throw new InvalidOperationException();
             }
@@ -118,7 +115,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.Favourites
 
             address.IsDefault = true;
 
-            foreach (var serverAddress in _addresses)
+            foreach (var serverAddress in Addresses)
             {
                 if (serverAddress != address)
                 {
@@ -129,7 +126,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.Favourites
             Save();
         }
 
-        private void OnServerAddressesCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void OnServerAddressesCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
             {
@@ -139,7 +136,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.Favourites
                 }
             }
 
-            if (e.OldItems != null)
+            if (e.OldItems == null) return;
             {
                 foreach (ServerAddress address in e.OldItems)
                 {
@@ -148,7 +145,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.Favourites
             }
         }
 
-        private void OnServerAddressPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void OnServerAddressPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             // Saving after changing default favourite is done by OnDefaultChanged
             if (e.PropertyName != "IsDefault")

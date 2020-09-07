@@ -1,6 +1,5 @@
-﻿using System;
-using System.Diagnostics;
-using System.Globalization;
+﻿using System.Globalization;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -9,15 +8,13 @@ using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow.PresetChannels;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Utils;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
-using KeyEventArgs = System.Windows.Input.KeyEventArgs;
-using UserControl = System.Windows.Controls.UserControl;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
 {
     /// <summary>
     ///     Interaction logic for RadioControlGroup.xaml
     /// </summary>
-    public partial class RadioControlGroup : UserControl
+    public partial class RadioControlGroup
     {
         private const double MHz = 1000000;
         private const int MaxSimultaneousTransmissions = 3;
@@ -29,7 +26,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
 
         public RadioControlGroup()
         {
-            this.DataContext = this; // set data context
+            DataContext = this; // set data context
 
             InitializeComponent();
 
@@ -68,32 +65,27 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
         {
             var dcsPlayerRadioInfo = _clientStateSingleton.DcsPlayerRadioInfo;
 
-            if ((dcsPlayerRadioInfo == null) || !dcsPlayerRadioInfo.IsCurrent() ||
-                RadioId > dcsPlayerRadioInfo.radios.Length - 1 || RadioId < 0)
-            {
-                //remove focus to somewhere else
-                RadioVolume.Focus();
-                Keyboard.ClearFocus(); //then clear altogether
-            }
+            if (dcsPlayerRadioInfo != null && dcsPlayerRadioInfo.IsCurrent() &&
+                RadioId <= dcsPlayerRadioInfo.radios.Length - 1 && RadioId >= 0) return;
+            //remove focus to somewhere else
+            RadioVolume.Focus();
+            Keyboard.ClearFocus(); //then clear altogether
         }
 
         private
             void RadioFrequencyOnKeyDown(object sender, KeyEventArgs keyEventArgs)
         {
-            if (keyEventArgs.Key == Key.Enter)
-            {
-                //remove focus to somewhere else
-                RadioVolume.Focus();
-                Keyboard.ClearFocus(); //then clear altogher
-            }
+            if (keyEventArgs.Key != Key.Enter) return;
+            //remove focus to somewhere else
+            RadioVolume.Focus();
+            Keyboard.ClearFocus(); //then clear altogher
         }
 
         private void RadioFrequencyOnLostFocus(object sender, RoutedEventArgs routedEventArgs)
         {
-            double freq = 0;
             // Some locales/cultures (e.g. German) do not parse "." as decimal points since they use decimal commas ("123,45"), leading to "123.45" being parsed as "12345" and frequencies being set too high
             // Using an invariant culture makes sure the decimal point is parsed properly for all locales - replacing any commas makes sure people entering numbers in a weird format still get correct results
-            if (double.TryParse(RadioFrequency.Text.Replace(',', '.').Trim(), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out freq))
+            if (double.TryParse(RadioFrequency.Text.Replace(',', '.').Trim(), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out var freq))
             {
                 RadioHelper.UpdateRadioFrequency(freq, RadioId, false);
             }
@@ -222,17 +214,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
 
                 if (_clientStateSingleton.DcsPlayerRadioInfo.simultaneousTransmission)
                 {
-                    int simulTransmission = 0;
-                    for (int i = 0; i < _clientStateSingleton.DcsPlayerRadioInfo.radios.Length; i++)
-                    {
-                        if (_clientStateSingleton.DcsPlayerRadioInfo.radios[i].simul)
-                        {
-                            if (i != RadioId)
-                            {
-                                simulTransmission++;
-                            }
-                        }
-                    }
+                    var simulTransmission = _clientStateSingleton.DcsPlayerRadioInfo.radios.Where((t, i) => t.simul && i != RadioId).Count();
 
                     if (simulTransmission < MaxSimultaneousTransmissions)
                     {
@@ -278,7 +260,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
 
             var dcsPlayerRadioInfo = _clientStateSingleton.DcsPlayerRadioInfo;
 
-            if (!_clientStateSingleton.IsConnected || (dcsPlayerRadioInfo == null) || !dcsPlayerRadioInfo.IsCurrent() ||
+            if (!_clientStateSingleton.IsConnected || dcsPlayerRadioInfo == null || !dcsPlayerRadioInfo.IsCurrent() ||
                 RadioId > dcsPlayerRadioInfo.radios.Length - 1)
             {
                 RadioActive.Fill = new SolidColorBrush(Colors.Red);
@@ -362,7 +344,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
                                 CultureInfo.InvariantCulture); //make nuber UK / US style with decimals not commas!
                     }
 
-                    RadioMetaData.Text = (currentRadio.modulation == 0 ? "AM" : "FM");
+                    RadioMetaData.Text = currentRadio.modulation == 0 ? "AM" : "FM";
 
                     if (currentRadio.secFreq > 100)
                     {
@@ -371,29 +353,16 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
 
                     if (currentRadio.channel > -1)
                     {
-                        RadioMetaData.Text += (" C" + currentRadio.channel);
+                        RadioMetaData.Text += " C" + currentRadio.channel;
                     }
-                    if (currentRadio.enc && (currentRadio.encKey > 0))
+                    if (currentRadio.enc && currentRadio.encKey > 0)
                     {
                         RadioMetaData.Text += " E" + currentRadio.encKey; // ENCRYPTED
                     }
                 }
                 RadioLabel.Text = dcsPlayerRadioInfo.radios[RadioId].name;
 
-                if (currentRadio.volMode == RadioInformation.VolumeMode.OVERLAY)
-                {
-                    RadioVolume.IsEnabled = true;
-
-                    //reset dragging just incase
-                    //    _dragging = false;
-                }
-                else
-                {
-                    RadioVolume.IsEnabled = false;
-
-                    //reset dragging just incase
-                    //  _dragging = false;
-                }
+                RadioVolume.IsEnabled = currentRadio.volMode == RadioInformation.VolumeMode.OVERLAY;
 
                 ToggleButtons(currentRadio.freqMode == RadioInformation.FreqMode.OVERLAY);
 
@@ -408,8 +377,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
         {
             var dcsPlayerRadioInfo = _clientStateSingleton.DcsPlayerRadioInfo;
 
-            if (((dcsPlayerRadioInfo != null) && dcsPlayerRadioInfo.IsCurrent())
-                && RadioId <= dcsPlayerRadioInfo.radios.Length - 1)
+            if (dcsPlayerRadioInfo != null && dcsPlayerRadioInfo.IsCurrent()
+                                           && RadioId <= dcsPlayerRadioInfo.radios.Length - 1)
             {
                 var currentRadio = dcsPlayerRadioInfo.radios[RadioId];
 
@@ -418,39 +387,31 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
                     EncryptionKeySpinner.Value = currentRadio.encKey;
 
                     //update stuff
-                    if ((currentRadio.encMode == RadioInformation.EncryptionMode.NO_ENCRYPTION)
-                        || (currentRadio.encMode == RadioInformation.EncryptionMode.ENCRYPTION_FULL)
-                        || (currentRadio.modulation == RadioInformation.Modulation.INTERCOM))
+                    if (currentRadio.encMode == RadioInformation.EncryptionMode.NO_ENCRYPTION
+                        || currentRadio.encMode == RadioInformation.EncryptionMode.ENCRYPTION_FULL
+                        || currentRadio.modulation == RadioInformation.Modulation.INTERCOM)
                     {
                         //Disable everything
                         EncryptionKeySpinner.IsEnabled = false;
                         EncryptionButton.IsEnabled = false;
                         EncryptionButton.Content = "Enable";
                     }
-                    else if (currentRadio.encMode ==
-                             RadioInformation.EncryptionMode.ENCRYPTION_COCKPIT_TOGGLE_OVERLAY_CODE)
+                    else switch (currentRadio.encMode)
                     {
-                        //allow spinner
-                        EncryptionKeySpinner.IsEnabled = true;
+                        case RadioInformation.EncryptionMode.ENCRYPTION_COCKPIT_TOGGLE_OVERLAY_CODE:
+                            //allow spinner
+                            EncryptionKeySpinner.IsEnabled = true;
 
-                        //disallow encryption toggle
-                        EncryptionButton.IsEnabled = false;
-                        EncryptionButton.Content = "Enable";
-                    }
-                    else if (currentRadio.encMode ==
-                             RadioInformation.EncryptionMode.ENCRYPTION_JUST_OVERLAY)
-                    {
-                        EncryptionKeySpinner.IsEnabled = true;
-                        EncryptionButton.IsEnabled = true;
-
-                        if (currentRadio.enc)
-                        {
-                            EncryptionButton.Content = "Disable";
-                        }
-                        else
-                        {
+                            //disallow encryption toggle
+                            EncryptionButton.IsEnabled = false;
                             EncryptionButton.Content = "Enable";
-                        }
+                            break;
+                        case RadioInformation.EncryptionMode.ENCRYPTION_JUST_OVERLAY:
+                            EncryptionKeySpinner.IsEnabled = true;
+                            EncryptionButton.IsEnabled = true;
+
+                            EncryptionButton.Content = currentRadio.enc ? "Disable" : "Enable";
+                            break;
                     }
                 }
                 else
@@ -484,13 +445,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
                 var receiveState = UdpVoiceHandler.RadioReceivingState[RadioId];
                 //check if current
 
-                if ((receiveState == null) || !receiveState.IsReceiving)
+                if (receiveState == null || !receiveState.IsReceiving)
                 {
                     RadioFrequency.Foreground =
                         new SolidColorBrush((Color) ColorConverter.ConvertFromString("#00FF00"));
                     RadioMetaData.Foreground = new SolidColorBrush((Color) ColorConverter.ConvertFromString("#00FF00"));
                 }
-                else if ((receiveState != null) && receiveState.IsReceiving)
+                else if (receiveState.IsReceiving)
                 {
                     if (receiveState.IsSecondary)
                     {
@@ -518,24 +479,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
         {
             var currentRadio = RadioHelper.GetRadio(RadioId);
 
-            if (currentRadio != null &&
-                currentRadio.modulation != RadioInformation.Modulation.DISABLED) // disabled
-            {
-                //update stuff
-                if (currentRadio.encMode == RadioInformation.EncryptionMode.ENCRYPTION_JUST_OVERLAY)
-                {
-                    RadioHelper.ToggleEncryption(RadioId);
+            if (currentRadio == null || currentRadio.modulation == RadioInformation.Modulation.DISABLED) return;
+            //update stuff
+            if (currentRadio.encMode != RadioInformation.EncryptionMode.ENCRYPTION_JUST_OVERLAY) return;
+            RadioHelper.ToggleEncryption(RadioId);
 
-                    if (currentRadio.enc)
-                    {
-                        EncryptionButton.Content = "Enable";
-                    }
-                    else
-                    {
-                        EncryptionButton.Content = "Disable";
-                    }
-                }
-            }
+            EncryptionButton.Content = currentRadio.enc ? "Enable" : "Disable";
         }
 
         private void EncryptionKeySpinner_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
@@ -546,17 +495,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
 
         private void ToggleSimultaneousTransmissionButton_Click(object sender, RoutedEventArgs e)
         {
-            if (_clientStateSingleton.DcsPlayerRadioInfo != null && _clientStateSingleton.DcsPlayerRadioInfo.simultaneousTransmission)
-            {
-                var currentRadio = RadioHelper.GetRadio(RadioId);
+            if (_clientStateSingleton.DcsPlayerRadioInfo == null ||
+                !_clientStateSingleton.DcsPlayerRadioInfo.simultaneousTransmission) return;
+            var currentRadio = RadioHelper.GetRadio(RadioId);
 
-                if (currentRadio != null)
-                {
-                    currentRadio.simul = !currentRadio.simul;
+            if (currentRadio == null) return;
+            currentRadio.simul = !currentRadio.simul;
 
-                    ToggleSimultaneousTransmissionButton.Content = currentRadio.simul ? "Sim. ON" : "Sim. OFF";
-                }
-            }
+            ToggleSimultaneousTransmissionButton.Content = currentRadio.simul ? "Sim. ON" : "Sim. OFF";
         }
     }
 }

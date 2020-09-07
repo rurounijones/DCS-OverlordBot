@@ -1,15 +1,13 @@
-﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
+﻿using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechOutput;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Web.Security;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Util;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
 {
-
-    class BearingToAirbase
+    internal class BearingToAirbase
     {
         public static async Task<string> Process(IRadioCall radioCall)
         {
@@ -33,14 +31,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
             if (braData != null)
             {
                 var bearing =
-                    Regex.Replace(Util.Geospatial.TrueToMagnetic(radioCall.Sender.Position, (int) braData["bearing"]).ToString("000"),
+                    Regex.Replace(Geospatial.TrueToMagnetic(radioCall.Sender.Position, (int) braData["bearing"]).ToString("000"),
                         "\\d{1}", " $0");
                 var range = braData["range"];
                 response = $"{AirbasePronouncer.PronounceAirbase((string) braData["name"])} bearing {bearing}, {(int) range} miles";
             }
             else
             {
-                response = $"I Could not find any friendly airbases.";
+                response = "I Could not find any friendly airbases.";
             }
 
             return response;
@@ -49,13 +47,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
         private static async Task<string> NamedAirbase(IRadioCall radioCall)
         {
             string response;
-            Dictionary<string, int> braData = await GameQuerier.GetBearingToNamedAirbase(radioCall.Sender.Position,
+            var braData = await GameQuerier.GetBearingToNamedAirbase(radioCall.Sender.Position,
                 radioCall.Sender.Group, radioCall.Sender.Flight, radioCall.Sender.Plane, radioCall.AirbaseName);
 
             if (braData != null)
             {
                 var bearing =
-                    Regex.Replace(Util.Geospatial.TrueToMagnetic(radioCall.Sender.Position, braData["bearing"]).ToString("000"),
+                    Regex.Replace(Geospatial.TrueToMagnetic(radioCall.Sender.Position, braData["bearing"]).ToString("000"),
                         "\\d{1}", " $0");
                 var range = braData["range"];
                 response = $"{AirbasePronouncer.PronounceAirbase(radioCall.AirbaseName)} bearing {bearing}, {range} miles";

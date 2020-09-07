@@ -28,20 +28,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Utils
 
         public DelegateCommand(Action<object> action, Func<object, bool> canExecute = null)
         {
-            if (action == null)
-            {
-                throw new ArgumentNullException(nameof(action));
-            }
-            _action = action;
-
-            if (canExecute == null)
-            {
-                _canExecute = _ => true;
-            }
-            else
-            {
-                _canExecute = canExecute;
-            }
+            _action = action ?? throw new ArgumentNullException(nameof(action));
+            _canExecute = canExecute ?? (_ => true);
         }
 
         public bool CanExecute(object parameter)

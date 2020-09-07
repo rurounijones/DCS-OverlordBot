@@ -16,58 +16,43 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
         private string _name;
         public string Name {
-            get
-            {
-                return _name;
-            }
+            get => _name;
             set
             {
-                if (_name != value)
-                {
-                    _name = value;
-                    OnPropertyChanged();
-                }
+                if (_name == value) return;
+                _name = value;
+                OnPropertyChanged();
             }
         }
 
         private string _address;
         public string Address
         {
-            get
-            {
-                return _address;
-            }
+            get => _address;
             set
             {
-                if (_address != value)
-                {
-                    _address = value;
-                    OnPropertyChanged();
-                }
+                if (_address == value) return;
+                _address = value;
+                OnPropertyChanged();
             }
         }
 
         private string _eamCoalitionPassword;
-        public string EAMCoalitionPassword
+        public string EamCoalitionPassword
         {
-            get
-            {
-                return _eamCoalitionPassword;
-            }
+            get => _eamCoalitionPassword;
             set
             {
-                if (_eamCoalitionPassword != value)
-                {
-                    _eamCoalitionPassword = value;
-                    OnPropertyChanged();
-                }
+                if (_eamCoalitionPassword == value) return;
+                _eamCoalitionPassword = value;
+                OnPropertyChanged();
             }
         }
 
         private bool _isDefault;
         public bool IsDefault
         {
-            get { return _isDefault; }
+            get => _isDefault;
             set
             {
                 _isDefault = value;

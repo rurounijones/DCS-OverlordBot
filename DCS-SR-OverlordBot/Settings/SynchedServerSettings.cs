@@ -8,10 +8,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
 {
     public class SyncedServerSettings
     {
-        private readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private static SyncedServerSettings instance;
-        private static readonly object _lock = new object();
-        private static readonly Dictionary<string, string> defaults = DefaultServerSettings.Defaults;
+        private readonly Logger _logger = LogManager.GetCurrentClassLogger();
+        private static SyncedServerSettings _instance;
+        private static readonly object Lock = new object();
+        private static readonly Dictionary<string, string> Defaults = DefaultServerSettings.Defaults;
 
         private readonly ConcurrentDictionary<string, string> _settings;
 
@@ -26,22 +26,22 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
         {
             get
             {
-                lock (_lock)
+                lock (Lock)
                 {
-                    if (instance == null)
+                    if (_instance == null)
                     {
-                        instance = new SyncedServerSettings();
+                        _instance = new SyncedServerSettings();
                     }
                 }
-                return instance;
+                return _instance;
             }
         }
 
         public string GetSetting(ServerSettingsKeys key)
         {
-            string setting = key.ToString();
+            var setting = key.ToString();
 
-            return _settings.GetOrAdd(setting, defaults.ContainsKey(setting) ? defaults[setting] : "");
+            return _settings.GetOrAdd(setting, Defaults.ContainsKey(setting) ? Defaults[setting] : "");
         }
 
         public bool GetSettingAsBool(ServerSettingsKeys key)
@@ -51,27 +51,23 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
 
         public void Decode(Dictionary<string, string> encoded)
         {
-            foreach (KeyValuePair<string, string> kvp in encoded)
+            foreach (var kvp in encoded)
             {
                 _settings.AddOrUpdate(kvp.Key, kvp.Value, (key, oldVal) => kvp.Value);
 
-                if (kvp.Key.Equals(ServerSettingsKeys.GLOBAL_LOBBY_FREQUENCIES.ToString()))
+                if (!kvp.Key.Equals(ServerSettingsKeys.GLOBAL_LOBBY_FREQUENCIES.ToString())) continue;
+                var freqStringList = kvp.Value.Split(',');
+
+                var newList = new List<double>();
+                foreach (var freq in freqStringList)
                 {
-                    var freqStringList = kvp.Value.Split(',');
-
-                    var newList = new List<double>();
-                    foreach (var freq in freqStringList)
-                    {
-                        if (double.TryParse(freq.Trim(), out var freqDouble))
-                        {
-                            freqDouble *= 1e+6; //convert to Hz from MHz
-                            newList.Add(freqDouble);
-                            Logger.Debug("Adding Server Global Frequency: " + freqDouble);
-                        }
-                    }
-
-                    GlobalFrequencies = newList;
+                    if (!double.TryParse(freq.Trim(), out var freqDouble)) continue;
+                    freqDouble *= 1e+6; //convert to Hz from MHz
+                    newList.Add(freqDouble);
+                    _logger.Debug("Adding Server Global Frequency: " + freqDouble);
                 }
+
+                GlobalFrequencies = newList;
             }
         }
     }

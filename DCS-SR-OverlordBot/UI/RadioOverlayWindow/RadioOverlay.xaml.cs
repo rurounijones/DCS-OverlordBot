@@ -6,26 +6,22 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Threading;
-using Ciribob.DCS.SimpleRadio.Standalone.Client;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.UI;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
-using NLog;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
 {
     /// <summary>
     ///     Interaction logic for RadioOverlayWindow.xaml
     /// </summary>
-    public partial class RadioOverlayWindow : Window
+    public partial class RadioOverlayWindow
     {
         private readonly double _aspectRatio;
-        private readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private readonly Client.UI.RadioOverlayWindow.RadioControlGroup[] radioControlGroup =
-            new Client.UI.RadioOverlayWindow.RadioControlGroup[3];
+        private readonly RadioControlGroup[] _radioControlGroup =
+            new RadioControlGroup[3];
 
         private readonly DispatcherTimer _updateTimer;
 
@@ -39,7 +35,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
             //method fires after initialisation
             InitializeComponent();
 
-            this.WindowStartupLocation = WindowStartupLocation.Manual;
+            WindowStartupLocation = WindowStartupLocation.Manual;
 
             _aspectRatio = MinWidth / MinHeight;
 
@@ -47,9 +43,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
             Opacity = _settings.GetPositionSetting(SettingsKeys.RadioOpacity).DoubleValue;
             WindowOpacitySlider.Value = Opacity;
 
-            radioControlGroup[0] = Radio1;
-            radioControlGroup[1] = Radio2;
-            radioControlGroup[2] = Radio3;
+            _radioControlGroup[0] = Radio1;
+            _radioControlGroup[1] = Radio2;
+            _radioControlGroup[2] = Radio3;
 
             //allows click and drag anywhere on the window
             ContainerPanel.MouseLeftButtonDown += WrapPanel_MouseLeftButtonDown;
@@ -63,8 +59,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
             //  Window_Loaded(null, null);
             CalculateScale();
 
-            LocationChanged += Location_Changed;
-
             RadioRefresh(null, null);
 
             //init radio refresh
@@ -73,13 +67,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
             _updateTimer.Start();
         }
 
-        private void Location_Changed(object sender, EventArgs e)
-        {
-        }
-
         private void RadioRefresh(object sender, EventArgs eventArgs)
         {
-            foreach (var radio in radioControlGroup)
+            foreach (var radio in _radioControlGroup)
             {
                 radio.RepaintRadioReceive();
                 radio.RepaintRadioStatus();
@@ -88,28 +78,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
             Intercom.RepaintRadioStatus();
 
             var dcsPlayerRadioInfo = _clientStateSingleton.DcsPlayerRadioInfo;
-            if ((dcsPlayerRadioInfo != null) && dcsPlayerRadioInfo.IsCurrent())
+            if (dcsPlayerRadioInfo != null && dcsPlayerRadioInfo.IsCurrent())
             {
-                var avalilableRadios = 0;
+                var availableRadios = dcsPlayerRadioInfo.radios.Count(t => t.modulation != RadioInformation.Modulation.DISABLED);
 
-                for (var i = 0; i < dcsPlayerRadioInfo.radios.Length; i++)
+                if (availableRadios > 1)
                 {
-                    if (dcsPlayerRadioInfo.radios[i].modulation != RadioInformation.Modulation.DISABLED)
-                    {
-                        avalilableRadios++;
-                    }
-                }
-
-                if (avalilableRadios > 1)
-                {
-                    if (dcsPlayerRadioInfo.control == DCSPlayerRadioInfo.RadioSwitchControls.HOTAS)
-                    {
-                        ControlText.Text = "HOTAS Controls";
-                    }
-                    else
-                    {
-                        ControlText.Text = "Cockpit Controls";
-                    }
+                    ControlText.Text = dcsPlayerRadioInfo.control == DCSPlayerRadioInfo.RadioSwitchControls.HOTAS ? "HOTAS Controls" : "Cockpit Controls";
                 }
                 else
                 {
@@ -121,35 +96,31 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
                 ControlText.Text = "";
             }
 
-            FocusDCS();
+            FocusDcs();
         }
 
         private long _lastFocus;
 
-        private void FocusDCS()
+        private void FocusDcs()
         {
-            if (_settings.GetClientSetting(SettingsKeys.RefocusDCS).BoolValue)
+            if (!_settings.GetClientSetting(SettingsKeys.RefocusDcs).BoolValue) return;
+            var overlayWindow = new WindowInteropHelper(this).Handle;
+
+            //focus DCS if needed
+            var foreGround = WindowHelper.GetForegroundWindow();
+
+            var localByName = Process.GetProcessesByName("dcs");
+
+            if (localByName.Length <= 0) return;
+            //either DCS is in focus OR Overlay window is not in focus
+            if (foreGround == localByName[0].MainWindowHandle || overlayWindow != foreGround ||
+                IsMouseOver)
             {
-                var overlayWindow = new WindowInteropHelper(this).Handle;
-
-                //focus DCS if needed
-                var foreGround = WindowHelper.GetForegroundWindow();
-
-                Process[] localByName = Process.GetProcessesByName("dcs");
-
-                if (localByName != null && localByName.Length > 0)
-                {
-                    //either DCS is in focus OR Overlay window is not in focus
-                    if (foreGround == localByName[0].MainWindowHandle || overlayWindow != foreGround ||
-                        this.IsMouseOver)
-                    {
-                        _lastFocus = DateTime.Now.Ticks;
-                    }
-                    else if (DateTime.Now.Ticks > _lastFocus + 20000000 && overlayWindow == foreGround)
-                    {
-                        WindowHelper.BringProcessToFront(localByName[0]);
-                    }
-                }
+                _lastFocus = DateTime.Now.Ticks;
+            }
+            else if (DateTime.Now.Ticks > _lastFocus + 20000000 && overlayWindow == foreGround)
+            {
+                WindowHelper.BringProcessToFront(localByName[0]);
             }
         }
 
@@ -234,16 +205,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
 
         private static object OnCoerceScaleValue(DependencyObject o, object value)
         {
-            var mainWindow = o as RadioOverlayWindow;
-            if (mainWindow != null)
+            if (o is RadioOverlayWindow mainWindow)
                 return mainWindow.OnCoerceScaleValue((double) value);
             return value;
         }
 
         private static void OnScaleValueChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
-            var mainWindow = o as RadioOverlayWindow;
-            if (mainWindow != null)
+            if (o is RadioOverlayWindow mainWindow)
                 mainWindow.OnScaleValueChanged((double) e.OldValue, (double) e.NewValue);
         }
 
@@ -262,8 +231,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
 
         public double ScaleValue
         {
-            get { return (double) GetValue(ScaleValueProperty); }
-            set { SetValue(ScaleValueProperty, value); }
+            get => (double) GetValue(ScaleValueProperty);
+            set => SetValue(ScaleValueProperty, value);
         }
 
         #endregion

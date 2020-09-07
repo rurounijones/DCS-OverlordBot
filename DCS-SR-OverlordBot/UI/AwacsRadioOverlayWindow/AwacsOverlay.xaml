@@ -16,7 +16,7 @@
         Topmost="True"
         WindowStyle="None">
 
-    <Grid Name="containerPanel"
+    <Grid Name="ContainerPanel"
           SizeChanged="containerPanel_SizeChanged"
           Style="{x:Null}">
 
@@ -94,53 +94,48 @@
 
         </StackPanel>
 
-        <local:RadioControlGroup x:Name="radio1"
+        <local:RadioControlGroup x:Name="Radio1"
                                  Grid.Row="1"
                                  Grid.Column="0"
                                  RadioId="1" />
-        <local:RadioControlGroup x:Name="radio2"
+        <local:RadioControlGroup x:Name="Radio2"
                                  Grid.Row="1"
                                  Grid.Column="1"
                                  RadioId="2" />
-        <local:RadioControlGroup x:Name="radio3"
+        <local:RadioControlGroup x:Name="Radio3"
                                  Grid.Row="1"
                                  Grid.Column="2"
                                  RadioId="3" />
-        <local:RadioControlGroup x:Name="radio4"
+        <local:RadioControlGroup x:Name="Radio4"
                                  Grid.Row="1"
                                  Grid.Column="3"
                                  RadioId="4" />
-        <local:RadioControlGroup x:Name="radio5"
+        <local:RadioControlGroup x:Name="Radio5"
                                  Grid.Row="1"
                                  Grid.Column="4"
                                  RadioId="5" />
-
-
-        <local:RadioControlGroup x:Name="radio6"
+        <local:RadioControlGroup x:Name="Radio6"
                                  Grid.Row="2"
                                  Grid.Column="0"
                                  RadioId="6" />
-
-        <local:RadioControlGroup x:Name="radio7"
+        <local:RadioControlGroup x:Name="Radio7"
                                  Grid.Row="2"
                                  Grid.Column="1"
                                  RadioId="7" />
-
-        <local:RadioControlGroup x:Name="radio8"
+        <local:RadioControlGroup x:Name="Radio8"
                                  Grid.Row="2"
                                  Grid.Column="2"
                                  RadioId="8" />
-
-        <local:RadioControlGroup x:Name="radio9"
+        <local:RadioControlGroup x:Name="Radio9"
                                  Grid.Row="2"
                                  Grid.Column="3"
                                  RadioId="9" />
-        <local:RadioControlGroup x:Name="radio10"
+        <local:RadioControlGroup x:Name="Radio10"
                                  Grid.Row="2"
                                  Grid.Column="4"
                                  RadioId="10" />
 
-        <Slider x:Name="windowOpacitySlider"
+        <Slider x:Name="WindowOpacitySlider"
                 Grid.Row="3"
                 Grid.Column="2"
                 Grid.ColumnSpan="2"

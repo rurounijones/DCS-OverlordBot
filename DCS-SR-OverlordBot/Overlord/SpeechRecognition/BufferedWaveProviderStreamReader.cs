@@ -1,6 +1,6 @@
-﻿using Microsoft.CognitiveServices.Speech.Audio;
+﻿using System.Threading;
+using Microsoft.CognitiveServices.Speech.Audio;
 using NAudio.Wave;
-using System.Threading;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 {

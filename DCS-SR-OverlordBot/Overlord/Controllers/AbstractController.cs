@@ -1,8 +1,7 @@
-﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
+﻿using System.Collections.Concurrent;
+using System.Threading.Tasks;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
-using System.Collections.Concurrent;
-using System.Threading.Tasks;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
 {
@@ -61,7 +60,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
                     return Task.Run(() => InboundToAirbase(radioCall)).Result;
                 default:
                     return Task.Run(() => Unknown(radioCall)).Result;
-            };
+            }
         }
 
         protected abstract string NullSender(IRadioCall radioCall);

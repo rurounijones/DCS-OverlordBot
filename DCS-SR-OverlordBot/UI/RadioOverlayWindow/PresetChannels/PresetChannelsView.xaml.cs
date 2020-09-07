@@ -1,11 +1,9 @@
-﻿using System.Windows.Controls;
-
-namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow.PresetChannels
+﻿namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow.PresetChannels
 {
     /// <summary>
     /// Interaction logic for PresetChannelsView.xaml
     /// </summary>
-    public partial class PresetChannelsView : UserControl
+    public partial class PresetChannelsView
     {
         public PresetChannelsView()
         {

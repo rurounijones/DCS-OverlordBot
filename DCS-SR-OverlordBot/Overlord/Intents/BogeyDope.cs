@@ -1,40 +1,31 @@
-﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
+﻿using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechOutput;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Util;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
 {
-    class BogeyDope
+    internal class BogeyDope
     {
 
         public static async Task<string> Process(IRadioCall radioCall)
         {
-            string response;
-            Player sender = radioCall.Sender;
+            var sender = radioCall.Sender;
 
-            Contact contact = await GameQuerier.GetBogeyDope(sender.Coalition, sender.Group, sender.Flight, sender.Plane);
+            var contact = await GameQuerier.GetBogeyDope(sender.Coalition, sender.Group, sender.Flight, sender.Plane);
 
-            if (contact != null)
-            {
-                response = BuildResponse(sender, contact);
-            }
-            else
-            {
-                response = "Picture is clean.";
-            }
-
-            return response;
+            return contact != null ? BuildResponse(sender, contact) : "Picture is clean.";
         }
 
         public static string BuildResponse(Player sender, Contact contact)
         {
-            string bearing = Regex.Replace(Util.Geospatial.TrueToMagnetic(sender.Position, contact.Bearing).ToString("000"), "\\d{1}", " $0");
-            string range = contact.Range.ToString();
-            string altitude = contact.Altitude.ToString("N0");
-            string aspect = GetAspect(contact);
-            string name = AircraftReportingNamePronouncer.PronounceName(contact);
+            var bearing = Regex.Replace(Geospatial.TrueToMagnetic(sender.Position, contact.Bearing).ToString("000"), "\\d{1}", " $0");
+            var range = contact.Range.ToString();
+            var altitude = contact.Altitude.ToString("N0");
+            var aspect = GetAspect(contact);
+            var name = AircraftReportingNamePronouncer.PronounceName(contact);
 
             var response = $"Bra, {bearing}, {range}, {altitude}{aspect}";
 
@@ -53,8 +44,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
                 return null;
             }
 
-            int bearing = contact.Bearing;
-            int heading = contact.Heading.Value;
+            var bearing = contact.Bearing;
+            var heading = contact.Heading.Value;
 
             // Allows us to just use clockwise based positive calculations
             if (heading < bearing)

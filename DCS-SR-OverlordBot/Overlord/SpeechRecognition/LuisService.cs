@@ -1,13 +1,12 @@
-﻿using System;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 {
-    class LuisService
+    internal class LuisService
     {
-        public static async Task<String> ParseIntent(String text)
+        public static async Task<string> ParseIntent(string text)
         {
             var client = new HttpClient();
             var queryString = HttpUtility.ParseQueryString(string.Empty);

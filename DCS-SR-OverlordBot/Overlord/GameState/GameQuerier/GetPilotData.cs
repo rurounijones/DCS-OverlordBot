@@ -1,8 +1,8 @@
-﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls;
+﻿using System.Data.Common;
+using System.Threading.Tasks;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls;
 using NetTopologySuite.Geometries;
 using Npgsql;
-using System.Data.Common;
-using System.Threading.Tasks;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
 {
@@ -21,7 +21,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
             var flight = sender.Flight;
             var plane = sender.Plane;
 
-            string command = @"SELECT id, position, coalition, altitude, pilot FROM public.units WHERE (pilot ILIKE '" + $"%{group} {flight}-{plane}%' OR pilot ILIKE '" + $"%{group} {flight}{plane}%')";
+            var command = @"SELECT id, position, coalition, altitude, pilot FROM public.units WHERE (pilot ILIKE '" + $"%{group} {flight}-{plane}%' OR pilot ILIKE '" + $"%{group} {flight}{plane}%')";
             using (var connection = new NpgsqlConnection(ConnectionString()))
             {
                 await connection.OpenAsync();

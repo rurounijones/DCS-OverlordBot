@@ -1,16 +1,18 @@
-﻿using Npgsql;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading.Tasks;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Util;
+using Geo.Geometries;
+using Npgsql;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
 {
     partial class GameQuerier
     {
-        public static async Task<Dictionary<string, object>> GetBearingToNearestFriendlyAirbase(Geo.Geometries.Point callerPosition, string group, int flight, int plane, int coalition)
+        public static async Task<Dictionary<string, object>> GetBearingToNearestFriendlyAirbase(Point callerPosition, string group, int flight, int plane, int coalition)
         {
-            string command = @"SELECT degrees(ST_AZIMUTH(request.position, airbase.position)) as bearing,
+            var command = @"SELECT degrees(ST_AZIMUTH(request.position, airbase.position)) as bearing,
                                       ST_DISTANCE(request.position, airbase.position) as distance,
 									  airbase.name
             FROM public.units AS airbase CROSS JOIN LATERAL (
@@ -37,11 +39,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
                     await dbDataReader.ReadAsync();
                     if (dbDataReader.HasRows)
                     {
-                        var bearing = Util.Geospatial.TrueToMagnetic(callerPosition, Math.Round(dbDataReader.GetDouble(0)));
+                        var bearing = Geospatial.TrueToMagnetic(callerPosition, Math.Round(dbDataReader.GetDouble(0)));
                         // West == negative numbers so convert
                         if (bearing < 0) { bearing += 360; }
 
-                        var range = (int)Math.Round((dbDataReader.GetDouble(1) * 0.539957d) / 1000); // Nautical Miles
+                        var range = (int)Math.Round(dbDataReader.GetDouble(1) * 0.539957d / 1000); // Nautical Miles
                         var name = dbDataReader.GetString(2);
 
 

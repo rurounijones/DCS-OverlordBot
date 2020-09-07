@@ -1,44 +1,31 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Input;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
 using Easy.MessageHub;
 using FragLabs.Audio.Codecs;
-using NAudio.CoreAudioApi;
+using FragLabs.Audio.Codecs.Opus;
 using NAudio.Wave.SampleProviders;
 using NLog;
-using WPFCustomMessageBox;
-using Application = FragLabs.Audio.Codecs.Opus.Application;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
 {
     public class AudioManager
     {
-        public static readonly int INPUT_SAMPLE_RATE = 16000;
+        public static readonly int InputSampleRate = 16000;
 
         // public static readonly int OUTPUT_SAMPLE_RATE = 44100;
-        public static readonly int INPUT_AUDIO_LENGTH_MS = 40; //TODO test this! Was 80ms but that broke opus
+        public static readonly int InputAudioLengthMs = 40; //TODO test this! Was 80ms but that broke opus
 
-        public static readonly int SEGMENT_FRAMES = (INPUT_SAMPLE_RATE / 1000) * INPUT_AUDIO_LENGTH_MS
+        public static readonly int SegmentFrames = InputSampleRate / 1000 * InputAudioLengthMs
             ; //640 is 40ms as INPUT_SAMPLE_RATE / 1000 *40 = 640
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
-        public delegate void VOIPConnectCallback(bool result, bool connectionError, string connection);
-
-        private readonly ConcurrentDictionary<string, ClientAudioProvider> _clientsBufferedAudio =
-            new ConcurrentDictionary<string, ClientAudioProvider>();
-
-        private readonly ConcurrentDictionary<string, RecorderAudioProvider> _recordersBufferedAudio =
-            new ConcurrentDictionary<string, RecorderAudioProvider>();
 
         public readonly ConcurrentDictionary<int, BotAudioProvider> BotAudioProviders =
             new ConcurrentDictionary<int, BotAudioProvider>();
@@ -57,11 +44,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
         public float MicMax { get; set; } = -100;
         public float SpeakerMax { get; set; } = -100;
 
-        private ClientStateSingleton _clientStateSingleton = ClientStateSingleton.Instance;
+        private readonly ClientStateSingleton _clientStateSingleton = ClientStateSingleton.Instance;
 
         #region Singleton definition
         private static volatile AudioManager _instance;
-        private static object _lock = new object();
+        private static readonly object Lock = new object();
 
         private AudioManager() { }
 
@@ -69,122 +56,39 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
         {
             get
             {
-                if (_instance == null)
+                if (_instance != null) return _instance;
+                lock (Lock)
                 {
-                    lock (_lock)
-                    {
-                        if (_instance == null)
-                            _instance = new AudioManager();
-                    }
+                    if (_instance == null)
+                        _instance = new AudioManager();
                 }
 
                 return _instance;
             }
         }
         #endregion
-        public float MicBoost { get; set; } = 1.0f;
 
-        public void StartEncoding(int mic, MMDevice speakers, string guid, InputDeviceManager inputManager,
-            IPAddress ipAddress, int port, MMDevice micOutput)
+        public void StartEncoding(string guid, IPAddress ipAddress, int port)
         {
             try
             {
                 //opus
-                _encoder = OpusEncoder.Create(INPUT_SAMPLE_RATE, 1, Application.Voip);
+                _encoder = OpusEncoder.Create(InputSampleRate, 1, Application.Voip);
                 _encoder.ForwardErrorCorrection = false;
-                _decoder = OpusDecoder.Create(INPUT_SAMPLE_RATE, 1);
+                _decoder = OpusDecoder.Create(InputSampleRate, 1);
                 _decoder.ForwardErrorCorrection = false;
-
-                //speex
             }
             catch (Exception ex)
             {
                 Logger.Error(ex, "Error starting audio Output - Quitting! " + ex.Message);  
-                ShowOutputError("Problem Initialising Audio Output!");
              
                 Environment.Exit(1);
             }
 
-            _udpVoiceHandler = new UdpVoiceHandler(guid, ipAddress, port, _decoder, this);
+            _udpVoiceHandler = new UdpVoiceHandler(guid, ipAddress, port, this);
             var voiceSenderThread = new Thread(_udpVoiceHandler.Listen);
 
             voiceSenderThread.Start();
-        }
-
-        private void ShowInputError(string message)
-        {
-            if (Environment.OSVersion.Version.Major == 10)
-            {
-                var messageBoxResult = CustomMessageBox.ShowYesNoCancel(
-                    $"{message}\n\n" +
-                    $"If you are using Windows 10, this could be caused by your privacy settings (make sure to allow apps to access your microphone)." +
-                    $"\nAlternatively, try a different Input device and please post your client log to the support Discord server.",
-                    "Audio Input Error",
-                    "OPEN PRIVACY SETTINGS",
-                    "JOIN DISCORD SERVER",
-                    "CLOSE",
-                    MessageBoxImage.Error);
-
-                if (messageBoxResult == MessageBoxResult.Yes)
-                {
-                    Process.Start("ms-settings:privacy-microphone");
-                }
-                else if (messageBoxResult == MessageBoxResult.No)
-                {
-                    Process.Start("https://discord.gg/baw7g3t");
-                }
-            }
-            else
-            {
-                var messageBoxResult = CustomMessageBox.ShowYesNo(
-                    $"{message}\n\n" +
-                    "Try a different Input device and please post your client log to the support Discord server.",
-                    "Audio Input Error",
-                    "JOIN DISCORD SERVER",
-                    "CLOSE",
-                    MessageBoxImage.Error);
-
-                if (messageBoxResult == MessageBoxResult.Yes)
-                {
-                    Process.Start("https://discord.gg/baw7g3t");
-                }
-            }
-        }
-
-        private void ShowOutputError(string message)
-        {
-            var messageBoxResult = CustomMessageBox.ShowYesNo(
-                $"{message}\n\n" +
-                "Try a different output device and please post your client log to the support Discord server.",
-                "Audio Output Error",
-                "JOIN DISCORD SERVER",
-                "CLOSE",
-                MessageBoxImage.Error);
-
-            if (messageBoxResult == MessageBoxResult.Yes)
-            {
-                Process.Start("https://discord.gg/baw7g3t");
-            }
-        }
-
-        public void PlaySoundEffectStartReceive(int transmitOnRadio, bool encrypted, float volume)
-        {
-        }
-
-        public void PlaySoundEffectStartTransmit(int transmitOnRadio, bool encrypted, float volume)
-        {
-        }
-
-        public void PlaySoundEffectEndReceive(int transmitOnRadio, float volume)
-        {
-            if (BotAudioProviders.ContainsKey(transmitOnRadio))
-            {
-                BotAudioProviders[transmitOnRadio].EndTransmission();
-            }
-        }
-
-        public void PlaySoundEffectEndTransmit(int transmitOnRadio, float volume)
-        {
         }
 
         public void StopEncoding()
@@ -192,9 +96,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
 
             _clientAudioMixer?.RemoveAllMixerInputs();
             _clientAudioMixer = null;
-
-            _clientsBufferedAudio.Clear();
-            _recordersBufferedAudio.Clear();
 
             _encoder?.Dispose();
             _encoder = null;
@@ -223,7 +124,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
                 CheckForResponses(ResponseQueues[audio.ReceivedRadio], audio.ReceivedRadio);
             }
 
-            if (BotAudioProviders.ContainsKey(audio.ReceivedRadio) && BotAudioProviders[audio.ReceivedRadio].SpeechRecognitionActive() == true)
+            if (BotAudioProviders.ContainsKey(audio.ReceivedRadio) && BotAudioProviders[audio.ReceivedRadio].SpeechRecognitionActive())
             {
                 bot = BotAudioProviders[audio.ReceivedRadio];
             }
@@ -231,12 +132,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
             {
                 var receivedRadioInfo = _clientStateSingleton.DcsPlayerRadioInfo.radios[audio.ReceivedRadio];
                 var responseQueue = ResponseQueues[audio.ReceivedRadio];
-                bot = new BotAudioProvider(receivedRadioInfo, responseQueue);
-                bot.SpeechRecognitionListener.VoiceHandler = _udpVoiceHandler;
+                bot = new BotAudioProvider(receivedRadioInfo, responseQueue)
+                {
+                    SpeechRecognitionListener = {VoiceHandler = _udpVoiceHandler}
+                };
                 BotAudioProviders[audio.ReceivedRadio] = bot;
             }
             bot.AddClientAudioSamples(audio);
         }
+
         private void CheckForResponses(ConcurrentQueue<byte[]> responseQueue, int radioId)
         {
             new Thread(async () =>
@@ -244,23 +148,30 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
                 Thread.CurrentThread.IsBackground = true;
                 while (true)
                 {
-                    byte[] response;
-                    if (responseQueue.TryDequeue(out response) && response != null)
+                    if (responseQueue.TryDequeue(out var response) && response != null)
                     {
                         Logger.Trace($"Sending Response: {response}");
                         await SendResponse(response, response.Length, radioId);
-                    };
+                    }
                     Thread.Sleep(50);
                 }
             }).Start();
         }
 
+        public void EndTransmission(int transmitOnRadio)
+        {
+            if (BotAudioProviders.ContainsKey(transmitOnRadio))
+            {
+                BotAudioProviders[transmitOnRadio].EndTransmission();
+            }
+        }
+
         // Expects a byte buffer containing 16 bit 16KHz 1 channel PCM WAV
-        private async Task SendResponse(byte[] buffer, int length, int radioId)
+        private async Task SendResponse(IReadOnlyList<byte> buffer, int length, int radioId)
         {
             try
             {
-                Queue<byte> audioQueue = new Queue<byte>(length);
+                var audioQueue = new Queue<byte>(length);
 
                 for (var i = 0; i < length; i++)
                 {
@@ -268,12 +179,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
                 }
 
                 //read out the buffer
-                while (audioQueue.Count >= SEGMENT_FRAMES)
+                while (audioQueue.Count >= SegmentFrames)
                 {
 
-                    byte[] packetBuffer = new byte[SEGMENT_FRAMES];
+                    var packetBuffer = new byte[SegmentFrames];
 
-                    for (var i = 0; i < SEGMENT_FRAMES; i++)
+                    for (var i = 0; i < SegmentFrames; i++)
                     {
                         if (audioQueue.Count > 0)
                         {
@@ -286,9 +197,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
                     }
 
                     //encode as opus bytes
-                    var buff = _encoder.Encode(packetBuffer, SEGMENT_FRAMES, out int len);
+                    var buff = _encoder.Encode(packetBuffer, SegmentFrames, out var len);
 
-                    if ((_udpVoiceHandler != null) && (buff != null) && (len > 0))
+                    if (_udpVoiceHandler != null && buff != null && len > 0)
                     {
                         //create copy with small buffer
                         var encoded = new byte[len];
@@ -304,7 +215,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
                     }
                     else
                     {
-                        Logger.Debug($"Invalid Bytes for Encoding - {length} should be {SEGMENT_FRAMES}");
+                        Logger.Debug($"Invalid Bytes for Encoding - {length} should be {SegmentFrames}");
                     }
                 }
                 // Send one null to reset the sending state

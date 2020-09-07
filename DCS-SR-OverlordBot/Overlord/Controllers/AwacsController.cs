@@ -1,13 +1,13 @@
-﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls;
+﻿using System.Collections.Concurrent;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls;
 using NLog;
-using System.Collections.Concurrent;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
 {
     public class AwacsController : AbstractController
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private const string DEFAULT_CALLSIGN = "Overlord"; 
+        private const string DefaultCallsign = "Overlord"; 
 
         protected override string None(IRadioCall radioCall)
         {
@@ -118,11 +118,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
             }
             else if (radioCall.AwacsCallsign != null && radioCall.AwacsCallsign.ToLower().Equals("anyface"))
             {
-                responseCallsign = DEFAULT_CALLSIGN; // Overlord is the default callsign;
+                responseCallsign = DefaultCallsign; // Overlord is the default callsign;
             }
             else if (string.IsNullOrEmpty(Callsign) && string.IsNullOrEmpty(radioCall.AwacsCallsign))
             {
-                responseCallsign = DEFAULT_CALLSIGN; // Overlord is the default callsign;
+                responseCallsign = DefaultCallsign; // Overlord is the default callsign;
             }
             else
             {

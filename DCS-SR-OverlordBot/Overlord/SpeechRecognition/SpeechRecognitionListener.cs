@@ -1,4 +1,10 @@
-﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers;
+﻿using System;
+using System.Collections.Concurrent;
+using System.IO;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Discord;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers;
@@ -6,16 +12,11 @@ using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechOutput;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using FragLabs.Audio.Codecs;
+using FragLabs.Audio.Codecs.Opus;
 using Microsoft.CognitiveServices.Speech;
 using Microsoft.CognitiveServices.Speech.Audio;
 using NAudio.Wave;
 using NLog;
-using System;
-using System.Collections.Concurrent;
-using System.IO;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 {
@@ -49,7 +50,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
             switch (radioInfo.botType)
             {
                 case "ATC":
-                    Controller = new AtcController()
+                    Controller = new AtcController
                     {
                         Callsign = radioInfo.name,
                         Voice = radioInfo.voice,
@@ -57,7 +58,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                     };
                     break;
                 case "AWACS":
-                    Controller = new AwacsController()
+                    Controller = new AwacsController
                     {
                         Callsign = radioInfo.name,
                         Voice = radioInfo.voice,
@@ -65,7 +66,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                     };
                     break;
                 default:
-                    Controller = new MuteController()
+                    Controller = new MuteController
                     {
                         Callsign = radioInfo.name,
                         Voice = null,
@@ -74,9 +75,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                     break;
             }
 
-            var encoder = OpusEncoder.Create(AudioManager.INPUT_SAMPLE_RATE, 1, FragLabs.Audio.Codecs.Opus.Application.Voip);
+            var encoder = OpusEncoder.Create(AudioManager.InputSampleRate, 1, Application.Voip);
             encoder.ForwardErrorCorrection = false;
-            encoder.FrameByteCount(AudioManager.SEGMENT_FRAMES);
+            encoder.FrameByteCount(AudioManager.SegmentFrames);
 
             var streamReader = new BufferedWaveProviderStreamReader(bufferedWaveProvider);
             _audioConfig = AudioConfig.FromStreamInput(streamReader, AudioStreamFormat.GetWaveFormatPCM(16000, 16, 1));
@@ -122,17 +123,17 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
         public async Task StartListeningAsync()
         {
-            Logger.Debug($"Started Continuous Recognition");
+            Logger.Debug("Started Continuous Recognition");
 
             // Initialize the recognizer
-            var authorizationToken = Task.Run(() => GetToken()).Result;
+            var authorizationToken = Task.Run(GetToken).Result;
             var speechConfig = SpeechConfig.FromAuthorizationToken(authorizationToken, Properties.Settings.Default.SpeechRegion);
             speechConfig.EndpointId = Properties.Settings.Default.SpeechCustomEndpointId;
             var recognizer = new SpeechRecognizer(speechConfig, _audioConfig);
 
             // Setup the cancellation code
             var stopRecognition = new TaskCompletionSource<int>();
-            CancellationTokenSource source = new CancellationTokenSource();
+            var source = new CancellationTokenSource();
 
             // Start the token renewal so we can do long-running recognition.
             var tokenRenewTask = StartTokenRenewTask(source.Token, recognizer);
@@ -185,12 +186,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
             // Waits for completion.
             // Use Task.WaitAny to keep the task rooted.
-            Task.WaitAny(new[] { stopRecognition.Task });
+            Task.WaitAny(stopRecognition.Task);
 
             // Stops recognition.
             await recognizer.StopContinuousRecognitionAsync().ConfigureAwait(false);
             source.Cancel();
-            Logger.Debug($"Stopped Continuous Recognition");
+            Logger.Debug("Stopped Continuous Recognition");
             TimedOut = true;
         }
 
@@ -204,7 +205,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                         await ProcessRecognizedCall(e);
                         break;
                     case ResultReason.NoMatch:
-                        Logger.Debug($"NOMATCH: Speech could not be recognized.");
+                        Logger.Debug("NOMATCH: Speech could not be recognized.");
                         break;
                 }
             }
@@ -237,12 +238,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                 LogTransmissionToDiscord(radioCall, response);
         }
 
-        private void LogTransmissionToDiscord(BaseRadioCall radioCall, string response)
+        private void LogTransmissionToDiscord(IRadioCall radioCall, string response)
         {
-            Logger.Debug($"Building Discord Request/Response message");
-            string transmission = $"Transmission Intent: {radioCall.Intent}\n" +
-                                  $"Request: {radioCall.Message}\n" +
-                                  $"Response: {response ?? "INGORED"}";
+            Logger.Debug("Building Discord Request/Response message");
+            var transmission = $"Transmission Intent: {radioCall.Intent}\n" +
+                               $"Request: {radioCall.Message}\n" +
+                               $"Response: {response ?? "**IGNORED**"}";
             _ = DiscordClient.LogTransmissionToDiscord(transmission, Controller.Radio).ConfigureAwait(false);
         }
 

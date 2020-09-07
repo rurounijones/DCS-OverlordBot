@@ -5,7 +5,7 @@ using RurouniJones.DCS.Airfields.Structure;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
 {
-    static class Constants
+    internal static class Constants
     {
         public static readonly List<Airfield> Airfields = Populator.Airfields;
     }
@@ -16,7 +16,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
         Bluefor
     }
 
-    static class CoalitionMethods
+    internal static class CoalitionMethods
     {
 
         public static Coalition GetOpposingCoalition(this Coalition coalition)

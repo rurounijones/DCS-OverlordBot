@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
@@ -10,7 +9,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
     /// <summary>
     ///     Interaction logic for IntercomControlGroup.xaml
     /// </summary>
-    public partial class IntercomControlGroup : UserControl
+    public partial class IntercomControlGroup
     {
         private bool _dragging;
 
@@ -28,13 +27,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
         {
             var currentRadio = _clientStateSingleton.DcsPlayerRadioInfo.radios[RadioId];
 
-            if (currentRadio.modulation != RadioInformation.Modulation.DISABLED)
+            if (currentRadio.modulation == RadioInformation.Modulation.DISABLED) return;
+            if (_clientStateSingleton.DcsPlayerRadioInfo.control ==
+                DCSPlayerRadioInfo.RadioSwitchControls.HOTAS)
             {
-                if (_clientStateSingleton.DcsPlayerRadioInfo.control ==
-                    DCSPlayerRadioInfo.RadioSwitchControls.HOTAS)
-                {
-                    _clientStateSingleton.DcsPlayerRadioInfo.selected = (short) RadioId;
-                }
+                _clientStateSingleton.DcsPlayerRadioInfo.selected = (short) RadioId;
             }
         }
 
@@ -65,7 +62,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
         {
             var dcsPlayerRadioInfo = _clientStateSingleton.DcsPlayerRadioInfo;
 
-            if (!_clientStateSingleton.IsConnected || (dcsPlayerRadioInfo == null) || !dcsPlayerRadioInfo.IsCurrent())
+            if (!_clientStateSingleton.IsConnected || dcsPlayerRadioInfo == null || !dcsPlayerRadioInfo.IsCurrent())
             {
                 RadioActive.Fill = new SolidColorBrush(Colors.Red);
 
@@ -81,13 +78,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
                 var transmitting = UdpVoiceHandler.RadioSendingState;
                 var receiveState = UdpVoiceHandler.RadioReceivingState[RadioId];
 
-                if ((receiveState != null) && receiveState.IsReceiving)
+                if (receiveState != null && receiveState.IsReceiving)
                 {
                     RadioActive.Fill = new SolidColorBrush((Color) ColorConverter.ConvertFromString("#96FF6D"));
                 }
                 else if (RadioId == dcsPlayerRadioInfo.selected)
                 {
-                    if (transmitting.IsSending && (transmitting.SendingOn == RadioId))
+                    if (transmitting.IsSending && transmitting.SendingOn == RadioId)
                     {
                         RadioActive.Fill = new SolidColorBrush((Color) ColorConverter.ConvertFromString("#96FF6D"));
                     }
@@ -148,13 +145,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
             }
             var dcsPlayerRadioInfo = _clientStateSingleton.DcsPlayerRadioInfo;
 
-            if ((dcsPlayerRadioInfo != null) && dcsPlayerRadioInfo.IsCurrent() &&
-                (dcsPlayerRadioInfo.unitId >= DCSPlayerRadioInfo.UnitIdOffset))
-            {
-                dcsPlayerRadioInfo.unitId =
-                    DCSPlayerRadioInfo.UnitIdOffset + ((uint) ((uint) IntercomNumberSpinner.Value));
-                _clientStateSingleton.LastSent = 0; //force refresh
-            }
+            if (dcsPlayerRadioInfo == null || !dcsPlayerRadioInfo.IsCurrent() ||
+                dcsPlayerRadioInfo.unitId < DCSPlayerRadioInfo.UnitIdOffset) return;
+            dcsPlayerRadioInfo.unitId =
+                DCSPlayerRadioInfo.UnitIdOffset + (uint) IntercomNumberSpinner.Value;
+            _clientStateSingleton.LastSent = 0; //force refresh
         }
     }
 }

@@ -4,7 +4,7 @@ using NLog;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Util
 {
-    class AirfieldUpdater
+    internal class AirfieldUpdater
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 

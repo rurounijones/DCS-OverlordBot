@@ -6,12 +6,6 @@
         public int Flight { get; set; }
         public int Plane { get; set; }
 
-        public string Callsign
-        {
-            get
-            {
-                return $"{Group} {Flight} {Plane}";
-            }
-        }
+        public string Callsign => $"{Group} {Flight} {Plane}";
     }
 }

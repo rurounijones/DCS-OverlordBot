@@ -1,10 +1,8 @@
 ﻿using System.Globalization;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings.RadioChannels;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow.PresetChannels;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Utils;
@@ -15,7 +13,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow
     /// <summary>
     ///     Interaction logic for RadioControlGroup.xaml
     /// </summary>
-    public partial class RadioControlGroup : UserControl
+    public partial class RadioControlGroup
     {
         private const double MHz = 1000000;
         private bool _dragging;
@@ -25,7 +23,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow
 
         public RadioControlGroup()
         {
-            this.DataContext = this; // set data context
+            DataContext = this; // set data context
 
             InitializeComponent();
         }
@@ -193,7 +191,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow
 
             var dcsPlayerRadioInfo = _clientStateSingleton.DcsPlayerRadioInfo;
 
-            if ((dcsPlayerRadioInfo == null) || !dcsPlayerRadioInfo.IsCurrent())
+            if (dcsPlayerRadioInfo == null || !dcsPlayerRadioInfo.IsCurrent())
             {
                 RadioActive.Fill = new SolidColorBrush(Colors.Red);
                 RadioLabel.Text = "No Radio";
@@ -212,7 +210,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow
                 {
                     var transmitting = UdpVoiceHandler.RadioSendingState;
 
-                    if (transmitting.IsSending && (transmitting.SendingOn == RadioId))
+                    if (transmitting.IsSending && transmitting.SendingOn == RadioId)
                     {
                         RadioActive.Fill = new SolidColorBrush((Color) ColorConverter.ConvertFromString("#96FF6D"));
                     }
@@ -228,61 +226,52 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow
 
                 var currentRadio = dcsPlayerRadioInfo.radios[RadioId];
 
-                if (currentRadio.modulation == RadioInformation.Modulation.DISABLED) // disabled
+                switch (currentRadio.modulation)
                 {
-                    RadioActive.Fill = new SolidColorBrush(Colors.Red);
-                    RadioLabel.Text = "No Radio";
-                    RadioFrequency.Text = "Unknown";
+                    // disabled
+                    case RadioInformation.Modulation.DISABLED:
+                        RadioActive.Fill = new SolidColorBrush(Colors.Red);
+                        RadioLabel.Text = "No Radio";
+                        RadioFrequency.Text = "Unknown";
 
-                    RadioVolume.IsEnabled = false;
+                        RadioVolume.IsEnabled = false;
 
-                    ToggleButtons(false);
-                    return;
-                }
-                if (currentRadio.modulation == RadioInformation.Modulation.INTERCOM) //intercom
-                {
-                    RadioFrequency.Text = "INTERCOM";
-                }
-                else
-                {
-                    RadioFrequency.Text =
-                        (currentRadio.freq / MHz).ToString("0.000",
-                            CultureInfo.InvariantCulture) + //make nuber UK / US style with decimals not commas!
-                        (currentRadio.modulation == 0 ? "AM" : "FM");
-                    if (currentRadio.secFreq > 100)
+                        ToggleButtons(false);
+                        return;
+                    //intercom
+                    case RadioInformation.Modulation.INTERCOM:
+                        RadioFrequency.Text = "INTERCOM";
+                        break;
+                    default:
                     {
-                        RadioFrequency.Text += " G";
-                    }
+                        RadioFrequency.Text =
+                            (currentRadio.freq / MHz).ToString("0.000",
+                                CultureInfo.InvariantCulture) + //make nuber UK / US style with decimals not commas!
+                            (currentRadio.modulation == 0 ? "AM" : "FM");
+                        if (currentRadio.secFreq > 100)
+                        {
+                            RadioFrequency.Text += " G";
+                        }
 
-                    if (currentRadio.channel >= 0)
-                    {
-                        RadioFrequency.Text += " C" + currentRadio.channel;
-                    }
+                        if (currentRadio.channel >= 0)
+                        {
+                            RadioFrequency.Text += " C" + currentRadio.channel;
+                        }
 
 
-                    if (currentRadio.enc && (currentRadio.encKey > 0))
-                    {
-                        RadioFrequency.Text += " E" + currentRadio.encKey; // ENCRYPTED
+                        if (currentRadio.enc && currentRadio.encKey > 0)
+                        {
+                            RadioFrequency.Text += " E" + currentRadio.encKey; // ENCRYPTED
+                        }
+
+                        break;
                     }
                 }
 
 
                 RadioLabel.Text = dcsPlayerRadioInfo.radios[RadioId].name;
 
-                if (currentRadio.volMode == RadioInformation.VolumeMode.OVERLAY)
-                {
-                    RadioVolume.IsEnabled = true;
-
-                    //reset dragging just incase
-                    //    _dragging = false;
-                }
-                else
-                {
-                    RadioVolume.IsEnabled = false;
-
-                    //reset dragging just incase
-                    //  _dragging = false;
-                }
+                RadioVolume.IsEnabled = currentRadio.volMode == RadioInformation.VolumeMode.OVERLAY;
 
                 ToggleButtons(currentRadio.freqMode == RadioInformation.FreqMode.OVERLAY);
 
@@ -297,46 +286,38 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow
         {
             var dcsPlayerRadioInfo = _clientStateSingleton.DcsPlayerRadioInfo;
 
-            if ((dcsPlayerRadioInfo != null) || dcsPlayerRadioInfo.IsCurrent())
+            if (dcsPlayerRadioInfo != null || dcsPlayerRadioInfo.IsCurrent())
             {
                 var currentRadio = dcsPlayerRadioInfo.radios[RadioId];
 
                 EncryptionKeySpinner.Value = currentRadio.encKey;
 
                 //update stuff
-                if ((currentRadio.encMode == RadioInformation.EncryptionMode.NO_ENCRYPTION)
-                    || (currentRadio.encMode == RadioInformation.EncryptionMode.ENCRYPTION_FULL)
-                    || (currentRadio.modulation == RadioInformation.Modulation.INTERCOM))
+                if (currentRadio.encMode == RadioInformation.EncryptionMode.NO_ENCRYPTION
+                    || currentRadio.encMode == RadioInformation.EncryptionMode.ENCRYPTION_FULL
+                    || currentRadio.modulation == RadioInformation.Modulation.INTERCOM)
                 {
                     //Disable everything
                     EncryptionKeySpinner.IsEnabled = false;
                     EncryptionButton.IsEnabled = false;
                     EncryptionButton.Content = "Enable";
                 }
-                else if (currentRadio.encMode ==
-                         RadioInformation.EncryptionMode.ENCRYPTION_COCKPIT_TOGGLE_OVERLAY_CODE)
+                else switch (currentRadio.encMode)
                 {
-                    //allow spinner
-                    EncryptionKeySpinner.IsEnabled = true;
+                    case RadioInformation.EncryptionMode.ENCRYPTION_COCKPIT_TOGGLE_OVERLAY_CODE:
+                        //allow spinner
+                        EncryptionKeySpinner.IsEnabled = true;
 
-                    //disallow encryption toggle
-                    EncryptionButton.IsEnabled = false;
-                    EncryptionButton.Content = "Enable";
-                }
-                else if (currentRadio.encMode ==
-                         RadioInformation.EncryptionMode.ENCRYPTION_JUST_OVERLAY)
-                {
-                    EncryptionKeySpinner.IsEnabled = true;
-                    EncryptionButton.IsEnabled = true;
-
-                    if (currentRadio.enc)
-                    {
-                        EncryptionButton.Content = "Disable";
-                    }
-                    else
-                    {
+                        //disallow encryption toggle
+                        EncryptionButton.IsEnabled = false;
                         EncryptionButton.Content = "Enable";
-                    }
+                        break;
+                    case RadioInformation.EncryptionMode.ENCRYPTION_JUST_OVERLAY:
+                        EncryptionKeySpinner.IsEnabled = true;
+                        EncryptionButton.IsEnabled = true;
+
+                        EncryptionButton.Content = currentRadio.enc ? "Disable" : "Enable";
+                        break;
                 }
             }
             else
@@ -361,21 +342,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow
                 var receiveState = UdpVoiceHandler.RadioReceivingState[RadioId];
                 //check if current
 
-                if ((receiveState == null) || !receiveState.IsReceiving)
+                if (receiveState == null || !receiveState.IsReceiving)
                 {
                     RadioFrequency.Foreground =
                         new SolidColorBrush((Color) ColorConverter.ConvertFromString("#00FF00"));
                 }
-                else if ((receiveState != null) && receiveState.IsReceiving)
+                else if (receiveState.IsReceiving)
                 {
-                    if (receiveState.IsSecondary)
-                    {
-                        RadioFrequency.Foreground = new SolidColorBrush(Colors.Red);
-                    }
-                    else
-                    {
-                        RadioFrequency.Foreground = new SolidColorBrush(Colors.White);
-                    }
+                    RadioFrequency.Foreground = receiveState.IsSecondary ? new SolidColorBrush(Colors.Red) : new SolidColorBrush(Colors.White);
                 }
                 else
                 {
@@ -390,24 +364,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow
         {
             var currentRadio = RadioHelper.GetRadio(RadioId);
 
-            if (currentRadio != null &&
-                currentRadio.modulation != RadioInformation.Modulation.DISABLED) // disabled
-            {
-                //update stuff
-                if (currentRadio.encMode == RadioInformation.EncryptionMode.ENCRYPTION_JUST_OVERLAY)
-                {
-                    RadioHelper.ToggleEncryption(RadioId);
+            if (currentRadio == null || currentRadio.modulation == RadioInformation.Modulation.DISABLED) return;
+            //update stuff
+            if (currentRadio.encMode != RadioInformation.EncryptionMode.ENCRYPTION_JUST_OVERLAY) return;
+            RadioHelper.ToggleEncryption(RadioId);
 
-                    if (currentRadio.enc)
-                    {
-                        EncryptionButton.Content = "Enable";
-                    }
-                    else
-                    {
-                        EncryptionButton.Content = "Disable";
-                    }
-                }
-            }
+            EncryptionButton.Content = currentRadio.enc ? "Enable" : "Disable";
         }
 
         private void EncryptionKeySpinner_OnValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)

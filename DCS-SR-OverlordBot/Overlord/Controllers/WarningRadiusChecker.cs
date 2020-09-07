@@ -1,20 +1,20 @@
-﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechOutput;
-using NLog;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Timers;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechOutput;
+using NLog;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
 {
-    class WarningRadiusChecker
+    internal class WarningRadiusChecker
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private static ConcurrentDictionary<string, List<string>> _warningStates = new ConcurrentDictionary<string, List<string>>();
+        private static readonly ConcurrentDictionary<string, List<string>> WarningStates = new ConcurrentDictionary<string, List<string>>();
         public static ConcurrentDictionary<string, WarningRadiusChecker> WarningChecks = new ConcurrentDictionary<string, WarningRadiusChecker>();
 
         private readonly Timer _checkTimer;
@@ -24,7 +24,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
         private readonly int _distance;
         private readonly ConcurrentQueue<byte[]> _responseQueue;
 
-        private static readonly double CHECK_INTERVAL = 5000; // milliseconds
+        private const double CheckInterval = 5000; // milliseconds
 
         public WarningRadiusChecker(Player sender, string awacs, string voice, int distance, ConcurrentQueue<byte[]> responseQueue)
         {
@@ -40,7 +40,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
                 WarningChecks.TryRemove(_sender.Id, out _);
             }
 
-            _checkTimer = new Timer(CHECK_INTERVAL);
+            _checkTimer = new Timer(CheckInterval);
             _checkTimer.Elapsed += async (s, e) => await CheckAsync();
 
             Logger.Debug($"Starting {distance} mile Radius Warning Check for {sender.Id}");
@@ -54,7 +54,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
         {
             Logger.Debug($"Stopping Warning Check for {_sender.Id}");
             _checkTimer.Stop();
-            _warningStates.TryRemove(_sender.Id, out _);
+            WarningStates.TryRemove(_sender.Id, out _);
             _checkTimer.Close();
         }
 
@@ -64,9 +64,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
             {
                 Logger.Debug($"Peforming Warning Radius check for {_sender.Id}");
 
-                if (_warningStates.ContainsKey(_sender.Id) == false)
+                if (WarningStates.ContainsKey(_sender.Id) == false)
                 {
-                    _warningStates.TryAdd(_sender.Id, new List<string>());
+                    WarningStates.TryAdd(_sender.Id, new List<string>());
                 }
                 var previousId = _sender.Id;
                 await GameQuerier.PopulatePilotData(_sender);
@@ -81,7 +81,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
                     return;
                 }
 
-                Contact contact = await GameQuerier.GetBogeyDope(_sender.Coalition, _sender.Group, _sender.Flight, _sender.Plane);
+                var contact = await GameQuerier.GetBogeyDope(_sender.Coalition, _sender.Group, _sender.Flight, _sender.Plane);
 
                 if (contact == null)
                 {
@@ -95,7 +95,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
                     return;
                 }
 
-                if (_warningStates[_sender.Id].Contains(contact.Id))
+                if (WarningStates[_sender.Id].Contains(contact.Id))
                 {
                     Logger.Debug($"Contact {contact.Id} already reported");
                     return;
@@ -108,13 +108,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
 
                 var ssmlResponse = $"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{_voice}\">{response}</voice></speak>";
 
-                byte[] audioData = await Speaker.CreateResponse(ssmlResponse);
+                var audioData = await Speaker.CreateResponse(ssmlResponse);
 
                 if (audioData != null)
                 {
                     Logger.Info($"Outgoing Transmission: {response}");
                     _responseQueue.Enqueue(audioData);
-                    _warningStates[_sender.Id].Add(contact.Id);
+                    WarningStates[_sender.Id].Add(contact.Id);
                 }
             }
             catch (Exception ex)

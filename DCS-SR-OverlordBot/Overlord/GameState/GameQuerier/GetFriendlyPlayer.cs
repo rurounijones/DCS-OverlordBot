@@ -1,9 +1,8 @@
-﻿using NetTopologySuite.Geometries;
-using NLog;
-using Npgsql;
-using System;
+﻿using System;
 using System.Data.Common;
 using System.Threading.Tasks;
+using NetTopologySuite.Geometries;
+using Npgsql;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
 {
@@ -45,8 +44,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
 
                         var id = dbDataReader.GetString(0);
                         var position = (Point)dbDataReader[1];
-                        var range = (int)Math.Round((dbDataReader.GetDouble(3) * 0.539957d) / 1000); // Nautical Miles
-                        var altitude = (int)Math.Round((dbDataReader.GetDouble(4) * 3.28d) / 1000d, 0) * 1000; // Feet
+                        var range = (int)Math.Round(dbDataReader.GetDouble(3) * 0.539957d / 1000); // Nautical Miles
+                        var altitude = (int)Math.Round(dbDataReader.GetDouble(4) * 3.28d / 1000d, 0) * 1000; // Feet
                         var heading = dbDataReader.GetDouble(5);
 
                         friendly = new Contact

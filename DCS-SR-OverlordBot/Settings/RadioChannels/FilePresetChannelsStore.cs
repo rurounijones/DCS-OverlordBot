@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.PresetChannels;
 using NLog;
 
@@ -17,66 +15,48 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings.RadioChannels
 
         public IEnumerable<PresetChannel> LoadFromStore(string radioName)
         {
-            var file = FindRadioFile(NormaliseString(radioName));
+            var file = FindRadioFile(NormalizeString(radioName));
 
-            if (file != null)
-            {
-                return ReadFrequenciesFromFile(file);
-            }
-
-            return new List<PresetChannel>();
+            return file != null ? ReadFrequenciesFromFile(file) : new List<PresetChannel>();
         }
 
-        private List<PresetChannel> ReadFrequenciesFromFile(string filePath)
+        private static List<PresetChannel> ReadFrequenciesFromFile(string filePath)
         {
-            List<PresetChannel> channels = new List<PresetChannel>();
-            string[] lines = File.ReadAllLines(filePath);
+            var channels = new List<PresetChannel>();
+            var lines = File.ReadAllLines(filePath);
 
-            const double MHz = 1000000;
-            if (lines?.Length > 0)
+            const double mHz = 1000000;
+            if (lines.Length <= 0) return channels;
+            foreach (var line in lines)
             {
-                foreach (var line in lines)
+                var trimmed = line.Trim();
+                if (trimmed.Length <= 0) continue;
+                try
                 {
-                    var trimmed = line.Trim();
-                    if (trimmed.Length > 0)
+                    var frequency = double.Parse(trimmed, CultureInfo.InvariantCulture);
+                    channels.Add(new PresetChannel
                     {
-                        try
-                        {
-                            double frequency = Double.Parse(trimmed, CultureInfo.InvariantCulture);
-                            channels.Add(new PresetChannel()
-                            {
-                                Text = trimmed,
-                                Value = frequency * MHz,
-                            });
-                        }
-                        catch (Exception ex)
-                        {
-                            Logger.Log(LogLevel.Info, "Error parsing frequency  ");
-                        }
-                    }
+                        Text = trimmed,
+                        Value = frequency * mHz
+                    });
+                }
+                catch (Exception)
+                {
+                    Logger.Log(LogLevel.Info, "Error parsing frequency  ");
                 }
             }
 
             return channels;
         }
 
-        private string FindRadioFile(string radioName)
+        private static string FindRadioFile(string radioName)
         {
             var files = Directory.GetFiles(Environment.CurrentDirectory);
 
-            foreach (var fileAndPath in files)
-            {
-                var name = Path.GetFileNameWithoutExtension(fileAndPath);
-
-                if (NormaliseString(name) == radioName)
-                {
-                    return fileAndPath;
-                }
-            }
-            return null;
+            return (from fileAndPath in files let name = Path.GetFileNameWithoutExtension(fileAndPath) where NormalizeString(name) == radioName select fileAndPath).FirstOrDefault();
         }
 
-        private string NormaliseString(string str)
+        private static string NormalizeString(string str)
         {
             //only allow alphanumeric, remove all spaces etc
             return Regex.Replace(str, "[^a-zA-Z0-9]", "").ToLower();

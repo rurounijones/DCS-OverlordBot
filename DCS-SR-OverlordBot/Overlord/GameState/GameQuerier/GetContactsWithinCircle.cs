@@ -1,28 +1,28 @@
-﻿using NetTopologySuite.Geometries;
-using Npgsql;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading.Tasks;
+using Geo.Geometries;
+using Npgsql;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState
 {
     partial class GameQuerier
     {
-        public static async Task<List<Contact>> GetContactsWithinCircle(Geo.Geometries.Point center, double radius)
+        public static async Task<List<Contact>> GetContactsWithinCircle(Point center, double radius)
         {
-            var command = @"SELECT id, coalition from public.units contact
+            const string command = @"SELECT id, coalition from public.units contact
                             WHERE contact.type ilike 'Air+%'
                             AND contact.speed >= 26
                             AND ST_DWithin(@center, contact.position, @radius)";
 
-            List<Contact> contacts = new List<Contact>();
+            var contacts = new List<Contact>();
 
             using (var connection = new NpgsqlConnection(ConnectionString()))
             {
                 await connection.OpenAsync();
                 using (var cmd = new NpgsqlCommand(command, connection))
                 {
-                    cmd.Parameters.AddWithValue("center", new Point(center.Coordinate.Longitude, center.Coordinate.Latitude));
+                    cmd.Parameters.AddWithValue("center", new NetTopologySuite.Geometries.Point(center.Coordinate.Longitude, center.Coordinate.Latitude));
                     cmd.Parameters.AddWithValue("radius", radius);
 
                     DbDataReader dbDataReader = await cmd.ExecuteReaderAsync();

@@ -1,11 +1,11 @@
-﻿using NLog;
+﻿using System;
+using NLog;
 using Npgsql.Logging;
-using System;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
 {
     //NLog logging provider for npgsql
-    class NLogLoggingProvider : INpgsqlLoggingProvider
+    internal class NLogLoggingProvider : INpgsqlLoggingProvider
     {
         public NpgsqlLogger CreateLogger(string name)
         {
@@ -13,9 +13,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
         }
     }
 
-    class NLogLogger : NpgsqlLogger
+    internal class NLogLogger : NpgsqlLogger
     {
-        readonly Logger _log;
+        private readonly Logger _log;
 
         internal NLogLogger(string name)
         {
@@ -37,7 +37,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
             _log.Log(ev);
         }
 
-        static LogLevel ToNLogLogLevel(NpgsqlLogLevel level)
+        private static LogLevel ToNLogLogLevel(NpgsqlLogLevel level)
         {
             switch (level)
             {
@@ -54,7 +54,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord
                 case NpgsqlLogLevel.Fatal:
                     return LogLevel.Fatal;
                 default:
-                    throw new ArgumentOutOfRangeException("level");
+                    throw new ArgumentOutOfRangeException(nameof(level));
             }
         }
     }

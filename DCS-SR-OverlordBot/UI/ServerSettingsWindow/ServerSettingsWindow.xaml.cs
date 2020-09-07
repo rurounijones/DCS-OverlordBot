@@ -5,7 +5,6 @@ using System.Windows.Threading;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Setting;
-using MahApps.Metro.Controls;
 using NLog;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
@@ -13,7 +12,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
     /// <summary>
     ///     Interaction logic for ServerSettingsWindow.xaml
     /// </summary>
-    public partial class ServerSettingsWindow : MetroWindow
+    public partial class ServerSettingsWindow
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly DispatcherTimer _updateTimer;
@@ -25,13 +24,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             InitializeComponent();
 
             _updateTimer = new DispatcherTimer {Interval = TimeSpan.FromSeconds(1)};
-            _updateTimer.Tick += UpdateUI;
+            _updateTimer.Tick += UpdateUi;
             _updateTimer.Start();
 
-            UpdateUI(null, null);
+            UpdateUi(null, null);
         }
 
-        private void UpdateUI(object sender, EventArgs e)
+        private void UpdateUi(object sender, EventArgs e)
         {
             var settings = _serverSettings;
 
@@ -51,18 +50,18 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
                 RealRadio.Content = settings.GetSettingAsBool(ServerSettingsKeys.IRL_RADIO_TX) ? "ON" : "OFF";
 
-                RadioRXInterference.Content =
+                RadioRxInterference.Content =
                     settings.GetSettingAsBool(ServerSettingsKeys.IRL_RADIO_RX_INTERFERENCE) ? "ON" : "OFF";
 
                 RadioExpansion.Content = settings.GetSettingAsBool(ServerSettingsKeys.RADIO_EXPANSION) ? "ON" : "OFF";
 
-                ExternalAWACSMode.Content = settings.GetSettingAsBool(ServerSettingsKeys.EXTERNAL_AWACS_MODE) ? "ON" : "OFF";
+                ExternalAwacsMode.Content = settings.GetSettingAsBool(ServerSettingsKeys.EXTERNAL_AWACS_MODE) ? "ON" : "OFF";
 
                 AllowRadioEncryption.Content = settings.GetSettingAsBool(ServerSettingsKeys.ALLOW_RADIO_ENCRYPTION) ? "ON" : "OFF";
 
-                ServerVersion.Content = SRSClientSyncHandler.ServerVersion;
+                ServerVersion.Content = SrsClientSyncHandler.ServerVersion;
             }
-            catch (IndexOutOfRangeException ex)
+            catch (IndexOutOfRangeException)
             {
                 Logger.Warn("Missing Server Option - Connected to old server");
             }

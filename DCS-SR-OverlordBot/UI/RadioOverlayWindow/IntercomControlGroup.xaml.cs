@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
@@ -10,7 +9,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
     /// <summary>
     ///     Interaction logic for IntercomControlGroup.xaml
     /// </summary>
-    public partial class IntercomControlGroup : UserControl
+    public partial class IntercomControlGroup
     {
         private bool _dragging;
         private readonly ClientStateSingleton _clientStateSingleton = ClientStateSingleton.Instance;
@@ -26,13 +25,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
         {
             var currentRadio = _clientStateSingleton.DcsPlayerRadioInfo.radios[RadioId];
 
-            if (currentRadio.modulation != RadioInformation.Modulation.DISABLED)
+            if (currentRadio.modulation == RadioInformation.Modulation.DISABLED) return;
+            if (_clientStateSingleton.DcsPlayerRadioInfo.control ==
+                DCSPlayerRadioInfo.RadioSwitchControls.HOTAS)
             {
-                if (_clientStateSingleton.DcsPlayerRadioInfo.control ==
-                    DCSPlayerRadioInfo.RadioSwitchControls.HOTAS)
-                {
-                    _clientStateSingleton.DcsPlayerRadioInfo.selected = (short) RadioId;
-                }
+                _clientStateSingleton.DcsPlayerRadioInfo.selected = (short) RadioId;
             }
         }
 
@@ -63,7 +60,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
         {
             var dcsPlayerRadioInfo = _clientStateSingleton.DcsPlayerRadioInfo;
 
-            if ((dcsPlayerRadioInfo == null) || !dcsPlayerRadioInfo.IsCurrent())
+            if (dcsPlayerRadioInfo == null || !dcsPlayerRadioInfo.IsCurrent())
             {
                 RadioActive.Fill = new SolidColorBrush(Colors.Red);
 
@@ -77,13 +74,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
                 var transmitting = UdpVoiceHandler.RadioSendingState;
                 var receiveState = UdpVoiceHandler.RadioReceivingState[RadioId];
 
-                if ((receiveState != null) && receiveState.IsReceiving)
+                if (receiveState != null && receiveState.IsReceiving)
                 {
                     RadioActive.Fill = new SolidColorBrush((Color) ColorConverter.ConvertFromString("#96FF6D"));
                 }
                 else if (RadioId == dcsPlayerRadioInfo.selected)
                 {
-                    if (transmitting.IsSending && (transmitting.SendingOn == RadioId))
+                    if (transmitting.IsSending && transmitting.SendingOn == RadioId)
                     {
                         RadioActive.Fill = new SolidColorBrush((Color) ColorConverter.ConvertFromString("#96FF6D"));
                     }

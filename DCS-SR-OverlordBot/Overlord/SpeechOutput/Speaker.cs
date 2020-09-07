@@ -1,9 +1,8 @@
-﻿using System;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.CognitiveServices.Speech;
 using Microsoft.CognitiveServices.Speech.Audio;
 using NLog;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechOutput
 {

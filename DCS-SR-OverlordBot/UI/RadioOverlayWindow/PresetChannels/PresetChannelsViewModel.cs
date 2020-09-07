@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Windows.Data;
 using System.Windows.Input;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings.RadioChannels;
@@ -12,7 +10,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow.Preset
 {
     public class PresetChannelsViewModel
     {
-        private IPresetChannelsStore _channelsStore;
+        private readonly IPresetChannelsStore _channelsStore;
         private int _radioId;
 
         public DelegateCommand DropDownClosedCommand { get; set; }
@@ -23,7 +21,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow.Preset
 
         public ObservableCollection<PresetChannel> PresetChannels
         {
-            get { return _presetChannels; }
+            get => _presetChannels;
             set
             {
                 _presetChannels = value;
@@ -55,9 +53,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow.Preset
 
         private void DropDownClosed(object args)
         {
-            if (SelectedPresetChannel != null
-                && SelectedPresetChannel.Value is Double
-                && (Double) SelectedPresetChannel.Value > 0 && RadioId > 0)
+            if (SelectedPresetChannel?.Value is double value && value > 0 && RadioId > 0)
             {
                 RadioHelper.SelectRadioChannel(SelectedPresetChannel, RadioId);
             }
@@ -76,15 +72,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow.Preset
 
             var radio = radios[_radioId];
 
-            int i = 1;
+            var i = 1;
             foreach (var channel in _channelsStore.LoadFromStore(radio.name))
             {
-                if (((double) channel.Value) < Max
-                    && ((double) channel.Value) > Min)
-                {
-                    channel.Channel = i++;
-                    PresetChannels.Add(channel);
-                }
+                if (!((double) channel.Value < Max) || !((double) channel.Value > Min)) continue;
+                channel.Channel = i++;
+                PresetChannels.Add(channel);
             }
         }
 

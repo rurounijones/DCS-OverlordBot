@@ -384,16 +384,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Audio\Providers\AudioProvider.cs" />
-    <Compile Include="Audio\Models\CachedAudioEffect.cs" />
     <Compile Include="Audio\Managers\AudioManager.cs" />
     <Compile Include="Audio\Models\ClientAudio.cs" />
-    <Compile Include="Audio\Providers\ClientAudioProvider.cs" />
-    <Compile Include="Audio\Models\JitterBufferAudio.cs" />
-    <Compile Include="Audio\Providers\JitterBufferProviderInterface.cs" />
-    <Compile Include="Audio\Providers\VolumeSampleProviderWithPeak.cs" />
-    <Compile Include="Audio\Utility\SpeexWrapper.cs" />
     <Compile Include="Discord\DiscordClient.cs" />
-    <Compile Include="Input\InputBindState.cs" />
     <Compile Include="Network\DCS\DCSRadioSyncHandler.cs" />
     <Compile Include="Network\DCS\DCSRadioSyncManager.cs" />
     <Compile Include="Network\Models\RadioSendingState.cs" />
@@ -427,14 +420,12 @@
     <Compile Include="Overlord\RadioCalls\SetWarningRadiusRadioCall.cs" />
     <Compile Include="Overlord\SpeechOutput\AirbasePronouncer.cs" />
     <Compile Include="Overlord\SpeechOutput\AircraftReportingNamePronouncer.cs" />
-    <Compile Include="Overlord\SpeechRecognition\LuisServiceV3.cs" />
     <Compile Include="Overlord\GameState\Player.cs" />
     <Compile Include="Overlord\SpeechOutput\RadioStreamWriter.cs" />
     <Compile Include="Overlord\SpeechOutput\Speaker.cs" />
     <Compile Include="Overlord\SpeechRecognition\BotAudioProvider.cs" />
     <Compile Include="Overlord\SpeechRecognition\BufferedWaveProviderStreamReader.cs" />
     <Compile Include="Overlord\SpeechRecognition\LuisService.cs" />
-    <Compile Include="Overlord\SpeechRecognition\RecorderAudioProvider.cs" />
     <Compile Include="Overlord\SpeechRecognition\SpeechRecognitionListener.cs" />
     <Compile Include="Overlord\GameState\GameQuerier.cs" />
     <Compile Include="Overlord\Intents\BogeyDope.cs" />
@@ -444,7 +435,6 @@
     <Compile Include="Overlord\Util\AirfieldUpdater.cs" />
     <Compile Include="Overlord\Util\Geospatial.cs" />
     <Compile Include="Overlord\Controllers\WarningRadiusChecker.cs" />
-    <Compile Include="Settings.cs" />
     <Compile Include="Settings\SynchedServerSettings.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -453,28 +443,16 @@
     </Compile>
     <Compile Include="Settings\Favourites\CsvFavouriteServerStore.cs" />
     <Compile Include="Settings\Favourites\IFavouriteServerStore.cs" />
-    <Compile Include="Settings\Favourites\MockFavouriteServerStore.cs" />
     <Compile Include="Settings\RadioChannels\FilePresetChannelsStore.cs" />
-    <Compile Include="Settings\RadioChannels\MockPresetChannelsStore.cs" />
     <Compile Include="Singletons\ClientStateSingleton.cs" />
     <Compile Include="Singletons\ConnectedClientsSingleton.cs" />
-    <Compile Include="UI\ClientWindow\InputBindingControl.xaml.cs">
-      <DependentUpon>InputBindingControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Input\InputDevice.cs" />
-    <Compile Include="Input\InputDeviceManager.cs" />
     <Compile Include="Settings\RadioChannels\PresetChannel.cs" />
     <Compile Include="Settings\RadioChannels\IPresetChannelsStore.cs" />
-    <Compile Include="UI\ClientWindow\AudioDeviceListItem.cs" />
     <Compile Include="UI\Images.cs" />
     <Compile Include="UI\RadioOverlayWindow\PresetChannels\PresetChannelsView.xaml.cs">
       <DependentUpon>PresetChannelsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\RadioOverlayWindow\PresetChannels\PresetChannelsViewModel.cs" />
-    <Compile Include="UI\ClientWindow\RadioChannelConfigUI.xaml.cs">
-      <DependentUpon>RadioChannelConfigUI.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Audio\Providers\RadioAudioProvider.cs" />
     <Compile Include="UI\AwacsRadioOverlayWindow\AwacsIntercomControlGroup.xaml.cs">
       <DependentUpon>AwacsIntercomControlGroup.xaml</DependentUpon>
     </Compile>
@@ -495,7 +473,6 @@
     <Compile Include="UI\RadioOverlayWindow\RadioControlGroup.xaml.cs">
       <DependentUpon>RadioControlGroup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Audio\Providers\RadioFilter.cs" />
     <Compile Include="UI\RadioOverlayWindow\RadioOverlay.xaml.cs">
       <DependentUpon>RadioOverlay.xaml</DependentUpon>
     </Compile>
@@ -507,13 +484,7 @@
     <Compile Include="UI\ToolTips.cs" />
     <Compile Include="Utils\DelegateCommand.cs" />
     <Compile Include="Utils\RadioHelper.cs" />
-    <Compile Include="Utils\ValueConverters\BooleanInverterConverter.cs" />
     <Compile Include="Utils\ValueConverters\ConnectionStatusImageConverter.cs" />
-    <Compile Include="Utils\WPFElementHelper.cs" />
-    <Page Include="UI\ClientWindow\InputBindingControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="UI\ClientWindow\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -527,10 +498,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="UI\RadioOverlayWindow\PresetChannels\PresetChannelsView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\ClientWindow\RadioChannelConfigUI.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -662,11 +629,9 @@
     <Content Include="Data\equipment-failure.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="speexdsp.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Audio\Utility\" />
     <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

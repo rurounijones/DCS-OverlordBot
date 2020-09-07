@@ -1,10 +1,10 @@
-﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Util;
 using NLog;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
 {
@@ -19,7 +19,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
 
             var declarePoint = Geospatial.CalculatePointFromSource(radioCall.Sender.Position, NauticalMilesToMeters(distance), Geospatial.MagneticToTrue(radioCall.Sender.Position, bearing));
 
-            var radius = 1 + (distance * 0.05);
+            var radius = 1 + distance * 0.05;
 
             Logger.Info($"Declare Source (Lon/Lat): {radioCall.Sender.Position}, Magnetic Bearing {bearing}, True Bearing {Geospatial.MagneticToTrue(radioCall.Sender.Position, bearing)},\n Declare Target (Lon/Lat): {declarePoint}, Search radius: {radius} miles");
 
@@ -36,7 +36,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
             {
                 { Coalition.Neutral, contacts.Count(contact => contact.Coalition == Coalition.Neutral) },
                 { Coalition.Redfor, contacts.Count(contact => contact.Coalition == Coalition.Redfor) },
-                { Coalition.Bluefor, contacts.Count(contact => contact.Coalition == Coalition.Bluefor) },
+                { Coalition.Bluefor, contacts.Count(contact => contact.Coalition == Coalition.Bluefor) }
             };
 
             var neutrals = false;

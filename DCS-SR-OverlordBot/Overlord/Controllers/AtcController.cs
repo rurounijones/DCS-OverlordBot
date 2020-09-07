@@ -1,9 +1,9 @@
-﻿using static Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Constants;
-
+﻿using System.Collections.Concurrent;
+using System.Linq;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechOutput;
-using System.Collections.Concurrent;
-using System.Linq;
+using static Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Constants;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
 {
@@ -58,7 +58,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
         {
             if (!IsAddressedToController(radioCall))
                 return null;
-            return ResponsePrefix(radioCall) + "ground, " + Intents.ReadytoTaxi.Process(radioCall).Result;
+            return ResponsePrefix(radioCall) + "ground, " + ReadytoTaxi.Process(radioCall).Result;
         }
 
         protected override string NullSender(IRadioCall _)

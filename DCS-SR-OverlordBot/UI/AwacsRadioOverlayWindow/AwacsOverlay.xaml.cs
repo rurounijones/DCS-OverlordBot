@@ -3,32 +3,27 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
-using Ciribob.DCS.SimpleRadio.Standalone.Common;
-using NLog;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
 {
     /// <summary>
     ///     Interaction logic for RadioOverlayWindow.xaml
     /// </summary>
-    public partial class RadioOverlayWindow : Window
+    public partial class RadioOverlayWindow
     {
         private readonly double _aspectRatio;
-        private readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private readonly RadioControlGroup[] radioControlGroup = new RadioControlGroup[10];
+        private readonly RadioControlGroup[] _radioControlGroup = new RadioControlGroup[10];
 
         private readonly DispatcherTimer _updateTimer;
 
-        public static bool AwacsActive = false
-            ; //when false and we're in spectator mode / not in an aircraft the other 7 radios will be disabled
+        public static bool AwacsActive; //when false and we're in spectator mode / not in an aircraft the other 7 radios will be disabled
 
         private readonly ClientStateSingleton _clientStateSingleton = ClientStateSingleton.Instance;
 
-        private Settings.SettingsStore _settings = Settings.SettingsStore.Instance;
+        private readonly SettingsStore _settings = SettingsStore.Instance;
 
         public RadioOverlayWindow()
         {
@@ -39,30 +34,30 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
 
             InitializeComponent();
 
-            this.WindowStartupLocation = WindowStartupLocation.Manual;
-            this.Left = _settings.GetPositionSetting(SettingsKeys.AwacsX).DoubleValue;
-            this.Top = _settings.GetPositionSetting(SettingsKeys.AwacsY).DoubleValue;
+            WindowStartupLocation = WindowStartupLocation.Manual;
+            Left = _settings.GetPositionSetting(SettingsKeys.AwacsX).DoubleValue;
+            Top = _settings.GetPositionSetting(SettingsKeys.AwacsY).DoubleValue;
 
             _aspectRatio = MinWidth / MinHeight;
 
             AllowsTransparency = true;
             //    Opacity = opacity;
-            windowOpacitySlider.Value = Opacity;
+            WindowOpacitySlider.Value = Opacity;
 
-            radioControlGroup[0] = radio1;
-            radioControlGroup[1] = radio2;
-            radioControlGroup[2] = radio3;
-            radioControlGroup[3] = radio4;
-            radioControlGroup[4] = radio5;
-            radioControlGroup[5] = radio6;
-            radioControlGroup[6] = radio7;
-            radioControlGroup[7] = radio8;
-            radioControlGroup[8] = radio9;
-            radioControlGroup[9] = radio10;
+            _radioControlGroup[0] = Radio1;
+            _radioControlGroup[1] = Radio2;
+            _radioControlGroup[2] = Radio3;
+            _radioControlGroup[3] = Radio4;
+            _radioControlGroup[4] = Radio5;
+            _radioControlGroup[5] = Radio6;
+            _radioControlGroup[6] = Radio7;
+            _radioControlGroup[7] = Radio8;
+            _radioControlGroup[8] = Radio9;
+            _radioControlGroup[9] = Radio10;
 
 
             //allows click and drag anywhere on the window
-            containerPanel.MouseLeftButtonDown += WrapPanel_MouseLeftButtonDown;
+            ContainerPanel.MouseLeftButtonDown += WrapPanel_MouseLeftButtonDown;
 
             //      Top = AppConfiguration.Instance.RadioX;
             //        Left = AppConfiguration.Instance.RadioY;
@@ -84,7 +79,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
             _updateTimer.Start();
         }
 
-        private void Location_Changed(object sender, EventArgs e)
+        private static void Location_Changed(object sender, EventArgs e)
         {
             //   AppConfiguration.Instance.RadioX = Top;
             //  AppConfiguration.Instance.RadioY = Left;
@@ -92,7 +87,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
 
         private void RadioRefresh(object sender, EventArgs eventArgs)
         {
-            foreach (var radio in radioControlGroup)
+            foreach (var radio in _radioControlGroup)
             {
                 radio.RepaintRadioReceive();
                 radio.RepaintRadioStatus();
@@ -101,33 +96,22 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
             intercom.RepaintRadioStatus();
 
             var dcsPlayerRadioInfo = _clientStateSingleton.DcsPlayerRadioInfo;
-            if (dcsPlayerRadioInfo != null)
+            if (dcsPlayerRadioInfo == null) return;
+            
+            if (_clientStateSingleton.IsConnected && dcsPlayerRadioInfo.IsCurrent())
             {
-                if (_clientStateSingleton.IsConnected && dcsPlayerRadioInfo.IsCurrent())
+                ToggleGlobalSimultaneousTransmissionButton.IsEnabled = true;
+            }
+            else
+            {
+                ToggleGlobalSimultaneousTransmissionButton.IsEnabled = false;
+                ToggleGlobalSimultaneousTransmissionButton.Content = "Simul. Transmission OFF";
+
+                dcsPlayerRadioInfo.simultaneousTransmission = false;
+
+                foreach (var radio in dcsPlayerRadioInfo.radios)
                 {
-                    ToggleGlobalSimultaneousTransmissionButton.IsEnabled = true;
-
-                    var avalilableRadios = 0;
-
-                    for (var i = 0; i < dcsPlayerRadioInfo.radios.Length; i++)
-                    {
-                        if (dcsPlayerRadioInfo.radios[i].modulation != RadioInformation.Modulation.DISABLED)
-                        {
-                            avalilableRadios++;
-                        }
-                    }
-                }
-                else
-                {
-                    ToggleGlobalSimultaneousTransmissionButton.IsEnabled = false;
-                    ToggleGlobalSimultaneousTransmissionButton.Content = "Simul. Transmission OFF";
-
-                    dcsPlayerRadioInfo.simultaneousTransmission = false;
-
-                    foreach (var radio in dcsPlayerRadioInfo.radios)
-                    {
-                        radio.simul = false;
-                    }
+                    radio.simul = false;
                 }
             }
         }
@@ -139,8 +123,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            _settings.GetPositionSetting(SettingsKeys.AwacsX).DoubleValue = this.Left;
-            _settings.GetPositionSetting(SettingsKeys.AwacsY).DoubleValue = this.Top;
+            _settings.GetPositionSetting(SettingsKeys.AwacsX).DoubleValue = Left;
+            _settings.GetPositionSetting(SettingsKeys.AwacsY).DoubleValue = Top;
 
             _settings.Save();
 
@@ -217,16 +201,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
 
         private static object OnCoerceScaleValue(DependencyObject o, object value)
         {
-            var mainWindow = o as RadioOverlayWindow;
-            if (mainWindow != null)
+            if (o is RadioOverlayWindow mainWindow)
                 return mainWindow.OnCoerceScaleValue((double) value);
             return value;
         }
 
         private static void OnScaleValueChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
-            var mainWindow = o as RadioOverlayWindow;
-            if (mainWindow != null)
+            if (o is RadioOverlayWindow mainWindow)
                 mainWindow.OnScaleValueChanged((double) e.OldValue, (double) e.NewValue);
         }
 
@@ -245,8 +227,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
 
         public double ScaleValue
         {
-            get { return (double) GetValue(ScaleValueProperty); }
-            set { SetValue(ScaleValueProperty, value); }
+            get => (double) GetValue(ScaleValueProperty);
+            set => SetValue(ScaleValueProperty, value);
         }
 
         #endregion
@@ -254,29 +236,27 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow
         private void ToggleGlobalSimultaneousTransmissionButton_Click(object sender, RoutedEventArgs e)
         {
             var dcsPlayerRadioInfo = _clientStateSingleton.DcsPlayerRadioInfo;
-            if (dcsPlayerRadioInfo != null)
-            {
-                dcsPlayerRadioInfo.simultaneousTransmission = !dcsPlayerRadioInfo.simultaneousTransmission;
+            if (dcsPlayerRadioInfo == null) return;
+            dcsPlayerRadioInfo.simultaneousTransmission = !dcsPlayerRadioInfo.simultaneousTransmission;
 
+            if (!dcsPlayerRadioInfo.simultaneousTransmission)
+            {
+                foreach (var radio in dcsPlayerRadioInfo.radios)
+                {
+                    radio.simul = false;
+                }
+            }
+
+            ToggleGlobalSimultaneousTransmissionButton.Content = _clientStateSingleton.DcsPlayerRadioInfo.simultaneousTransmission ? "Simul. Transmission ON" : "Simul. Transmission OFF";
+
+            foreach (var radio in _radioControlGroup)
+            {
                 if (!dcsPlayerRadioInfo.simultaneousTransmission)
                 {
-                    foreach (var radio in dcsPlayerRadioInfo.radios)
-                    {
-                        radio.simul = false;
-                    }
+                    radio.ToggleSimultaneousTransmissionButton.Content = "Sim. OFF";
                 }
 
-                ToggleGlobalSimultaneousTransmissionButton.Content = _clientStateSingleton.DcsPlayerRadioInfo.simultaneousTransmission ? "Simul. Transmission ON" : "Simul. Transmission OFF";
-
-                foreach (var radio in radioControlGroup)
-                {
-                    if (!dcsPlayerRadioInfo.simultaneousTransmission)
-                    {
-                        radio.ToggleSimultaneousTransmissionButton.Content = "Sim. OFF";
-                    }
-
-                    radio.RepaintRadioStatus();
-                }
+                radio.RepaintRadioStatus();
             }
         }
     }

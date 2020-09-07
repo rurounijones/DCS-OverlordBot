@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Forms;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Discord;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord;
@@ -10,23 +11,25 @@ using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Util;
 using NLog;
 using Npgsql;
 using Npgsql.Logging;
+using MessageBox = System.Windows.MessageBox;
+using Timer = System.Threading.Timer;
 
 namespace DCS_SR_Client
 {
     /// <summary>
     ///     Interaction logic for App.xaml
     /// </summary>
-    public partial class App : Application
+    public partial class App
     {
-        private System.Windows.Forms.NotifyIcon _notifyIcon;
-        private readonly bool loggingReady = false;
-        private Timer airfieldUpdateTimer;
+        private NotifyIcon _notifyIcon;
+        private readonly bool _loggingReady;
+        private Timer _airfieldUpdateTimer;
 
-        private static readonly CancellationTokenSource _tokenSource = new CancellationTokenSource();
+        private static readonly CancellationTokenSource TokenSource = new CancellationTokenSource();
 
         public App()
         {
-            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledExceptionHandler);
+            AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionHandler;
 
             var location = AppDomain.CurrentDomain.BaseDirectory;
 
@@ -34,17 +37,7 @@ namespace DCS_SR_Client
             if (!File.Exists(location + "\\opus.dll"))
             {
                 MessageBox.Show(
-                    $"You are missing the opus.dll - Reinstall using the Installer and don't move the client from the installation directory!",
-                    "Installation Error!", MessageBoxButton.OK,
-                    MessageBoxImage.Error);
-
-                Environment.Exit(1);
-            }
-            if (!File.Exists(location + "\\speexdsp.dll"))
-            {
-
-                MessageBox.Show(
-                    $"You are missing the speexdsp.dll - Reinstall using the Installer and don't move the client from the installation directory!",
+                    "You are missing the opus.dll - Reinstall using the Installer and don't move the client from the installation directory!",
                     "Installation Error!", MessageBoxButton.OK,
                     MessageBoxImage.Error);
 
@@ -56,43 +49,44 @@ namespace DCS_SR_Client
             NpgsqlConnection.GlobalTypeMapper.UseNetTopologySuite(geographyAsDefault: true);
             NpgsqlLogManager.Provider = new NLogLoggingProvider();
             NpgsqlLogManager.IsParameterLoggingEnabled = true;
+            _loggingReady = true;
 
             Task.Run(async () => await DiscordClient.Connect());
 
-            airfieldUpdateTimer = new Timer(UpdateAirfields, null, 0, 60000);
+            _airfieldUpdateTimer = new Timer(UpdateAirfields, null, 0, 60000);
         }
 
-        private void UpdateAirfields(object stateInfo)
+        private static void UpdateAirfields(object stateInfo)
         {
             AirfieldUpdater.UpdateAirfields();
         }
 
         private void InitNotificationIcon()
         {
-            System.Windows.Forms.MenuItem notifyIconContextMenuShow = new System.Windows.Forms.MenuItem
+            var notifyIconContextMenuShow = new MenuItem
             {
                 Index = 0,
                 Text = "Show"
             };
-            notifyIconContextMenuShow.Click += new EventHandler(NotifyIcon_Show);
+            notifyIconContextMenuShow.Click += NotifyIcon_Show;
 
-            System.Windows.Forms.MenuItem notifyIconContextMenuQuit = new System.Windows.Forms.MenuItem
+            var notifyIconContextMenuQuit = new MenuItem
             {
                 Index = 1,
                 Text = "Quit"
             };
-            notifyIconContextMenuQuit.Click += new EventHandler(NotifyIcon_Quit);
+            notifyIconContextMenuQuit.Click += NotifyIcon_Quit;
 
-            System.Windows.Forms.ContextMenu notifyIconContextMenu = new System.Windows.Forms.ContextMenu();
-            notifyIconContextMenu.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] { notifyIconContextMenuShow, notifyIconContextMenuQuit });
+            var notifyIconContextMenu = new ContextMenu();
+            notifyIconContextMenu.MenuItems.AddRange(new[] { notifyIconContextMenuShow, notifyIconContextMenuQuit });
 
-            _notifyIcon = new System.Windows.Forms.NotifyIcon
+            _notifyIcon = new NotifyIcon
             {
                 Icon = Ciribob.DCS.SimpleRadio.Standalone.Client.Properties.Resources.audio_headset,
-                Visible = true
+                Visible = true,
+                ContextMenu = notifyIconContextMenu
             };
-            _notifyIcon.ContextMenu = notifyIconContextMenu;
-            _notifyIcon.DoubleClick += new EventHandler(NotifyIcon_Show);
+            _notifyIcon.DoubleClick += NotifyIcon_Show;
 
         }
 
@@ -109,20 +103,18 @@ namespace DCS_SR_Client
 
         protected override void OnExit(ExitEventArgs e)
         {
-            _tokenSource.Cancel();
-            Task.Run(() => DiscordClient.Disconnect());
-            SRSClientSyncHandler.Instance.ApplicationStopped = true;
+            TokenSource.Cancel();
+            Task.Run(DiscordClient.Disconnect);
+            SrsClientSyncHandler.Instance.ApplicationStopped = true;
             _notifyIcon.Visible = false;
             base.OnExit(e);
         }
 
         private void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs e)
         {
-            if (loggingReady)
-            {
-                Logger logger = LogManager.GetCurrentClassLogger();
-                logger.Error((Exception) e.ExceptionObject, "Received unhandled exception, {0}", e.IsTerminating ? "exiting" : "continuing");
-            }
+            if (!_loggingReady) return;
+            var logger = LogManager.GetCurrentClassLogger();
+            logger.Error((Exception) e.ExceptionObject, "Received unhandled exception, {0}", e.IsTerminating ? "exiting" : "continuing");
         }
     }
 }

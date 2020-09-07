@@ -5,11 +5,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechOutput
 {
     internal class RadioStreamWriter : PushAudioOutputStreamCallback
     {
-        private BufferedWaveProvider provider;
+        private BufferedWaveProvider _provider;
 
         public RadioStreamWriter(BufferedWaveProvider provider)
         {
-            this.provider = provider;
+            _provider = provider;
         }
 
         public override uint Write(byte[] dataBuffer)

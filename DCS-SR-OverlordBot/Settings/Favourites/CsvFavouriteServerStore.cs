@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Windows;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.UI;
 using NLog;
 
@@ -32,7 +33,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Preferences
             {
                 var message = $"Failed to load settings: {exception}";
                 Logger.Error(exception, message);
-                System.Windows.MessageBox.Show(message);
+                MessageBox.Show(message);
             }
             return Enumerable.Empty<ServerAddress>();
         }
@@ -44,7 +45,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Preferences
                 var sb = new StringBuilder();
                 foreach (var address in addresses)
                 {
-                    sb.AppendLine($"{address.Name},{address.Address},{address.IsDefault},{address.EAMCoalitionPassword}");
+                    sb.AppendLine($"{address.Name},{address.Address},{address.IsDefault},{address.EamCoalitionPassword}");
                 }
                 File.WriteAllText(_fileNameAndPath, sb.ToString());
 
@@ -79,20 +80,16 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Preferences
             return addresses;
         }
 
-        private ServerAddress Parse(string line)
+        private static ServerAddress Parse(string line)
         {
             var split = line.Split(',');
-            if (split.Length >= 3)
+            if (split.Length < 3)
+                throw new ArgumentOutOfRangeException(nameof(line), @"address must be at least 3 segments");
+            if (bool.TryParse(split[2], out var isDefault))
             {
-                bool isDefault;
-
-                if (bool.TryParse(split[2], out isDefault))
-                {
-                    return new ServerAddress(split[0], split[1], split.Length >= 4 && !string.IsNullOrWhiteSpace(split[3]) ? split[3] : null, isDefault);
-                }
-                throw new ArgumentException("isDefault parameter cannot be cast to a boolean");
+                return new ServerAddress(split[0], split[1], split.Length >= 4 && !string.IsNullOrWhiteSpace(split[3]) ? split[3] : null, isDefault);
             }
-            throw new ArgumentOutOfRangeException(nameof(line), @"address must be at least 3 segments");
+            throw new ArgumentException("isDefault parameter cannot be cast to a boolean");
         }
     }
 }

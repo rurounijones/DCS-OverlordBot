@@ -1,11 +1,11 @@
-﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Threading.Tasks;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using NAudio.Wave;
 using NLog;
-using System;
-using System.Collections.Concurrent;
-using System.Threading.Tasks;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 {
@@ -13,16 +13,17 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
     {
 
         //https://trac.ffmpeg.org/wiki/audio%20types
-        public static readonly WaveFormat PCM_MONO_16K_S16LE = new WaveFormat(16000, 1);
+        public static readonly WaveFormat PcmMono16Ks16Le = new WaveFormat(16000, 1);
 
-        readonly BufferedWaveProvider _speechAudioProvider;
+        private readonly BufferedWaveProvider _speechAudioProvider;
         public SpeechRecognitionListener SpeechRecognitionListener { get; set; }
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         public double Frequency;
+        private static readonly byte[] Silence = new byte[AudioManager.InputSampleRate / 1000 * 2000];
 
         public BotAudioProvider(RadioInformation receivedRadioInfo, ConcurrentQueue<byte[]> responseQueue)
         {
-            _speechAudioProvider = new BufferedWaveProvider(PCM_MONO_16K_S16LE)
+            _speechAudioProvider = new BufferedWaveProvider(PcmMono16Ks16Le)
             {
                 BufferDuration = new TimeSpan(0, 1, 0),
                 DiscardOnBufferOverflow = true,
@@ -51,7 +52,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
         {
             var newTransmission = LikelyNewTransmission();
 
-            var decoded = _decoder.Decode(audio.EncodedAudio,
+            var decoded = Decoder.Decode(audio.EncodedAudio,
                 audio.EncodedAudio.Length, out var decodedLength, newTransmission);
 
             if (decodedLength > 0)
@@ -69,7 +70,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                 {
                     // System.Diagnostics.Debug.WriteLine(audio.ClientGuid+"ADDED");
                     //append ms of silence - this functions as our jitter buffer??
-                    var silencePad = (AudioManager.INPUT_SAMPLE_RATE / 1000) * SILENCE_PAD;
+                    var silencePad = AudioManager.InputSampleRate / 1000 * SilencePad;
 
                     var newAudio = new short[audio.PcmAudioShort.Length + silencePad];
 
@@ -91,15 +92,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
 
         public void EndTransmission()
         {
-            var silence = new byte[AudioManager.INPUT_SAMPLE_RATE / 1000 * 2000];
-            _speechAudioProvider.AddSamples(silence, 0, silence.Length);
+            _speechAudioProvider.AddSamples(Silence, 0, Silence.Length);
         }
 
         //destructor to clear up opus
         ~BotAudioProvider()
         {
-            _decoder.Dispose();
-            _decoder = null;
+            Decoder.Dispose();
+            Decoder = null;
         }
 
     }

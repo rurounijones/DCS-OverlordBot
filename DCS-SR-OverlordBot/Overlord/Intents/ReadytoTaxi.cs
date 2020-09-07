@@ -1,33 +1,32 @@
-﻿using static Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Constants;
-
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls;
-using RurouniJones.DCS.Airfields.Controllers;
-using RurouniJones.DCS.Airfields.Structure;
-using System;
+﻿using System;
 using System.Collections;
 using System.Linq;
 using System.Threading.Tasks;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls;
 using NLog;
+using RurouniJones.DCS.Airfields.Controllers;
+using RurouniJones.DCS.Airfields.Structure;
+using static Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Constants;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
 {
-    class ReadytoTaxi
+    internal class ReadytoTaxi
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private static readonly Array instructionsVariants = new ArrayList { "", "taxi to", "proceed to", "head to" }.ToArray();
-        private static readonly Array viaVariants = new ArrayList { "via", "along", "using" }.ToArray();
+        private static readonly Array InstructionsVariants = new ArrayList { "", "taxi to", "proceed to", "head to" }.ToArray();
+        private static readonly Array ViaVariants = new ArrayList { "via", "along", "using" }.ToArray();
 
-        private static readonly Random randomizer = new Random();
+        private static readonly Random Randomizer = new Random();
 
-        private static readonly TaxiInstructions DummyInstructions = new TaxiInstructions()
+        private static readonly TaxiInstructions DummyInstructions = new TaxiInstructions
         {
             DestinationName = "Unknown Destination"
         };
 
         public static async Task<string> Process(IRadioCall radioCall)
         {
-            TaxiInstructions taxiInstructions = DummyInstructions;
+            var taxiInstructions = DummyInstructions;
             Airfield airfield;
             try
             {
@@ -43,12 +42,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
                     return "There are no ATC services currently available at this airfield.";
 
                 taxiInstructions = new GroundController(airfield).GetTaxiInstructions(radioCall.Sender.Position);
-                return ConvertTaxiInstructionsToSSML(taxiInstructions);
+                return ConvertTaxiInstructionsToSsml(taxiInstructions);
             }
             catch (NoActiveRunwaysFoundException ex)
             {
                 Logger.Error(ex, "No Active Runways found");
-                return $"We could not find any active runways.";
+                return "We could not find any active runways.";
             }
             catch (TaxiPathNotFoundException ex)
             {
@@ -57,13 +56,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
             }
         }
 
-        private static string ConvertTaxiInstructionsToSSML(TaxiInstructions taxiInstructions)
+        private static string ConvertTaxiInstructionsToSsml(TaxiInstructions taxiInstructions)
         {
-            string spokenInstructions = $"{Random(instructionsVariants)} {taxiInstructions.DestinationName} ";
+            var spokenInstructions = $"{Random(InstructionsVariants)} {taxiInstructions.DestinationName} ";
 
             if (taxiInstructions.TaxiwayNames.Count > 0)
             {
-                spokenInstructions += $"<break time=\"60ms\" /> {Random(viaVariants)}<break time=\"60ms\" /> {string.Join(" <break time=\"60ms\" /> ", taxiInstructions.TaxiwayNames)}";
+                spokenInstructions += $"<break time=\"60ms\" /> {Random(ViaVariants)}<break time=\"60ms\" /> {string.Join(" <break time=\"60ms\" /> ", taxiInstructions.TaxiwayNames)}";
             }
 
             if (taxiInstructions.Comments.Count > 0)
@@ -76,7 +75,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Intents
 
         private static string Random(Array array)
         {
-            return array.GetValue(randomizer.Next(array.Length)).ToString();
+            return array.GetValue(Randomizer.Next(array.Length)).ToString();
         }
     }
 }

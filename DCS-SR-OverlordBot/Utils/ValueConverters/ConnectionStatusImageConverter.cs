@@ -1,29 +1,26 @@
-﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.UI;
-using System;
+﻿using System;
+using System.Globalization;
 using System.Windows.Data;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.UI;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Utils.ValueConverters
 {
-    class ConnectionStatusImageConverter : IValueConverter
+    internal class ConnectionStatusImageConverter : IValueConverter
     {
-		private ClientStateSingleton _clientState { get; } = ClientStateSingleton.Instance;
+		private ClientStateSingleton ClientState { get; } = ClientStateSingleton.Instance;
 
-		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			bool connected = (bool)value;
+			var connected = (bool)value;
 			if (connected) {
 				return Images.IconConnected;
-			} else if (_clientState.IsConnectionErrored)
-			{
-				return Images.IconDisconnectedError;
-			} else
-			{
-				return Images.IconDisconnected;
 			}
-		}
 
-		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            return ClientState.IsConnectionErrored ? Images.IconDisconnectedError : Images.IconDisconnected;
+        }
+
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 		{
 			throw new NotImplementedException();
 		}

@@ -1,30 +1,25 @@
 ﻿using System;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
-using Ciribob.DCS.SimpleRadio.Standalone.Common;
-using Ciribob.DCS.SimpleRadio.Standalone.Common.Setting;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow;
+using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.DCSState;
+using Ciribob.DCS.SimpleRadio.Standalone.Common.Setting;
 using NLog;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
 {
-    public class DCSRadioSyncHandler
+    public class DcsRadioSyncHandler
     {
-        private readonly DCSRadioSyncManager.SendRadioUpdate _radioUpdate;
+        private readonly DcsRadioSyncManager.SendRadioUpdate _radioUpdate;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private readonly ClientStateSingleton _clientStateSingleton = ClientStateSingleton.Instance;
         private readonly SyncedServerSettings _serverSettings = SyncedServerSettings.Instance;
-        private readonly ConnectedClientsSingleton _clients = ConnectedClientsSingleton.Instance;
 
-        private volatile bool _stop;
+        private long _identStart;
 
-        public delegate void NewAircraft(string name);
-
-        private long _identStart = 0;
-
-        public DCSRadioSyncHandler(DCSRadioSyncManager.SendRadioUpdate radioUpdate)
+        public DcsRadioSyncHandler(DcsRadioSyncManager.SendRadioUpdate radioUpdate)
         {
             _radioUpdate = radioUpdate;
         }
@@ -42,12 +37,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
 
             var update = UpdateRadio(message);
 
-            if (update || _clientStateSingleton.LastSent < 1 || !_clientStateSingleton.DcsPlayerRadioInfo.iff.Equals(original))
-            {
-                Logger.Debug("Sending Radio Info To Server - Update");
-                _clientStateSingleton.LastSent = DateTime.Now.Ticks;
-                _radioUpdate();
-            }
+            if (!update && _clientStateSingleton.LastSent >= 1 &&
+                _clientStateSingleton.DcsPlayerRadioInfo.iff.Equals(original)) return;
+            Logger.Debug("Sending Radio Info To Server - Update");
+            _clientStateSingleton.LastSent = DateTime.Now.Ticks;
+            _radioUpdate();
         }
 
         private bool UpdateRadio(DCSPlayerRadioInfo message)
@@ -58,31 +52,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
 
             var playerRadioInfo = _clientStateSingleton.DcsPlayerRadioInfo;
 
-            //update common parts
             playerRadioInfo.name = message.name;
             playerRadioInfo.inAircraft = message.inAircraft;
             playerRadioInfo.intercomHotMic = message.intercomHotMic;
 
-            /*
-            if (_globalSettings.ProfileSettingsStore.GetClientSettingBool(ProfileSettingsKeys.AlwaysAllowHotasControls))
-            {
-                message.control = DCSPlayerRadioInfo.RadioSwitchControls.HOTAS;
-                playerRadioInfo.control = DCSPlayerRadioInfo.RadioSwitchControls.HOTAS;
-            }
-            else
-            {
-                playerRadioInfo.control = message.control;
-            }*/
-
             playerRadioInfo.simultaneousTransmissionControl = message.simultaneousTransmissionControl;
 
             playerRadioInfo.unit = message.unit;
-
-
-            if (!_clientStateSingleton.ShouldUseLotATCPosition())
-            {
-                _clientStateSingleton.UpdatePlayerPosition(message.latLng);
-            }
 
             var overrideFreqAndVol = false;
 
@@ -115,7 +91,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
                 playerRadioInfo.selected = message.selected;
             }
 
-            bool simul = false;
+            var simul = false;
 
 
             //copy over radio names, min + max
@@ -125,10 +101,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
 
                 //if awacs NOT open -  disable radios over 3
                 if (i >= message.radios.Length
-                    || (RadioOverlayWindow.AwacsActive == false
-                        && (i > 3 || i == 0)
-                        // disable intercom and all radios over 3 if awacs panel isnt open and we're a spectator given by the UnitId
-                        && playerRadioInfo.unitId >= DCSPlayerRadioInfo.UnitIdOffset))
+                    || RadioOverlayWindow.AwacsActive == false
+                    && (i > 3 || i == 0)
+                    // disable intercom and all radios over 3 if awacs panel isnt open and we're a spectator given by the UnitId
+                    && playerRadioInfo.unitId >= DCSPlayerRadioInfo.UnitIdOffset)
                 {
                     clientRadio.freq = 1;
                     clientRadio.freqMin = 1;
@@ -148,8 +124,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
                 var updateRadio = message.radios[i];
 
 
-                if ((updateRadio.expansion && !expansion) ||
-                    (updateRadio.modulation == RadioInformation.Modulation.DISABLED))
+                if (updateRadio.expansion && !expansion ||
+                    updateRadio.modulation == RadioInformation.Modulation.DISABLED)
                 {
                     //expansion radio, not allowed
                     clientRadio.freq = 1;
@@ -191,18 +167,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
                     clientRadio.freqMode = updateRadio.freqMode;
                     clientRadio.guardFreqMode = updateRadio.guardFreqMode;
 
-                    if (_serverSettings.GetSettingAsBool(ServerSettingsKeys.ALLOW_RADIO_ENCRYPTION))
-                    {
-                        clientRadio.encMode = updateRadio.encMode;
-                    }
-                    else
-                    {
-                        clientRadio.encMode = RadioInformation.EncryptionMode.NO_ENCRYPTION;
-                    }
+                    clientRadio.encMode = _serverSettings.GetSettingAsBool(ServerSettingsKeys.ALLOW_RADIO_ENCRYPTION) ? updateRadio.encMode : RadioInformation.EncryptionMode.NO_ENCRYPTION;
 
                     clientRadio.volMode = updateRadio.volMode;
 
-                    if ((updateRadio.freqMode == RadioInformation.FreqMode.COCKPIT) || overrideFreqAndVol)
+                    if (updateRadio.freqMode == RadioInformation.FreqMode.COCKPIT || overrideFreqAndVol)
                     {
                         if (!DCSPlayerRadioInfo.FreqCloseEnough(clientRadio.freq, updateRadio.freq))
                             changed = true;
@@ -273,49 +242,49 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
                             clientRadio.encKey = 1;
                         }
                     }
-                    else if (clientRadio.encMode ==
-                             RadioInformation.EncryptionMode.ENCRYPTION_COCKPIT_TOGGLE_OVERLAY_CODE)
+                    else switch (clientRadio.encMode)
                     {
-                        clientRadio.enc = updateRadio.enc;
-
-                        if (clientRadio.encKey == 0)
+                        case RadioInformation.EncryptionMode.ENCRYPTION_COCKPIT_TOGGLE_OVERLAY_CODE:
                         {
-                            clientRadio.encKey = 1;
+                            clientRadio.enc = updateRadio.enc;
+
+                            if (clientRadio.encKey == 0)
+                            {
+                                clientRadio.encKey = 1;
+                            }
+
+                            break;
                         }
-                    }
-                    else if (clientRadio.encMode == RadioInformation.EncryptionMode.ENCRYPTION_FULL)
-                    {
-                        clientRadio.enc = updateRadio.enc;
-                        clientRadio.encKey = updateRadio.encKey;
-                    }
-                    else
-                    {
-                        clientRadio.enc = false;
-                        clientRadio.encKey = 0;
+                        case RadioInformation.EncryptionMode.ENCRYPTION_FULL:
+                            clientRadio.enc = updateRadio.enc;
+                            clientRadio.encKey = updateRadio.encKey;
+                            break;
+                        default:
+                            clientRadio.enc = false;
+                            clientRadio.encKey = 0;
+                            break;
                     }
 
                     //handle volume
-                    if ((updateRadio.volMode == RadioInformation.VolumeMode.COCKPIT) || overrideFreqAndVol)
+                    if (updateRadio.volMode == RadioInformation.VolumeMode.COCKPIT || overrideFreqAndVol)
                     {
                         clientRadio.volume = updateRadio.volume;
                     }
 
                     //handle Channels load for radios
-                    if (newAircraft && i > 0)
+                    if (!newAircraft || i <= 0) continue;
+                    if (clientRadio.freqMode == RadioInformation.FreqMode.OVERLAY)
                     {
-                        if (clientRadio.freqMode == RadioInformation.FreqMode.OVERLAY)
-                        {
-                            var channelModel = _clientStateSingleton.FixedChannels[i - 1];
-                            channelModel.Max = clientRadio.freqMax;
-                            channelModel.Min = clientRadio.freqMin;
-                            channelModel.Reload();
-                            clientRadio.channel = -1; //reset channel
-                        }
-                        else
-                        {
-                            _clientStateSingleton.FixedChannels[i - 1].Clear();
-                            //clear
-                        }
+                        var channelModel = _clientStateSingleton.FixedChannels[i - 1];
+                        channelModel.Max = clientRadio.freqMax;
+                        channelModel.Min = clientRadio.freqMin;
+                        channelModel.Reload();
+                        clientRadio.channel = -1; //reset channel
+                    }
+                    else
+                    {
+                        _clientStateSingleton.FixedChannels[i - 1].Clear();
+                        //clear
                     }
                 }
             }
@@ -355,19 +324,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
                 _identStart = 0;
             }
 
-            //                }
-            //            }
-
-            //update
             playerRadioInfo.LastUpdate = DateTime.Now.Ticks;
 
             return changed;
         }
-
-        public void Stop()
-        {
-            _stop = true;
-        }
-
     }
 }

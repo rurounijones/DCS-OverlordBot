@@ -7,14 +7,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Overlay
     //Source http://stackoverflow.com/a/37724335
     public static class WindowHelper
     {
-        private const int SW_RESTORE = 9;
+        private const int SwRestore = 9;
 
         public static void BringProcessToFront(Process process)
         {
             var handle = process.MainWindowHandle;
             if (IsIconic(handle))
             {
-                ShowWindow(handle, SW_RESTORE);
+                ShowWindow(handle, SwRestore);
             }
 
             SetForegroundWindow(handle);
