@@ -68,7 +68,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
         public string LastSeenName { get; set; }
 
-        public string ExternalAwacsModePassword { get; set; }
+        public string ExternalAwacsModePassword { get; set; } = "XXXXX";
 
         public Client(AudioManager audioManager)
         {

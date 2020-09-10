@@ -453,10 +453,6 @@
     </Compile>
     <Compile Include="UI\RadioOverlayWindow\PresetChannels\PresetChannelsViewModel.cs" />
     <Compile Include="Settings\Favourites\ServerAddress.cs" />
-    <Compile Include="UI\ClientWindow\Favourites\FavouriteServersView.xaml.cs">
-      <DependentUpon>FavouriteServersView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\ClientWindow\Favourites\FavouriteServersViewModel.cs" />
     <Compile Include="UI\ServerSettingsWindow\ServerSettingsWindow.xaml.cs">
       <DependentUpon>ServerSettingsWindow.xaml</DependentUpon>
     </Compile>
@@ -476,10 +472,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="UI\RadioOverlayWindow\PresetChannels\PresetChannelsView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\ClientWindow\Favourites\FavouriteServersView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

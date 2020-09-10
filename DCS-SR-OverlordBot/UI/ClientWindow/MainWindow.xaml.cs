@@ -6,14 +6,9 @@ using System.Net.Sockets;
 using System.Runtime;
 using System.Windows;
 using System.Windows.Forms;
-using System.Windows.Threading;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Preferences;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.Favourites;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
-using Ciribob.DCS.SimpleRadio.Standalone.Common.Setting;
-using Easy.MessageHub;
 using NLog;
 using MessageBox = System.Windows.MessageBox;
 
@@ -24,22 +19,18 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
     /// </summary>
     public partial class MainWindow
     {
-        private static readonly AudioManager _audioManager = AudioManager.Instance;
+        private static readonly AudioManager AudioManager = AudioManager.Instance;
 
         private readonly Logger _logger = LogManager.GetCurrentClassLogger();
-        private int _port = 5002;
+        private readonly int _port;
 
-        private IPAddress _resolvedIp;
+        private readonly IPAddress _resolvedIp;
         private ServerSettingsWindow _serverSettingsWindow;
 
-        private readonly DispatcherTimer _redrawUiTimer;
-        private ServerAddress _serverAddress;
-
         private readonly SettingsStore _settings = SettingsStore.Instance;
-        private readonly SyncedServerSettings _serverSettings = SyncedServerSettings.Instance;
 
         /// <remarks>Used in the XAML for DataBinding many things</remarks>
-        public Network.Client ClientState { get; } = _audioManager.Client;
+        public Network.Client ClientState { get; } = AudioManager.Client;
 
         public MainWindow()
         {
@@ -52,10 +43,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
             // Initialize images/icons
             Images.Init();
-
-            // Set up tooltips that are always defined
-            InitToolTips();
-
+            
             DataContext = this;
 
             WindowStartupLocation = WindowStartupLocation.Manual;
@@ -78,17 +66,25 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                 _logger.Info("Started DCS-SimpleRadio Client " + UpdaterChecker.VERSION);
             }
 
-            FavouriteServersViewModel = new FavouriteServersViewModel(new CsvFavouriteServerStore());
-
-            InitDefaultAddress();
-
             ExternalAwacsModeName.Text = _settings.GetClientSetting(SettingsKeys.LastSeenName).StringValue;
-
-            _redrawUiTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
-            _redrawUiTimer.Tick += RedrawUiTick;
-            _redrawUiTimer.Start();
-
+            
             _logger.Debug("Connecting on Startup");
+
+            
+
+            var resolvedAddresses = Dns.GetHostAddresses(Properties.Settings.Default.SRSHost);
+            _resolvedIp = resolvedAddresses.FirstOrDefault(xa => xa.AddressFamily == AddressFamily.InterNetwork); // Ensure we get an IPv4 address in case the host resolves to both IPv6 and IPv4
+
+            if (_resolvedIp == null)
+            {
+                throw new Exception($"Could not determine IPv4 address for {Properties.Settings.Default.SRSHost}");
+            }
+
+            _port = Properties.Settings.Default.SRSPort;
+
+            ServerName.Text = Properties.Settings.Default.SRSHostId;
+            ServerEndpoint.Text = Properties.Settings.Default.SRSHost + ":" + _port;
+
             Connect();
         }
 
@@ -101,19 +97,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             }
 
             var mainWindowVisible = false;
-            var radioWindowVisible = false;
-            var awacsWindowVisible = false;
 
             var mainWindowX = (int)_settings.GetPositionSetting(SettingsKeys.ClientX).DoubleValue;
             var mainWindowY = (int)_settings.GetPositionSetting(SettingsKeys.ClientY).DoubleValue;
-            var radioWindowX = (int)_settings.GetPositionSetting(SettingsKeys.RadioX).DoubleValue;
-            var radioWindowY = (int)_settings.GetPositionSetting(SettingsKeys.RadioY).DoubleValue;
-            var awacsWindowX = (int)_settings.GetPositionSetting(SettingsKeys.AwacsX).DoubleValue;
-            var awacsWindowY = (int)_settings.GetPositionSetting(SettingsKeys.AwacsY).DoubleValue;
 
             _logger.Info($"Checking window visibility for main client window {{X={mainWindowX},Y={mainWindowY}}}");
-            _logger.Info($"Checking window visibility for radio overlay {{X={radioWindowX},Y={radioWindowY}}}");
-            _logger.Info($"Checking window visibility for AWACS overlay {{X={awacsWindowX},Y={awacsWindowY}}}");
 
             foreach (var screen in Screen.AllScreens)
             {
@@ -124,15 +112,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                     _logger.Info($"Main client window {{X={mainWindowX},Y={mainWindowY}}} is visible on {(screen.Primary ? "primary " : "")}screen {screen.DeviceName} with bounds {screen.Bounds}");
                     mainWindowVisible = true;
                 }
-                if (screen.Bounds.Contains(radioWindowX, radioWindowY))
-                {
-                    _logger.Info($"Radio overlay {{X={radioWindowX},Y={radioWindowY}}} is visible on {(screen.Primary ? "primary " : "")}screen {screen.DeviceName} with bounds {screen.Bounds}");
-                    radioWindowVisible = true;
-                }
-
-                if (!screen.Bounds.Contains(awacsWindowX, awacsWindowY)) continue;
-                _logger.Info($"AWACS overlay {{X={awacsWindowX},Y={awacsWindowY}}} is visible on {(screen.Primary ? "primary " : "")}screen {screen.DeviceName} with bounds {screen.Bounds}");
-                awacsWindowVisible = true;
             }
 
             if (!mainWindowVisible)
@@ -151,88 +130,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                 Left = 200;
                 Top = 200;
             }
-
-            if (!radioWindowVisible)
-            {
-                MessageBox.Show(this,
-                    "The SRS radio overlay is no longer visible likely due to a monitor reconfiguration.\n\nThe position will be reset to default to fix this issue.",
-                    "SRS window position reset",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning);
-
-                _logger.Warn($"Radio overlay window outside visible area of monitors, resetting position ({radioWindowX},{radioWindowY}) to defaults");
-
-                _settings.SetPositionSetting(SettingsKeys.RadioX, 300);
-                _settings.SetPositionSetting(SettingsKeys.RadioY, 300);
-            }
-
-            if (!awacsWindowVisible)
-            {
-                MessageBox.Show(this,
-                    "The SRS AWACS overlay is no longer visible likely due to a monitor reconfiguration.\n\nThe position will be reset to default to fix this issue",
-                    "SRS window position reset",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning);
-
-                _logger.Warn($"AWACS overlay window outside visible area of monitors, resetting position ({awacsWindowX},{awacsWindowY}) to defaults");
-
-                _settings.SetPositionSetting(SettingsKeys.AwacsX, 300);
-                _settings.SetPositionSetting(SettingsKeys.AwacsY, 300);
-            }
-
-            if (!mainWindowVisible || !radioWindowVisible || !awacsWindowVisible)
+            
+            if (mainWindowVisible)
             {
                 _settings.Save();
-            }
-        }
-
-        private void InitDefaultAddress()
-        {
-            // legacy setting migration
-            if (!string.IsNullOrEmpty(_settings.GetClientSetting(SettingsKeys.LastServer).StringValue) &&
-                FavouriteServersViewModel.Addresses.Count == 0)
-            {
-                var oldAddress = new ServerAddress(_settings.GetClientSetting(SettingsKeys.LastServer).StringValue,
-                    _settings.GetClientSetting(SettingsKeys.LastServer).StringValue, null, true);
-                FavouriteServersViewModel.Addresses.Add(oldAddress);
-            }
-
-            ServerAddress = FavouriteServersViewModel.DefaultServerAddress;
-        }
-
-        private void InitToolTips()
-        {
-            ExternalAwacsModeName.ToolTip = ToolTips.ExternalAwacsModeName;
-        }
-
-        public FavouriteServersViewModel FavouriteServersViewModel { get; }
-
-        public ServerAddress ServerAddress
-        {
-            get => _serverAddress;
-            set
-            {
-                _serverAddress = value;
-                if (value != null)
-                {
-                    ServerIp.Text = value.Address;
-                    ClientState.ExternalAwacsModePassword = string.IsNullOrWhiteSpace(value.EamCoalitionPassword) ? "" : value.EamCoalitionPassword;
-                }
-            }
-        }
-
-        private void RedrawUiTick(object sender, EventArgs e)
-        {
-            // Redraw UI state (currently once per second), toggling controls as required
-            // Some other callbacks/UI state changes could also probably be moved to this...
-            if (ClientState.IsTcpConnected)
-            {
-                var eamEnabled = _serverSettings.GetSettingAsBool(ServerSettingsKeys.EXTERNAL_AWACS_MODE);
-                ExternalAwacsModeName.IsEnabled = eamEnabled && !ClientState.ExternalAwacsModeConnected;
-            }
-            else
-            {
-                ExternalAwacsModeName.IsEnabled = false;
             }
         }
 
@@ -246,26 +147,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             {
                 try
                 {
-                    //process hostname
-                    var resolvedAddresses = Dns.GetHostAddresses(GetAddressFromTextBox());
-                    var ip = resolvedAddresses.FirstOrDefault(xa => xa.AddressFamily == AddressFamily.InterNetwork); // Ensure we get an IPv4 address in case the host resolves to both IPv6 and IPv4
-
-                    if (ip != null)
-                    {
-                        _resolvedIp = ip;
-                        _port = GetPortFromTextBox();
-
-                        _audioManager.ConnectToSRS(new IPEndPoint(_resolvedIp, _port));
-                    }
-                    else
-                    {
-                        //invalid ID
-                        MessageBox.Show("Invalid IP or Host Name!", "Host Name Error", MessageBoxButton.OK,
-                            MessageBoxImage.Error);
-
-                        ClientState.IsTcpConnected = false;
-                        ToggleServerSettings.IsEnabled = false;
-                    }
+                    AudioManager.ConnectToSRS(new IPEndPoint(_resolvedIp, _port));
                 }
                 catch (Exception ex) when (ex is SocketException || ex is ArgumentException)
                 {
@@ -278,29 +160,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             }
         }
 
-        private string GetAddressFromTextBox()
-        {
-            var addr = ServerIp.Text.Trim();
-
-            return addr.Contains(":") ? addr.Split(':')[0] : addr;
-        }
-
-        private int GetPortFromTextBox()
-        {
-            var addr = ServerIp.Text.Trim();
-
-            if (!addr.Contains(":")) return 5002;
-            if (int.TryParse(addr.Split(':')[1], out var port))
-            {
-                return port;
-            }
-            throw new ArgumentException("specified port is not valid");
-
-        }
-
         private void Stop()
         {
-            _audioManager.StopEncoding();
+            AudioManager.StopEncoding();
         }
         
         protected override void OnClosing(CancelEventArgs e)
@@ -316,9 +178,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
             //save window position
             base.OnClosing(e);
-
-            // Stop UI redraw timer
-            _redrawUiTimer?.Stop();
 
             Stop();
         }
@@ -351,11 +210,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                 _serverSettingsWindow?.Close();
                 _serverSettingsWindow = null;
             }
-        }
-        
-        private void LaunchAddressTab(object sender, RoutedEventArgs e)
-        {
-            TabControl.SelectedItem = FavouritesSeversTab;
         }
     }
 }
