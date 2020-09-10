@@ -129,13 +129,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Discord
 
         private static List<string> GetHumanSrsClients()
         {
-            var allClients = ConnectedClientsSingleton.Instance.Values;
+            var allClients = ClientStateSingleton.Instance.Values;
             return (from client in allClients where client.Name != "OverlordBot" && !client.Name.Contains("ATIS") select client.Name).ToList();
         }
 
         private static List<string> GetBotCallsignCompatibleClients()
         {
-            var allClients = ConnectedClientsSingleton.Instance.Values;
+            var allClients = ClientStateSingleton.Instance.Values;
             return (from client in allClients where client.Name != "OverlordBot" && !client.Name.Contains("ATIS") && IsClientNameCompatible(client.Name) select client.Name).ToList();
         }
 
@@ -146,7 +146,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Discord
 
         private static List<string> GetClientsOnFrequency(RadioInformation radioInfo)
         {
-            var clientsOnFreq = ConnectedClientsSingleton.Instance.ClientsOnFreq(radioInfo.freq, RadioInformation.Modulation.AM);
+            var clientsOnFreq = ClientStateSingleton.Instance.ClientsOnFreq(radioInfo.freq, RadioInformation.Modulation.AM);
             return (from client in clientsOnFreq where client.Name != "OverlordBot" select client.Name).ToList();
         }
     }

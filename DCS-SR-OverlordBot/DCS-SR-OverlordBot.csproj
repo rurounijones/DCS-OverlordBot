@@ -445,7 +445,6 @@
     <Compile Include="Settings\Favourites\IFavouriteServerStore.cs" />
     <Compile Include="Settings\RadioChannels\FilePresetChannelsStore.cs" />
     <Compile Include="Singletons\ClientStateSingleton.cs" />
-    <Compile Include="Singletons\ConnectedClientsSingleton.cs" />
     <Compile Include="Settings\RadioChannels\PresetChannel.cs" />
     <Compile Include="Settings\RadioChannels\IPresetChannelsStore.cs" />
     <Compile Include="UI\Images.cs" />

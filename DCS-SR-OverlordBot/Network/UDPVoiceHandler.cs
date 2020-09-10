@@ -26,7 +26,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
         public static volatile RadioReceivingState[] RadioReceivingState = new RadioReceivingState[11];
 
         private readonly AudioManager _audioManager;
-        private readonly ConnectedClientsSingleton _clients = ConnectedClientsSingleton.Instance;
 
         private readonly BlockingCollection<byte[]> _encodedAudio = new BlockingCollection<byte[]>();
         private readonly string _guid;
@@ -39,7 +38,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
         private const int _jitterBuffer = 50; //in milliseconds
 
-        private readonly ClientStateSingleton _clientStateSingleton = ClientStateSingleton.Instance;
+        private readonly ClientStateSingleton _clientState = ClientStateSingleton.Instance;
 
         //    private readonly JitterBuffer _jitterBuffer = new JitterBuffer();
         private UdpClient _listener;
@@ -75,7 +74,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             var diff = TimeSpan.FromTicks(DateTime.Now.Ticks - _udpLastReceived);
 
             //ping every 15 so after 35 seconds VoIP UDP issue
-            _clientStateSingleton.IsVoipConnected = diff.Seconds <= 35;
+            _clientState.IsVoipConnected = diff.Seconds <= 35;
         }
 
         private void CheckTransmissionEnded()
@@ -142,7 +141,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             //stop UI Refreshing
             _updateTimer.Stop();
 
-            _clientStateSingleton.IsVoipConnected = false;
+            _clientState.IsVoipConnected = false;
         }
 
         public void StartTimer()
@@ -181,8 +180,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
         private SRClient IsClientMetaDataValid(string clientGuid)
         {
-            if (!_clients.ContainsKey(clientGuid)) return null;
-            var client = _clients[_guid];
+            if (!_clientState.ContainsKey(clientGuid)) return null;
+            var client = _clientState[_guid];
 
             return client;
         }
@@ -214,7 +213,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
                         var myClient = IsClientMetaDataValid(_guid);
 
-                        if (myClient == null || !_clientStateSingleton.DcsPlayerRadioInfo.IsCurrent()) continue;
+                        if (myClient == null || !_clientState.DcsPlayerRadioInfo.IsCurrent()) continue;
                         //Decode bytes
                         var udpVoicePacket = UDPVoicePacket.DecodeVoicePacket(encodedOpusAudio);
 
@@ -241,7 +240,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                                 udpVoicePacket.Encryptions[i] = 0;
                             }
 
-                            var radio = _clientStateSingleton.DcsPlayerRadioInfo.CanHearTransmission(
+                            var radio = _clientState.DcsPlayerRadioInfo.CanHearTransmission(
                                 udpVoicePacket.Frequencies[i],
                                 (Modulation) udpVoicePacket.Modulations[i],
                                 udpVoicePacket.Encryptions[i],
@@ -351,15 +350,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                 return transmitting;
             }
 
-            transmitting.Add(_clientStateSingleton.DcsPlayerRadioInfo.selected);
+            transmitting.Add(_clientState.DcsPlayerRadioInfo.selected);
 
-            if (!_clientStateSingleton.DcsPlayerRadioInfo.simultaneousTransmission) return transmitting;
+            if (!_clientState.DcsPlayerRadioInfo.simultaneousTransmission) return transmitting;
             // Skip intercom
             for (var i = 1; i < 11; i++)
             {
-                var radio = _clientStateSingleton.DcsPlayerRadioInfo.radios[i];
+                var radio = _clientState.DcsPlayerRadioInfo.radios[i];
                 if (radio.modulation != Modulation.DISABLED && radio.simul &&
-                    i != _clientStateSingleton.DcsPlayerRadioInfo.selected)
+                    i != _clientState.DcsPlayerRadioInfo.selected)
                 {
                     transmitting.Add(i);
                 }
@@ -376,9 +375,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                 return true;
             }
 
-            if (_clients.TryGetValue(udpVoicePacket.Guid, out var transmittingClient))
+            if (_clientState.TryGetValue(udpVoicePacket.Guid, out var transmittingClient))
             {
-                var myLatLng= _clientStateSingleton.PlayerCoalitionLocationMetadata.LngLngPosition;
+                var myLatLng= _clientState.PlayerCoalitionLocationMetadata.LngLngPosition;
                 var clientLatLng = transmittingClient.LatLngPosition;
                 if (myLatLng == null || clientLatLng == null || !myLatLng.isValid() || !clientLatLng.isValid())
                 {
@@ -402,8 +401,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                 return true;
             }
 
-            if (!_clients.TryGetValue(transmittingClientGuid, out var transmittingClient)) return false;
-            var myLatLng = _clientStateSingleton.PlayerCoalitionLocationMetadata.LngLngPosition;
+            if (!_clientState.TryGetValue(transmittingClientGuid, out var transmittingClient)) return false;
+            var myLatLng = _clientState.PlayerCoalitionLocationMetadata.LngLngPosition;
             var clientLatLng = transmittingClient.LatLngPosition;
             //No DCS Position - do we have LotATC Position?
             if (myLatLng == null || clientLatLng == null || !myLatLng.isValid() || !clientLatLng.isValid())
@@ -448,12 +447,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                 yScore += 16;
             }
 
-            if (_clientStateSingleton.DcsPlayerRadioInfo.selected == x.ReceivingState.ReceivedOn)
+            if (_clientState.DcsPlayerRadioInfo.selected == x.ReceivingState.ReceivedOn)
             {
                 xScore += 8;
             }
 
-            if (_clientStateSingleton.DcsPlayerRadioInfo.selected == y.ReceivingState.ReceivedOn)
+            if (_clientState.DcsPlayerRadioInfo.selected == y.ReceivingState.ReceivedOn)
             {
                 yScore += 8;
             }
@@ -477,7 +476,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             {
                 try
                 {
-                    var currentlySelectedRadio = _clientStateSingleton.DcsPlayerRadioInfo.radios[radioId];
+                    var currentlySelectedRadio = _clientState.DcsPlayerRadioInfo.radios[radioId];
 
                     var frequencies = new List<double>(1);
                     var encryptions = new List<byte>(1);
@@ -495,7 +494,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                         AudioPart1Bytes = bytes,
                         AudioPart1Length = (ushort)bytes.Length,
                         Frequencies = frequencies.ToArray(),
-                        UnitId = _clientStateSingleton.DcsPlayerRadioInfo.unitId,
+                        UnitId = _clientState.DcsPlayerRadioInfo.unitId,
                         Encryptions = encryptions.ToArray(),
                         Modulations = modulations.ToArray(),
                         PacketNumber = _packetNumber++

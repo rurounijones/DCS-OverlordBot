@@ -31,9 +31,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
         private IPEndPoint _serverEndpoint;
         private TcpClient _tcpClient;
 
-        private readonly ClientStateSingleton _clientStateSingleton = ClientStateSingleton.Instance;
         private readonly SyncedServerSettings _serverSettings = SyncedServerSettings.Instance;
-        private readonly ConnectedClientsSingleton _clients = ConnectedClientsSingleton.Instance;
+        private readonly ClientStateSingleton _clientState = ClientStateSingleton.Instance;
 
         private DcsRadioSyncManager _radioDcsSync;
 
@@ -101,15 +100,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
         public void ConnectExternalAwacsMode()
         {
-            if (_clientStateSingleton.ExternalAwacsModeConnected)
+            if (_clientState.ExternalAwacsModeConnected)
             {
                 return;
             }
 
-            _clientStateSingleton.ExternalAwacsModeSelected = true;
+            _clientState.ExternalAwacsModeSelected = true;
 
-            var sideInfo = _clientStateSingleton.PlayerCoalitionLocationMetadata;
-            sideInfo.name = _clientStateSingleton.LastSeenName;
+            var sideInfo = _clientState.PlayerCoalitionLocationMetadata;
+            sideInfo.name = _clientState.LastSeenName;
             SendToServer(new NetworkMessage
             {
                 Client = new SRClient
@@ -181,7 +180,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
         private void ClientRadioUpdated()
         {
             Logger.Debug("Sending Radio Update to Server");
-            var sideInfo = _clientStateSingleton.PlayerCoalitionLocationMetadata;
+            var sideInfo = _clientState.PlayerCoalitionLocationMetadata;
             SendToServer(new NetworkMessage
             {
                 Client = new SRClient
@@ -189,7 +188,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                     Coalition = sideInfo.side,
                     Name = sideInfo.name,
                     ClientGuid = _guid,
-                    RadioInfo = _clientStateSingleton.DcsPlayerRadioInfo,
+                    RadioInfo = _clientState.DcsPlayerRadioInfo,
                     LatLngPosition = sideInfo.LngLngPosition
                 },
                 MsgType = NetworkMessage.MessageType.RADIO_UPDATE
@@ -211,42 +210,42 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
         private void CallExternalAWACSModeOnMain(bool result, int coalition)
         {
-            _clientStateSingleton.ExternalAwacsModeSelected = result;
+            _clientState.ExternalAwacsModeSelected = result;
 
             if (result)
             {
-                _clientStateSingleton.PlayerCoalitionLocationMetadata.side = coalition;
-                _clientStateSingleton.PlayerCoalitionLocationMetadata.name = _clientStateSingleton.LastSeenName;
-                _clientStateSingleton.DcsPlayerRadioInfo.name = _clientStateSingleton.LastSeenName;
+                _clientState.PlayerCoalitionLocationMetadata.side = coalition;
+                _clientState.PlayerCoalitionLocationMetadata.name = _clientState.LastSeenName;
+                _clientState.DcsPlayerRadioInfo.name = _clientState.LastSeenName;
             }
             else
             {
-                _clientStateSingleton.PlayerCoalitionLocationMetadata.side = 0;
-                _clientStateSingleton.PlayerCoalitionLocationMetadata.name = "";
-                _clientStateSingleton.DcsPlayerRadioInfo.name = "";
-                _clientStateSingleton.DcsPlayerRadioInfo.LastUpdate = 0;
-                _clientStateSingleton.LastSent = 0;
+                _clientState.PlayerCoalitionLocationMetadata.side = 0;
+                _clientState.PlayerCoalitionLocationMetadata.name = "";
+                _clientState.DcsPlayerRadioInfo.name = "";
+                _clientState.DcsPlayerRadioInfo.LastUpdate = 0;
+                _clientState.LastSent = 0;
             }
         }
 
         private void ClientSyncLoop()
         {
             //clear the clients list
-            _clients.Clear();
+            _clientState.Clear();
             var decodeErrors = 0; //if the JSON is unreadable - new version likely
 
             using (var reader = new StreamReader(_tcpClient.GetStream(), Encoding.UTF8))
             {
                 try
                 {
-                    var sideInfo = _clientStateSingleton.PlayerCoalitionLocationMetadata;
+                    var sideInfo = _clientState.PlayerCoalitionLocationMetadata;
                     //start the loop off by sending a SYNC Request
                     SendToServer(new NetworkMessage
                     {
                         Client = new SRClient
                         {
                             Coalition = sideInfo.side,
-                            Name = sideInfo.name.Length > 0 ? sideInfo.name : _clientStateSingleton.LastSeenName,
+                            Name = sideInfo.name.Length > 0 ? sideInfo.name : _clientState.LastSeenName,
                             LatLngPosition = sideInfo.LngLngPosition,
                             ClientGuid = _guid
                         },
@@ -276,9 +275,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                                             _serverSettings.Decode(serverMessage.ServerSettings);
                                         }
 
-                                        if (_clients.ContainsKey(serverMessage.Client.ClientGuid))
+                                        if (_clientState.ContainsKey(serverMessage.Client.ClientGuid))
                                         {
-                                            var srClient = _clients[serverMessage.Client.ClientGuid];
+                                            var srClient = _clientState[serverMessage.Client.ClientGuid];
                                             var updatedSrClient = serverMessage.Client;
                                             if (srClient != null)
                                             {
@@ -319,7 +318,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                                             connectedClient.LineOfSightLoss = 0.0f;
                                             //0.0 is NO LOSS therefore full Line of sight
 
-                                            _clients[serverMessage.Client.ClientGuid] = connectedClient;
+                                            _clientState[serverMessage.Client.ClientGuid] = connectedClient;
 
                                             // Logger.Debug("Received New Client: " + NetworkMessage.MessageType.UPDATE +
                                             //             " From: " +
@@ -327,7 +326,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                                             //             serverMessage.Client.Coalition);
                                         }
 
-                                        if (_clientStateSingleton.ExternalAwacsModeSelected &&
+                                        if (_clientState.ExternalAwacsModeSelected &&
                                             !_serverSettings.GetSettingAsBool(ServerSettingsKeys.EXTERNAL_AWACS_MODE))
                                         {
                                             DisconnectExternalAwacsMode();
@@ -369,13 +368,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                                                 //LOS isnt working
                                                 client.LineOfSightLoss = 0.0f;
                                                 //0.0 is NO LOSS therefore full Line of sight
-                                                _clients[client.ClientGuid] = client;
+                                                _clientState[client.ClientGuid] = client;
                                             }
                                         }
                                         //add server settings
                                         _serverSettings.Decode(serverMessage.ServerSettings);
 
-                                        if (_clientStateSingleton.ExternalAwacsModeSelected &&
+                                        if (_clientState.ExternalAwacsModeSelected &&
                                             !_serverSettings.GetSettingAsBool(ServerSettingsKeys.EXTERNAL_AWACS_MODE))
                                         {
                                             DisconnectExternalAwacsMode();
@@ -388,7 +387,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                                         _serverSettings.Decode(serverMessage.ServerSettings);
                                         ServerVersion = serverMessage.Version;
 
-                                        if (_clientStateSingleton.ExternalAwacsModeSelected &&
+                                        if (_clientState.ExternalAwacsModeSelected &&
                                             !_serverSettings.GetSettingAsBool(ServerSettingsKeys.EXTERNAL_AWACS_MODE))
                                         {
                                             DisconnectExternalAwacsMode();
@@ -396,7 +395,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                                         break;
                                     case NetworkMessage.MessageType.CLIENT_DISCONNECT:
 
-                                        _clients.TryRemove(serverMessage.Client.ClientGuid, out var outClient);
+                                        _clientState.TryRemove(serverMessage.Client.ClientGuid, out var outClient);
 
                                         if (outClient != null)
                                         {
@@ -464,7 +463,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             ClientStateSingleton.Instance.DcsPlayerRadioInfo.LastUpdate = 0;
 
             //clear the clients list
-            _clients.Clear();
+            _clientState.Clear();
 
             Disconnect();
         }
