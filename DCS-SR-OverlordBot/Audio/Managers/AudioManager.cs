@@ -45,30 +45,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
 
         public readonly Network.Client Client;
 
-        #region Singleton definition
-        private static volatile AudioManager _instance;
-        private static readonly object Lock = new object();
-
-        private AudioManager()
+        public AudioManager()
         {
             Client = new Network.Client(this);
         }
-
-        public static AudioManager Instance
-        {
-            get
-            {
-                if (_instance != null) return _instance;
-                lock (Lock)
-                {
-                    if (_instance == null)
-                        _instance = new AudioManager();
-                }
-
-                return _instance;
-            }
-        }
-        #endregion
 
         public void ConnectToSRS(IPEndPoint address)
         {

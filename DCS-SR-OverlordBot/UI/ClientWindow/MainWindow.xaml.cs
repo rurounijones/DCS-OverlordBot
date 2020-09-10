@@ -19,7 +19,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
     /// </summary>
     public partial class MainWindow
     {
-        private static readonly AudioManager AudioManager = AudioManager.Instance;
+        private static readonly AudioManager AudioManager = new AudioManager();
 
         private readonly Logger _logger = LogManager.GetCurrentClassLogger();
         private readonly int _port;

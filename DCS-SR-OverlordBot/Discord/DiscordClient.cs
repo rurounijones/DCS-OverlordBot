@@ -56,6 +56,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Discord
 
         private static async Task ProcessMessage(SocketMessage message)
         {
+            /*
             if (message.Channel.GetType() == typeof(SocketDMChannel)
                 && message.Author.Id == 278154654347427840 // DOLT 1-2 RurouniJones's Discord ID
                 && message.Content.Split(' ')[0].Equals(Properties.Settings.Default.ServerName))
@@ -77,7 +78,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Discord
                 {
                     Logger.Error(ex, $"Could not send transmission to radio {radioId}");
                 }
-            }
+            }*/
         }
 
         public static async Task LogTransmissionToDiscord(string transmission, RadioInformation radioInfo)
