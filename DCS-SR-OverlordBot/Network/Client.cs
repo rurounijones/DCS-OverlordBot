@@ -19,7 +19,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
         public readonly SrsClientSyncHandler SrsClientSyncHandler;
         private readonly AudioManager _audioManager;
 
-        public DCSPlayerRadioInfo DcsPlayerRadioInfo { get; }
+        public DCSPlayerRadioInfo DcsPlayerRadioInfo { get; set; }
         public DCSPlayerSideInfo PlayerCoalitionLocationMetadata { get; set; }
 
         private IPEndPoint _endpoint;
@@ -62,13 +62,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
         public string LastSeenName { get; set; }
 
-        public string ExternalAwacsModePassword { get; set; } = "XXXXX";
+        public string ExternalAwacsModePassword { get; set; } = "hoggit1fw";
 
-        public Client(AudioManager audioManager)
+        public Client(AudioManager audioManager, DCSPlayerRadioInfo playerRadioInfo )
         {
             _audioManager = audioManager;
             ShortGuid = Common.Network.ShortGuid.NewGuid();
-            DcsPlayerRadioInfo = new DCSPlayerRadioInfo();
+            DcsPlayerRadioInfo = playerRadioInfo;
             PlayerCoalitionLocationMetadata = new DCSPlayerSideInfo();
             SrsClientSyncHandler = new SrsClientSyncHandler(this);
 
@@ -77,7 +77,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             IsTcpConnected = false;
             ExternalAwacsModeSelected = false;
 
-            LastSeenName = "OverlordBot-Development";
+            LastSeenName = playerRadioInfo.name;
         }
 
         public void ConnectData(IPEndPoint endpoint)

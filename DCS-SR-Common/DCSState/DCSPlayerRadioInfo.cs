@@ -8,13 +8,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
 {
     public class DCSPlayerRadioInfo
     {
-        //HOTAS or IN COCKPIT controls
-        public enum RadioSwitchControls
-        {
-            HOTAS = 0,
-            IN_COCKPIT = 1
-        }
-
         [JsonNetworkIgnoreSerialization]
         [JsonDCSIgnoreSerialization]
         public string name = "";
@@ -31,12 +24,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
         [JsonDCSIgnoreSerialization]
         public volatile bool ptt = false;
 
-        public RadioInformation[] radios = new RadioInformation[11]; //10 + intercom
-
-        [JsonNetworkIgnoreSerialization]
-        [JsonDCSIgnoreSerialization]
-        public RadioSwitchControls control = RadioSwitchControls.HOTAS;
-
+        public List<RadioInformation> radios  = new List<RadioInformation>();
+        
         [JsonNetworkIgnoreSerialization]
         public short selected = 0;
 
@@ -68,14 +57,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
             EXTERNAL_DCS_CONTROL = 0,
         }
 
-        public DCSPlayerRadioInfo()
-        {
-            for (var i = 0; i < 11; i++)
-            {
-                radios[i] = new RadioInformation();
-            }
-        }
-
         [JsonIgnore]
         public long LastUpdate { get; set; }
 
@@ -103,14 +84,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
 
                 var compareRadio = compare as DCSPlayerRadioInfo;
 
-                if (control != compareRadio.control)
-                {
-                    return false;
-                }
-                //if (side != compareRadio.side)
-                //{
-                //    return false;
-                //}
                 if (!name.Equals(compareRadio.name))
                 {
                     return false;
@@ -138,17 +111,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
                     }
                 }
 
-                for (var i = 0; i < radios.Length; i++)
+                for (var i = 0; i < radios.Count; i++)
                 {
                     var radio1 = radios[i];
                     var radio2 = compareRadio.radios[i];
 
-                    if ((radio1 != null) && (radio2 != null))
+                    if (radio1 == null || radio2 == null) continue;
+                    if (!radio1.Equals(radio2))
                     {
-                        if (!radio1.Equals(radio2))
-                        {
-                            return false;
-                        }
+                        return false;
                     }
                 }
             }
@@ -160,17 +131,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
 
             return true;
         }
-
-
-        /*
-         * Was Radio updated in the last 10 Seconds
-         */
-
-        public bool IsCurrent()
-        {
-            return LastUpdate > DateTime.Now.Ticks - 100000000;
-        }
-
+        
         //comparing doubles is risky - check that we're close enough to hear (within 100hz)
         public static bool FreqCloseEnough(double freq1, double freq2)
         {
@@ -187,18 +148,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
             out RadioReceivingState receivingState,
             out bool decryptable)
         {
-        //    if (!IsCurrent())
-       //     {
-       //         receivingState = null;
-        //        decryptable = false;
-         //       return null;
-         //   }
-
             RadioInformation bestMatchingRadio = null;
             RadioReceivingState bestMatchingRadioState = null;
             bool bestMatchingDecryptable = false;
 
-            for (var i = 0; i < radios.Length; i++)
+            for (var i = 0; i < radios.Count; i++)
             {
                 var receivingRadio = radios[i];
 

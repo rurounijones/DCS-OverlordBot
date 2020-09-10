@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network;
@@ -32,8 +31,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
         private readonly SyncedServerSettings _serverSettings = SyncedServerSettings.Instance;
         private readonly Client _clientState;
-
-        private DcsRadioSyncManager _radioDcsSync;
 
         private readonly string _guid;
 
@@ -104,22 +101,16 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
         public void DisconnectExternalAwacsMode()
         {
-            _radioDcsSync.StopExternalAwacsModeLoop();
-            CallExternalAWACSModeOnMain(false, 0);
+            _clientState.PlayerCoalitionLocationMetadata.side = 0;
+            _clientState.PlayerCoalitionLocationMetadata.name = "";
+            _clientState.DcsPlayerRadioInfo.name = "";
+            _clientState.DcsPlayerRadioInfo.LastUpdate = 0;
+            _clientState.LastSent = 0;
         }
 
         private void Connect()
         {
-
-            if (_radioDcsSync != null)
-            {
-                _radioDcsSync.Stop();
-                _radioDcsSync = null;
-            }
-
             var connectionError = false;
-
-            _radioDcsSync = new DcsRadioSyncManager(ClientRadioUpdated, _clientState);
 
             using (_tcpClient = new TcpClient())
             {
@@ -156,9 +147,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             CallOnMain(false, connectionError);
         }
 
-        private void ClientRadioUpdated()
+        private void SendAwacsRadioInformation()
         {
             Logger.Debug("Sending Radio Update to Server");
+            _clientState.LastSent = 0;
+            _clientState.ExternalAwacsModeConnected = true;
             var sideInfo = _clientState.PlayerCoalitionLocationMetadata;
             SendToServer(new NetworkMessage
             {
@@ -184,26 +177,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             catch (Exception ex)
             {
                  Logger.Error(ex, "Failed to update UI after connection callback (result {result}, connectionError {connectionError})", result, connectionError);
-            }
-        }
-
-        private void CallExternalAWACSModeOnMain(bool result, int coalition)
-        {
-            _clientState.ExternalAwacsModeSelected = result;
-
-            if (result)
-            {
-                _clientState.PlayerCoalitionLocationMetadata.side = coalition;
-                _clientState.PlayerCoalitionLocationMetadata.name = _clientState.LastSeenName;
-                _clientState.DcsPlayerRadioInfo.name = _clientState.LastSeenName;
-            }
-            else
-            {
-                _clientState.PlayerCoalitionLocationMetadata.side = 0;
-                _clientState.PlayerCoalitionLocationMetadata.name = "";
-                _clientState.DcsPlayerRadioInfo.name = "";
-                _clientState.DcsPlayerRadioInfo.LastUpdate = 0;
-                _clientState.LastSent = 0;
             }
         }
 
@@ -390,19 +363,19 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                                         Disconnect();
                                         break;
                                     case NetworkMessage.MessageType.EXTERNAL_AWACS_MODE_PASSWORD:
-                                        if (serverMessage.Client.Coalition == 0)
-                                        {
-                                            Logger.Info("External AWACS mode authentication failed");
-
-                                            CallExternalAWACSModeOnMain(false, 0);
-                                        }
-                                        else if (_radioDcsSync != null)
+                                        if (serverMessage.Client.Coalition > 0)
                                         {
                                             Logger.Info("External AWACS mode authentication succeeded, coalition {0}", serverMessage.Client.Coalition == 1 ? "red" : "blue");
+                                            _clientState.PlayerCoalitionLocationMetadata.side = serverMessage.Client.Coalition;
+                                            _clientState.PlayerCoalitionLocationMetadata.name = _clientState.LastSeenName;
+                                            _clientState.DcsPlayerRadioInfo.name = _clientState.LastSeenName;
 
-                                            CallExternalAWACSModeOnMain(true, serverMessage.Client.Coalition);
-
-                                            _radioDcsSync.StartExternalAwacsModeLoop();
+                                            SendAwacsRadioInformation();
+                                        }
+                                        else
+                                        {
+                                            Logger.Info("External AWACS mode authentication failed");
+                                            DisconnectExternalAwacsMode();
                                         }
                                         break;
                                     default:

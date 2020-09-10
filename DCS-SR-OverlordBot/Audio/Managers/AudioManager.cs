@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition;
+using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Easy.MessageHub;
 using FragLabs.Audio.Codecs;
 using FragLabs.Audio.Codecs.Opus;
@@ -43,9 +43,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
 
         public readonly Network.Client Client;
 
-        public AudioManager()
+        public bool IsConnected => Client.IsTcpConnected && Client.IsConnected;
+
+        public AudioManager(DCSPlayerRadioInfo playerRadioInfo)
         {
-            Client = new Network.Client(this);
+            Client = new Network.Client(this, playerRadioInfo);
         }
 
         public void ConnectToSRS(IPEndPoint address)

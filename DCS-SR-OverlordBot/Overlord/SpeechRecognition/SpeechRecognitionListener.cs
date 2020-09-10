@@ -233,6 +233,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                     $"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{Controller.Voice}\">{response}</voice></speak>"));
                 Controller.Radio.TransmissionQueue.Enqueue(audioResponse ?? FailureMessage);
             }
+            else
+            {
+                Logger.Info($"Radio Call Ignored due to null response for Radio Call Processing");
+            }
 
             if (Controller.Radio.discordTransmissionLogChannelId > 0)
                 LogTransmissionToDiscord(radioCall, response);

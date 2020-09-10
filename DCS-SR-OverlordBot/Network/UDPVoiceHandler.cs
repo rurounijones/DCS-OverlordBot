@@ -219,7 +219,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
                         var myClient = IsClientMetaDataValid(_guid);
 
-                        if (myClient == null || !_clientState.DcsPlayerRadioInfo.IsCurrent()) continue;
+                        if (myClient == null) continue;
                         //Decode bytes
                         var udpVoicePacket = UDPVoicePacket.DecodeVoicePacket(encodedOpusAudio);
 

@@ -387,8 +387,6 @@
     <Compile Include="Audio\Managers\AudioManager.cs" />
     <Compile Include="Audio\Models\ClientAudio.cs" />
     <Compile Include="Discord\DiscordClient.cs" />
-    <Compile Include="Network\DCS\DCSRadioSyncHandler.cs" />
-    <Compile Include="Network\DCS\DCSRadioSyncManager.cs" />
     <Compile Include="Network\Models\RadioSendingState.cs" />
     <Compile Include="Network\SRSClientSyncHandler.cs" />
     <Compile Include="Network\UDPVoiceHandler.cs" />
