@@ -81,11 +81,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             }
             else
             {
-                Logger.Debug($"{diff.Seconds} seconds since last Received UDP data from Server");
+                Logger.Info($"{diff.Seconds} seconds since last Received UDP data from Server");
                 _clientState.IsConnected = false;
             }
-
-
         }
 
         private void CheckTransmissionEnded()
@@ -111,10 +109,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                 _listener.AllowNatTraversal(true);
             }
             catch { }
-            // _listener.Connect(_serverEndpoint);
+            // _listener.ConnectAudio(_serverEndpoint);
 
             //start 2 audio processing threads
-            var decoderThread = new Thread(UdpAudioDecode);
+            var decoderThread = new Thread(UdpAudioDecode) {Name = "Audio Decoder"};
             decoderThread.Start();
 
             StartTimer();
@@ -562,7 +560,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                         if (!RadioSendingState.IsSending)
                         {
                             Logger.Debug($"Sending UDP Ping to server {_serverEndpoint}: {_guid}");
-                            _listener?.Send(message, message.Length,_serverEndpoint);
+                            _listener?.Send(message, message.Length, _serverEndpoint);
                         }
                     }
                     catch (Exception e)
@@ -579,9 +577,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                         return;
                     }
                 }
-                Logger.Debug($"Stopping UDP Server Ping to {_serverEndpoint} due to leaving thread");
 
-            });
+                Logger.Debug($"Stopping UDP Server Ping to {_serverEndpoint} due to leaving thread");
+            }) {Name = "UDP Ping Sender"};
             thread.Start();
         }
     }

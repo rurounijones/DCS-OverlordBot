@@ -1,6 +1,10 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Runtime.InteropServices;
+using System.Threading;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings.RadioChannels;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow.PresetChannels;
@@ -26,6 +30,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
         public long LastSent { get; set; }
 
         public bool IsTcpConnected { get; set; }
+
+        private UdpVoiceHandler _udpVoiceHandler;
 
         private bool _isConnected;
         public bool IsConnected
@@ -81,6 +87,20 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             ExternalAwacsModeSelected = false;
 
             LastSeenName = "OverlordBot-Development";
+        }
+
+        public void ConnectData(IPEndPoint endpoint, SrsClientSyncHandler.ConnectCallback callback)
+        {
+            _logger.Info($"Starting SRS Data Connection");
+            SrsClientSyncHandler.TryConnect(endpoint, callback);
+        }
+
+        public void ConnectAudio(IPAddress address, int port, AudioManager audioManager)
+        {
+            _logger.Info($"Starting SRS Audio Connection");
+            _udpVoiceHandler = new UdpVoiceHandler(ShortGuid, address, port, audioManager, this);
+            var udpListenerThread = new Thread(_udpVoiceHandler.Listen) {Name = "Audio Listener"};
+            udpListenerThread.Start();
         }
 
         #region ConnectedClientSingleton

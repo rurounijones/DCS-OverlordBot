@@ -84,10 +84,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
                 Environment.Exit(1);
             }
 
-            _udpVoiceHandler = new UdpVoiceHandler(Client.ShortGuid, ipAddress, port, this, Client);
-            var voiceSenderThread = new Thread(_udpVoiceHandler.Listen);
-
-            voiceSenderThread.Start();
+            Client.ConnectAudio(ipAddress, port, this);
         }
 
         public void StopEncoding()
@@ -154,7 +151,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
                     }
                     Thread.Sleep(50);
                 }
-            }).Start();
+            }) {Name = "Audio Sender"}.Start();
         }
 
         public void EndTransmission(int transmitOnRadio)

@@ -38,7 +38,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
         private readonly DispatcherTimer _redrawUiTimer;
         private ServerAddress _serverAddress;
-        private readonly DelegateCommand _connectCommand;
 
         private readonly SettingsStore _settings = SettingsStore.Instance;
         private readonly SyncedServerSettings _serverSettings = SyncedServerSettings.Instance;
@@ -85,7 +84,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                 _logger.Info("Started DCS-SimpleRadio Client " + UpdaterChecker.VERSION);
             }
 
-            _connectCommand = new DelegateCommand(Connect, () => ServerAddress != null);
             FavouriteServersViewModel = new FavouriteServersViewModel(new CsvFavouriteServerStore());
 
             InitDefaultAddress();
@@ -226,8 +224,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                     ServerIp.Text = value.Address;
                     ClientState.ExternalAwacsModePassword = string.IsNullOrWhiteSpace(value.EamCoalitionPassword) ? "" : value.EamCoalitionPassword;
                 }
-
-                _connectCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -265,8 +261,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                         _resolvedIp = ip;
                         _port = GetPortFromTextBox();
 
-                        _client = ClientState.SrsClientSyncHandler;
-                        _client.TryConnect(new IPEndPoint(_resolvedIp, _port), ConnectCallback);
+                        _audioManager.Client.ConnectData(new IPEndPoint(_resolvedIp, _port), ConnectCallback);
                     }
                     else
                     {

@@ -72,7 +72,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             _callback = callback;
             _serverEndpoint = endpoint;
 
-            var tcpThread = new Thread(Connect);
+            var tcpThread = new Thread(Connect) {Name = "SRS Data"};
+
             tcpThread.Start();
         }
 
