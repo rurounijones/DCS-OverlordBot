@@ -5,7 +5,6 @@ using System.Net;
 using System.Threading;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings.RadioChannels;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Setting;
@@ -24,9 +23,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
         public DCSPlayerSideInfo PlayerCoalitionLocationMetadata { get; set; }
 
         private IPEndPoint _endpoint;
-
-        //store radio channels here?
-        public PresetChannelsViewModel[] FixedChannels { get; }
 
         public long LastSent { get; set; }
 
@@ -75,13 +71,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             DcsPlayerRadioInfo = new DCSPlayerRadioInfo();
             PlayerCoalitionLocationMetadata = new DCSPlayerSideInfo();
             SrsClientSyncHandler = new SrsClientSyncHandler(this);
-
-            FixedChannels = new PresetChannelsViewModel[10];
-
-            for (var i = 0; i < FixedChannels.Length; i++)
-            {
-                FixedChannels[i] = new PresetChannelsViewModel(new FilePresetChannelsStore(), i + 1, this);
-            }
 
             LastSent = 0;
 

@@ -447,7 +447,6 @@
     <Compile Include="Network\Client.cs" />
     <Compile Include="Settings\RadioChannels\PresetChannel.cs" />
     <Compile Include="Settings\RadioChannels\IPresetChannelsStore.cs" />
-    <Compile Include="PresetChannelsViewModel.cs" />
     <Compile Include="Settings\Favourites\ServerAddress.cs" />
     <Compile Include="Settings\SettingsStore.cs" />
     <Compile Include="Utils\DelegateCommand.cs" />

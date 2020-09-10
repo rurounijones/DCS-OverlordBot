@@ -246,22 +246,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
                     {
                         clientRadio.volume = updateRadio.volume;
                     }
-
-                    //handle Channels load for radios
-                    if (!newAircraft || i <= 0) continue;
-                    if (clientRadio.freqMode == RadioInformation.FreqMode.OVERLAY)
-                    {
-                        var channelModel = _client.FixedChannels[i - 1];
-                        channelModel.Max = clientRadio.freqMax;
-                        channelModel.Min = clientRadio.freqMin;
-                        channelModel.Reload();
-                        clientRadio.channel = -1; //reset channel
-                    }
-                    else
-                    {
-                        _client.FixedChannels[i - 1].Clear();
-                        //clear
-                    }
                 }
             }
 
