@@ -75,7 +75,17 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             var diff = TimeSpan.FromTicks(DateTime.Now.Ticks - _udpLastReceived);
 
             //ping every 15 so after 35 seconds VoIP UDP issue
-            _clientState.IsVoipConnected = diff.Seconds <= 35;
+            if (diff.Seconds <= 35)
+            {
+                _clientState.IsConnected = true;
+            }
+            else
+            {
+                Logger.Debug($"{diff.Seconds} seconds since last Received UDP data from Server");
+                _clientState.IsConnected = false;
+            }
+
+
         }
 
         private void CheckTransmissionEnded()
@@ -125,7 +135,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                     if (bytes.Length == 22)
                     {
                         _udpLastReceived = DateTime.Now.Ticks;
-                        Logger.Info("Received Ping Back from Server");
+                        Logger.Debug("Received UDP Ping Back from Server");
                     }
                     else if (bytes.Length > 22)
                     {
@@ -133,16 +143,16 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                         _encodedAudio.Add(bytes);
                     }
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    //  logger.Error(e, "error listening for UDP Voip");
+                    Logger.Error(e, "Error Receiving UDP data from Server");
                 }
             }
 
             //stop UI Refreshing
             _updateTimer.Stop();
 
-            _clientState.IsVoipConnected = false;
+            _clientState.IsConnected = false;
         }
 
         public void StartTimer()
@@ -551,12 +561,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                     {
                         if (!RadioSendingState.IsSending)
                         {
+                            Logger.Debug($"Sending UDP Ping to server {_serverEndpoint}: {_guid}");
                             _listener?.Send(message, message.Length,_serverEndpoint);
                         }
                     }
                     catch (Exception e)
                     {
-                        Logger.Error(e, "Exception Sending Audio Ping! " + e.Message);
+                        Logger.Error(e, "Exception Sending UDP Ping! " + e.Message);
                     }
 
                     //wait for cancel or quit
@@ -564,9 +575,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
                     if (cancelled)
                     {
+                        Logger.Debug($"Stopping UDP Server Ping to {_serverEndpoint} due to cancellation");
                         return;
                     }
                 }
+                Logger.Debug($"Stopping UDP Server Ping to {_serverEndpoint} due to leaving thread");
+
             });
             thread.Start();
         }

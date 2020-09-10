@@ -27,23 +27,24 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
         public bool IsTcpConnected { get; set; }
 
-        private bool _isVoipConnected;
-        public bool IsVoipConnected
+        private bool _isConnected;
+        public bool IsConnected
         {
-            get => _isVoipConnected;
+            get => _isConnected;
             set
             {
-                _isVoipConnected = value;
-                if(value)
+                if(value && !_isConnected )
                 {
                     _logger.Debug($"Connection State {SrsClientSyncHandler.ConnectionState.Connected}");
                     SrsClientSyncHandler.ProcessConnectionState(SrsClientSyncHandler.ConnectionState.Connected);
                 }
-                if (value == false)
+                if (!value == _isConnected)
                 {
                     _logger.Debug($"Connection State {SrsClientSyncHandler.ConnectionState.Disconnected}");
                     SrsClientSyncHandler.ProcessConnectionState(SrsClientSyncHandler.ConnectionState.Disconnected);
                 }
+                _isConnected = value;
+
             }
         }
 
