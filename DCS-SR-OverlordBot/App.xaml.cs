@@ -105,7 +105,7 @@ namespace DCS_SR_Client
         {
             TokenSource.Cancel();
             Task.Run(DiscordClient.Disconnect);
-            SrsClientSyncHandler.Instance.ApplicationStopped = true;
+            SrsClientSyncHandler.ApplicationStopped = true;
             _notifyIcon.Visible = false;
             base.OnExit(e);
         }

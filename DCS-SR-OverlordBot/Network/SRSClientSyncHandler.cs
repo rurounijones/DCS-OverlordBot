@@ -32,7 +32,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
         private TcpClient _tcpClient;
 
         private readonly SyncedServerSettings _serverSettings = SyncedServerSettings.Instance;
-        private readonly ClientStateSingleton _clientState = ClientStateSingleton.Instance;
+        private readonly ClientStateSingleton _clientState;
 
         private DcsRadioSyncManager _radioDcsSync;
 
@@ -40,11 +40,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
         private const int MaxDecodeErrors = 5;
 
-        #region Singleton Definition
-        private static volatile SrsClientSyncHandler _instance;
-        private static readonly object Lock = new object();
-
-        public bool ApplicationStopped = false;
+        public static volatile bool ApplicationStopped = false;
 
         public enum ConnectionState
         {
@@ -52,27 +48,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             Disconnected
         }
 
-        public static SrsClientSyncHandler Instance
+        public SrsClientSyncHandler(ClientStateSingleton clientStateSingleton)
         {
-            get
-            {
-                if (_instance != null) return _instance;
-                lock (Lock)
-                {
-                    if (_instance == null)
-                        _instance = new SrsClientSyncHandler();
-                }
-
-                return _instance;
-            }
-        }
-        #endregion
-
-
-        private SrsClientSyncHandler()
-        {
-            // Appears not to work after a disconnect for some ungodly reason.
-            //hub.Subscribe<ConnectionState>(cs => ProcessConnectionState(cs));
+            _clientState = clientStateSingleton;
         }
 
         public void ProcessConnectionState(ConnectionState cs)

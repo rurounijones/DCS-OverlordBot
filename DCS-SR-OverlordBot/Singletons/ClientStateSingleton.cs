@@ -19,6 +19,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
         private static volatile ClientStateSingleton _instance;
         private static readonly object Lock = new object();
 
+        public readonly SrsClientSyncHandler SrsClientSyncHandler;
+
         public DCSPlayerRadioInfo DcsPlayerRadioInfo { get; }
         public DCSPlayerSideInfo PlayerCoalitionLocationMetadata { get; set; }
 
@@ -39,19 +41,17 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
                 if(value)
                 {
                     _logger.Debug($"Connection State {SrsClientSyncHandler.ConnectionState.Connected}");
-                    SrsClientSyncHandler.Instance.ProcessConnectionState(SrsClientSyncHandler.ConnectionState.Connected);
+                    SrsClientSyncHandler.ProcessConnectionState(SrsClientSyncHandler.ConnectionState.Connected);
                 }
                 if (value == false)
                 {
                     _logger.Debug($"Connection State {SrsClientSyncHandler.ConnectionState.Disconnected}");
-                    SrsClientSyncHandler.Instance.ProcessConnectionState(SrsClientSyncHandler.ConnectionState.Disconnected);
+                    SrsClientSyncHandler.ProcessConnectionState(SrsClientSyncHandler.ConnectionState.Disconnected);
                 }
             }
         }
 
         public string ShortGuid { get; }
-
-        public bool IsConnectionErrored { get; set; }
 
         // Indicates the user's desire to be in External Awacs Mode or not
         public bool ExternalAwacsModeSelected { get; set; }
@@ -69,6 +69,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
             ShortGuid = Common.Network.ShortGuid.NewGuid();
             DcsPlayerRadioInfo = new DCSPlayerRadioInfo();
             PlayerCoalitionLocationMetadata = new DCSPlayerSideInfo();
+            SrsClientSyncHandler = new SrsClientSyncHandler(this);
 
             FixedChannels = new PresetChannelsViewModel[10];
 

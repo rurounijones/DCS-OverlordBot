@@ -268,7 +268,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                         _resolvedIp = ip;
                         _port = GetPortFromTextBox();
 
-                        _client = SrsClientSyncHandler.Instance;
+                        _client = ClientState.SrsClientSyncHandler;
                         _client.TryConnect(new IPEndPoint(_resolvedIp, _port), ConnectCallback);
                     }
                     else
