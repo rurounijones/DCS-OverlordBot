@@ -38,8 +38,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
 
         private OpusEncoder _encoder;
 
-        private UdpVoiceHandler _udpVoiceHandler;
-
         public float MicMax { get; set; } = -100;
         public float SpeakerMax { get; set; } = -100;
 
@@ -85,10 +83,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
             _decoder?.Dispose();
             _decoder = null;
           
-            if (_udpVoiceHandler != null)
+            if (Client.UdpVoiceHandler != null)
             {
-                _udpVoiceHandler.RequestStop();
-                _udpVoiceHandler = null;
+                Client.UdpVoiceHandler.RequestStop();
+                Client.UdpVoiceHandler = null;
             }
 
             SpeakerMax = -100;
@@ -116,7 +114,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
                 var responseQueue = ResponseQueues[audio.ReceivedRadio];
                 bot = new BotAudioProvider(receivedRadioInfo, responseQueue)
                 {
-                    SpeechRecognitionListener = {VoiceHandler = _udpVoiceHandler}
+                    SpeechRecognitionListener = {VoiceHandler = Client.UdpVoiceHandler}
                 };
                 BotAudioProviders[audio.ReceivedRadio] = bot;
             }
@@ -181,14 +179,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
                     //encode as opus bytes
                     var buff = _encoder.Encode(packetBuffer, SegmentFrames, out var len);
 
-                    if (_udpVoiceHandler != null && buff != null && len > 0)
+                    if (Client.UdpVoiceHandler != null && buff != null && len > 0)
                     {
                         //create copy with small buffer
                         var encoded = new byte[len];
 
                         Buffer.BlockCopy(buff, 0, encoded, 0, len);
 
-                        await Task.Run(() => _udpVoiceHandler.Send(encoded, len, radioId));
+                        await Task.Run(() => Client.UdpVoiceHandler.Send(encoded, len, radioId));
                         // Sleep between sending 40ms worth of data so that we do not overflow the 3 second audio buffers of
                         // normal SRS clients. The lower the sleep the less chance of audio corruption due to network issues
                         // but the greater the chance of over-flowing buffers. 20ms sleep per 40ms of audio being sent seems
@@ -201,7 +199,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
                     }
                 }
                 // Send one null to reset the sending state
-                await Task.Run(() => _udpVoiceHandler.Send(null, 0, radioId));
+                await Task.Run(() => Client.UdpVoiceHandler.Send(null, 0, radioId));
                 // Sleep for a second between sending messages to give players a chance to split messages.
             } catch (Exception ex)
             {

@@ -28,7 +28,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
         public bool IsTcpConnected { get; set; }
 
-        private UdpVoiceHandler _udpVoiceHandler;
+        public  UdpVoiceHandler UdpVoiceHandler;
 
         private bool _isConnected;
         public bool IsConnected
@@ -90,8 +90,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
         public void ConnectAudio()
         {
             _logger.Info($"Starting SRS Audio Connection");
-            _udpVoiceHandler = new UdpVoiceHandler(ShortGuid, _endpoint, _audioManager, this);
-            var udpListenerThread = new Thread(_udpVoiceHandler.Listen) {Name = "Audio Listener"};
+            UdpVoiceHandler = new UdpVoiceHandler(ShortGuid, _endpoint, _audioManager, this);
+            var udpListenerThread = new Thread(UdpVoiceHandler.Listen) {Name = "Audio Listener"};
             udpListenerThread.Start();
         }
 
@@ -119,7 +119,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             IsTcpConnected = false;
 
             SrsClientSyncHandler.Disconnect();
-            _udpVoiceHandler.RequestStop();
+            UdpVoiceHandler.RequestStop();
 
             DcsPlayerRadioInfo.Reset();
             PlayerCoalitionLocationMetadata.Reset();
