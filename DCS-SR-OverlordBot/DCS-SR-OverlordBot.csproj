@@ -435,29 +435,21 @@
     <Compile Include="Overlord\Util\AirfieldUpdater.cs" />
     <Compile Include="Overlord\Util\Geospatial.cs" />
     <Compile Include="Overlord\Controllers\WarningRadiusChecker.cs" />
-    <Compile Include="Settings\SynchedServerSettings.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Settings\SynchedServerSettings.cs" />
     <Compile Include="Settings\Favourites\CsvFavouriteServerStore.cs" />
     <Compile Include="Settings\Favourites\IFavouriteServerStore.cs" />
     <Compile Include="Settings\RadioChannels\FilePresetChannelsStore.cs" />
     <Compile Include="Network\Client.cs" />
     <Compile Include="Settings\RadioChannels\PresetChannel.cs" />
     <Compile Include="Settings\RadioChannels\IPresetChannelsStore.cs" />
-    <Compile Include="UI\Images.cs" />
-    <Compile Include="UI\RadioOverlayWindow\PresetChannels\PresetChannelsView.xaml.cs">
-      <DependentUpon>PresetChannelsView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\RadioOverlayWindow\PresetChannels\PresetChannelsViewModel.cs" />
+    <Compile Include="PresetChannelsViewModel.cs" />
     <Compile Include="Settings\Favourites\ServerAddress.cs" />
-    <Compile Include="UI\ServerSettingsWindow\ServerSettingsWindow.xaml.cs">
-      <DependentUpon>ServerSettingsWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Settings\SettingsStore.cs" />
-    <Compile Include="UI\ToolTips.cs" />
     <Compile Include="Utils\DelegateCommand.cs" />
     <Page Include="UI\ClientWindow\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -471,14 +463,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="UI\RadioOverlayWindow\PresetChannels\PresetChannelsView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\ServerSettingsWindow\ServerSettingsWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Themes\Styles.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -495,8 +479,8 @@
     </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="awacs-radios.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -562,16 +546,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="server-10.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="audio-headset.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="status-disconnected-game.png" />
-    <Resource Include="status-connected.png" />
-    <Resource Include="status-disconnected-error.png" />
-    <Resource Include="status-disconnected.png" />
     <Content Include="Data\equipment-failure.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

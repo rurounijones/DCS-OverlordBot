@@ -25,7 +25,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
         private readonly int _port;
 
         private readonly IPAddress _resolvedIp;
-        private ServerSettingsWindow _serverSettingsWindow;
 
         private readonly SettingsStore _settings = SettingsStore.Instance;
 
@@ -38,12 +37,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
             InitializeComponent();
 
-            // Initialize ToolTip controls
-            ToolTips.Init();
-
-            // Initialize images/icons
-            Images.Init();
-            
             DataContext = this;
 
             WindowStartupLocation = WindowStartupLocation.Manual;
@@ -153,9 +146,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                 {
                     MessageBox.Show("Invalid IP or Host Name!", "Host Name Error", MessageBoxButton.OK,
                         MessageBoxImage.Error);
-
-                    ClientState.IsTcpConnected = false;
-                    ToggleServerSettings.IsEnabled = false;
                 }
             }
         }
@@ -190,26 +180,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             }
 
             base.OnStateChanged(e);
-        }
-
-        private void ToggleServerSettings_OnClick(object sender, RoutedEventArgs e)
-        {
-            if (_serverSettingsWindow == null || !_serverSettingsWindow.IsVisible ||
-                _serverSettingsWindow.WindowState == WindowState.Minimized)
-            {
-                _serverSettingsWindow?.Close();
-
-                _serverSettingsWindow = new ServerSettingsWindow
-                {
-                    WindowStartupLocation = WindowStartupLocation.CenterOwner, Owner = this
-                };
-                _serverSettingsWindow.ShowDialog();
-            }
-            else
-            {
-                _serverSettingsWindow?.Close();
-                _serverSettingsWindow = null;
-            }
         }
     }
 }

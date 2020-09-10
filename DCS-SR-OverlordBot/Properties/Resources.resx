@@ -121,16 +121,4 @@
   <data name="audio_headset" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\audio-headset.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="status_connected" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\status-connected.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="status_disconnected" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\status-disconnected.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="status_disconnected_error" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\status-disconnected-error.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="status_disconnected_game" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\status-disconnected-game.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
 </root>
