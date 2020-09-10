@@ -475,7 +475,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                 try
                 {
                     _tcpClient.GetStream().Write(bytes, 0, bytes.Length);
-                    _tcpClient.GetStream().Write(bytes, 0, bytes.Length);
                 } catch (ObjectDisposedException ex)
                 {
                     Logger.Debug(ex, $"Tried writing message type {message.MsgType} to a disposed TcpClient");
