@@ -109,9 +109,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                 _listener.AllowNatTraversal(true);
             }
             catch { }
-            // _listener.ConnectAudio(_serverEndpoint);
 
-            //start 2 audio processing threads
             var decoderThread = new Thread(UdpAudioDecode) {Name = "Audio Decoder"};
             decoderThread.Start();
 
@@ -121,14 +119,13 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
             _packetNumber = 1; //reset packet number
 
+            var localListenEndpoint = new IPEndPoint(IPAddress.Any, 0); // 0 means random unused port
+
             while (!_stop)
             {
                 try
                 {
-                    var groupEp = new IPEndPoint(IPAddress.Any, _port);
-                    //   listener.Client.ReceiveTimeout = 3000;
-
-                    var bytes = _listener.Receive(ref groupEp);
+                    var bytes = _listener.Receive(ref localListenEndpoint);
 
                     if (bytes.Length == 22)
                     {
