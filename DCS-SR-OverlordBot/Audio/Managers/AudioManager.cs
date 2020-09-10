@@ -67,7 +67,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
         }
         #endregion
 
-        public void StartEncoding(string guid, IPAddress ipAddress, int port)
+        public void StartEncoding(IPAddress ipAddress, int port)
         {
             try
             {
@@ -84,7 +84,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
                 Environment.Exit(1);
             }
 
-            _udpVoiceHandler = new UdpVoiceHandler(guid, ipAddress, port, this, Client);
+            _udpVoiceHandler = new UdpVoiceHandler(Client.ShortGuid, ipAddress, port, this, Client);
             var voiceSenderThread = new Thread(_udpVoiceHandler.Listen);
 
             voiceSenderThread.Start();

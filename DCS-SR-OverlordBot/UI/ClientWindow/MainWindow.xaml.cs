@@ -352,7 +352,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
                 _settings.SetClientSetting(SettingsKeys.LastServer, ServerIp.Text);
 
-                _audioManager.StartEncoding(_settings.GetClientSetting(SettingsKeys.CliendIdShort).StringValue, _resolvedIp, _port);
+                _audioManager.StartEncoding(_resolvedIp, _port);
             }
             else
             {

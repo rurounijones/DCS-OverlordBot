@@ -35,7 +35,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
         private DcsRadioSyncManager _radioDcsSync;
 
-        private readonly string _guid = SettingsStore.Instance.GetClientSetting(SettingsKeys.CliendIdShort).StringValue;
+        private readonly string _guid;
 
         private const int MaxDecodeErrors = 5;
 
@@ -50,6 +50,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
         public SrsClientSyncHandler(Client client)
         {
             _clientState = client;
+            _guid = client.ShortGuid;
         }
 
         public void ProcessConnectionState(ConnectionState cs)
