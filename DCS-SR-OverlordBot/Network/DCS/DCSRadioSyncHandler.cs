@@ -1,6 +1,5 @@
 ﻿using System;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.DCSState;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Setting;
@@ -13,14 +12,15 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
         private readonly DcsRadioSyncManager.SendRadioUpdate _radioUpdate;
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private readonly ClientStateSingleton _clientStateSingleton = ClientStateSingleton.Instance;
+        private readonly Client _client;
         private readonly SyncedServerSettings _serverSettings = SyncedServerSettings.Instance;
 
         private long _identStart;
 
-        public DcsRadioSyncHandler(DcsRadioSyncManager.SendRadioUpdate radioUpdate)
+        public DcsRadioSyncHandler(DcsRadioSyncManager.SendRadioUpdate radioUpdate, Client client)
         {
             _radioUpdate = radioUpdate;
+            _client = client;
         }
 
         public void ProcessRadioInfo(DCSPlayerRadioInfo message)
@@ -29,17 +29,17 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
 
             Transponder original = null;
 
-            if (_clientStateSingleton.DcsPlayerRadioInfo.iff != null)
+            if (_client.DcsPlayerRadioInfo.iff != null)
             {
-                original = _clientStateSingleton.DcsPlayerRadioInfo.iff.Copy();
+                original = _client.DcsPlayerRadioInfo.iff.Copy();
             }
 
             var update = UpdateRadio(message);
 
-            if (!update && _clientStateSingleton.LastSent >= 1 &&
-                _clientStateSingleton.DcsPlayerRadioInfo.iff.Equals(original)) return;
+            if (!update && _client.LastSent >= 1 &&
+                _client.DcsPlayerRadioInfo.iff.Equals(original)) return;
             Logger.Debug("Sending Radio Info To Server - Update");
-            _clientStateSingleton.LastSent = DateTime.Now.Ticks;
+            _client.LastSent = DateTime.Now.Ticks;
             _radioUpdate();
         }
 
@@ -49,7 +49,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
 
             var expansion = _serverSettings.GetSettingAsBool(ServerSettingsKeys.RADIO_EXPANSION);
 
-            var playerRadioInfo = _clientStateSingleton.DcsPlayerRadioInfo;
+            var playerRadioInfo = _client.DcsPlayerRadioInfo;
 
             playerRadioInfo.name = message.name;
             playerRadioInfo.inAircraft = message.inAircraft;
@@ -251,7 +251,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
                     if (!newAircraft || i <= 0) continue;
                     if (clientRadio.freqMode == RadioInformation.FreqMode.OVERLAY)
                     {
-                        var channelModel = _clientStateSingleton.FixedChannels[i - 1];
+                        var channelModel = _client.FixedChannels[i - 1];
                         channelModel.Max = clientRadio.freqMax;
                         channelModel.Min = clientRadio.freqMin;
                         channelModel.Reload();
@@ -259,7 +259,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
                     }
                     else
                     {
-                        _clientStateSingleton.FixedChannels[i - 1].Clear();
+                        _client.FixedChannels[i - 1].Clear();
                         //clear
                     }
                 }

@@ -1,8 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Data;
 using System.Windows.Input;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings.RadioChannels;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.PresetChannels;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Utils;
 
@@ -15,6 +15,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow.Preset
 
         public DelegateCommand DropDownClosedCommand { get; set; }
 
+        private readonly Network.Client _client;
 
         private readonly object _presetChannelLock = new object();
         private ObservableCollection<PresetChannel> _presetChannels;
@@ -29,8 +30,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow.Preset
             }
         }
 
-        public PresetChannelsViewModel(IPresetChannelsStore channels, int radioId)
+        public PresetChannelsViewModel(IPresetChannelsStore channels, int radioId, Network.Client client)
         {
+            _client = client;
             _radioId = radioId;
             _channelsStore = channels;
             ReloadCommand = new DelegateCommand(OnReload);
@@ -54,7 +56,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow.Preset
         {
             PresetChannels.Clear();
 
-            var radios = ClientStateSingleton.Instance.DcsPlayerRadioInfo.radios;
+            var radios = _client.DcsPlayerRadioInfo.radios;
 
             var radio = radios[_radioId];
 

@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
 using Easy.MessageHub;
 using FragLabs.Audio.Codecs;
 using FragLabs.Audio.Codecs.Opus;
@@ -44,7 +43,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
         public float MicMax { get; set; } = -100;
         public float SpeakerMax { get; set; } = -100;
 
-        private readonly ClientStateSingleton _clientStateSingleton = ClientStateSingleton.Instance;
+        public readonly Network.Client Client = new Network.Client();
 
         #region Singleton definition
         private static volatile AudioManager _instance;
@@ -85,7 +84,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
                 Environment.Exit(1);
             }
 
-            _udpVoiceHandler = new UdpVoiceHandler(guid, ipAddress, port, this);
+            _udpVoiceHandler = new UdpVoiceHandler(guid, ipAddress, port, this, Client);
             var voiceSenderThread = new Thread(_udpVoiceHandler.Listen);
 
             voiceSenderThread.Start();
@@ -130,7 +129,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
             }
             else
             {
-                var receivedRadioInfo = _clientStateSingleton.DcsPlayerRadioInfo.radios[audio.ReceivedRadio];
+                var receivedRadioInfo = Client.DcsPlayerRadioInfo.radios[audio.ReceivedRadio];
                 var responseQueue = ResponseQueues[audio.ReceivedRadio];
                 bot = new BotAudioProvider(receivedRadioInfo, responseQueue)
                 {

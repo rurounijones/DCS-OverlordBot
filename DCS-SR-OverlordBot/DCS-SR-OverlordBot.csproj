@@ -444,7 +444,7 @@
     <Compile Include="Settings\Favourites\CsvFavouriteServerStore.cs" />
     <Compile Include="Settings\Favourites\IFavouriteServerStore.cs" />
     <Compile Include="Settings\RadioChannels\FilePresetChannelsStore.cs" />
-    <Compile Include="Singletons\ClientStateSingleton.cs" />
+    <Compile Include="Network\Client.cs" />
     <Compile Include="Settings\RadioChannels\PresetChannel.cs" />
     <Compile Include="Settings\RadioChannels\IPresetChannelsStore.cs" />
     <Compile Include="UI\Images.cs" />
@@ -587,6 +587,7 @@
   <ItemGroup>
     <Folder Include="Audio\Utility\" />
     <Folder Include="Resources\" />
+    <Folder Include="Singletons\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target AfterTargets="AfterBuild;NonWinFodyTarget" Name="CleanReferenceCopyLocalPaths">

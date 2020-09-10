@@ -8,7 +8,6 @@ using System.Windows;
 using System.Windows.Threading;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Setting;
@@ -32,7 +31,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
         private TcpClient _tcpClient;
 
         private readonly SyncedServerSettings _serverSettings = SyncedServerSettings.Instance;
-        private readonly ClientStateSingleton _clientState;
+        private readonly Client _clientState;
 
         private DcsRadioSyncManager _radioDcsSync;
 
@@ -48,9 +47,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             Disconnected
         }
 
-        public SrsClientSyncHandler(ClientStateSingleton clientStateSingleton)
+        public SrsClientSyncHandler(Client client)
         {
-            _clientState = clientStateSingleton;
+            _clientState = client;
         }
 
         public void ProcessConnectionState(ConnectionState cs)
@@ -96,7 +95,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                     LatLngPosition = sideInfo.LngLngPosition,
                     ClientGuid = _guid
                 },
-                ExternalAWACSModePassword = ClientStateSingleton.Instance.ExternalAwacsModePassword,
+                ExternalAWACSModePassword = _clientState.ExternalAwacsModePassword,
                 MsgType = NetworkMessage.MessageType.EXTERNAL_AWACS_MODE_PASSWORD
             });
         }
@@ -118,7 +117,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
             var connectionError = false;
 
-            _radioDcsSync = new DcsRadioSyncManager(ClientRadioUpdated);
+            _radioDcsSync = new DcsRadioSyncManager(ClientRadioUpdated, _clientState);
 
             using (_tcpClient = new TcpClient())
             {
@@ -438,7 +437,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             }
 
             //disconnected - reset DCS Info
-            ClientStateSingleton.Instance.DcsPlayerRadioInfo.LastUpdate = 0;
+            _clientState.DcsPlayerRadioInfo.LastUpdate = 0;
 
             //clear the clients list
             _clientState.Clear();
@@ -504,7 +503,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             _tcpClient?.Close(); // this'll stop the socket blocking
 
             Logger.Error("Disconnecting from server");
-            ClientStateSingleton.Instance.IsTcpConnected = false;
+            _clientState.IsTcpConnected = false;
 
             //CallOnMain(false);
         }

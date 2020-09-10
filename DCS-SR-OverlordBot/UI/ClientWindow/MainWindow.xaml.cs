@@ -12,7 +12,6 @@ using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Preferences;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.Favourites;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Utils;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
@@ -28,7 +27,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
     /// </summary>
     public partial class MainWindow
     {
-        private AudioManager _audioManager;
+        private static AudioManager _audioManager = AudioManager.Instance;
 
         private readonly Logger _logger = LogManager.GetCurrentClassLogger();
         private SrsClientSyncHandler _client;
@@ -45,7 +44,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
         private readonly SyncedServerSettings _serverSettings = SyncedServerSettings.Instance;
 
         /// <remarks>Used in the XAML for DataBinding many things</remarks>
-        public ClientStateSingleton ClientState { get; } = ClientStateSingleton.Instance;
+        public Network.Client ClientState { get; } = _audioManager.Client;
 
         private readonly IMessageHub _hub = MessageHub.Instance;
 
@@ -255,8 +254,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             }
             else
             {
-                _audioManager = AudioManager.Instance;
-
                 try
                 {
                     //process hostname

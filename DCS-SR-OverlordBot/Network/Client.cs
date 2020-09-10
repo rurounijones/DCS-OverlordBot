@@ -1,7 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings.RadioChannels;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow.PresetChannels;
@@ -10,14 +9,11 @@ using Ciribob.DCS.SimpleRadio.Standalone.Common.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Setting;
 using NLog;
 
-namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
+namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 {
-    public sealed class ClientStateSingleton
+    public sealed class Client
     {
         private readonly Logger _logger = LogManager.GetCurrentClassLogger();
-
-        private static volatile ClientStateSingleton _instance;
-        private static readonly object Lock = new object();
 
         public readonly SrsClientSyncHandler SrsClientSyncHandler;
 
@@ -64,7 +60,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
 
         public string ExternalAwacsModePassword { get; set; }
 
-        private ClientStateSingleton()
+        public Client()
         {
             ShortGuid = Common.Network.ShortGuid.NewGuid();
             DcsPlayerRadioInfo = new DCSPlayerRadioInfo();
@@ -75,7 +71,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
 
             for (var i = 0; i < FixedChannels.Length; i++)
             {
-                FixedChannels[i] = new PresetChannelsViewModel(new FilePresetChannelsStore(), i + 1);
+                FixedChannels[i] = new PresetChannelsViewModel(new FilePresetChannelsStore(), i + 1, this);
             }
 
             LastSent = 0;
@@ -84,21 +80,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
             ExternalAwacsModeSelected = false;
 
             LastSeenName = "OverlordBot-Development";
-        }
-
-        public static ClientStateSingleton Instance
-        {
-            get
-            {
-                if (_instance != null) return _instance;
-                lock (Lock)
-                {
-                    if (_instance == null)
-                        _instance = new ClientStateSingleton();
-                }
-
-                return _instance;
-            }
         }
 
         #region ConnectedClientSingleton
@@ -140,8 +121,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
             {
                 return new List<SRClient>();
             }
-            var currentClientPos = ClientStateSingleton.Instance.PlayerCoalitionLocationMetadata;
-            var currentUnitId = ClientStateSingleton.Instance.DcsPlayerRadioInfo.unitId;
+            var currentClientPos = PlayerCoalitionLocationMetadata;
+            var currentUnitId = DcsPlayerRadioInfo.unitId;
             var coalitionSecurity = SyncedServerSettings.Instance.GetSettingAsBool(ServerSettingsKeys.COALITION_AUDIO_SECURITY);
             var globalFrequencies = _serverSettings.GlobalFrequencies;
             var global = globalFrequencies.Contains(freq);
