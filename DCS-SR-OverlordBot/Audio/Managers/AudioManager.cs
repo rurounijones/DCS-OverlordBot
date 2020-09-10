@@ -43,13 +43,16 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
         public float MicMax { get; set; } = -100;
         public float SpeakerMax { get; set; } = -100;
 
-        public readonly Network.Client Client = new Network.Client();
+        public readonly Network.Client Client;
 
         #region Singleton definition
         private static volatile AudioManager _instance;
         private static readonly object Lock = new object();
 
-        private AudioManager() { }
+        private AudioManager()
+        {
+            Client = new Network.Client(this);
+        }
 
         public static AudioManager Instance
         {
@@ -67,7 +70,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
         }
         #endregion
 
-        public void StartEncoding(IPAddress ipAddress, int port)
+        public void StartEncoding()
         {
             try
             {
@@ -84,7 +87,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
                 Environment.Exit(1);
             }
 
-            Client.ConnectAudio(ipAddress, port, this);
+            Client.ConnectAudio();
         }
 
         public void StopEncoding()

@@ -53,17 +53,17 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
         private long _udpLastReceived;
         private readonly DispatcherTimer _updateTimer;
 
-        public UdpVoiceHandler(string guid, IPAddress address, int port, AudioManager audioManager, Client client)
+        public UdpVoiceHandler(string guid, IPEndPoint endpoint, AudioManager audioManager, Client client)
         {
             _audioManager = audioManager;
             _guidAsciiBytes = Encoding.ASCII.GetBytes(guid);
 
             _guid = guid;
-            _port = port;
+            _port = endpoint.Port;
 
             _clientState = client;
 
-            _serverEndpoint = new IPEndPoint(address, _port);
+            _serverEndpoint = endpoint;
 
             _updateTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(5) };
             _updateTimer.Tick += UpdateVoipStatus;

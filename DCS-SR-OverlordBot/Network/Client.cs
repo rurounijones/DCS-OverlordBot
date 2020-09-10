@@ -20,9 +20,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
         private readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
         public readonly SrsClientSyncHandler SrsClientSyncHandler;
+        private readonly AudioManager _audioManager;
 
         public DCSPlayerRadioInfo DcsPlayerRadioInfo { get; }
         public DCSPlayerSideInfo PlayerCoalitionLocationMetadata { get; set; }
+
+        private IPEndPoint _endpoint;
 
         //store radio channels here?
         public PresetChannelsViewModel[] FixedChannels { get; }
@@ -67,8 +70,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
         public string ExternalAwacsModePassword { get; set; }
 
-        public Client()
+        public Client(AudioManager audioManager)
         {
+            _audioManager = audioManager;
             ShortGuid = Common.Network.ShortGuid.NewGuid();
             DcsPlayerRadioInfo = new DCSPlayerRadioInfo();
             PlayerCoalitionLocationMetadata = new DCSPlayerSideInfo();
@@ -89,18 +93,51 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             LastSeenName = "OverlordBot-Development";
         }
 
-        public void ConnectData(IPEndPoint endpoint, SrsClientSyncHandler.ConnectCallback callback)
+        public void ConnectData(IPEndPoint endpoint)
         {
+            _endpoint = endpoint;
             _logger.Info($"Starting SRS Data Connection");
-            SrsClientSyncHandler.TryConnect(endpoint, callback);
+            SrsClientSyncHandler.TryConnect(_endpoint, ConnectCallback);
         }
 
-        public void ConnectAudio(IPAddress address, int port, AudioManager audioManager)
+        public void ConnectAudio()
         {
             _logger.Info($"Starting SRS Audio Connection");
-            _udpVoiceHandler = new UdpVoiceHandler(ShortGuid, address, port, audioManager, this);
+            _udpVoiceHandler = new UdpVoiceHandler(ShortGuid, _endpoint, _audioManager, this);
             var udpListenerThread = new Thread(_udpVoiceHandler.Listen) {Name = "Audio Listener"};
             udpListenerThread.Start();
+        }
+
+        private void ConnectCallback(bool result, bool connectionError, string connection)
+        {
+            if (result)
+            {
+                if (IsTcpConnected) return;
+
+                IsTcpConnected = true;
+
+                _audioManager.StartEncoding();
+            }
+            else
+            {
+                Disconnect();
+                Thread.Sleep(5000);
+                ConnectData(_endpoint);
+            }
+        }
+
+        public void Disconnect()
+        {
+            IsTcpConnected = false;
+
+            SrsClientSyncHandler.Disconnect();
+            _udpVoiceHandler.RequestStop();
+            _audioManager.StopEncoding();
+
+            DcsPlayerRadioInfo.Reset();
+            PlayerCoalitionLocationMetadata.Reset();
+
+            _logger.Debug("Could not connect to SRS server. Trying again");
         }
 
         #region ConnectedClientSingleton

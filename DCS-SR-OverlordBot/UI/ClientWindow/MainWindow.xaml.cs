@@ -4,16 +4,13 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime;
-using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Threading;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Preferences;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.Favourites;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Utils;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Setting;
 using Easy.MessageHub;
@@ -27,10 +24,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
     /// </summary>
     public partial class MainWindow
     {
-        private static AudioManager _audioManager = AudioManager.Instance;
+        private static readonly AudioManager _audioManager = AudioManager.Instance;
 
         private readonly Logger _logger = LogManager.GetCurrentClassLogger();
-        private SrsClientSyncHandler _client;
         private int _port = 5002;
 
         private IPAddress _resolvedIp;
@@ -246,7 +242,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
         {
             if (ClientState.IsTcpConnected)
             {
-                Stop();
+                ClientState.Disconnect();
             }
             else
             {
@@ -261,7 +257,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                         _resolvedIp = ip;
                         _port = GetPortFromTextBox();
 
-                        _audioManager.Client.ConnectData(new IPEndPoint(_resolvedIp, _port), ConnectCallback);
+                        _audioManager.Client.ConnectData(new IPEndPoint(_resolvedIp, _port));
                     }
                     else
                     {
@@ -306,57 +302,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
         private void Stop()
         {
-            ClientState.IsTcpConnected = false;
-            ToggleServerSettings.IsEnabled = false;
-            ExternalAwacsModeName.IsEnabled = false;
-            ExternalAwacsModeNameLabel.IsEnabled = false;
-
-            if (!string.IsNullOrWhiteSpace(ClientState.LastSeenName) &&
-                _settings.GetClientSetting(SettingsKeys.LastSeenName).StringValue != ClientState.LastSeenName)
-            {
-                _settings.SetClientSetting(SettingsKeys.LastSeenName, ClientState.LastSeenName);
-            }
-
-            if (_audioManager != null)
-            {
-                _audioManager.StopEncoding();
-                _audioManager = null;
-            }
-
-            if (_client != null)
-            {
-                _client.Disconnect();
-                _client = null;
-            }
-
-            ClientState.DcsPlayerRadioInfo.Reset();
-            ClientState.PlayerCoalitionLocationMetadata.Reset();
-
-            _logger.Debug("Could not connect to SRS server. Trying again");
-            Thread.Sleep(5000);
-            Connect();
+            ClientState.Disconnect();
         }
-
-        private void ConnectCallback(bool result, bool connectionError, string connection)
-        {
-            if (result)
-            {
-                if (ClientState.IsTcpConnected) return;
-
-                ClientState.IsTcpConnected = true;
-
-                _settings.SetClientSetting(SettingsKeys.LastServer, ServerIp.Text);
-
-                _audioManager.StartEncoding(_resolvedIp, _port);
-            }
-            else
-            {
-                if (ClientState.IsTcpConnected) return;
-                Stop();
-                _hub.Publish(SrsClientSyncHandler.ConnectionState.Disconnected);
-            }
-        }
-
+        
         protected override void OnClosing(CancelEventArgs e)
         {
             _settings.SetPositionSetting(SettingsKeys.ClientX, Left);
