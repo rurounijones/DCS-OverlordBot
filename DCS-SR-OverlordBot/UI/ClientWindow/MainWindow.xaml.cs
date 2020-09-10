@@ -41,8 +41,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
         /// <remarks>Used in the XAML for DataBinding many things</remarks>
         public Network.Client ClientState { get; } = _audioManager.Client;
 
-        private readonly IMessageHub _hub = MessageHub.Instance;
-
         public MainWindow()
         {
             GCSettings.LatencyMode = GCLatencyMode.SustainedLowLatency;
@@ -257,7 +255,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                         _resolvedIp = ip;
                         _port = GetPortFromTextBox();
 
-                        _audioManager.Client.ConnectData(new IPEndPoint(_resolvedIp, _port));
+                        _audioManager.ConnectToSRS(new IPEndPoint(_resolvedIp, _port));
                     }
                     else
                     {
@@ -302,7 +300,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
         private void Stop()
         {
-            ClientState.Disconnect();
+            _audioManager.StopEncoding();
         }
         
         protected override void OnClosing(CancelEventArgs e)

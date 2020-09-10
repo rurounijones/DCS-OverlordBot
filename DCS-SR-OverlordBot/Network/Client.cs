@@ -115,13 +115,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
                 if (IsTcpConnected) return;
 
                 IsTcpConnected = true;
-
+                ConnectAudio();
                 _audioManager.StartEncoding();
             }
             else
             {
                 Disconnect();
                 Thread.Sleep(5000);
+                _logger.Debug("Could not connect to SRS server. Trying again");
                 ConnectData(_endpoint);
             }
         }
@@ -132,12 +133,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
             SrsClientSyncHandler.Disconnect();
             _udpVoiceHandler.RequestStop();
-            _audioManager.StopEncoding();
 
             DcsPlayerRadioInfo.Reset();
             PlayerCoalitionLocationMetadata.Reset();
-
-            _logger.Debug("Could not connect to SRS server. Trying again");
         }
 
         #region ConnectedClientSingleton

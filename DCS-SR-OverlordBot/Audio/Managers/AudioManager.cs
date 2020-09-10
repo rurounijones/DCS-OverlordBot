@@ -70,6 +70,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
         }
         #endregion
 
+        public void ConnectToSRS(IPEndPoint address)
+        {
+            Client.ConnectData(address);
+        }
+
         public void StartEncoding()
         {
             try
@@ -86,13 +91,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
              
                 Environment.Exit(1);
             }
-
-            Client.ConnectAudio();
         }
 
         public void StopEncoding()
         {
-
+            Client.Disconnect();
             _clientAudioMixer?.RemoveAllMixerInputs();
             _clientAudioMixer = null;
 
