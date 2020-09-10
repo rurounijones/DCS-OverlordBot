@@ -2,7 +2,6 @@
 using System.Windows.Data;
 using System.Windows.Input;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings.RadioChannels;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.UI.ClientWindow.PresetChannels;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Utils;
 
@@ -29,16 +28,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow.Preset
             }
         }
 
-        public int RadioId
-        {
-            private get { return _radioId; }
-            set
-            {
-                _radioId = value;
-                Reload();
-            }
-        }
-
         public PresetChannelsViewModel(IPresetChannelsStore channels, int radioId)
         {
             _radioId = radioId;
@@ -53,10 +42,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow.Preset
 
         private void DropDownClosed(object args)
         {
-            if (SelectedPresetChannel?.Value is double value && value > 0 && RadioId > 0)
-            {
-                RadioHelper.SelectRadioChannel(SelectedPresetChannel, RadioId);
-            }
         }
 
         public PresetChannel SelectedPresetChannel { get; set; }
@@ -68,7 +53,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI.RadioOverlayWindow.Preset
         {
             PresetChannels.Clear();
 
-            var radios = ClientStateSingleton.Instance.DcsPlayerRadioInfo.radios;
+            var radios = Network.Client.Instance.DcsPlayerRadioInfo.radios;
 
             var radio = radios[_radioId];
 

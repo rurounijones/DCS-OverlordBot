@@ -6,7 +6,6 @@
                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                       xmlns:local="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Client.UI"
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                      xmlns:converters="clr-namespace:Ciribob.DCS.SimpleRadio.Standalone.Client.Utils.ValueConverters"
                       Title="OverlordBot for SRS"
                       Width="550"
                       Height="412.001"
@@ -30,8 +29,6 @@
                     <StackPanel Margin="0"
                                 HorizontalAlignment="Center"
                                 Orientation="Horizontal"/>
-
-
                     <StackPanel Margin="0"
                                 HorizontalAlignment="Center"
                                 Orientation="Horizontal"/>
@@ -78,13 +75,6 @@
                     <StackPanel Margin="0"
                                 HorizontalAlignment="Center"
                                 Orientation="Horizontal">
-                        <Button x:Name="StartStop"
-                                Width="125"
-                                Margin="0,10,20,0"
-                                HorizontalAlignment="Center"
-                                Command="{Binding Path=ConnectCommand}"
-                                Content="Connect"
-                                Style="{DynamicResource SquareButtonStyle}" />
                         <Button x:Name="ToggleServerSettings"
                                 Width="125"
                                 Margin="0,10,0,0"
@@ -93,47 +83,12 @@
                                 Content="Show Server Settings"
                                 IsEnabled="False"
                                 Style="{DynamicResource SquareButtonStyle}" />
-
-                    </StackPanel>
-                    <StackPanel Margin="0"
-                                HorizontalAlignment="Center"
-                                Orientation="Horizontal">
-                        <Button x:Name="ShowOverlay"
-                                Width="125"
-                                Margin="0,15,20,0"
-                                HorizontalAlignment="Center"
-                                Click="ShowOverlay_OnClick"
-                                Content="Toggle Radio Overlay"
-                                Style="{DynamicResource SquareButtonStyle}" />
-                        <Button x:Name="ShowAwacsOverlay"
-                                Width="125"
-                                Margin="0,15,0,0"
-                                HorizontalAlignment="Center"
-                                Click="ShowAwacsOverlay_OnClick"
-                                Content="Toggle AWACS Overlay"
-                                Style="{DynamicResource SquareButtonStyle}" />
                     </StackPanel>
 
                     <StackPanel Margin="0"
                                 HorizontalAlignment="Center"
                                 Orientation="Horizontal">
-                        <StackPanel Margin="0"
-                                HorizontalAlignment="Center"
-                                Orientation="Vertical">
-                            <Label x:Name="ExternalAwacsModePasswordLabel"
-                                HorizontalAlignment="Center"
-                                HorizontalContentAlignment="Center"
-                                Margin="0,10,10,0"
-                                Content="EAM coalition password"
-                                IsEnabled="False" />
-                            <TextBox x:Name="ExternalAwacsModePassword"
-                                 Width="200"
-                                 Height="23"
-                                 Margin="0,0,10,0"
-                                 HorizontalAlignment="Center"
-                                 Text="{Binding Path=ClientState.ExternalAwacsModePassword, Mode=TwoWay}"
-                                 IsEnabled="False" />
-                        </StackPanel>
+
                         <StackPanel Margin="0"
                                 HorizontalAlignment="Center"
                                 Orientation="Vertical">
@@ -156,41 +111,6 @@
                     <StackPanel Margin="0"
                                 HorizontalAlignment="Center"
                                 Orientation="Horizontal"/>
-
-                    <StackPanel Margin="0"
-                                HorizontalAlignment="Center"
-                                Orientation="Horizontal">
-                        <Label HorizontalAlignment="Center" Content="Connected Clients:" />
-                        <Label x:Name="ClientCount"
-                               HorizontalAlignment="Center"
-                               Content="0" />
-                    </StackPanel>
-
-                    <StackPanel Margin="0"
-                                HorizontalAlignment="Center"
-                                Orientation="Horizontal">
-                        <StackPanel.Resources>
-                            <converters:ConnectionStatusImageConverter x:Key="ConnectionStatusImageConverter"/>
-                        </StackPanel.Resources>
-                        <Label HorizontalAlignment="Center" HorizontalContentAlignment="Center" Content="Server" />
-                        <Image x:Name="ServerConnectionStatus"
-                               Source="{Binding Path=ClientState.IsConnected, Converter={StaticResource ConnectionStatusImageConverter}}"
-                               HorizontalAlignment="Center"
-                               Height="26"
-                               Margin="5,0,5,0" />
-                        <Label HorizontalAlignment="Center" HorizontalContentAlignment="Center" Content="VOIP" />
-                        <Image x:Name="VoipConnectionStatus"
-                               Source="{Binding Path=ClientState.IsVoipConnected, Converter={StaticResource ConnectionStatusImageConverter}}"
-                               Height="26"
-                               HorizontalAlignment="Center"
-                               Margin="5,0,5,0" />
-                        <Label HorizontalAlignment="Center" HorizontalContentAlignment="Center" Content="AWACS" />
-                        <Image x:Name="AwacsConnectionStatus"
-                               Source="{Binding Path=ClientState.ExternalAwacsModeConnected, Converter={StaticResource ConnectionStatusImageConverter}}"
-                               Height="26"
-                               HorizontalAlignment="Center" 
-                               Margin="5,0,5,0" />
-                    </StackPanel>
                 </StackPanel>
             </GroupBox>
         </TabItem>

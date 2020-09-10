@@ -453,38 +453,17 @@
       <DependentUpon>PresetChannelsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\RadioOverlayWindow\PresetChannels\PresetChannelsViewModel.cs" />
-    <Compile Include="UI\AwacsRadioOverlayWindow\AwacsIntercomControlGroup.xaml.cs">
-      <DependentUpon>AwacsIntercomControlGroup.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\AwacsRadioOverlayWindow\AwacsRadioControlGroup.xaml.cs">
-      <DependentUpon>AwacsRadioControlGroup.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\AwacsRadioOverlayWindow\AwacsOverlay.xaml.cs">
-      <DependentUpon>AwacsOverlay.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Settings\Favourites\ServerAddress.cs" />
     <Compile Include="UI\ClientWindow\Favourites\FavouriteServersView.xaml.cs">
       <DependentUpon>FavouriteServersView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\ClientWindow\Favourites\FavouriteServersViewModel.cs" />
-    <Compile Include="UI\RadioOverlayWindow\IntercomControlGroup.xaml.cs">
-      <DependentUpon>IntercomControlGroup.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\RadioOverlayWindow\RadioControlGroup.xaml.cs">
-      <DependentUpon>RadioControlGroup.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UI\RadioOverlayWindow\RadioOverlay.xaml.cs">
-      <DependentUpon>RadioOverlay.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UI\ServerSettingsWindow\ServerSettingsWindow.xaml.cs">
       <DependentUpon>ServerSettingsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Settings\SettingsStore.cs" />
-    <Compile Include="UI\RadioOverlayWindow\WindowHelper.cs" />
     <Compile Include="UI\ToolTips.cs" />
     <Compile Include="Utils\DelegateCommand.cs" />
-    <Compile Include="Utils\RadioHelper.cs" />
-    <Compile Include="Utils\ValueConverters\ConnectionStatusImageConverter.cs" />
     <Page Include="UI\ClientWindow\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -501,33 +480,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UI\AwacsRadioOverlayWindow\AwacsIntercomControlGroup.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UI\AwacsRadioOverlayWindow\AwacsRadioControlGroup.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UI\AwacsRadioOverlayWindow\AwacsOverlay.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="UI\ClientWindow\Favourites\FavouriteServersView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\RadioOverlayWindow\IntercomControlGroup.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UI\RadioOverlayWindow\RadioControlGroup.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UI\RadioOverlayWindow\RadioOverlay.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\ServerSettingsWindow\ServerSettingsWindow.xaml">
       <SubType>Designer</SubType>

@@ -1,7 +1,6 @@
 ﻿using System;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.UI.AwacsRadioOverlayWindow;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.DCSState;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Setting;
@@ -93,33 +92,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network.DCS
 
             var simul = false;
 
-
             //copy over radio names, min + max
-            for (var i = 0; i < playerRadioInfo.radios.Length; i++)
+            for (var i = 0; i < message.radios.Length; i++)
             {
                 var clientRadio = playerRadioInfo.radios[i];
-
-                //if awacs NOT open -  disable radios over 3
-                if (i >= message.radios.Length
-                    || RadioOverlayWindow.AwacsActive == false
-                    && (i > 3 || i == 0)
-                    // disable intercom and all radios over 3 if awacs panel isnt open and we're a spectator given by the UnitId
-                    && playerRadioInfo.unitId >= DCSPlayerRadioInfo.UnitIdOffset)
-                {
-                    clientRadio.freq = 1;
-                    clientRadio.freqMin = 1;
-                    clientRadio.freqMax = 1;
-                    clientRadio.secFreq = 0;
-                    clientRadio.modulation = RadioInformation.Modulation.DISABLED;
-                    clientRadio.name = "No Radio";
-
-                    clientRadio.freqMode = RadioInformation.FreqMode.COCKPIT;
-                    clientRadio.guardFreqMode = RadioInformation.FreqMode.COCKPIT;
-                    clientRadio.encMode = RadioInformation.EncryptionMode.NO_ENCRYPTION;
-                    clientRadio.volMode = RadioInformation.VolumeMode.COCKPIT;
-
-                    continue;
-                }
 
                 var updateRadio = message.radios[i];
 

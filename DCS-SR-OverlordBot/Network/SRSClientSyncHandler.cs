@@ -527,7 +527,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             _tcpClient?.Close(); // this'll stop the socket blocking
 
             Logger.Error("Disconnecting from server");
-            ClientStateSingleton.Instance.IsConnected = false;
+            ClientStateSingleton.Instance.IsTcpConnected = false;
 
             //CallOnMain(false);
         }

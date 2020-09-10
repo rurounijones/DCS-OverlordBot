@@ -7,7 +7,6 @@ using System.Runtime;
 using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
-using System.Windows.Input;
 using System.Windows.Threading;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Network;
@@ -35,14 +34,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
         private SrsClientSyncHandler _client;
         private int _port = 5002;
 
-        private Overlay.RadioOverlayWindow _radioOverlayWindow;
-        private AwacsRadioOverlayWindow.RadioOverlayWindow _awacsRadioOverlay;
-
         private IPAddress _resolvedIp;
         private ServerSettingsWindow _serverSettingsWindow;
-
-        //used to debounce toggle
-        private long _toggleShowHide;
 
         private readonly DispatcherTimer _redrawUiTimer;
         private ServerAddress _serverAddress;
@@ -180,12 +173,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
                 _settings.SetPositionSetting(SettingsKeys.RadioX, 300);
                 _settings.SetPositionSetting(SettingsKeys.RadioY, 300);
-
-                if (_radioOverlayWindow != null)
-                {
-                    _radioOverlayWindow.Left = 300;
-                    _radioOverlayWindow.Top = 300;
-                }
             }
 
             if (!awacsWindowVisible)
@@ -200,12 +187,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
                 _settings.SetPositionSetting(SettingsKeys.AwacsX, 300);
                 _settings.SetPositionSetting(SettingsKeys.AwacsY, 300);
-
-                if (_awacsRadioOverlay != null)
-                {
-                    _awacsRadioOverlay.Left = 300;
-                    _awacsRadioOverlay.Top = 300;
-                }
             }
 
             if (!mainWindowVisible || !radioWindowVisible || !awacsWindowVisible)
@@ -230,7 +211,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
         private void InitToolTips()
         {
-            ExternalAwacsModePassword.ToolTip = ToolTips.ExternalAwacsModePassword;
             ExternalAwacsModeName.ToolTip = ToolTips.ExternalAwacsModeName;
         }
 
@@ -252,31 +232,24 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             }
         }
 
-        public ICommand ConnectCommand => _connectCommand;
-
         private void RedrawUiTick(object sender, EventArgs e)
         {
-            var isGameExportConnected = ClientState.IsGameExportConnected;
-
             // Redraw UI state (currently once per second), toggling controls as required
             // Some other callbacks/UI state changes could also probably be moved to this...
-            if (ClientState.IsConnected)
+            if (ClientState.IsTcpConnected)
             {
                 var eamEnabled = _serverSettings.GetSettingAsBool(ServerSettingsKeys.EXTERNAL_AWACS_MODE);
-
-                ExternalAwacsModePassword.IsEnabled = eamEnabled && !ClientState.ExternalAwacsModeConnected && !isGameExportConnected;
-                ExternalAwacsModeName.IsEnabled = eamEnabled && !ClientState.ExternalAwacsModeConnected && !isGameExportConnected;
+                ExternalAwacsModeName.IsEnabled = eamEnabled && !ClientState.ExternalAwacsModeConnected;
             }
             else
             {
-                ExternalAwacsModePassword.IsEnabled = false;
                 ExternalAwacsModeName.IsEnabled = false;
             }
         }
 
         private void Connect()
         {
-            if (ClientState.IsConnected)
+            if (ClientState.IsTcpConnected)
             {
                 Stop();
             }
@@ -297,9 +270,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
                         _client = SrsClientSyncHandler.Instance;
                         _client.TryConnect(new IPEndPoint(_resolvedIp, _port), ConnectCallback);
-
-                        StartStop.Content = "Connecting...";
-                        StartStop.IsEnabled = false;
                     }
                     else
                     {
@@ -307,7 +277,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                         MessageBox.Show("Invalid IP or Host Name!", "Host Name Error", MessageBoxButton.OK,
                             MessageBoxImage.Error);
 
-                        ClientState.IsConnected = false;
+                        ClientState.IsTcpConnected = false;
                         ToggleServerSettings.IsEnabled = false;
                     }
                 }
@@ -316,7 +286,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                     MessageBox.Show("Invalid IP or Host Name!", "Host Name Error", MessageBoxButton.OK,
                         MessageBoxImage.Error);
 
-                    ClientState.IsConnected = false;
+                    ClientState.IsTcpConnected = false;
                     ToggleServerSettings.IsEnabled = false;
                 }
             }
@@ -344,13 +314,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
 
         private void Stop()
         {
-            StartStop.Content = "Connect";
-            StartStop.IsEnabled = true;
-            ClientState.IsConnected = false;
+            ClientState.IsTcpConnected = false;
             ToggleServerSettings.IsEnabled = false;
-
-            ExternalAwacsModePassword.IsEnabled = false;
-            ExternalAwacsModePasswordLabel.IsEnabled = false;
             ExternalAwacsModeName.IsEnabled = false;
             ExternalAwacsModeNameLabel.IsEnabled = false;
 
@@ -384,11 +349,9 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
         {
             if (result)
             {
-                if (ClientState.IsConnected) return;
-                StartStop.Content = "Disconnect";
-                StartStop.IsEnabled = true;
+                if (ClientState.IsTcpConnected) return;
 
-                ClientState.IsConnected = true;
+                ClientState.IsTcpConnected = true;
 
                 _settings.SetClientSetting(SettingsKeys.LastServer, ServerIp.Text);
 
@@ -396,7 +359,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             }
             else
             {
-                if (ClientState.IsConnected) return;
+                if (ClientState.IsTcpConnected) return;
                 Stop();
                 _hub.Publish(SrsClientSyncHandler.ConnectionState.Disconnected);
             }
@@ -420,12 +383,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             _redrawUiTimer?.Stop();
 
             Stop();
-
-            _radioOverlayWindow?.Close();
-            _radioOverlayWindow = null;
-
-            _awacsRadioOverlay?.Close();
-            _awacsRadioOverlay = null;
         }
 
         protected override void OnStateChanged(EventArgs e)
@@ -436,64 +393,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
             }
 
             base.OnStateChanged(e);
-        }
-
-        private void ShowOverlay_OnClick(object sender, RoutedEventArgs e)
-        {
-            ToggleOverlay(true);
-        }
-
-        private void ToggleOverlay(bool uiButton)
-        {
-            //debounce show hide (1 tick = 100ns, 6000000 ticks = 600ms debounce)
-            if (DateTime.Now.Ticks - _toggleShowHide <= 6000000 && !uiButton) return;
-            _toggleShowHide = DateTime.Now.Ticks;
-            if (_radioOverlayWindow == null || !_radioOverlayWindow.IsVisible ||
-                _radioOverlayWindow.WindowState == WindowState.Minimized)
-            {
-                //hide awacs panel
-                _awacsRadioOverlay?.Close();
-                _awacsRadioOverlay = null;
-
-                _radioOverlayWindow?.Close();
-
-                _radioOverlayWindow = new Overlay.RadioOverlayWindow
-                {
-                    ShowInTaskbar = !_settings.GetClientSetting(SettingsKeys.RadioOverlayTaskbarHide).BoolValue
-                };
-
-
-                _radioOverlayWindow.Show();
-            }
-            else
-            {
-                _radioOverlayWindow?.Close();
-                _radioOverlayWindow = null;
-            }
-        }
-
-        private void ShowAwacsOverlay_OnClick(object sender, RoutedEventArgs e)
-        {
-            if (_awacsRadioOverlay == null || !_awacsRadioOverlay.IsVisible ||
-                _awacsRadioOverlay.WindowState == WindowState.Minimized)
-            {
-                //close normal overlay
-                _radioOverlayWindow?.Close();
-                _radioOverlayWindow = null;
-
-                _awacsRadioOverlay?.Close();
-
-                _awacsRadioOverlay = new AwacsRadioOverlayWindow.RadioOverlayWindow
-                {
-                    ShowInTaskbar = !_settings.GetClientSetting(SettingsKeys.RadioOverlayTaskbarHide).BoolValue
-                };
-                _awacsRadioOverlay.Show();
-            }
-            else
-            {
-                _awacsRadioOverlay?.Close();
-                _awacsRadioOverlay = null;
-            }
         }
 
         private void ToggleServerSettings_OnClick(object sender, RoutedEventArgs e)

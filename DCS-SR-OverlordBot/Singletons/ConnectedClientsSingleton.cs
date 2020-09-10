@@ -1,6 +1,5 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
@@ -9,15 +8,13 @@ using Ciribob.DCS.SimpleRadio.Standalone.Common.Setting;
 
 namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
 {
-    public sealed class ConnectedClientsSingleton : INotifyPropertyChanged
+    public sealed class ConnectedClientsSingleton
     {
         private readonly ConcurrentDictionary<string, SRClient> _clients = new ConcurrentDictionary<string, SRClient>();
         private static volatile ConnectedClientsSingleton _instance;
         private static readonly object Lock = new object();
         private readonly string _guid = ClientStateSingleton.Instance.ShortGuid;
         private readonly SyncedServerSettings _serverSettings = SyncedServerSettings.Instance;
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         private ConnectedClientsSingleton() { }
 
@@ -36,53 +33,22 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Singletons
             }
         }
 
-        private void NotifyPropertyChanged(string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public void NotifyAll()
-        {
-            NotifyPropertyChanged("Total");
-            NotifyPropertyChanged("InGame");
-        }
-
         public SRClient this[string key]
         {
             get => _clients[key];
-            set
-            {
-                _clients[key] = value;
-                NotifyAll();
-            }
+            set => _clients[key] = value;
         }
 
         public ICollection<SRClient> Values => _clients.Values;
 
-        public int Total => _clients.Count;
-
-        public int InGame
-        {
-            get
-            {
-                return _clients.Values.Count(client => client.IsIngame());
-            }
-        }
-
         public bool TryRemove(string key, out SRClient value)
         {
-            var result = _clients.TryRemove(key, out value);
-            if (result)
-            {
-                NotifyAll();
-            }
-            return result;
+            return _clients.TryRemove(key, out value);
         }
 
         public void Clear()
         {
             _clients.Clear();
-            NotifyAll();
         }
 
         public bool TryGetValue(string key, out SRClient value)
