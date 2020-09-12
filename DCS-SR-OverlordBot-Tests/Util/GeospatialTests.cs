@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Util.Tests
+namespace RurouniJones.DCS.OverlordBot.Util.Tests
 {
     [TestClass]
     public class GeospatialTests

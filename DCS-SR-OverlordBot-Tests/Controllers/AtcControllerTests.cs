@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
+namespace RurouniJones.DCS.OverlordBot.Controllers.Tests
 {
 
     [TestClass]

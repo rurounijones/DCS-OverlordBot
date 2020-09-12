@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
+namespace RurouniJones.DCS.OverlordBot.Network
 {
     public class RadioSendingState
     {

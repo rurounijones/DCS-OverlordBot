@@ -1,6 +1,6 @@
 ﻿using Ciribob.DCS.SimpleRadio.Standalone.Common;
 
-namespace Ciribob.DCS.SimpleRadio.Standalone.Client
+namespace RurouniJones.DCS.OverlordBot
 {
     public class ClientAudio
     {

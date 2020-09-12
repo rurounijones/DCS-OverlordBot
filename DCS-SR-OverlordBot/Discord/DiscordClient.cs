@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers;
+using RurouniJones.DCS.OverlordBot.Audio.Managers;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Discord;
 using Discord.WebSocket;
 using NLog;
 
-namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Discord
+namespace RurouniJones.DCS.OverlordBot.Discord
 {
     internal class DiscordClient
     {

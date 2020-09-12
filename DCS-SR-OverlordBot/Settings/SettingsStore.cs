@@ -7,7 +7,7 @@ using Ciribob.DCS.SimpleRadio.Standalone.Common.Network;
 using NLog;
 using SharpConfig;
 
-namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
+namespace RurouniJones.DCS.OverlordBot.Settings
 {
     public enum SettingsKeys
     {

@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
+using RurouniJones.DCS.OverlordBot.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Setting;
@@ -14,7 +14,7 @@ using Easy.MessageHub;
 using Newtonsoft.Json;
 using NLog;
 
-namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
+namespace RurouniJones.DCS.OverlordBot.Network
 {
     public class SrsClientSyncHandler
     {

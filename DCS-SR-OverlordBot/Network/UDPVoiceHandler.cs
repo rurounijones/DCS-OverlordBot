@@ -6,8 +6,8 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows.Threading;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
+using RurouniJones.DCS.OverlordBot.Audio.Managers;
+using RurouniJones.DCS.OverlordBot.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Setting;
@@ -15,7 +15,7 @@ using NLog;
 using static Ciribob.DCS.SimpleRadio.Standalone.Common.RadioInformation;
 using Timer = Cabhishek.Timers.Timer;
 
-namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
+namespace RurouniJones.DCS.OverlordBot.Network
 {
     public class UdpVoiceHandler
     {

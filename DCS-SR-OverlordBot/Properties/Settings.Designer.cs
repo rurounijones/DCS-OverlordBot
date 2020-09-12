@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Properties {
+namespace RurouniJones.DCS.OverlordBot.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

@@ -1,9 +1,9 @@
 ﻿using System;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
+using RurouniJones.DCS.OverlordBot.Audio.Managers;
+using RurouniJones.DCS.OverlordBot.Settings;
 using FragLabs.Audio.Codecs;
 
-namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio
+namespace RurouniJones.DCS.OverlordBot.Audio
 {
     public abstract class AudioProvider
     {

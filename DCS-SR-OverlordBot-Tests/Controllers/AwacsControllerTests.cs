@@ -1,9 +1,9 @@
-﻿using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.GameState;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.RadioCalls;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using RurouniJones.DCS.OverlordBot.GameState;
+using RurouniJones.DCS.OverlordBot.RadioCalls;
 
-namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers.Tests
+namespace RurouniJones.DCS.OverlordBot.Controllers.Tests
 {
 
     [TestClass]

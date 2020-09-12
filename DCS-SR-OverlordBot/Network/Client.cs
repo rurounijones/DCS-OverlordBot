@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Setting;
+using RurouniJones.DCS.OverlordBot.Audio.Managers;
+using RurouniJones.DCS.OverlordBot.Settings;
 using NLog;
 
-namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
+namespace RurouniJones.DCS.OverlordBot.Network
 {
     public sealed class Client
     {
@@ -67,7 +67,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
         public Client(AudioManager audioManager, DCSPlayerRadioInfo playerRadioInfo )
         {
             _audioManager = audioManager;
-            ShortGuid = Common.Network.ShortGuid.NewGuid();
+            ShortGuid = Ciribob.DCS.SimpleRadio.Standalone.Common.Network.ShortGuid.NewGuid();
             DcsPlayerRadioInfo = playerRadioInfo;
             PlayerCoalitionLocationMetadata = new DCSPlayerSideInfo();
             SrsClientSyncHandler = new SrsClientSyncHandler(this);

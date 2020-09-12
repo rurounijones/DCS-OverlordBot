@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Setting;
 using NLog;
 
-namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Settings
+namespace RurouniJones.DCS.OverlordBot.Settings
 {
     public class SyncedServerSettings
     {

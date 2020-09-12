@@ -7,14 +7,14 @@ using System.Net;
 using System.Net.Sockets;
 using System.Runtime;
 using System.Windows;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Settings;
+using RurouniJones.DCS.OverlordBot.Audio.Managers;
+using RurouniJones.DCS.OverlordBot.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.DCSState;
 using Newtonsoft.Json;
 using NLog;
 
-namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
+namespace RurouniJones.DCS.OverlordBot.UI
 {
     public partial class MainWindow
     {

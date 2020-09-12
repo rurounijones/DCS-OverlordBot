@@ -4,13 +4,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Discord;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Network;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Util;
+using RurouniJones.DCS.OverlordBot.Discord;
+using RurouniJones.DCS.OverlordBot.Network;
 using NLog;
 using Npgsql;
 using Npgsql.Logging;
+using RurouniJones.DCS.OverlordBot;
+using RurouniJones.DCS.OverlordBot.Util;
 using MessageBox = System.Windows.MessageBox;
 using Timer = System.Threading.Timer;
 
@@ -82,7 +82,7 @@ namespace DCS_SR_Client
 
             _notifyIcon = new NotifyIcon
             {
-                Icon = Ciribob.DCS.SimpleRadio.Standalone.Client.Properties.Resources.audio_headset,
+                Icon = RurouniJones.DCS.OverlordBot.Properties.Resources.audio_headset,
                 Visible = true,
                 ContextMenu = notifyIconContextMenu
             };
