@@ -93,6 +93,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
         public string botType = null;
 
         [JsonNetworkIgnoreSerialization]
+        public string coalitionPassword = null;
+
+        [JsonNetworkIgnoreSerialization]
+        public string callsign = null;
+
+        [JsonNetworkIgnoreSerialization]
         public ConcurrentQueue<byte[]> TransmissionQueue { get; set; }
 
         [JsonNetworkIgnoreSerialization]

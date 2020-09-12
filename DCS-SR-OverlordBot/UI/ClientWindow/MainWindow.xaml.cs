@@ -62,7 +62,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.UI
                 var playerRadioInfo = new DCSPlayerRadioInfo
                 {
                     LastUpdate = DateTime.Now.Ticks,
-                    name = $"OverlordBot-Development {radio.freq}",
+                    name = radio.name,
                     ptt = false,
                     radios = new List<RadioInformation> { radio },
                     selected = 1,

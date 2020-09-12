@@ -52,7 +52,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                 case "ATC":
                     Controller = new AtcController
                     {
-                        Callsign = radioInfo.name,
+                        Callsign = radioInfo.callsign,
                         Voice = radioInfo.voice,
                         Radio = radioInfo
                     };
@@ -60,7 +60,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                 case "AWACS":
                     Controller = new AwacsController
                     {
-                        Callsign = radioInfo.name,
+                        Callsign = radioInfo.callsign,
                         Voice = radioInfo.voice,
                         Radio = radioInfo
                     };
@@ -68,7 +68,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
                 default:
                     Controller = new MuteController
                     {
-                        Callsign = radioInfo.name,
+                        Callsign = radioInfo.callsign,
                         Voice = null,
                         Radio = null
                     };

@@ -62,7 +62,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
         public string LastSeenName { get; set; }
 
-        public string ExternalAwacsModePassword { get; set; } = "hoggit1fw";
+        public readonly string ExternalAwacsModePassword;
 
         public Client(AudioManager audioManager, DCSPlayerRadioInfo playerRadioInfo )
         {
@@ -71,6 +71,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             DcsPlayerRadioInfo = playerRadioInfo;
             PlayerCoalitionLocationMetadata = new DCSPlayerSideInfo();
             SrsClientSyncHandler = new SrsClientSyncHandler(this);
+
+            ExternalAwacsModePassword = playerRadioInfo.radios.First().coalitionPassword;
 
             LastSent = 0;
 

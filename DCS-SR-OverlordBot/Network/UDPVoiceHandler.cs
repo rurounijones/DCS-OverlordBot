@@ -88,16 +88,14 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
 
         private void CheckTransmissionEnded()
         {
-            for (var i = 0; i < RadioReceivingState.Length; i++)
-            {
-                //Nothing on this radio!
-                //play out if nothing after 200ms
-                //and Audio hasn't been played already
-                var radioState = RadioReceivingState[i];
-                if (radioState == null || radioState.PlayedEndOfTransmission || radioState.IsReceiving) continue;
-                radioState.PlayedEndOfTransmission = true; 
-                _audioManager.EndTransmission(i);
-            }
+            //Nothing on this radio!
+            //play out if nothing after 200ms
+            //and Audio hasn't been played already
+            var radioState = RadioReceivingState[0];
+            if (radioState == null || radioState.PlayedEndOfTransmission || radioState.IsReceiving) return;
+            Logger.Info($"Transmission on radio ended");
+            radioState.PlayedEndOfTransmission = true;
+            _audioManager.EndTransmission();
         }
 
         public void Listen()
@@ -113,7 +111,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             var decoderThread = new Thread(UdpAudioDecode) {Name = "Audio Decoder"};
             decoderThread.Start();
 
-            StartTimer();
+            StartTransmissionEndCheckTimer();
 
             StartPing();
 
@@ -150,11 +148,10 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             _clientState.IsConnected = false;
         }
 
-        public void StartTimer()
+        public void StartTransmissionEndCheckTimer()
         {
             StopTimer();
 
-            // _jitterBuffer.Clear();
             _timer = new Timer(CheckTransmissionEnded, TimeSpan.FromMilliseconds(_jitterBuffer));
             _timer.Start();
         }
@@ -170,13 +167,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
         public void RequestStop()
         {
             _stop = true;
-            try
-            {
-                _listener.Close();
-            }
-            catch (Exception)
-            {
-            }
+            _listener.Close();
 
             _stopFlag.Cancel();
             _pingStop.Cancel();

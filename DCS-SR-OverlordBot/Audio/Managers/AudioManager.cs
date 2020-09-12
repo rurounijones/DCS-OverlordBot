@@ -26,11 +26,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public readonly ConcurrentDictionary<int, BotAudioProvider> BotAudioProviders =
-            new ConcurrentDictionary<int, BotAudioProvider>();
-
-        public ConcurrentDictionary<int, ConcurrentQueue<byte[]>> ResponseQueues =
-            new ConcurrentDictionary<int, ConcurrentQueue<byte[]>>();
+        public BotAudioProvider BotAudioProvider;
+        public readonly ConcurrentQueue<byte[]> ResponseQueue = new ConcurrentQueue<byte[]>();
 
         private MixingSampleProvider _clientAudioMixer;
 
@@ -42,8 +39,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
         public float SpeakerMax { get; set; } = -100;
 
         public readonly Network.Client Client;
-
-        public bool IsConnected => Client.IsTcpConnected && Client.IsConnected;
 
         public AudioManager(DCSPlayerRadioInfo playerRadioInfo)
         {
@@ -57,6 +52,12 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
 
         public void StartEncoding()
         {
+            BotAudioProvider = new BotAudioProvider(Client.DcsPlayerRadioInfo.radios[0], ResponseQueue)
+            {
+                SpeechRecognitionListener = { VoiceHandler = Client.UdpVoiceHandler }
+            };
+            StartResponseCheckLoop();
+
             try
             {
                 //opus
@@ -99,57 +100,33 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
 
         public void AddClientAudio(ClientAudio audio)
         {
-            BotAudioProvider bot;
-            if (!ResponseQueues.ContainsKey(audio.ReceivedRadio) || ResponseQueues[audio.ReceivedRadio] == null)
-            {
-                ResponseQueues[audio.ReceivedRadio] = new ConcurrentQueue<byte[]>();
-                CheckForResponses(ResponseQueues[audio.ReceivedRadio], audio.ReceivedRadio);
-            }
-
-            if (BotAudioProviders.ContainsKey(audio.ReceivedRadio) && BotAudioProviders[audio.ReceivedRadio].SpeechRecognitionActive())
-            {
-                bot = BotAudioProviders[audio.ReceivedRadio];
-            }
-            else
-            {
-                var receivedRadioInfo = Client.DcsPlayerRadioInfo.radios[audio.ReceivedRadio];
-                var responseQueue = ResponseQueues[audio.ReceivedRadio];
-                bot = new BotAudioProvider(receivedRadioInfo, responseQueue)
-                {
-                    SpeechRecognitionListener = {VoiceHandler = Client.UdpVoiceHandler}
-                };
-                BotAudioProviders[audio.ReceivedRadio] = bot;
-            }
-            bot.AddClientAudioSamples(audio);
+            BotAudioProvider.AddClientAudioSamples(audio);
         }
 
-        private void CheckForResponses(ConcurrentQueue<byte[]> responseQueue, int radioId)
+        private void StartResponseCheckLoop()
         {
             new Thread(async () =>
             {
                 Thread.CurrentThread.IsBackground = true;
                 while (true)
                 {
-                    if (responseQueue.TryDequeue(out var response) && response != null)
+                    if (ResponseQueue.TryDequeue(out var response) && response != null)
                     {
                         Logger.Trace($"Sending Response: {response}");
-                        await SendResponse(response, response.Length, radioId);
+                        await SendResponse(response, response.Length);
                     }
                     Thread.Sleep(50);
                 }
             }) {Name = "Audio Sender"}.Start();
         }
 
-        public void EndTransmission(int transmitOnRadio)
+        public void EndTransmission()
         {
-            if (BotAudioProviders.ContainsKey(transmitOnRadio))
-            {
-                BotAudioProviders[transmitOnRadio].EndTransmission();
-            }
+            BotAudioProvider.EndTransmission();
         }
 
         // Expects a byte buffer containing 16 bit 16KHz 1 channel PCM WAV
-        private async Task SendResponse(IReadOnlyList<byte> buffer, int length, int radioId)
+        private async Task SendResponse(IReadOnlyList<byte> buffer, int length)
         {
             try
             {
@@ -188,7 +165,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
 
                         Buffer.BlockCopy(buff, 0, encoded, 0, len);
 
-                        await Task.Run(() => Client.UdpVoiceHandler.Send(encoded, len, radioId));
+                        await Task.Run(() => Client.UdpVoiceHandler.Send(encoded, len, 0));
                         // Sleep between sending 40ms worth of data so that we do not overflow the 3 second audio buffers of
                         // normal SRS clients. The lower the sleep the less chance of audio corruption due to network issues
                         // but the greater the chance of over-flowing buffers. 20ms sleep per 40ms of audio being sent seems
@@ -201,11 +178,11 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers
                     }
                 }
                 // Send one null to reset the sending state
-                await Task.Run(() => Client.UdpVoiceHandler.Send(null, 0, radioId));
+                await Task.Run(() => Client.UdpVoiceHandler.Send(null, 0, 0));
                 // Sleep for a second between sending messages to give players a chance to split messages.
             } catch (Exception ex)
             {
-                Logger.Error(ex, $"Exception sending response. RadioId {radioId}, Response length {length}");
+                Logger.Error(ex, $"Exception sending response. RadioId {0}, Response length {length}");
             }
             Thread.Sleep(1000);
         }
