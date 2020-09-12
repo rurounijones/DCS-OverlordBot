@@ -1,4 +1,6 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using NLog;
 using RurouniJones.DCS.OverlordBot.Controllers;
@@ -8,6 +10,15 @@ namespace RurouniJones.DCS.OverlordBot.Intents
 {
     internal class SetWarningRadius
     {
+        private static readonly Random Random = new Random();
+
+        private static readonly List<string> Responses = new List<string>
+        {
+            "warning set for {0} miles",
+            "we'll warn you at {0} miles",
+            "perimeter set for {0} miles"
+        };
+
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public static async Task<string> Process(BaseRadioCall baseRadioCall, string voice, ConcurrentQueue<byte[]> responseQueue)
@@ -22,8 +33,9 @@ namespace RurouniJones.DCS.OverlordBot.Intents
                 return "I did not catch the warning distance.";
             }
 
-            new WarningRadiusChecker(radioCall.Sender, radioCall.ReceiverName, voice, radioCall.WarningRadius, responseQueue);
-            return $"warning set for {radioCall.WarningRadius} miles.";
+            var _ = new WarningRadiusChecker(radioCall.Sender, radioCall.ReceiverName, voice, radioCall.WarningRadius, responseQueue);
+
+            return string.Format(Responses[Random.Next(Responses.Count)], radioCall.WarningRadius);
         }
     }
 }
