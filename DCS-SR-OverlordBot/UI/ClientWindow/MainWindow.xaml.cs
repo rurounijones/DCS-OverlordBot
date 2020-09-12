@@ -76,7 +76,7 @@ namespace RurouniJones.DCS.OverlordBot.UI
                 };
 
                 var audioManager = new AudioManager(playerRadioInfo);
-                audioManager.ConnectToSRS(new IPEndPoint(_resolvedIp, _port));
+                audioManager.ConnectToSrs(new IPEndPoint(_resolvedIp, _port));
                 AudioManagers.Add(audioManager);
             }
         }

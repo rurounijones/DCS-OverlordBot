@@ -45,7 +45,7 @@ namespace RurouniJones.DCS.OverlordBot.Audio.Managers
             Client = new Network.Client(this, playerRadioInfo);
         }
 
-        public void ConnectToSRS(IPEndPoint address)
+        public void ConnectToSrs(IPEndPoint address)
         {
             Client.ConnectData(address);
         }
@@ -165,7 +165,7 @@ namespace RurouniJones.DCS.OverlordBot.Audio.Managers
 
                         Buffer.BlockCopy(buff, 0, encoded, 0, len);
 
-                        await Task.Run(() => Client.UdpVoiceHandler.Send(encoded, len, 0));
+                        await Task.Run(() => Client.UdpVoiceHandler.Send(encoded, 0));
                         // Sleep between sending 40ms worth of data so that we do not overflow the 3 second audio buffers of
                         // normal SRS clients. The lower the sleep the less chance of audio corruption due to network issues
                         // but the greater the chance of over-flowing buffers. 20ms sleep per 40ms of audio being sent seems
@@ -178,11 +178,11 @@ namespace RurouniJones.DCS.OverlordBot.Audio.Managers
                     }
                 }
                 // Send one null to reset the sending state
-                await Task.Run(() => Client.UdpVoiceHandler.Send(null, 0, 0));
+                await Task.Run(() => Client.UdpVoiceHandler.Send(null, 0));
                 // Sleep for a second between sending messages to give players a chance to split messages.
             } catch (Exception ex)
             {
-                Logger.Error(ex, $"Exception sending response. RadioId {0}, Response length {length}");
+                Logger.Error(ex, $"Exception sending response. Response length {length}");
             }
             Thread.Sleep(1000);
         }

@@ -544,7 +544,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Audio\Utility\" />
     <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

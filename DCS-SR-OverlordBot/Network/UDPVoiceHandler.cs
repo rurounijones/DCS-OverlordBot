@@ -30,7 +30,6 @@ namespace RurouniJones.DCS.OverlordBot.Network
         private readonly string _guid;
         private readonly byte[] _guidAsciiBytes;
         private readonly CancellationTokenSource _pingStop = new CancellationTokenSource();
-        private readonly int _port;
         private readonly SyncedServerSettings _serverSettings = SyncedServerSettings.Instance;
 
         private readonly CancellationTokenSource _stopFlag = new CancellationTokenSource();
@@ -59,7 +58,6 @@ namespace RurouniJones.DCS.OverlordBot.Network
             _guidAsciiBytes = Encoding.ASCII.GetBytes(guid);
 
             _guid = guid;
-            _port = endpoint.Port;
 
             _clientState = client;
 
@@ -107,7 +105,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
             }
             catch { }
 
-            var decoderThread = new Thread(UdpAudioDecode) {Name = "Audio Decoder"};
+            var decoderThread = new Thread(UdpAudioDecode) {Name = $"{_clientState.LastSeenName} Audio Decoder"};
             decoderThread.Start();
 
             StartTransmissionEndCheckTimer();
@@ -158,7 +156,6 @@ namespace RurouniJones.DCS.OverlordBot.Network
         public void StopTimer()
         {
             if (_timer == null) return;
-            //    _jitterBuffer.Clear();
             _timer.Stop();
             _timer = null;
         }
@@ -466,7 +463,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
             return yScore - xScore;
         }
 
-        public bool Send(byte[] bytes, int len, int radioId)
+        public bool Send(byte[] bytes, int radioId)
         {
             if (bytes != null)
             {
