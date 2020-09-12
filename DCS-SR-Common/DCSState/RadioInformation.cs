@@ -5,31 +5,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
 {
     public class RadioInformation
     {
-        public enum EncryptionMode
-        {
-            NO_ENCRYPTION = 0,
-            ENCRYPTION_JUST_OVERLAY = 1,
-            ENCRYPTION_FULL = 2,
-            ENCRYPTION_COCKPIT_TOGGLE_OVERLAY_CODE = 3
-
-            // 0  is no controls
-            // 1 is FC3 Gui Toggle + Gui Enc key setting
-            // 2 is InCockpit toggle + Incockpit Enc setting
-            // 3 is Incockpit toggle + Gui Enc Key setting
-        }
-
-        public enum VolumeMode
-        {
-            COCKPIT = 0,
-            OVERLAY = 1,
-        }
-
-        public enum FreqMode
-        {
-            COCKPIT = 0,
-            OVERLAY = 1,
-        }
-
         public enum Modulation
         {
             AM = 0,
@@ -44,17 +19,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
         public bool enc = false; // encrytion enabled
         public byte encKey = 0;
 
-        [JsonNetworkIgnoreSerialization]
-        public EncryptionMode encMode = EncryptionMode.NO_ENCRYPTION;
-
-        [JsonDCSIgnoreSerialization]
-        [JsonNetworkIgnoreSerialization]
-        public double freqMax = 1;
-
-        [JsonDCSIgnoreSerialization]
-        [JsonNetworkIgnoreSerialization]
-        public double freqMin = 1;
-
         public double freq = 1;
         
         public Modulation modulation = Modulation.DISABLED;
@@ -62,23 +26,8 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
         [JsonNetworkIgnoreSerialization]
         public string name = "";
         
-        public double secFreq = 1;
-
         [JsonNetworkIgnoreSerialization]
         public float volume = 1.0f;
-
-        [JsonNetworkIgnoreSerialization]
-        [JsonDCSIgnoreSerialization]
-        public FreqMode freqMode = FreqMode.COCKPIT;
-        [JsonNetworkIgnoreSerialization]
-        [JsonDCSIgnoreSerialization]
-        public FreqMode guardFreqMode = FreqMode.COCKPIT;
-        [JsonNetworkIgnoreSerialization]
-        [JsonDCSIgnoreSerialization]
-        public VolumeMode volMode = VolumeMode.COCKPIT;
-        [JsonNetworkIgnoreSerialization]
-        [JsonDCSIgnoreSerialization]
-        public bool expansion = false;
 
         [JsonNetworkIgnoreSerialization]
         public int channel = -1;
@@ -134,10 +83,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
                 return false;
             }
             if (encKey != compare.encKey)
-            {
-                return false;
-            }
-            if (!DCSPlayerRadioInfo.FreqCloseEnough(secFreq, compare.secFreq))
             {
                 return false;
             }

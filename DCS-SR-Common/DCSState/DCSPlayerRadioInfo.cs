@@ -213,29 +213,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common
                         };
                         bestMatchingDecryptable = isDecryptable;
                     }
-                    if ((receivingRadio.secFreq == frequency)
-                        && (receivingRadio.secFreq > 10000))
-                    {
-                        if (encryptionKey == 0 || (receivingRadio.enc ? receivingRadio.encKey : (byte)0) == encryptionKey)
-                        {
-                            receivingState = new RadioReceivingState
-                            {
-                                IsSecondary = true,
-                                LastReceviedAt = DateTime.Now.Ticks,
-                                ReceivedOn = i
-                            };
-                            decryptable = true;
-                            return receivingRadio;
-                        }
-
-                        bestMatchingRadio = receivingRadio;
-                        bestMatchingRadioState = new RadioReceivingState
-                        {
-                            IsSecondary = true,
-                            LastReceviedAt = DateTime.Now.Ticks,
-                            ReceivedOn = i
-                        };
-                    }
                 }
             }
 
