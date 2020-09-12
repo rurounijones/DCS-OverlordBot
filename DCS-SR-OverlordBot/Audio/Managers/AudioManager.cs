@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Easy.MessageHub;
 using FragLabs.Audio.Codecs;

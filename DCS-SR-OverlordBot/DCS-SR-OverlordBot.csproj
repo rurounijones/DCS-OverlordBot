@@ -421,7 +421,7 @@
     <Compile Include="Overlord\GameState\Player.cs" />
     <Compile Include="Overlord\SpeechOutput\RadioStreamWriter.cs" />
     <Compile Include="Overlord\SpeechOutput\Speaker.cs" />
-    <Compile Include="Overlord\SpeechRecognition\BotAudioProvider.cs" />
+    <Compile Include="Audio\Providers\BotAudioProvider.cs" />
     <Compile Include="Overlord\SpeechRecognition\BufferedWaveProviderStreamReader.cs" />
     <Compile Include="Overlord\SpeechRecognition\LuisService.cs" />
     <Compile Include="Overlord\SpeechRecognition\SpeechRecognitionListener.cs" />
@@ -441,7 +441,6 @@
     <Compile Include="Settings\SynchedServerSettings.cs" />
     <Compile Include="Network\Client.cs" />
     <Compile Include="Settings\SettingsStore.cs" />
-    <Compile Include="Utils\DelegateCommand.cs" />
     <Page Include="UI\ClientWindow\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

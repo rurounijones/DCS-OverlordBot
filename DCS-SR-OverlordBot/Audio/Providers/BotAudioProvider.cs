@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
-using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio;
 using Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Managers;
+using Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using NAudio.Wave;
 using NLog;
 
-namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.SpeechRecognition
+namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Audio.Providers
 {
     public class BotAudioProvider : AudioProvider
     {

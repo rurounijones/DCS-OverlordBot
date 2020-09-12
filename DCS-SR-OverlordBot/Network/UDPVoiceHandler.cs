@@ -93,7 +93,6 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Network
             //and Audio hasn't been played already
             var radioState = RadioReceivingState[0];
             if (radioState == null || radioState.PlayedEndOfTransmission || radioState.IsReceiving) return;
-            Logger.Info($"Transmission on radio ended");
             radioState.PlayedEndOfTransmission = true;
             _audioManager.EndTransmission();
         }
