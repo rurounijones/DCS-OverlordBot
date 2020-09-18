@@ -85,7 +85,8 @@ namespace RurouniJones.DCS.OverlordBot.Network
 
             var sideInfo = _clientState.PlayerCoalitionLocationMetadata;
             sideInfo.name = _clientState.LastSeenName;
-            SendToServer(new NetworkMessage
+
+            var message = new NetworkMessage
             {
                 Client = new SRClient
                 {
@@ -96,7 +97,10 @@ namespace RurouniJones.DCS.OverlordBot.Network
                 },
                 ExternalAWACSModePassword = _clientState.ExternalAwacsModePassword,
                 MsgType = NetworkMessage.MessageType.EXTERNAL_AWACS_MODE_PASSWORD
-            });
+
+            };
+
+            SendToServer(message);
         }
 
         public void DisconnectExternalAwacsMode()
@@ -149,11 +153,12 @@ namespace RurouniJones.DCS.OverlordBot.Network
 
         private void SendAwacsRadioInformation()
         {
-            Logger.Debug("Sending Radio Update to Server");
             _clientState.LastSent = 0;
             _clientState.ExternalAwacsModeConnected = true;
+
             var sideInfo = _clientState.PlayerCoalitionLocationMetadata;
-            SendToServer(new NetworkMessage
+
+            var message = new NetworkMessage
             {
                 Client = new SRClient
                 {
@@ -164,7 +169,9 @@ namespace RurouniJones.DCS.OverlordBot.Network
                     LatLngPosition = sideInfo.LngLngPosition
                 },
                 MsgType = NetworkMessage.MessageType.RADIO_UPDATE
-            });
+            };
+
+            SendToServer(message);
         }
 
         private void CallOnMain(bool result, bool connectionError = false)
@@ -213,6 +220,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
                             decodeErrors = 0; //reset counter
                             if (serverMessage != null)
                             {
+                                Logger.Debug($"Message {serverMessage.MsgType} received: {line}");
                                 //Logger.Debug("Received "+serverMessage.MsgType);
                                 switch (serverMessage.MsgType)
                                 {
@@ -441,15 +449,12 @@ namespace RurouniJones.DCS.OverlordBot.Network
 
                 var json = message.Encode();
 
-                if (message.MsgType == NetworkMessage.MessageType.RADIO_UPDATE)
-                {
-                    Logger.Debug("Sending Radio Update To Server: "+ json);
-                }
-
                 var bytes = Encoding.UTF8.GetBytes(json);
                 try
                 {
                     _tcpClient.GetStream().Write(bytes, 0, bytes.Length);
+                    Logger.Debug($"Message {message.MsgType} sent: {json}");
+
                 } catch (ObjectDisposedException ex)
                 {
                     Logger.Debug(ex, $"Tried writing message type {message.MsgType} to a disposed TcpClient");
