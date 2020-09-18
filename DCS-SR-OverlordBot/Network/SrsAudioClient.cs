@@ -36,7 +36,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
 
         private const int _jitterBuffer = 50; //in milliseconds
 
-        private readonly Client _clientState;
+        private readonly Client _mainClient;
 
         //    private readonly JitterBuffer _jitterBuffer = new JitterBuffer();
         private UdpClient _listener;
@@ -52,35 +52,35 @@ namespace RurouniJones.DCS.OverlordBot.Network
         private long _udpLastReceived;
         private readonly DispatcherTimer _updateTimer;
 
-        public SrsAudioClient(string guid, IPEndPoint endpoint, AudioManager audioManager, Client client)
+        public SrsAudioClient(string guid, IPEndPoint endpoint, AudioManager audioManager, Client mainClient)
         {
             _audioManager = audioManager;
             _guidAsciiBytes = Encoding.ASCII.GetBytes(guid);
 
             _guid = guid;
 
-            _clientState = client;
+            _mainClient = mainClient;
 
             _serverEndpoint = endpoint;
 
             _updateTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(5) };
-            _updateTimer.Tick += UpdateVoipStatus;
+            _updateTimer.Tick += UpdateAudioConnectionStatus;
             _updateTimer.Start();
         }
 
-        private void UpdateVoipStatus(object sender, EventArgs e)
+        private void UpdateAudioConnectionStatus(object sender, EventArgs e)
         {
             var diff = TimeSpan.FromTicks(DateTime.Now.Ticks - _udpLastReceived);
 
             //ping every 15 so after 35 seconds VoIP UDP issue
             if (diff.Seconds <= 35)
             {
-                _clientState.IsConnected = true;
+                _mainClient.IsAudioConnected = true;
             }
             else
             {
                 Logger.Info($"{diff.Seconds} seconds since last Received UDP data from Server");
-                _clientState.IsConnected = false;
+                _mainClient.Disconnect();
             }
         }
 
@@ -105,7 +105,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
             }
             catch { }
 
-            var decoderThread = new Thread(UdpAudioDecode) {Name = $"{_clientState.LastSeenName} Audio Decoder"};
+            var decoderThread = new Thread(UdpAudioDecode) {Name = $"{_mainClient.LastSeenName} Audio Decoder"};
             decoderThread.Start();
 
             StartTransmissionEndCheckTimer();
@@ -142,7 +142,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
             //stop UI Refreshing
             _updateTimer.Stop();
 
-            _clientState.IsConnected = false;
+            _mainClient.Disconnect();
         }
 
         public void StartTransmissionEndCheckTimer()
@@ -173,8 +173,8 @@ namespace RurouniJones.DCS.OverlordBot.Network
 
         private SRClient IsClientMetaDataValid(string clientGuid)
         {
-            if (!_clientState.ContainsKey(clientGuid)) return null;
-            var client = _clientState[_guid];
+            if (!_mainClient.ContainsKey(clientGuid)) return null;
+            var client = _mainClient[_guid];
 
             return client;
         }
@@ -233,7 +233,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
                                 udpVoicePacket.Encryptions[i] = 0;
                             }
 
-                            var radio = _clientState.DcsPlayerRadioInfo.CanHearTransmission(
+                            var radio = _mainClient.DcsPlayerRadioInfo.CanHearTransmission(
                                 udpVoicePacket.Frequencies[i],
                                 (Modulation) udpVoicePacket.Modulations[i],
                                 udpVoicePacket.Encryptions[i],
@@ -343,15 +343,15 @@ namespace RurouniJones.DCS.OverlordBot.Network
                 return transmitting;
             }
 
-            transmitting.Add(_clientState.DcsPlayerRadioInfo.selected);
+            transmitting.Add(_mainClient.DcsPlayerRadioInfo.selected);
 
-            if (!_clientState.DcsPlayerRadioInfo.simultaneousTransmission) return transmitting;
+            if (!_mainClient.DcsPlayerRadioInfo.simultaneousTransmission) return transmitting;
             // Skip intercom
             for (var i = 1; i < 11; i++)
             {
-                var radio = _clientState.DcsPlayerRadioInfo.radios[i];
+                var radio = _mainClient.DcsPlayerRadioInfo.radios[i];
                 if (radio.modulation != Modulation.DISABLED && radio.simul &&
-                    i != _clientState.DcsPlayerRadioInfo.selected)
+                    i != _mainClient.DcsPlayerRadioInfo.selected)
                 {
                     transmitting.Add(i);
                 }
@@ -368,9 +368,9 @@ namespace RurouniJones.DCS.OverlordBot.Network
                 return true;
             }
 
-            if (_clientState.TryGetValue(udpVoicePacket.Guid, out var transmittingClient))
+            if (_mainClient.TryGetValue(udpVoicePacket.Guid, out var transmittingClient))
             {
-                var myLatLng= _clientState.PlayerCoalitionLocationMetadata.LngLngPosition;
+                var myLatLng= _mainClient.PlayerCoalitionLocationMetadata.LngLngPosition;
                 var clientLatLng = transmittingClient.LatLngPosition;
                 if (myLatLng == null || clientLatLng == null || !myLatLng.isValid() || !clientLatLng.isValid())
                 {
@@ -394,8 +394,8 @@ namespace RurouniJones.DCS.OverlordBot.Network
                 return true;
             }
 
-            if (!_clientState.TryGetValue(transmittingClientGuid, out var transmittingClient)) return false;
-            var myLatLng = _clientState.PlayerCoalitionLocationMetadata.LngLngPosition;
+            if (!_mainClient.TryGetValue(transmittingClientGuid, out var transmittingClient)) return false;
+            var myLatLng = _mainClient.PlayerCoalitionLocationMetadata.LngLngPosition;
             var clientLatLng = transmittingClient.LatLngPosition;
             //No DCS Position - do we have LotATC Position?
             if (myLatLng == null || clientLatLng == null || !myLatLng.isValid() || !clientLatLng.isValid())
@@ -440,12 +440,12 @@ namespace RurouniJones.DCS.OverlordBot.Network
                 yScore += 16;
             }
 
-            if (_clientState.DcsPlayerRadioInfo.selected == x.ReceivingState.ReceivedOn)
+            if (_mainClient.DcsPlayerRadioInfo.selected == x.ReceivingState.ReceivedOn)
             {
                 xScore += 8;
             }
 
-            if (_clientState.DcsPlayerRadioInfo.selected == y.ReceivingState.ReceivedOn)
+            if (_mainClient.DcsPlayerRadioInfo.selected == y.ReceivingState.ReceivedOn)
             {
                 yScore += 8;
             }
@@ -469,7 +469,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
             {
                 try
                 {
-                    var currentlySelectedRadio = _clientState.DcsPlayerRadioInfo.radios[radioId];
+                    var currentlySelectedRadio = _mainClient.DcsPlayerRadioInfo.radios[radioId];
 
                     var frequencies = new List<double>(1);
                     var encryptions = new List<byte>(1);
@@ -487,7 +487,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
                         AudioPart1Bytes = bytes,
                         AudioPart1Length = (ushort)bytes.Length,
                         Frequencies = frequencies.ToArray(),
-                        UnitId = _clientState.DcsPlayerRadioInfo.unitId,
+                        UnitId = _mainClient.DcsPlayerRadioInfo.unitId,
                         Encryptions = encryptions.ToArray(),
                         Modulations = modulations.ToArray(),
                         PacketNumber = _packetNumber++

@@ -16,8 +16,10 @@ namespace RurouniJones.DCS.OverlordBot.Network
     {
         private readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
-        public readonly SrsDataClient SrsDataClient;
         private readonly AudioManager _audioManager;
+
+        public readonly SrsDataClient SrsDataClient;
+        public SrsAudioClient SrsAudioClient;
 
         public DCSPlayerRadioInfo DcsPlayerRadioInfo { get; set; }
         public DCSPlayerSideInfo PlayerCoalitionLocationMetadata { get; set; }
@@ -26,30 +28,8 @@ namespace RurouniJones.DCS.OverlordBot.Network
 
         public long LastSent { get; set; }
 
-        public bool IsTcpConnected { get; set; }
-
-        public  SrsAudioClient SrsAudioClient;
-
-        private bool _isConnected;
-        public bool IsConnected
-        {
-            get => _isConnected;
-            set
-            {
-                if(value && !_isConnected )
-                {
-                    _logger.Debug($"Connection State {SrsDataClient.ConnectionState.Connected}");
-                    SrsDataClient.ProcessConnectionState(SrsDataClient.ConnectionState.Connected);
-                }
-                if (!value == _isConnected)
-                {
-                    _logger.Debug($"Connection State {SrsDataClient.ConnectionState.Disconnected}");
-                    SrsDataClient.ProcessConnectionState(SrsDataClient.ConnectionState.Disconnected);
-                }
-                _isConnected = value;
-
-            }
-        }
+        public bool IsDataConnected { get; set; }
+        public bool IsAudioConnected { get; set; }
 
         public string ShortGuid { get; }
 
@@ -76,7 +56,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
 
             LastSent = 0;
 
-            IsTcpConnected = false;
+            IsDataConnected = false;
             ExternalAwacsModeSelected = false;
 
             LastSeenName = playerRadioInfo.name;
@@ -86,7 +66,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
         {
             _endpoint = endpoint;
             _logger.Info($"Starting SRS Data Connection");
-            SrsDataClient.TryConnect(_endpoint, ConnectCallback);
+            SrsDataClient.TryConnect(_endpoint, DataConnectedCallback);
         }
 
         public void ConnectAudio()
@@ -97,15 +77,16 @@ namespace RurouniJones.DCS.OverlordBot.Network
             udpListenerThread.Start();
         }
 
-        private void ConnectCallback(bool result, bool connectionError, string connection)
+        private void DataConnectedCallback(bool result)
         {
             if (result)
             {
-                if (IsTcpConnected) return;
+                if (IsDataConnected) return;
 
-                IsTcpConnected = true;
+                IsDataConnected = true;
                 ConnectAudio();
                 _audioManager.StartEncoding();
+                SrsDataClient.ConnectExternalAwacsMode();
             }
             else
             {
@@ -118,8 +99,12 @@ namespace RurouniJones.DCS.OverlordBot.Network
 
         public void Disconnect()
         {
-            IsTcpConnected = false;
+            _logger.Debug("Disconnecting from Server");
 
+            IsDataConnected = false;
+            IsAudioConnected = false;
+
+            SrsDataClient.DisconnectExternalAwacsMode();
             SrsDataClient.Disconnect();
             SrsAudioClient.RequestStop();
 

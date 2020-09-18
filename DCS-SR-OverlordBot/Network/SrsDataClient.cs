@@ -18,19 +18,19 @@ namespace RurouniJones.DCS.OverlordBot.Network
 {
     public class SrsDataClient
     {
-        public delegate void ConnectCallback(bool result, bool connectionError, string connection);
+        public delegate void ConnectCallback(bool result);
 
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private volatile bool _stop;
 
         public static string ServerVersion = "Unknown";
-        private ConnectCallback _callback;
+        private ConnectCallback _connectionCallback;
         private IPEndPoint _serverEndpoint;
         private TcpClient _tcpClient;
 
         private readonly SyncedServerSettings _serverSettings = SyncedServerSettings.Instance;
-        private readonly Client _clientState;
+        private readonly Client _mainClient;
 
         private readonly string _guid;
 
@@ -44,10 +44,10 @@ namespace RurouniJones.DCS.OverlordBot.Network
             Disconnected
         }
 
-        public SrsDataClient(Client client)
+        public SrsDataClient(Client mainClient)
         {
-            _clientState = client;
-            _guid = client.ShortGuid;
+            _mainClient = mainClient;
+            _guid = mainClient.ShortGuid;
         }
 
         public void ProcessConnectionState(ConnectionState cs)
@@ -66,7 +66,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
 
         public void TryConnect(IPEndPoint endpoint, ConnectCallback callback)
         {
-            _callback = callback;
+            _connectionCallback = callback;
             _serverEndpoint = endpoint;
 
             var tcpThread = new Thread(Connect) {Name = "SRS Data"};
@@ -76,15 +76,15 @@ namespace RurouniJones.DCS.OverlordBot.Network
 
         public void ConnectExternalAwacsMode()
         {
-            if (_clientState.ExternalAwacsModeConnected)
+            if (_mainClient.ExternalAwacsModeConnected)
             {
                 return;
             }
 
-            _clientState.ExternalAwacsModeSelected = true;
+            _mainClient.ExternalAwacsModeSelected = true;
 
-            var sideInfo = _clientState.PlayerCoalitionLocationMetadata;
-            sideInfo.name = _clientState.LastSeenName;
+            var sideInfo = _mainClient.PlayerCoalitionLocationMetadata;
+            sideInfo.name = _mainClient.LastSeenName;
 
             var message = new NetworkMessage
             {
@@ -95,9 +95,8 @@ namespace RurouniJones.DCS.OverlordBot.Network
                     LatLngPosition = sideInfo.LngLngPosition,
                     ClientGuid = _guid
                 },
-                ExternalAWACSModePassword = _clientState.ExternalAwacsModePassword,
+                ExternalAWACSModePassword = _mainClient.ExternalAwacsModePassword,
                 MsgType = NetworkMessage.MessageType.EXTERNAL_AWACS_MODE_PASSWORD
-
             };
 
             SendToServer(message);
@@ -105,11 +104,12 @@ namespace RurouniJones.DCS.OverlordBot.Network
 
         public void DisconnectExternalAwacsMode()
         {
-            _clientState.PlayerCoalitionLocationMetadata.side = 0;
-            _clientState.PlayerCoalitionLocationMetadata.name = "";
-            _clientState.DcsPlayerRadioInfo.name = "";
-            _clientState.DcsPlayerRadioInfo.LastUpdate = 0;
-            _clientState.LastSent = 0;
+            _mainClient.ExternalAwacsModeConnected = false;
+            _mainClient.PlayerCoalitionLocationMetadata.side = 0;
+            _mainClient.PlayerCoalitionLocationMetadata.name = "";
+            _mainClient.DcsPlayerRadioInfo.name = "";
+            _mainClient.DcsPlayerRadioInfo.LastUpdate = 0;
+            _mainClient.LastSent = 0;
         }
 
         private void Connect()
@@ -130,7 +130,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
                     {
                         _tcpClient.NoDelay = true;
 
-                        CallOnMain(true);
+                        _connectionCallback(true);
                         ClientSyncLoop();
                     }
                     else
@@ -147,16 +147,15 @@ namespace RurouniJones.DCS.OverlordBot.Network
                     connectionError = true;
                 }
             }
-            //disconnect callback
-            CallOnMain(false, connectionError);
+            _connectionCallback(false);
         }
 
         private void SendAwacsRadioInformation()
         {
-            _clientState.LastSent = 0;
-            _clientState.ExternalAwacsModeConnected = true;
+            _mainClient.LastSent = 0;
+            _mainClient.ExternalAwacsModeConnected = true;
 
-            var sideInfo = _clientState.PlayerCoalitionLocationMetadata;
+            var sideInfo = _mainClient.PlayerCoalitionLocationMetadata;
 
             var message = new NetworkMessage
             {
@@ -165,7 +164,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
                     Coalition = sideInfo.side,
                     Name = sideInfo.name,
                     ClientGuid = _guid,
-                    RadioInfo = _clientState.DcsPlayerRadioInfo,
+                    RadioInfo = _mainClient.DcsPlayerRadioInfo,
                     LatLngPosition = sideInfo.LngLngPosition
                 },
                 MsgType = NetworkMessage.MessageType.RADIO_UPDATE
@@ -174,37 +173,24 @@ namespace RurouniJones.DCS.OverlordBot.Network
             SendToServer(message);
         }
 
-        private void CallOnMain(bool result, bool connectionError = false)
-        {
-            try
-            {
-                Application.Current.Dispatcher.Invoke(DispatcherPriority.Background,
-                    new ThreadStart(delegate { _callback(result, connectionError, _serverEndpoint.ToString()); }));
-            }
-            catch (Exception ex)
-            {
-                 Logger.Error(ex, "Failed to update UI after connection callback (result {result}, connectionError {connectionError})", result, connectionError);
-            }
-        }
-
         private void ClientSyncLoop()
         {
             //clear the clients list
-            _clientState.Clear();
+            _mainClient.Clear();
             var decodeErrors = 0; //if the JSON is unreadable - new version likely
 
             using (var reader = new StreamReader(_tcpClient.GetStream(), Encoding.UTF8))
             {
                 try
                 {
-                    var sideInfo = _clientState.PlayerCoalitionLocationMetadata;
+                    var sideInfo = _mainClient.PlayerCoalitionLocationMetadata;
                     //start the loop off by sending a SYNC Request
                     SendToServer(new NetworkMessage
                     {
                         Client = new SRClient
                         {
                             Coalition = sideInfo.side,
-                            Name = sideInfo.name.Length > 0 ? sideInfo.name : _clientState.LastSeenName,
+                            Name = sideInfo.name.Length > 0 ? sideInfo.name : _mainClient.LastSeenName,
                             LatLngPosition = sideInfo.LngLngPosition,
                             ClientGuid = _guid
                         },
@@ -235,9 +221,9 @@ namespace RurouniJones.DCS.OverlordBot.Network
                                             _serverSettings.Decode(serverMessage.ServerSettings);
                                         }
 
-                                        if (_clientState.ContainsKey(serverMessage.Client.ClientGuid))
+                                        if (_mainClient.ContainsKey(serverMessage.Client.ClientGuid))
                                         {
-                                            var srClient = _clientState[serverMessage.Client.ClientGuid];
+                                            var srClient = _mainClient[serverMessage.Client.ClientGuid];
                                             var updatedSrClient = serverMessage.Client;
                                             if (srClient != null)
                                             {
@@ -278,7 +264,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
                                             connectedClient.LineOfSightLoss = 0.0f;
                                             //0.0 is NO LOSS therefore full Line of sight
 
-                                            _clientState[serverMessage.Client.ClientGuid] = connectedClient;
+                                            _mainClient[serverMessage.Client.ClientGuid] = connectedClient;
 
                                             // Logger.Debug("Received New Client: " + NetworkMessage.MessageType.UPDATE +
                                             //             " From: " +
@@ -286,7 +272,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
                                             //             serverMessage.Client.Coalition);
                                         }
 
-                                        if (_clientState.ExternalAwacsModeSelected &&
+                                        if (_mainClient.ExternalAwacsModeSelected &&
                                             !_serverSettings.GetSettingAsBool(ServerSettingsKeys.EXTERNAL_AWACS_MODE))
                                         {
                                             DisconnectExternalAwacsMode();
@@ -300,7 +286,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
                                         if (serverMessage.Version == null)
                                         {
                                             Logger.Error("Disconnecting Unversioned Server");
-                                            Disconnect();
+                                            _mainClient.Disconnect();
                                             break;
                                         }
 
@@ -315,7 +301,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
 
                                             ShowVersionMistmatchWarning(serverMessage.Version);
 
-                                            Disconnect();
+                                            _mainClient.Disconnect();
                                             break;
                                         }
 
@@ -328,16 +314,17 @@ namespace RurouniJones.DCS.OverlordBot.Network
                                                 //LOS isnt working
                                                 client.LineOfSightLoss = 0.0f;
                                                 //0.0 is NO LOSS therefore full Line of sight
-                                                _clientState[client.ClientGuid] = client;
+                                                _mainClient[client.ClientGuid] = client;
                                             }
                                         }
                                         //add server settings
                                         _serverSettings.Decode(serverMessage.ServerSettings);
 
-                                        if (_clientState.ExternalAwacsModeSelected &&
+                                        if (_mainClient.ExternalAwacsModeSelected &&
                                             !_serverSettings.GetSettingAsBool(ServerSettingsKeys.EXTERNAL_AWACS_MODE))
                                         {
-                                            DisconnectExternalAwacsMode();
+                                            Logger.Error($"This server does not support External Awacs mode");
+                                            _mainClient.Disconnect();
                                         }
 
                                         break;
@@ -347,15 +334,16 @@ namespace RurouniJones.DCS.OverlordBot.Network
                                         _serverSettings.Decode(serverMessage.ServerSettings);
                                         ServerVersion = serverMessage.Version;
 
-                                        if (_clientState.ExternalAwacsModeSelected &&
+                                        if (_mainClient.ExternalAwacsModeSelected &&
                                             !_serverSettings.GetSettingAsBool(ServerSettingsKeys.EXTERNAL_AWACS_MODE))
                                         {
-                                            DisconnectExternalAwacsMode();
+                                            Logger.Error($"This server does not support External Awacs mode");
+                                            _mainClient.Disconnect();
                                         }
                                         break;
                                     case NetworkMessage.MessageType.CLIENT_DISCONNECT:
 
-                                        _clientState.TryRemove(serverMessage.Client.ClientGuid, out var outClient);
+                                        _mainClient.TryRemove(serverMessage.Client.ClientGuid, out var outClient);
 
                                         if (outClient != null)
                                         {
@@ -365,29 +353,26 @@ namespace RurouniJones.DCS.OverlordBot.Network
                                         break;
                                     case NetworkMessage.MessageType.VERSION_MISMATCH:
                                         Logger.Error($"Version Mismatch Between Client ({UpdaterChecker.VERSION}) & Server ({serverMessage.Version}) - Disconnecting");
-
-                                        ShowVersionMistmatchWarning(serverMessage.Version);
-
-                                        Disconnect();
+                                        _mainClient.Disconnect();
                                         break;
                                     case NetworkMessage.MessageType.EXTERNAL_AWACS_MODE_PASSWORD:
                                         if (serverMessage.Client.Coalition > 0)
                                         {
                                             Logger.Info("External AWACS mode authentication succeeded, coalition {0}", serverMessage.Client.Coalition == 1 ? "red" : "blue");
-                                            _clientState.PlayerCoalitionLocationMetadata.side = serverMessage.Client.Coalition;
-                                            _clientState.PlayerCoalitionLocationMetadata.name = _clientState.LastSeenName;
-                                            _clientState.DcsPlayerRadioInfo.name = _clientState.LastSeenName;
+                                            _mainClient.PlayerCoalitionLocationMetadata.side = serverMessage.Client.Coalition;
+                                            _mainClient.PlayerCoalitionLocationMetadata.name = _mainClient.LastSeenName;
+                                            _mainClient.DcsPlayerRadioInfo.name = _mainClient.LastSeenName;
 
                                             SendAwacsRadioInformation();
                                         }
                                         else
                                         {
                                             Logger.Info("External AWACS mode authentication failed");
-                                            DisconnectExternalAwacsMode();
+                                            _mainClient.Disconnect();
                                         }
                                         break;
                                     default:
-                                        Logger.Error("Recevied unknown " + line);
+                                        Logger.Error("Received unknown " + line);
                                         break;
                                 }
                             }
@@ -403,7 +388,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
 
                             if (decodeErrors <= MaxDecodeErrors) continue;
                             Logger.Error("Too many errors decoding server messagse. disconnecting");
-                            Disconnect();
+                            _mainClient.Disconnect();
                             break;
                         }
 
@@ -420,12 +405,11 @@ namespace RurouniJones.DCS.OverlordBot.Network
             }
 
             //disconnected - reset DCS Info
-            _clientState.DcsPlayerRadioInfo.LastUpdate = 0;
+            _mainClient.DcsPlayerRadioInfo.LastUpdate = 0;
 
             //clear the clients list
-            _clientState.Clear();
-
-            Disconnect();
+            _mainClient.Clear();
+            _mainClient.Disconnect();
         }
 
         private static void ShowVersionMistmatchWarning(string serverVersion)
@@ -468,7 +452,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
                     Logger.Error(ex, $"Client exception sending message type {message.MsgType} to server");
                 }
 
-                Disconnect();
+                _mainClient.Disconnect();
             }
         }
 
@@ -477,14 +461,11 @@ namespace RurouniJones.DCS.OverlordBot.Network
         {
             _stop = true;
 
-            DisconnectExternalAwacsMode();
-
             _tcpClient?.Close(); // this'll stop the socket blocking
 
-            Logger.Error("Disconnecting from server");
-            _clientState.IsTcpConnected = false;
+            Logger.Error("Disconnecting data connection from server");
+            _mainClient.IsDataConnected = false;
 
-            //CallOnMain(false);
         }
     }
 }
