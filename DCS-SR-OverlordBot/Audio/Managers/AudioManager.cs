@@ -54,7 +54,7 @@ namespace RurouniJones.DCS.OverlordBot.Audio.Managers
         {
             BotAudioProvider = new BotAudioProvider(Client.DcsPlayerRadioInfo.radios[0], ResponseQueue)
             {
-                SpeechRecognitionListener = { VoiceHandler = Client.UdpVoiceHandler }
+                SpeechRecognitionListener = { VoiceHandler = Client.SrsAudioClient }
             };
             StartResponseCheckLoop();
 
@@ -86,10 +86,10 @@ namespace RurouniJones.DCS.OverlordBot.Audio.Managers
             _decoder?.Dispose();
             _decoder = null;
           
-            if (Client.UdpVoiceHandler != null)
+            if (Client.SrsAudioClient != null)
             {
-                Client.UdpVoiceHandler.RequestStop();
-                Client.UdpVoiceHandler = null;
+                Client.SrsAudioClient.RequestStop();
+                Client.SrsAudioClient = null;
             }
 
             SpeakerMax = -100;
@@ -158,14 +158,14 @@ namespace RurouniJones.DCS.OverlordBot.Audio.Managers
                     //encode as opus bytes
                     var buff = _encoder.Encode(packetBuffer, SegmentFrames, out var len);
 
-                    if (Client.UdpVoiceHandler != null && buff != null && len > 0)
+                    if (Client.SrsAudioClient != null && buff != null && len > 0)
                     {
                         //create copy with small buffer
                         var encoded = new byte[len];
 
                         Buffer.BlockCopy(buff, 0, encoded, 0, len);
 
-                        await Task.Run(() => Client.UdpVoiceHandler.Send(encoded, 0));
+                        await Task.Run(() => Client.SrsAudioClient.Send(encoded, 0));
                         // Sleep between sending 40ms worth of data so that we do not overflow the 3 second audio buffers of
                         // normal SRS clients. The lower the sleep the less chance of audio corruption due to network issues
                         // but the greater the chance of over-flowing buffers. 20ms sleep per 40ms of audio being sent seems
@@ -178,7 +178,7 @@ namespace RurouniJones.DCS.OverlordBot.Audio.Managers
                     }
                 }
                 // Send one null to reset the sending state
-                await Task.Run(() => Client.UdpVoiceHandler.Send(null, 0));
+                await Task.Run(() => Client.SrsAudioClient.Send(null, 0));
                 // Sleep for a second between sending messages to give players a chance to split messages.
             } catch (Exception ex)
             {

@@ -16,7 +16,7 @@ using NLog;
 
 namespace RurouniJones.DCS.OverlordBot.Network
 {
-    public class SrsClientSyncHandler
+    public class SrsDataClient
     {
         public delegate void ConnectCallback(bool result, bool connectionError, string connection);
 
@@ -44,7 +44,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
             Disconnected
         }
 
-        public SrsClientSyncHandler(Client client)
+        public SrsDataClient(Client client)
         {
             _clientState = client;
             _guid = client.ShortGuid;

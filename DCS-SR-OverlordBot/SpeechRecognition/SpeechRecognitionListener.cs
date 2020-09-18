@@ -34,7 +34,7 @@ namespace RurouniJones.DCS.OverlordBot.SpeechRecognition
 
         public readonly AbstractController Controller;
 
-        public UdpVoiceHandler VoiceHandler;
+        public SrsAudioClient VoiceHandler;
 
         public bool TimedOut;
 

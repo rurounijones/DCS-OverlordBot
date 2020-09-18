@@ -17,7 +17,7 @@ using Timer = Cabhishek.Timers.Timer;
 
 namespace RurouniJones.DCS.OverlordBot.Network
 {
-    public class UdpVoiceHandler
+    public class SrsAudioClient
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
@@ -52,7 +52,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
         private long _udpLastReceived;
         private readonly DispatcherTimer _updateTimer;
 
-        public UdpVoiceHandler(string guid, IPEndPoint endpoint, AudioManager audioManager, Client client)
+        public SrsAudioClient(string guid, IPEndPoint endpoint, AudioManager audioManager, Client client)
         {
             _audioManager = audioManager;
             _guidAsciiBytes = Encoding.ASCII.GetBytes(guid);

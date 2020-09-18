@@ -16,7 +16,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
     {
         private readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
-        public readonly SrsClientSyncHandler SrsClientSyncHandler;
+        public readonly SrsDataClient SrsDataClient;
         private readonly AudioManager _audioManager;
 
         public DCSPlayerRadioInfo DcsPlayerRadioInfo { get; set; }
@@ -28,7 +28,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
 
         public bool IsTcpConnected { get; set; }
 
-        public  UdpVoiceHandler UdpVoiceHandler;
+        public  SrsAudioClient SrsAudioClient;
 
         private bool _isConnected;
         public bool IsConnected
@@ -38,13 +38,13 @@ namespace RurouniJones.DCS.OverlordBot.Network
             {
                 if(value && !_isConnected )
                 {
-                    _logger.Debug($"Connection State {SrsClientSyncHandler.ConnectionState.Connected}");
-                    SrsClientSyncHandler.ProcessConnectionState(SrsClientSyncHandler.ConnectionState.Connected);
+                    _logger.Debug($"Connection State {SrsDataClient.ConnectionState.Connected}");
+                    SrsDataClient.ProcessConnectionState(SrsDataClient.ConnectionState.Connected);
                 }
                 if (!value == _isConnected)
                 {
-                    _logger.Debug($"Connection State {SrsClientSyncHandler.ConnectionState.Disconnected}");
-                    SrsClientSyncHandler.ProcessConnectionState(SrsClientSyncHandler.ConnectionState.Disconnected);
+                    _logger.Debug($"Connection State {SrsDataClient.ConnectionState.Disconnected}");
+                    SrsDataClient.ProcessConnectionState(SrsDataClient.ConnectionState.Disconnected);
                 }
                 _isConnected = value;
 
@@ -70,7 +70,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
             ShortGuid = Ciribob.DCS.SimpleRadio.Standalone.Common.Network.ShortGuid.NewGuid();
             DcsPlayerRadioInfo = playerRadioInfo;
             PlayerCoalitionLocationMetadata = new DCSPlayerSideInfo();
-            SrsClientSyncHandler = new SrsClientSyncHandler(this);
+            SrsDataClient = new SrsDataClient(this);
 
             ExternalAwacsModePassword = playerRadioInfo.radios.First().coalitionPassword;
 
@@ -86,14 +86,14 @@ namespace RurouniJones.DCS.OverlordBot.Network
         {
             _endpoint = endpoint;
             _logger.Info($"Starting SRS Data Connection");
-            SrsClientSyncHandler.TryConnect(_endpoint, ConnectCallback);
+            SrsDataClient.TryConnect(_endpoint, ConnectCallback);
         }
 
         public void ConnectAudio()
         {
             _logger.Info($"Starting SRS Audio Connection");
-            UdpVoiceHandler = new UdpVoiceHandler(ShortGuid, _endpoint, _audioManager, this);
-            var udpListenerThread = new Thread(UdpVoiceHandler.Listen) {Name = "Audio Listener"};
+            SrsAudioClient = new SrsAudioClient(ShortGuid, _endpoint, _audioManager, this);
+            var udpListenerThread = new Thread(SrsAudioClient.Listen) {Name = "Audio Listener"};
             udpListenerThread.Start();
         }
 
@@ -120,8 +120,8 @@ namespace RurouniJones.DCS.OverlordBot.Network
         {
             IsTcpConnected = false;
 
-            SrsClientSyncHandler.Disconnect();
-            UdpVoiceHandler.RequestStop();
+            SrsDataClient.Disconnect();
+            SrsAudioClient.RequestStop();
 
             DcsPlayerRadioInfo.Reset();
             PlayerCoalitionLocationMetadata.Reset();
