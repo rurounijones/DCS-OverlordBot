@@ -18,7 +18,7 @@ namespace RurouniJones.DCS.OverlordBot.Audio.Providers
         private readonly BufferedWaveProvider _speechAudioProvider;
         public SpeechRecognitionListener SpeechRecognitionListener { get; set; }
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private readonly byte[] Silence;
+        private readonly byte[] _silence;
 
         public BotAudioProvider(RadioInformation receivedRadioInfo, ConcurrentQueue<byte[]> responseQueue)
         {
@@ -28,7 +28,7 @@ namespace RurouniJones.DCS.OverlordBot.Audio.Providers
                 DiscardOnBufferOverflow = true,
                 ReadFully = false
             };
-            Silence =  new byte[_speechAudioProvider.WaveFormat.AverageBytesPerSecond * 2];
+            _silence =  new byte[_speechAudioProvider.WaveFormat.AverageBytesPerSecond * 2];
             SpeechRecognitionListener = new SpeechRecognitionListener(_speechAudioProvider, responseQueue, receivedRadioInfo);
             Task.Run(() => SpeechRecognitionListener.StartListeningAsync());
         }
@@ -87,7 +87,7 @@ namespace RurouniJones.DCS.OverlordBot.Audio.Providers
 
         public void EndTransmission()
         {
-            _speechAudioProvider.AddSamples(Silence, 0, Silence.Length);
+            _speechAudioProvider.AddSamples(_silence, 0, _silence.Length);
         }
 
         //destructor to clear up opus

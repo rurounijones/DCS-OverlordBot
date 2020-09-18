@@ -6,7 +6,6 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows.Threading;
-using RurouniJones.DCS.OverlordBot.Audio.Managers;
 using RurouniJones.DCS.OverlordBot.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network;
@@ -24,8 +23,6 @@ namespace RurouniJones.DCS.OverlordBot.Network
         public static volatile RadioSendingState RadioSendingState = new RadioSendingState();
         public static volatile RadioReceivingState[] RadioReceivingState = new RadioReceivingState[11];
 
-        private readonly AudioManager _audioManager;
-
         private readonly BlockingCollection<byte[]> _encodedAudio = new BlockingCollection<byte[]>();
         private readonly string _guid;
         private readonly byte[] _guidAsciiBytes;
@@ -34,7 +31,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
 
         private readonly CancellationTokenSource _stopFlag = new CancellationTokenSource();
 
-        private const int _jitterBuffer = 50; //in milliseconds
+        private const int JitterBuffer = 50; //in milliseconds
 
         private readonly Client _mainClient;
 
@@ -52,16 +49,14 @@ namespace RurouniJones.DCS.OverlordBot.Network
         private long _udpLastReceived;
         private readonly DispatcherTimer _updateTimer;
 
-        public SrsAudioClient(string guid, IPEndPoint endpoint, AudioManager audioManager, Client mainClient)
+        public SrsAudioClient(Client mainClient)
         {
-            _audioManager = audioManager;
-            _guidAsciiBytes = Encoding.ASCII.GetBytes(guid);
-
-            _guid = guid;
+            _guid = mainClient.ShortGuid;
+            _guidAsciiBytes = Encoding.ASCII.GetBytes(_guid);
 
             _mainClient = mainClient;
 
-            _serverEndpoint = endpoint;
+            _serverEndpoint = mainClient.Endpoint;
 
             _updateTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(5) };
             _updateTimer.Tick += UpdateAudioConnectionStatus;
@@ -92,7 +87,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
             var radioState = RadioReceivingState[0];
             if (radioState == null || radioState.PlayedEndOfTransmission || radioState.IsReceiving) return;
             radioState.PlayedEndOfTransmission = true;
-            _audioManager.EndTransmission();
+            _mainClient.AudioManager.EndTransmission();
         }
 
         public void Listen()
@@ -149,7 +144,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
         {
             StopTimer();
 
-            _timer = new Timer(CheckTransmissionEnded, TimeSpan.FromMilliseconds(_jitterBuffer));
+            _timer = new Timer(CheckTransmissionEnded, TimeSpan.FromMilliseconds(JitterBuffer));
             _timer.Start();
         }
 
@@ -315,7 +310,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
                                 // Only play actual audio once
                                 if (i == 0)
                                 {
-                                    _audioManager.AddClientAudio(audio);
+                                    _mainClient.AudioManager.AddClientAudio(audio);
                                 }
                             }
                         }

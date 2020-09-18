@@ -5,7 +5,6 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows;
-using System.Windows.Threading;
 using RurouniJones.DCS.OverlordBot.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network;
@@ -48,20 +47,6 @@ namespace RurouniJones.DCS.OverlordBot.Network
         {
             _mainClient = mainClient;
             _guid = mainClient.ShortGuid;
-        }
-
-        public void ProcessConnectionState(ConnectionState cs)
-        {
-            Logger.Debug($"Recieving Connection State {cs}");
-            switch (cs)
-            {
-                case ConnectionState.Connected:
-                    ConnectExternalAwacsMode();
-                    break;
-                case ConnectionState.Disconnected:
-                    DisconnectExternalAwacsMode();
-                    break;
-            }
         }
 
         public void TryConnect(IPEndPoint endpoint, ConnectCallback callback)

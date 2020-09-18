@@ -16,7 +16,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
     {
         private readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
-        private readonly AudioManager _audioManager;
+        public readonly AudioManager AudioManager;
 
         public readonly SrsDataClient SrsDataClient;
         public SrsAudioClient SrsAudioClient;
@@ -24,7 +24,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
         public DCSPlayerRadioInfo DcsPlayerRadioInfo { get; set; }
         public DCSPlayerSideInfo PlayerCoalitionLocationMetadata { get; set; }
 
-        private IPEndPoint _endpoint;
+        public IPEndPoint Endpoint;
 
         public long LastSent { get; set; }
 
@@ -46,7 +46,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
 
         public Client(AudioManager audioManager, DCSPlayerRadioInfo playerRadioInfo )
         {
-            _audioManager = audioManager;
+            AudioManager = audioManager;
             ShortGuid = Ciribob.DCS.SimpleRadio.Standalone.Common.Network.ShortGuid.NewGuid();
             DcsPlayerRadioInfo = playerRadioInfo;
             PlayerCoalitionLocationMetadata = new DCSPlayerSideInfo();
@@ -64,15 +64,15 @@ namespace RurouniJones.DCS.OverlordBot.Network
 
         public void ConnectData(IPEndPoint endpoint)
         {
-            _endpoint = endpoint;
+            Endpoint = endpoint;
             _logger.Info($"Starting SRS Data Connection");
-            SrsDataClient.TryConnect(_endpoint, DataConnectedCallback);
+            SrsDataClient.TryConnect(Endpoint, DataConnectedCallback);
         }
 
         public void ConnectAudio()
         {
             _logger.Info($"Starting SRS Audio Connection");
-            SrsAudioClient = new SrsAudioClient(ShortGuid, _endpoint, _audioManager, this);
+            SrsAudioClient = new SrsAudioClient(this);
             var udpListenerThread = new Thread(SrsAudioClient.Listen) {Name = "Audio Listener"};
             udpListenerThread.Start();
         }
@@ -85,7 +85,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
 
                 IsDataConnected = true;
                 ConnectAudio();
-                _audioManager.StartEncoding();
+                AudioManager.StartEncoding();
                 SrsDataClient.ConnectExternalAwacsMode();
             }
             else
@@ -93,7 +93,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
                 Disconnect();
                 Thread.Sleep(5000);
                 _logger.Debug("Could not connect to SRS server. Trying again");
-                ConnectData(_endpoint);
+                ConnectData(Endpoint);
             }
         }
 
