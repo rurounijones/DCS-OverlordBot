@@ -181,7 +181,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
                             decodeErrors = 0; //reset counter
                             if (serverMessage != null)
                             {
-                                Logger.Debug($"Message {serverMessage.MsgType} received: {line}");
+                                Logger.Trace($"Message {serverMessage.MsgType} received: {line}");
                                 switch (serverMessage.MsgType)
                                 {
                                     case NetworkMessage.MessageType.PING:
@@ -400,7 +400,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
                 try
                 {
                     _tcpClient.GetStream().Write(bytes, 0, bytes.Length);
-                    Logger.Debug($"Message {message.MsgType} sent: {json}");
+                    Logger.Trace($"Message {message.MsgType} sent: {json}");
 
                 } catch (ObjectDisposedException ex)
                 {

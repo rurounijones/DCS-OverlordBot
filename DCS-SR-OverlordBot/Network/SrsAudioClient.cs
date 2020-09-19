@@ -120,7 +120,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
                     if (bytes.Length == 22)
                     {
                         _udpLastReceived = DateTime.Now.Ticks;
-                        Logger.Debug("Received UDP Ping Back from Server");
+                        Logger.Trace("Received UDP Ping Back from Server");
                     }
                     else if (bytes.Length > 22)
                     {
@@ -516,7 +516,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
 
         private void StartPing()
         {
-            Logger.Info("Pinging Server - Starting");
+            Logger.Debug("Pinging Server - Starting");
 
             var message = _guidAsciiBytes;
 
@@ -538,7 +538,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
                     {
                         if (!RadioSendingState.IsSending)
                         {
-                            Logger.Debug($"Sending UDP Ping to server {_serverEndpoint}: {_guid}");
+                            Logger.Trace($"Sending UDP Ping to server {_serverEndpoint}: {_guid}");
                             _listener?.Send(message, message.Length, _serverEndpoint);
                         }
                     }
