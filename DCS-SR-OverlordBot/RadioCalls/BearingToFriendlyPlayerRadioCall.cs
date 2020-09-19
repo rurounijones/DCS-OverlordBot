@@ -12,8 +12,8 @@ namespace RurouniJones.DCS.OverlordBot.RadioCalls
             get
             {
 
-                var luisEntity = LuisResponse.CompositeEntities.Find(x => x.ParentType == "player_callsign");
-                return luisEntity == null ? null : BuildPlayer(luisEntity);
+                var compositeEntity = LuisResponse.CompositeEntities.Find(x => x.ParentType == "player_callsign");
+                return compositeEntity == null ? null : BuildPlayer(compositeEntity, LuisResponse.Entities);
             }
         }
         public BearingToFriendlyPlayerRadioCall(IRadioCall baseRadioCall) : base(baseRadioCall) { }

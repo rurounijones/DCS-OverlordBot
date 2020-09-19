@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using RurouniJones.DCS.OverlordBot.GameState;
@@ -34,7 +35,7 @@ namespace RurouniJones.DCS.OverlordBot.RadioCalls
 
                 _sender = BuildPlayer(LuisResponse.CompositeEntities.Find(x => x.ParentType == "learned_sender" || 
                                                                                x.ParentType == "defined_sender" || 
-                                                                               x.ParentType == "airbase_caller"));
+                                                                               x.ParentType == "airbase_caller"), LuisResponse.Entities);
 
 
                 return _sender;
@@ -60,7 +61,7 @@ namespace RurouniJones.DCS.OverlordBot.RadioCalls
         public BaseRadioCall(string luisJson)
         {
             LuisResponse = JsonConvert.DeserializeObject<LuisResponse>(luisJson);
-            Task.Run((Func<Task>) (async () => await GameQuerier.PopulatePilotData(this))).Wait();
+            Task.Run(async () => await GameQuerier.PopulatePilotData(this)).Wait();
         }
 
         public BaseRadioCall(IRadioCall baseRadioCall)
@@ -69,7 +70,7 @@ namespace RurouniJones.DCS.OverlordBot.RadioCalls
             Sender = baseRadioCall.Sender;
         }
 
-        protected static Player BuildPlayer(LuisCompositeEntity luisEntity)
+        protected static Player BuildPlayer(LuisCompositeEntity luisEntity, List<LuisEntity> entities)
         {
             string group = null;
             var flight = -1;
@@ -135,6 +136,12 @@ namespace RurouniJones.DCS.OverlordBot.RadioCalls
             if (group == null || flight == -1 || element == -1)
             {
                 return null;
+            }
+
+            var groupEntity = entities.Find(x => x.Entity.Equals(group));
+            if (groupEntity?.Resolution?.Values?.Count > 0)
+            {
+                group = groupEntity.Resolution.Values[0];
             }
 
             return new Player
