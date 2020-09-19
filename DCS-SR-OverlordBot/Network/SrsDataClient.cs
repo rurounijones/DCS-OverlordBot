@@ -37,12 +37,6 @@ namespace RurouniJones.DCS.OverlordBot.Network
 
         public static volatile bool ApplicationStopped = false;
 
-        public enum ConnectionState
-        {
-            Connected,
-            Disconnected
-        }
-
         public SrsDataClient(Client mainClient)
         {
             _mainClient = mainClient;
@@ -121,15 +115,11 @@ namespace RurouniJones.DCS.OverlordBot.Network
                     else
                     {
                         Logger.Error($"Failed to connect to server @ {_serverEndpoint}");
-
-                        // Signal disconnect including an error
-                        connectionError = true;
                     }
                 }
                 catch (Exception ex)
                 {
                     Logger.Error(ex, "Could not connect to server");
-                    connectionError = true;
                 }
             }
             _connectionCallback(false);
@@ -192,7 +182,6 @@ namespace RurouniJones.DCS.OverlordBot.Network
                             if (serverMessage != null)
                             {
                                 Logger.Debug($"Message {serverMessage.MsgType} received: {line}");
-                                //Logger.Debug("Received "+serverMessage.MsgType);
                                 switch (serverMessage.MsgType)
                                 {
                                     case NetworkMessage.MessageType.PING:
@@ -233,10 +222,6 @@ namespace RurouniJones.DCS.OverlordBot.Network
                                                         srClient.RadioInfo.LastUpdate = DateTime.Now.Ticks;
                                                     }
                                                 }
-
-                                                // Logger.Debug("Received Update Client: " + NetworkMessage.MessageType.UPDATE + " From: " +
-                                                //             srClient.Name + " Coalition: " +
-                                                //             srClient.Coalition + " Pos: " + srClient.LatLngPosition);
                                             }
                                         }
                                         else
@@ -250,23 +235,17 @@ namespace RurouniJones.DCS.OverlordBot.Network
                                             //0.0 is NO LOSS therefore full Line of sight
 
                                             _mainClient[serverMessage.Client.ClientGuid] = connectedClient;
-
-                                            // Logger.Debug("Received New Client: " + NetworkMessage.MessageType.UPDATE +
-                                            //             " From: " +
-                                            //             serverMessage.Client.Name + " Coalition: " +
-                                            //             serverMessage.Client.Coalition);
                                         }
 
                                         if (_mainClient.ExternalAwacsModeSelected &&
                                             !_serverSettings.GetSettingAsBool(ServerSettingsKeys.EXTERNAL_AWACS_MODE))
                                         {
-                                            DisconnectExternalAwacsMode();
+                                            Logger.Error($"This server does not support External Awacs mode");
+                                            _mainClient.Disconnect();
                                         }
 
                                         break;
                                     case NetworkMessage.MessageType.SYNC:
-                                        // Logger.Info("Recevied: " + NetworkMessage.MessageType.SYNC);
-
                                         //check server version
                                         if (serverMessage.Version == null)
                                         {
@@ -347,7 +326,6 @@ namespace RurouniJones.DCS.OverlordBot.Network
                                             _mainClient.PlayerCoalitionLocationMetadata.side = serverMessage.Client.Coalition;
                                             _mainClient.PlayerCoalitionLocationMetadata.name = _mainClient.LastSeenName;
                                             _mainClient.DcsPlayerRadioInfo.name = _mainClient.LastSeenName;
-
                                             SendAwacsRadioInformation();
                                         }
                                         else

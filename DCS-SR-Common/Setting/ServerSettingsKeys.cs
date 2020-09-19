@@ -41,7 +41,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Common.Setting
             { ServerSettingsKeys.CLIENT_EXPORT_ENABLED.ToString(), "false" },
             { ServerSettingsKeys.COALITION_AUDIO_SECURITY.ToString(), "false" },
             { ServerSettingsKeys.DISTANCE_ENABLED.ToString(), "false" },
-            { ServerSettingsKeys.EXTERNAL_AWACS_MODE.ToString(), "false" },
+            { ServerSettingsKeys.EXTERNAL_AWACS_MODE.ToString(), "true" },
             { ServerSettingsKeys.EXTERNAL_AWACS_MODE_BLUE_PASSWORD.ToString(), "" },
             { ServerSettingsKeys.EXTERNAL_AWACS_MODE_RED_PASSWORD.ToString(), "" },
             { ServerSettingsKeys.IRL_RADIO_RX_INTERFERENCE.ToString(), "false" },
