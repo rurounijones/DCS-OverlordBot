@@ -44,6 +44,8 @@ namespace RurouniJones.DCS.OverlordBot.Network
 
         public readonly string ExternalAwacsModePassword;
 
+        public string LogClientId;
+
         public Client(AudioManager audioManager, DCSPlayerRadioInfo playerRadioInfo )
         {
             AudioManager = audioManager;
@@ -51,6 +53,8 @@ namespace RurouniJones.DCS.OverlordBot.Network
             DcsPlayerRadioInfo = playerRadioInfo;
             PlayerCoalitionLocationMetadata = new DCSPlayerSideInfo();
             SrsDataClient = new SrsDataClient(this);
+
+            LogClientId = audioManager.LogClientId;
 
             ExternalAwacsModePassword = playerRadioInfo.radios.First().coalitionPassword;
 
@@ -65,13 +69,13 @@ namespace RurouniJones.DCS.OverlordBot.Network
         public void ConnectData(IPEndPoint endpoint)
         {
             Endpoint = endpoint;
-            _logger.Info($"Starting SRS Data Connection");
+            _logger.Info($"{LogClientId}| Starting SRS Data Connection");
             SrsDataClient.TryConnect(Endpoint, DataConnectedCallback);
         }
 
         public void ConnectAudio()
         {
-            _logger.Info($"Starting SRS Audio Connection");
+            _logger.Info($"{LogClientId}| Starting SRS Audio Connection");
             SrsAudioClient = new SrsAudioClient(this);
             var udpListenerThread = new Thread(SrsAudioClient.Listen) {Name = "Audio Listener"};
             udpListenerThread.Start();
@@ -92,14 +96,14 @@ namespace RurouniJones.DCS.OverlordBot.Network
             {
                 Disconnect();
                 Thread.Sleep(5000);
-                _logger.Debug("Could not connect to SRS server. Trying again");
+                _logger.Debug($"{LogClientId}| Could not connect to SRS server. Trying again");
                 ConnectData(Endpoint);
             }
         }
 
         public void Disconnect()
         {
-            _logger.Debug("Disconnecting from Server");
+            _logger.Debug($"{LogClientId}| Disconnecting from Server");
 
             IsDataConnected = false;
             IsAudioConnected = false;

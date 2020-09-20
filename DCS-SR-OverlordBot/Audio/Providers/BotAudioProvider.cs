@@ -18,10 +18,14 @@ namespace RurouniJones.DCS.OverlordBot.Audio.Providers
         private readonly BufferedWaveProvider _speechAudioProvider;
         public SpeechRecognitionListener SpeechRecognitionListener { get; set; }
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        public string LogClientId;
+
         private readonly byte[] _silence;
 
         public BotAudioProvider(RadioInformation receivedRadioInfo, ConcurrentQueue<byte[]> responseQueue)
         {
+
+            LogClientId = receivedRadioInfo.name;
             _speechAudioProvider = new BufferedWaveProvider(PcmMono16Ks16Le)
             {
                 BufferDuration = new TimeSpan(0, 1, 0),
@@ -46,6 +50,11 @@ namespace RurouniJones.DCS.OverlordBot.Audio.Providers
         public void AddClientAudioSamples(ClientAudio audio)
         {
             var newTransmission = LikelyNewTransmission();
+
+            if (newTransmission)
+            {
+                Logger.Debug($"{LogClientId}| Likely New Transmission");
+            }
 
             var decoded = Decoder.Decode(audio.EncodedAudio,
                 audio.EncodedAudio.Length, out var decodedLength, newTransmission);
@@ -81,12 +90,13 @@ namespace RurouniJones.DCS.OverlordBot.Audio.Providers
             }
             else
             {
-                Logger.Debug("Failed to decode audio from Packet for client");
+                Logger.Debug($"{LogClientId}| Failed to decode audio from Packet for client");
             }
         }
 
         public void EndTransmission()
         {
+            Logger.Debug($"{LogClientId}| Transmission Ended");
             _speechAudioProvider.AddSamples(_silence, 0, _silence.Length);
         }
 

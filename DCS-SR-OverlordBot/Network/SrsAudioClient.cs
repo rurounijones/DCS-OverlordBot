@@ -74,7 +74,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
             }
             else
             {
-                Logger.Info($"{diff.Seconds} seconds since last Received UDP data from Server");
+                Logger.Info($"{_mainClient.LogClientId}| {diff.Seconds} seconds since last Received UDP data from Server");
                 _mainClient.Disconnect();
             }
         }
@@ -100,7 +100,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
             }
             catch { }
 
-            var decoderThread = new Thread(UdpAudioDecode) {Name = $"{_mainClient.LastSeenName} Audio Decoder"};
+            var decoderThread = new Thread(UdpAudioDecode) {Name = $"{_mainClient.LogClientId}|  Audio Decoder"};
             decoderThread.Start();
 
             StartTransmissionEndCheckTimer();
@@ -120,7 +120,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
                     if (bytes.Length == 22)
                     {
                         _udpLastReceived = DateTime.Now.Ticks;
-                        Logger.Trace("Received UDP Ping Back from Server");
+                        Logger.Trace($"{_mainClient.LogClientId}| Received UDP Ping Back from Server");
                     }
                     else if (bytes.Length > 22)
                     {
@@ -130,7 +130,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
                 }
                 catch (Exception e)
                 {
-                    Logger.Error(e, "Error Receiving UDP data from Server");
+                    Logger.Error(e, $"{_mainClient.LogClientId}| Error Receiving UDP data from Server");
                 }
             }
 
@@ -189,7 +189,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
                             _encodedAudio.TryTake(out encodedOpusAudio, 100000, _stopFlag.Token);
                         } catch(OperationCanceledException ex)
                         {
-                            Logger.Debug(ex, "Cancelled operating to get encoded audio");
+                            Logger.Debug(ex, $"{_mainClient.LogClientId}| Cancelled operating to get encoded audio");
                         }
 
                         if (encodedOpusAudio == null ||
@@ -319,14 +319,14 @@ namespace RurouniJones.DCS.OverlordBot.Network
                     {
                         if (!_stop)
                         {
-                            Logger.Info(ex, "Failed to decode audio from Packet");
+                            Logger.Info(ex, $"{_mainClient.LogClientId}| Failed to decode audio from Packet");
                         }
                     }
                 }
             }
             catch (OperationCanceledException)
             {
-                Logger.Info("Stopped DeJitter Buffer");
+                Logger.Info($"{_mainClient.LogClientId}| Stopped DeJitter Buffer");
             }
         }
 
@@ -502,7 +502,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
                 }
                 catch (Exception e)
                 {
-                    Logger.Error(e, "Exception Sending Audio Message " + e.Message);
+                    Logger.Error(e, $"{_mainClient.LogClientId}| Exception Sending Audio Message " + e.Message);
                     return false;
                 }
             }
@@ -516,7 +516,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
 
         private void StartPing()
         {
-            Logger.Debug("Pinging Server - Starting");
+            Logger.Debug($"{_mainClient.LogClientId}| Pinging Server - Starting");
 
             var message = _guidAsciiBytes;
 
@@ -538,13 +538,13 @@ namespace RurouniJones.DCS.OverlordBot.Network
                     {
                         if (!RadioSendingState.IsSending)
                         {
-                            Logger.Trace($"Sending UDP Ping to server {_serverEndpoint}: {_guid}");
+                            Logger.Trace($"{_mainClient.LogClientId}| Sending UDP Ping to server {_serverEndpoint}: {_guid}");
                             _listener?.Send(message, message.Length, _serverEndpoint);
                         }
                     }
                     catch (Exception e)
                     {
-                        Logger.Error(e, "Exception Sending UDP Ping! " + e.Message);
+                        Logger.Error(e, $"{_mainClient.LogClientId}| Exception Sending UDP Ping! " + e.Message);
                     }
 
                     //wait for cancel or quit
@@ -552,13 +552,13 @@ namespace RurouniJones.DCS.OverlordBot.Network
 
                     if (cancelled)
                     {
-                        Logger.Debug($"Stopping UDP Server Ping to {_serverEndpoint} due to cancellation");
+                        Logger.Debug($"{_mainClient.LogClientId}| Stopping UDP Server Ping to {_serverEndpoint} due to cancellation");
                         return;
                     }
                 }
 
-                Logger.Debug($"Stopping UDP Server Ping to {_serverEndpoint} due to leaving thread");
-            }) {Name = "UDP Ping Sender"};
+                Logger.Debug($"{_mainClient.LogClientId}| Stopping UDP Server Ping to {_serverEndpoint} due to leaving thread");
+            }) {Name = $"{_mainClient.LogClientId}| UDP Ping Sender"};
             thread.Start();
         }
     }

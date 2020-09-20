@@ -40,9 +40,15 @@ namespace RurouniJones.DCS.OverlordBot.Audio.Managers
 
         public readonly Network.Client Client;
 
+        private DCSPlayerRadioInfo _playerRadioInfo;
+        public string LogClientId;
+
         public AudioManager(DCSPlayerRadioInfo playerRadioInfo)
         {
+            _playerRadioInfo = playerRadioInfo;
+            LogClientId =  _playerRadioInfo.radios[0].name;
             Client = new Network.Client(this, playerRadioInfo);
+
         }
 
         public void ConnectToSrs(IPEndPoint address)
@@ -68,7 +74,7 @@ namespace RurouniJones.DCS.OverlordBot.Audio.Managers
             }
             catch (Exception ex)
             {
-                Logger.Error(ex, "Error starting audio Output - Quitting! " + ex.Message);  
+                Logger.Error(ex, $"{LogClientId}| Error starting audio Output - Quitting! " + ex.Message);  
              
                 Environment.Exit(1);
             }
@@ -112,12 +118,12 @@ namespace RurouniJones.DCS.OverlordBot.Audio.Managers
                 {
                     if (ResponseQueue.TryDequeue(out var response) && response != null)
                     {
-                        Logger.Trace($"Sending Response: {response}");
+                        Logger.Trace($"{LogClientId}| Sending Response");
                         await SendResponse(response, response.Length);
                     }
                     Thread.Sleep(50);
                 }
-            }) {Name = "Audio Sender"}.Start();
+            }) {Name = $"{LogClientId} Audio Sender"}.Start();
         }
 
         public void EndTransmission()
@@ -174,7 +180,7 @@ namespace RurouniJones.DCS.OverlordBot.Audio.Managers
                     }
                     else
                     {
-                        Logger.Debug($"Invalid Bytes for Encoding - {length} should be {SegmentFrames}");
+                        Logger.Debug($"{LogClientId}| Invalid Bytes for Encoding - {length} should be {SegmentFrames}");
                     }
                 }
                 // Send one null to reset the sending state
@@ -182,7 +188,7 @@ namespace RurouniJones.DCS.OverlordBot.Audio.Managers
                 // Sleep for a second between sending messages to give players a chance to split messages.
             } catch (Exception ex)
             {
-                Logger.Error(ex, $"Exception sending response. Response length {length}");
+                Logger.Error(ex, $"{LogClientId}| Exception sending response. Response length {length}");
             }
             Thread.Sleep(1000);
         }

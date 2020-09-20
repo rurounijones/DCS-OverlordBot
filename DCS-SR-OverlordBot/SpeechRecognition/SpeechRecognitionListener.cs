@@ -23,6 +23,7 @@ namespace RurouniJones.DCS.OverlordBot.SpeechRecognition
     public class SpeechRecognitionListener
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private readonly string _logClientId;
 
         // Used when an exception is thrown so that the caller isn't left wondering.
         private static readonly byte[] FailureMessage = File.ReadAllBytes("Data/equipment-failure.wav");
@@ -46,6 +47,7 @@ namespace RurouniJones.DCS.OverlordBot.SpeechRecognition
         public SpeechRecognitionListener(BufferedWaveProvider bufferedWaveProvider, ConcurrentQueue<byte[]> responseQueue, RadioInformation radioInfo)
         {
             radioInfo.TransmissionQueue = responseQueue;
+            _logClientId = radioInfo.name;
 
             switch (radioInfo.botType)
             {
@@ -123,7 +125,7 @@ namespace RurouniJones.DCS.OverlordBot.SpeechRecognition
 
         public async Task StartListeningAsync()
         {
-            Logger.Debug("Started Continuous Recognition");
+            Logger.Debug($"{_logClientId}| Started Continuous Recognition");
 
             // Initialize the recognizer
             var authorizationToken = Task.Run(GetToken).Result;
@@ -145,12 +147,12 @@ namespace RurouniJones.DCS.OverlordBot.SpeechRecognition
 
             recognizer.Canceled += async (s, e) =>
             {
-                Logger.Trace($"CANCELLED: Reason={e.Reason}");
+                Logger.Trace($"{_logClientId}| CANCELLED: Reason={e.Reason}");
 
                 if (e.Reason == CancellationReason.Error)
                 {
-                    Logger.Trace($"CANCELLED: ErrorCode={e.ErrorCode}");
-                    Logger.Trace($"CANCELLED: ErrorDetails={e.ErrorDetails}");
+                    Logger.Trace($"{_logClientId}| CANCELLED: ErrorCode={e.ErrorCode}");
+                    Logger.Trace($"{_logClientId}| CANCELLED: ErrorDetails={e.ErrorDetails}");
 
                     if (e.ErrorCode != CancellationErrorCode.BadRequest && e.ErrorCode != CancellationErrorCode.ConnectionFailure)
                     {
@@ -162,22 +164,22 @@ namespace RurouniJones.DCS.OverlordBot.SpeechRecognition
 
             recognizer.SpeechStartDetected += (s, e) =>
             {
-                Logger.Trace("\nSpeech started event.");
+                Logger.Trace($"{_logClientId}| Speech started event.");
             };
 
             recognizer.SpeechEndDetected += (s, e) =>
             {
-                Logger.Trace("\nSpeech ended event.");
+                Logger.Trace($"{_logClientId}| Speech ended event.");
             };
 
             recognizer.SessionStarted += (s, e) =>
             {
-                Logger.Trace("\nSession started event.");
+                Logger.Trace($"{_logClientId}| Session started event.");
             };
 
             recognizer.SessionStopped += (s, e) =>
             {
-                Logger.Trace("\nSession stopped event.");
+                Logger.Trace($"{_logClientId}| Session stopped event.");
                 stopRecognition.TrySetResult(0);
             };
 
@@ -191,7 +193,7 @@ namespace RurouniJones.DCS.OverlordBot.SpeechRecognition
             // Stops recognition.
             await recognizer.StopContinuousRecognitionAsync().ConfigureAwait(false);
             source.Cancel();
-            Logger.Debug("Stopped Continuous Recognition");
+            Logger.Debug($"{_logClientId}| Stopped Continuous Recognition");
             TimedOut = true;
         }
 
@@ -205,22 +207,22 @@ namespace RurouniJones.DCS.OverlordBot.SpeechRecognition
                         await ProcessRecognizedCall(e);
                         break;
                     case ResultReason.NoMatch:
-                        Logger.Debug("NOMATCH: Speech could not be recognized.");
+                        Logger.Debug($"{_logClientId}| NOMATCH: Speech could not be recognized.");
                         break;
                 }
             }
             catch (Exception ex)
             {
-                Logger.Error(ex, "Error processing radio call");
+                Logger.Error(ex, $"{_logClientId}| Error processing radio call");
                 Controller.Radio.TransmissionQueue.Enqueue(FailureMessage);
             }
         }
 
         private async Task ProcessRecognizedCall(SpeechRecognitionEventArgs e)
         {
-            Logger.Info($"Incoming Transmission: {e.Result.Text}");
+            Logger.Info($"{_logClientId}| Incoming Transmission: {e.Result.Text}");
             var luisJson = Task.Run(() => LuisService.ParseIntent(e.Result.Text)).Result;
-            Logger.Debug($"LUIS Response: {luisJson}");
+            Logger.Debug($"{_logClientId}| LUIS Response: {luisJson}");
 
             var radioCall = new BaseRadioCall(luisJson);
 
@@ -228,14 +230,14 @@ namespace RurouniJones.DCS.OverlordBot.SpeechRecognition
 
             if (!string.IsNullOrEmpty(response))
             {
-                Logger.Info($"Outgoing Transmission: {response}");
+                Logger.Info($"{_logClientId}| Outgoing Transmission: {response}");
                 var audioResponse = await Task.Run(() => Speaker.CreateResponse(
                     $"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{Controller.Voice}\">{response}</voice></speak>"));
                 Controller.Radio.TransmissionQueue.Enqueue(audioResponse ?? FailureMessage);
             }
             else
             {
-                Logger.Info($"Radio Call Ignored due to null response for Radio Call Processing");
+                Logger.Info($"{_logClientId}| Radio Call Ignored due to null response for Radio Call Processing");
             }
 
             if (Controller.Radio.discordTransmissionLogChannelId > 0)
@@ -244,7 +246,7 @@ namespace RurouniJones.DCS.OverlordBot.SpeechRecognition
 
         private void LogTransmissionToDiscord(IRadioCall radioCall, string response)
         {
-            Logger.Debug("Building Discord Request/Response message");
+            Logger.Debug($"{_logClientId}| Building Discord Request/Response message");
             var transmission = $"Transmission Intent: {radioCall.Intent}\n" +
                                $"Request: {radioCall.Message}\n" +
                                $"Response: {response ?? "**IGNORED**"}";

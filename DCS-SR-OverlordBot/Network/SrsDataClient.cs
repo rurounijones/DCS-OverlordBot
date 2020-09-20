@@ -48,7 +48,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
             _connectionCallback = callback;
             _serverEndpoint = endpoint;
 
-            var tcpThread = new Thread(Connect) {Name = "SRS Data"};
+            var tcpThread = new Thread(Connect) {Name = $"{_mainClient.LogClientId}| SRS Data"};
 
             tcpThread.Start();
         }
@@ -114,12 +114,12 @@ namespace RurouniJones.DCS.OverlordBot.Network
                     }
                     else
                     {
-                        Logger.Error($"Failed to connect to server @ {_serverEndpoint}");
+                        Logger.Error($"{_mainClient.LogClientId}| Failed to connect to server @ {_serverEndpoint}");
                     }
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error(ex, "Could not connect to server");
+                    Logger.Error(ex, $"{_mainClient.LogClientId}| Could not connect to server");
                 }
             }
             _connectionCallback(false);
@@ -181,7 +181,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
                             decodeErrors = 0; //reset counter
                             if (serverMessage != null)
                             {
-                                Logger.Trace($"Message {serverMessage.MsgType} received: {line}");
+                                Logger.Trace($"{_mainClient.LogClientId}| Message {serverMessage.MsgType} received: {line}");
                                 switch (serverMessage.MsgType)
                                 {
                                     case NetworkMessage.MessageType.PING:
@@ -240,7 +240,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
                                         if (_mainClient.ExternalAwacsModeSelected &&
                                             !_serverSettings.GetSettingAsBool(ServerSettingsKeys.EXTERNAL_AWACS_MODE))
                                         {
-                                            Logger.Error($"This server does not support External Awacs mode");
+                                            Logger.Error($"{_mainClient.LogClientId}| This server does not support External Awacs mode");
                                             _mainClient.Disconnect();
                                         }
 
@@ -249,7 +249,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
                                         //check server version
                                         if (serverMessage.Version == null)
                                         {
-                                            Logger.Error("Disconnecting Unversioned Server");
+                                            Logger.Error($"{_mainClient.LogClientId}| Disconnecting Unversioned Server");
                                             _mainClient.Disconnect();
                                             break;
                                         }
@@ -261,7 +261,8 @@ namespace RurouniJones.DCS.OverlordBot.Network
 
                                         if (serverVersion < protocolVersion)
                                         {
-                                            Logger.Error($"Server version ({serverMessage.Version}) older than minimum procotol version ({UpdaterChecker.MINIMUM_PROTOCOL_VERSION}) - disconnecting");
+                                            Logger.Error($"{_mainClient.LogClientId}| Server version ({serverMessage.Version}) older than minimum" + 
+                                                         "procotol version ({UpdaterChecker.MINIMUM_PROTOCOL_VERSION}) - disconnecting");
 
                                             ShowVersionMistmatchWarning(serverMessage.Version);
 
@@ -287,7 +288,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
                                         if (_mainClient.ExternalAwacsModeSelected &&
                                             !_serverSettings.GetSettingAsBool(ServerSettingsKeys.EXTERNAL_AWACS_MODE))
                                         {
-                                            Logger.Error($"This server does not support External Awacs mode");
+                                            Logger.Error($"{_mainClient.LogClientId}| This server does not support External Awacs mode");
                                             _mainClient.Disconnect();
                                         }
 
@@ -301,7 +302,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
                                         if (_mainClient.ExternalAwacsModeSelected &&
                                             !_serverSettings.GetSettingAsBool(ServerSettingsKeys.EXTERNAL_AWACS_MODE))
                                         {
-                                            Logger.Error($"This server does not support External Awacs mode");
+                                            Logger.Error($"{_mainClient.LogClientId}| This server does not support External Awacs mode");
                                             _mainClient.Disconnect();
                                         }
                                         break;
@@ -316,13 +317,13 @@ namespace RurouniJones.DCS.OverlordBot.Network
 
                                         break;
                                     case NetworkMessage.MessageType.VERSION_MISMATCH:
-                                        Logger.Error($"Version Mismatch Between Client ({UpdaterChecker.VERSION}) & Server ({serverMessage.Version}) - Disconnecting");
+                                        Logger.Error($"{_mainClient.LogClientId}| Version Mismatch Between Client ({UpdaterChecker.VERSION}) & Server ({serverMessage.Version}) - Disconnecting");
                                         _mainClient.Disconnect();
                                         break;
                                     case NetworkMessage.MessageType.EXTERNAL_AWACS_MODE_PASSWORD:
                                         if (serverMessage.Client.Coalition > 0)
                                         {
-                                            Logger.Info("External AWACS mode authentication succeeded, coalition {0}", serverMessage.Client.Coalition == 1 ? "red" : "blue");
+                                            Logger.Info($"{_mainClient.LogClientId}| External AWACS mode authentication succeeded, coalition {0}", serverMessage.Client.Coalition == 1 ? "red" : "blue");
                                             _mainClient.PlayerCoalitionLocationMetadata.side = serverMessage.Client.Coalition;
                                             _mainClient.PlayerCoalitionLocationMetadata.name = _mainClient.LastSeenName;
                                             _mainClient.DcsPlayerRadioInfo.name = _mainClient.LastSeenName;
@@ -330,27 +331,27 @@ namespace RurouniJones.DCS.OverlordBot.Network
                                         }
                                         else
                                         {
-                                            Logger.Info("External AWACS mode authentication failed");
+                                            Logger.Info($"{_mainClient.LogClientId}| External AWACS mode authentication failed");
                                             _mainClient.Disconnect();
                                         }
                                         break;
                                     default:
-                                        Logger.Error("Received unknown " + line);
+                                        Logger.Error($"{_mainClient.LogClientId}| Received unknown " + line);
                                         break;
                                 }
                             }
                         }
                         catch (Exception ex)
                         {
-                            Logger.Error(ex, $"Error decoding message from server: {line}");
+                            Logger.Error(ex, $"{_mainClient.LogClientId}| Error decoding message from server: {line}");
                             decodeErrors++;
                             if (!_stop)
                             {
-                                Logger.Error(ex, "Client exception reading from socket ");
+                                Logger.Error(ex, $"{_mainClient.LogClientId}| Client exception reading from socket ");
                             }
 
                             if (decodeErrors <= MaxDecodeErrors) continue;
-                            Logger.Error("Too many errors decoding server messagse. disconnecting");
+                            Logger.Error($"{_mainClient.LogClientId}| Too many errors decoding server messagse. disconnecting");
                             _mainClient.Disconnect();
                             break;
                         }
@@ -362,7 +363,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
                 {
                     if (!_stop)
                     {
-                        Logger.Error(ex, "Client exception reading - Disconnecting ");
+                        Logger.Error(ex, $"{_mainClient.LogClientId}| Client exception reading - Disconnecting ");
                     }
                 }
             }
@@ -400,11 +401,11 @@ namespace RurouniJones.DCS.OverlordBot.Network
                 try
                 {
                     _tcpClient.GetStream().Write(bytes, 0, bytes.Length);
-                    Logger.Trace($"Message {message.MsgType} sent: {json}");
+                    Logger.Trace($"{_mainClient.LogClientId}| Message {message.MsgType} sent: {json}");
 
                 } catch (ObjectDisposedException ex)
                 {
-                    Logger.Debug(ex, $"Tried writing message type {message.MsgType} to a disposed TcpClient");
+                    Logger.Debug(ex, $"{_mainClient.LogClientId}| Tried writing message type {message.MsgType} to a disposed TcpClient");
                 }
                 //Need to flush?
             }
@@ -412,7 +413,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
             {
                 if (!_stop)
                 {
-                    Logger.Error(ex, $"Client exception sending message type {message.MsgType} to server");
+                    Logger.Error(ex, $"{_mainClient.LogClientId}| Client exception sending message type {message.MsgType} to server");
                 }
 
                 _mainClient.Disconnect();
@@ -426,7 +427,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
 
             _tcpClient?.Close(); // this'll stop the socket blocking
 
-            Logger.Error("Disconnecting data connection from server");
+            Logger.Error($"{_mainClient.LogClientId}| Disconnecting data connection from server");
             _mainClient.IsDataConnected = false;
 
         }
