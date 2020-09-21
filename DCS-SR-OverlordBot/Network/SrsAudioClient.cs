@@ -20,8 +20,8 @@ namespace RurouniJones.DCS.OverlordBot.Network
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public static volatile RadioSendingState RadioSendingState = new RadioSendingState();
-        public static volatile RadioReceivingState[] RadioReceivingState = new RadioReceivingState[11];
+        public RadioSendingState RadioSendingState = new RadioSendingState();
+        public RadioReceivingState[] RadioReceivingState = new RadioReceivingState[11];
 
         private readonly BlockingCollection<byte[]> _encodedAudio = new BlockingCollection<byte[]>();
         private readonly string _guid;
