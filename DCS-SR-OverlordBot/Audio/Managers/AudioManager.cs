@@ -82,6 +82,7 @@ namespace RurouniJones.DCS.OverlordBot.Audio.Managers
 
         public void StopEncoding()
         {
+            Task.Run(async () => await BotAudioProvider.SpeechRecognitionListener.StopRecognition());
             Client.Disconnect();
             _clientAudioMixer?.RemoveAllMixerInputs();
             _clientAudioMixer = null;

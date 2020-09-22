@@ -37,8 +37,11 @@ namespace RurouniJones.DCS.OverlordBot.SpeechRecognition
 
         public SrsAudioClient VoiceHandler;
 
-        public bool TimedOut;
+        private TaskCompletionSource<int> _stopRecognition;
+        private CancellationTokenSource _source;
 
+        private volatile bool _stop;
+        
         // Allows OverlordBot to listen for a specific word to start listening. Currently not used although the setup has all been done.
         // This is due to wierd state transition errors that I cannot be bothered to debug. Possible benefit is less calls to Speech endpoint but
         // not sure if that is good enough or not to keep investigating.
@@ -125,76 +128,77 @@ namespace RurouniJones.DCS.OverlordBot.SpeechRecognition
 
         public async Task StartListeningAsync()
         {
-            Logger.Debug($"{_logClientId}| Started Continuous Recognition");
+            while (!_stop) {
+                Logger.Debug($"{_logClientId}| Started Continuous Recognition");
 
-            // Initialize the recognizer
-            var authorizationToken = Task.Run(GetToken).Result;
-            var speechConfig = SpeechConfig.FromAuthorizationToken(authorizationToken, Properties.Settings.Default.SpeechRegion);
-            speechConfig.EndpointId = Properties.Settings.Default.SpeechCustomEndpointId;
-            var recognizer = new SpeechRecognizer(speechConfig, _audioConfig);
+                // Initialize the recognizer
+                var authorizationToken = Task.Run(GetToken).Result;
+                var speechConfig =
+                    SpeechConfig.FromAuthorizationToken(authorizationToken, Properties.Settings.Default.SpeechRegion);
+                speechConfig.EndpointId = Properties.Settings.Default.SpeechCustomEndpointId;
+                var recognizer = new SpeechRecognizer(speechConfig, _audioConfig);
 
-            // Setup the cancellation code
-            var stopRecognition = new TaskCompletionSource<int>();
-            var source = new CancellationTokenSource();
+                // Setup the cancellation code
+                _stopRecognition = new TaskCompletionSource<int>();
+                _source = new CancellationTokenSource();
 
-            // Start the token renewal so we can do long-running recognition.
-            var tokenRenewTask = StartTokenRenewTask(source.Token, recognizer);
+                // Start the token renewal so we can do long-running recognition.
+                var tokenRenewTask = StartTokenRenewTask(_source.Token, recognizer);
 
-            recognizer.Recognized += async (s, e) =>
-            {
-                await ProcessRadioCall(e);
-            };
+                recognizer.Recognized += async (s, e) => { await ProcessRadioCall(e); };
 
-            recognizer.Canceled += async (s, e) =>
-            {
-                Logger.Trace($"{_logClientId}| CANCELLED: Reason={e.Reason}");
-
-                if (e.Reason == CancellationReason.Error)
+                recognizer.Canceled += async (s, e) =>
                 {
-                    Logger.Trace($"{_logClientId}| CANCELLED: ErrorCode={e.ErrorCode}");
-                    Logger.Trace($"{_logClientId}| CANCELLED: ErrorDetails={e.ErrorDetails}");
+                    Logger.Trace($"{_logClientId}| CANCELLED: Reason={e.Reason}");
 
-                    if (e.ErrorCode != CancellationErrorCode.BadRequest && e.ErrorCode != CancellationErrorCode.ConnectionFailure)
+                    if (e.Reason == CancellationReason.Error)
                     {
-                        Controller.Radio.TransmissionQueue.Enqueue(FailureMessage);
+                        Logger.Trace($"{_logClientId}| CANCELLED: ErrorCode={e.ErrorCode}");
+                        Logger.Trace($"{_logClientId}| CANCELLED: ErrorDetails={e.ErrorDetails}");
+
+                        if (e.ErrorCode != CancellationErrorCode.BadRequest &&
+                            e.ErrorCode != CancellationErrorCode.ConnectionFailure)
+                        {
+                            Controller.Radio.TransmissionQueue.Enqueue(FailureMessage);
+                        }
                     }
-                }
-                stopRecognition.TrySetResult(1);
-            };
 
-            recognizer.SpeechStartDetected += (s, e) =>
-            {
-                Logger.Trace($"{_logClientId}| Speech started event.");
-            };
+                    _stopRecognition.TrySetResult(1);
+                };
 
-            recognizer.SpeechEndDetected += (s, e) =>
-            {
-                Logger.Trace($"{_logClientId}| Speech ended event.");
-            };
+                recognizer.SpeechStartDetected += (s, e) => { Logger.Trace($"{_logClientId}| Speech started event."); };
 
-            recognizer.SessionStarted += (s, e) =>
-            {
-                Logger.Trace($"{_logClientId}| Session started event.");
-            };
+                recognizer.SpeechEndDetected += (s, e) => { Logger.Trace($"{_logClientId}| Speech ended event."); };
 
-            recognizer.SessionStopped += (s, e) =>
-            {
-                Logger.Trace($"{_logClientId}| Session stopped event.");
-                stopRecognition.TrySetResult(0);
-            };
+                recognizer.SessionStarted += (s, e) => { Logger.Trace($"{_logClientId}| Session started event."); };
 
-            // Starts continuous recognition. Uses StopContinuousRecognitionAsync() to stop recognition.
-            await recognizer.StartContinuousRecognitionAsync().ConfigureAwait(false);
+                recognizer.SessionStopped += (s, e) =>
+                {
+                    Logger.Trace($"{_logClientId}| Session stopped event.");
+                    _stopRecognition.TrySetResult(0);
+                };
 
-            // Waits for completion.
-            // Use Task.WaitAny to keep the task rooted.
-            Task.WaitAny(stopRecognition.Task);
+                // Starts continuous recognition. Uses StopContinuousRecognitionAsync() to stop recognition.
+                await recognizer.StartContinuousRecognitionAsync().ConfigureAwait(false);
 
-            // Stops recognition.
-            await recognizer.StopContinuousRecognitionAsync().ConfigureAwait(false);
-            source.Cancel();
-            Logger.Debug($"{_logClientId}| Stopped Continuous Recognition");
-            TimedOut = true;
+                // Waits for completion.
+                // Use Task.WaitAny to keep the task rooted.
+                Task.WaitAny(_stopRecognition.Task);
+
+                // Stops recognition.
+                await recognizer.StopContinuousRecognitionAsync().ConfigureAwait(false);
+                _source.Cancel();
+                Logger.Debug($"{_logClientId}| Stopped Continuous Recognition");
+            }
+        }
+
+        public async Task StopRecognition()
+        {
+            Logger.Debug($"{_logClientId}| Stopping Continuous Recognition");
+            _stop = true;
+            _stopRecognition.TrySetResult(0);
+            _source.Cancel();
+
         }
 
         private async Task ProcessRadioCall(SpeechRecognitionEventArgs e)

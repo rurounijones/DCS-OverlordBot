@@ -37,16 +37,6 @@ namespace RurouniJones.DCS.OverlordBot.Audio.Providers
             Task.Run(() => SpeechRecognitionListener.StartListeningAsync());
         }
 
-        public async Task SendTransmission(string message)
-        {
-            await SpeechRecognitionListener.SendTransmission(message);
-        }
-
-        public bool SpeechRecognitionActive()
-        {
-            return SpeechRecognitionListener.TimedOut == false;
-        }
-
         public void AddClientAudioSamples(ClientAudio audio)
         {
             var newTransmission = LikelyNewTransmission();
