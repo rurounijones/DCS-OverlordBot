@@ -485,7 +485,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Data\Airfields.json" />
-    <None Include="Data\sort_airfields.rb" />
     <None Include="luis-app-definition.json" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
