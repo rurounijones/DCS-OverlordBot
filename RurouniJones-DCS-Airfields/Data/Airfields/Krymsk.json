@@ -184,7 +184,7 @@
       "name": "Alpha",
       "source": "Runway-0 4",
       "target": "Alpha Delta",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Alpha",
@@ -196,7 +196,7 @@
       "name": "Alpha",
       "source": "Runway-0 4",
       "target": "Apron 1",
-      "cost": 999
+      "cost": 100
     },
     {
       "name": "Alpha",
@@ -430,7 +430,7 @@
       "name": "Delta",
       "source": "Delta Foxtrot",
       "target": "Runway-2 2",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Delta",
@@ -529,7 +529,7 @@
       "cost": 999
     },
     {
-      "name": "Bravo",
+      "name": "Runway",
       "source": "Bravo Runway",
       "target": "Runway-0 4",
       "cost": 999

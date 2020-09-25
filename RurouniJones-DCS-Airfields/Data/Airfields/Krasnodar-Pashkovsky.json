@@ -183,13 +183,13 @@
       "name": "Alfa",
       "source": "Runway-0 5 Left",
       "target": "Alfa Whiskey",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Charlie",
       "source": "Runway-2 3 Right",
       "target": "Alfa Charlie",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Charlie",
@@ -291,7 +291,7 @@
       "name": "Juliett",
       "source": "Juliett November",
       "target": "Runway-2 3 Left",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "November",
@@ -375,7 +375,7 @@
       "name": "Echo",
       "source": "Runway-0 5 Right",
       "target": "Echo November",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Runway",

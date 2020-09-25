@@ -72,7 +72,7 @@
     {
       "name": "Kilo Spots",
       "lat": 24.261281556722,
-      "lon": 54.540425511934
+      "lon": 54.540425511934004
     },
     {
       "name": "Uniform Rearm & Refuel Pad",
@@ -616,7 +616,7 @@
       "name": "Papa",
       "source": "Papa X-Ray 0",
       "target": "Papa Romeo",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Papa",
@@ -736,7 +736,7 @@
       "name": "Victor 0",
       "source": "Runway-3 1 Left",
       "target": "Victor Victor 0",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Victor 0",
@@ -1072,7 +1072,7 @@
       "name": "Foxtrot",
       "source": "Alfa Foxtrot",
       "target": "Runway-1 3 Left",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Alfa",
@@ -1204,7 +1204,7 @@
       "name": "Hotel 1",
       "source": "Runway-3 1 Right",
       "target": "Hotel Hotel 1 Hotel 11",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Hotel",
@@ -1222,7 +1222,7 @@
       "name": "Whiskey 0",
       "source": "Whiskey Yankee",
       "target": "Runway-1 3 Right",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Whiskey 0",
@@ -1234,7 +1234,7 @@
       "name": "Whiskey 0",
       "source": "Whiskey Rearm & Refuel Pad",
       "target": "Runway-1 3 Right",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Whiskey 0",
@@ -1246,7 +1246,7 @@
       "name": "X-Ray 0",
       "source": "X-Ray Rearm & Refuel Pad",
       "target": "Runway-1 3 Right",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "X-Ray 0",
@@ -1258,7 +1258,7 @@
       "name": "X-Ray 0",
       "source": "X-Ray X-Ray 0",
       "target": "Runway-1 3 Right",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "X-Ray 0",
@@ -1288,7 +1288,7 @@
       "name": "Juliett 11",
       "source": "Juliett Juliett 11",
       "target": "Runway-1 3 Left",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Papa",

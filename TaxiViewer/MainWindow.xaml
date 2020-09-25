@@ -15,7 +15,7 @@
                 <Button x:Name="SaveAirfieldButton" Content="Save" Click="Save_Airfield" IsEnabled="False"/>
             </ToolBar>
             <ToolBar>
-                <ToggleButton x:Name="AddTaxiPathButton" Content="Add Taxi Path"/>
+                <ToggleButton x:Name="AddTaxiPathButton" Content="Add/Edit Taxi Paths"/>
             </ToolBar>
         </ToolBarTray>
         <DockPanel x:Name="GraphPanel" ClipToBounds="True"/>

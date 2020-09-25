@@ -65,9 +65,15 @@ namespace TaxiViewer
 
         private void Save_Airfield(object sender, RoutedEventArgs e)
         {
+            
+            foreach (var taxiPath in airfield.Taxiways)
+            {
+                taxiPath.Cost = (int) airfield.TaxiwayCost.FirstOrDefault(x => x.Key.Source.Name == taxiPath.Source && x.Key.Target.Name == taxiPath.Target).Value;
+            }
+
             try
             {
-                string json = JsonConvert.SerializeObject(airfield, Formatting.Indented);
+                var json = JsonConvert.SerializeObject(airfield, Formatting.Indented);
                 File.WriteAllText(FileName, json);
             }
             catch (Exception _)
@@ -105,6 +111,7 @@ namespace TaxiViewer
             foreach (TaggedEdge<TaxiPoint, string> edge in airfield.TaxiNavigationGraph.Edges)
             {
                 var displayEdge = graph.AddEdge(edge.Source.Name, edge.Tag, edge.Target.Name);
+                displayEdge.UserData = edge;
 
                 if (airfield.TaxiwayCost[edge] >= 999)
                 {
@@ -130,9 +137,30 @@ namespace TaxiViewer
 
             graphViewer.MouseDown += (s, ev) =>
             {
-                if (graphViewer.ObjectUnderMouseCursor is VNode && ev.RightButtonIsPressed && (bool)AddTaxiPathButton.IsChecked)
+                if (!ev.RightButtonIsPressed || !(bool)AddTaxiPathButton.IsChecked)
+                    return;
+
+                if (graphViewer.ObjectUnderMouseCursor is VNode node)
                 {
-                    SourceNode = (VNode)graphViewer.ObjectUnderMouseCursor;
+                    SourceNode = node;
+                } 
+                else if (graphViewer.ObjectUnderMouseCursor.DrawingObject is Label label)
+                {
+                    var cost = airfield.TaxiwayCost[(TaggedEdge<TaxiPoint, string>)label.Owner.UserData];
+
+                    switch (cost)
+                    {
+                        case 1:
+                            airfield.TaxiwayCost[(TaggedEdge<TaxiPoint, string>)label.Owner.UserData] = 100;
+                            break;
+                        case 100:
+                            airfield.TaxiwayCost[(TaggedEdge<TaxiPoint, string>)label.Owner.UserData] = 999;
+                            break;
+                        case 999:
+                            airfield.TaxiwayCost[(TaggedEdge<TaxiPoint, string>)label.Owner.UserData] = 1;
+                            break;
+                    }
+                    DisplayGraph();
                 }
             };
 
@@ -196,8 +224,8 @@ namespace TaxiViewer
                     graphViewer.Graph = graph;
                 }
                 SourceNode = null;
-            };
-
+            }; 
+            
             graphViewer.Graph = graph;
         }
     }

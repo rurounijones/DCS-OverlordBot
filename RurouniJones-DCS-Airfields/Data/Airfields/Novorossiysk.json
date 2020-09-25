@@ -3,102 +3,99 @@
   "lat": 37.786226060479564,
   "lon": 37.786226060479564,
   "alt": 40.010040283203125,
-  "runways": [
-    {
-      "lat": 44.662742941153,
-      "lon": 37.770617848637,
-      "name": "Runway-0 4",
-      "heading": 40
-    },
-    {
-      "lat": 44.673510893104,
-      "lon": 37.785926801069,
-      "name": "Runway-2 2",
-      "heading": 220
-    }
-  ],
-
-  "junctions": [
-    {
-      "lat": 44.674464050059,
-      "lon": 37.784964996081,
-      "name": "Alpha Tango"
-    },
-    {
-      "lat": 44.674358254339,
-      "lon": 37.782204769995,
-      "name": "Bravo Tango"
-    },
-    {
-      "lat": 44.672582621103,
-      "lon": 37.780119915972,
-      "name": "Mike Tango"
-    },
-    {
-      "lat": 44.668666503605,
-      "lon": 37.77571637189,
-      "name": "November 1 Tango"
-    },
-    {
-      "lat": 44.671152145092,
-      "lon": 37.778455486122,
-      "name": "November 2 Tango"
-    },
-    {
-      "lat": 44.663236846525,
-      "lon": 37.769599290979,
-      "name": "Charlie Tango"
-    },
-    {
-      "lat": 44.672690723191,
-      "lon": 37.784659855223,
-      "name": "Bravo Runway"
-    }
-  ],
-
   "parkingSpots": [
     {
+      "name": "Apron South 1",
       "lat": 44.666398567368,
-      "lon": 37.772026071304,
-      "name": "Apron South 1"
+      "lon": 37.772026071304
     },
     {
+      "name": "November One Spots",
       "lat": 44.669020020174,
-      "lon": 37.775025626785,
-      "name": "November One Spots"
+      "lon": 37.775025626785
     },
     {
+      "name": "November Two Spots",
       "lat": 44.671531829502,
-      "lon": 37.777770038136,
-      "name": "November Two Spots"
+      "lon": 37.777770038136
     },
     {
+      "name": "November Two Spots 2",
       "lat": 44.672804126512,
-      "lon": 37.778050646758,
-      "name": "November Two Spots 2"
+      "lon": 37.778050646758
     },
     {
+      "name": "Maintenance Area",
       "lat": 44.67394263178,
-      "lon": 37.779520745619,
-      "name": "Maintenance Area"
+      "lon": 37.779520745619
     },
     {
+      "name": "Apron North",
       "lat": 44.675207122371,
-      "lon": 37.783274590455,
-      "name": "Apron North"
+      "lon": 37.783274590455
     },
     {
+      "name": "Apron North 1",
       "lat": 44.675224444591,
-      "lon": 37.78451281264,
-      "name": "Apron North 1"
+      "lon": 37.78451281264
     },
     {
+      "name": "Apron South",
       "lat": 44.664143183583,
-      "lon": 37.769448699534,
-      "name": "Apron South"
+      "lon": 37.769448699534
     }
   ],
-
+  "runways": [
+    {
+      "heading": 40,
+      "name": "Runway-0 4",
+      "lat": 44.662742941153,
+      "lon": 37.770617848637
+    },
+    {
+      "heading": 220,
+      "name": "Runway-2 2",
+      "lat": 44.673510893104,
+      "lon": 37.785926801069
+    }
+  ],
+  "junctions": [
+    {
+      "name": "Alpha Tango",
+      "lat": 44.674464050059,
+      "lon": 37.784964996081
+    },
+    {
+      "name": "Bravo Tango",
+      "lat": 44.674358254339,
+      "lon": 37.782204769995
+    },
+    {
+      "name": "Mike Tango",
+      "lat": 44.672582621103,
+      "lon": 37.780119915972
+    },
+    {
+      "name": "November 1 Tango",
+      "lat": 44.668666503605,
+      "lon": 37.77571637189
+    },
+    {
+      "name": "November 2 Tango",
+      "lat": 44.671152145092,
+      "lon": 37.778455486122
+    },
+    {
+      "name": "Charlie Tango",
+      "lat": 44.663236846525,
+      "lon": 37.769599290979
+    },
+    {
+      "name": "Bravo Runway",
+      "lat": 44.672690723191,
+      "lon": 37.784659855223
+    }
+  ],
   "taxipaths": [
     {
       "name": "Tango",
@@ -118,7 +115,6 @@
       "target": "Charlie Tango",
       "cost": 1
     },
-
     {
       "name": "Tango",
       "source": "Charlie Tango",
@@ -135,7 +131,7 @@
       "name": "Charlie",
       "source": "Runway-0 4",
       "target": "Charlie Tango",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "November 1",
@@ -291,7 +287,7 @@
       "name": "Alpha",
       "source": "Alpha Tango",
       "target": "Runway-2 2",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Tango",

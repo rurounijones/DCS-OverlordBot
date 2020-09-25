@@ -102,7 +102,7 @@
       "name": "Alfa",
       "source": "Runway-1 2",
       "target": "Alfa Bravo",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Alfa",
@@ -198,7 +198,7 @@
       "name": "Echo",
       "source": "Echo Echo 1",
       "target": "Runway-3 0",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Echo",

@@ -132,7 +132,7 @@
       "name": "Alfa",
       "source": "Runway-0 4",
       "target": "Alfa Victor",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Victor",
@@ -192,7 +192,7 @@
       "name": "Echo",
       "source": "Delta Echo Victor",
       "target": "Runway-2 2",
-      "cost": 999
+      "cost": 1
     },
     {
       "name": "Runway",
