@@ -409,11 +409,9 @@
     <Compile Include="GameState\GameQuerier\GetFriendlyPlayer.cs" />
     <Compile Include="Intents\BearingToAirbase.cs" />
     <Compile Include="Intents\BearingToFriendlyPlayer.cs" />
-    <Compile Include="Intents\Declare.cs" />
     <Compile Include="Intents\SetWarningRadius.cs" />
     <Compile Include="NLogLoggingProvider.cs" />
     <Compile Include="RadioCalls\BearingToFriendlyPlayerRadioCall.cs" />
-    <Compile Include="RadioCalls\DeclareRadioCall.cs" />
     <Compile Include="RadioCalls\IRadioCall.cs" />
     <Compile Include="RadioCalls\SetWarningRadiusRadioCall.cs" />
     <Compile Include="SpeechOutput\AirbasePronouncer.cs" />
