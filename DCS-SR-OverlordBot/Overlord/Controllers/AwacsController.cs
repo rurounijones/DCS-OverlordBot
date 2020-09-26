@@ -54,7 +54,7 @@ namespace Ciribob.DCS.SimpleRadio.Standalone.Client.Overlord.Controllers
         {
             if (!IsAddressedToController(radioCall) || radioCall.Sender.Coalition == Coalition.Neutral)
                 return null;
-            return ResponsePrefix(radioCall) + Intents.Declare.Process(new DeclareRadioCall(radioCall)).Result;
+            return ResponsePrefix(radioCall) + "we do not support declare calls.";
 
         }
 
