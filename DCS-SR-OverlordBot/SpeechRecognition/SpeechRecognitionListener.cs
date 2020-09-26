@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using System.Threading;
@@ -11,6 +12,8 @@ using Microsoft.CognitiveServices.Speech;
 using Microsoft.CognitiveServices.Speech.Audio;
 using NAudio.Wave;
 using NLog;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Trace;
 using RurouniJones.DCS.OverlordBot.Audio.Managers;
 using RurouniJones.DCS.OverlordBot.Controllers;
 using RurouniJones.DCS.OverlordBot.Discord;
@@ -41,6 +44,10 @@ namespace RurouniJones.DCS.OverlordBot.SpeechRecognition
         private CancellationTokenSource _source;
 
         private volatile bool _stop;
+
+        private readonly string _botType;
+        private readonly string _callsign;
+        private readonly double _frequency;
         
         // Allows OverlordBot to listen for a specific word to start listening. Currently not used although the setup has all been done.
         // This is due to wierd state transition errors that I cannot be bothered to debug. Possible benefit is less calls to Speech endpoint but
@@ -50,6 +57,10 @@ namespace RurouniJones.DCS.OverlordBot.SpeechRecognition
         public SpeechRecognitionListener(BufferedWaveProvider bufferedWaveProvider, ConcurrentQueue<byte[]> responseQueue, RadioInformation radioInfo)
         {
             radioInfo.TransmissionQueue = responseQueue;
+            _botType = radioInfo.botType;
+            _frequency = radioInfo.freq;
+            _callsign = radioInfo.callsign;
+
             _logClientId = radioInfo.name;
 
             switch (radioInfo.botType)
@@ -93,18 +104,29 @@ namespace RurouniJones.DCS.OverlordBot.SpeechRecognition
         // Gets an authorization token by sending a POST request to the token service.
         public static async Task<string> GetToken()
         {
-            using (var client = new HttpClient())
+            using (var activity = Constants.ActivitySource.StartActivity("SpeechRecognitionListener.TokenRenewal"))
             {
-                client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", Properties.Settings.Default.SpeechSubscriptionKey);
-                var uriBuilder = new UriBuilder("https://" + Properties.Settings.Default.SpeechRegion + ".api.cognitive.microsoft.com/sts/v1.0/issueToken");
-
-                using (var result = await client.PostAsync(uriBuilder.Uri.AbsoluteUri, null))
+                using (var client = new HttpClient())
                 {
-                    if (result.IsSuccessStatusCode)
+                    client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key",
+                        Properties.Settings.Default.SpeechSubscriptionKey);
+                    var uriBuilder = new UriBuilder("https://" + Properties.Settings.Default.SpeechRegion +
+                                                    ".api.cognitive.microsoft.com/sts/v1.0/issueToken");
+
+                    using (var result = await client.PostAsync(uriBuilder.Uri.AbsoluteUri, null))
                     {
-                        return await result.Content.ReadAsStringAsync();
+                        if (result.IsSuccessStatusCode)
+                        {
+                            return await result.Content.ReadAsStringAsync();
+                        }
+
+                        var exception = new HttpRequestException(
+                            $"Cannot get token from {uriBuilder}. Error: {result.StatusCode}");
+
+                        activity?.RecordException(exception);
+
+                        throw exception;
                     }
-                    throw new HttpRequestException($"Cannot get token from {uriBuilder}. Error: {result.StatusCode}");
                 }
             }
         }
@@ -147,7 +169,7 @@ namespace RurouniJones.DCS.OverlordBot.SpeechRecognition
 
                 recognizer.Recognized += async (s, e) => { await ProcessRadioCall(e); };
 
-                recognizer.Canceled += async (s, e) =>
+                recognizer.Canceled += (s, e) =>
                 {
                     Logger.Trace($"{_logClientId}| CANCELLED: Reason={e.Reason}");
 
@@ -203,64 +225,95 @@ namespace RurouniJones.DCS.OverlordBot.SpeechRecognition
 
         private async Task ProcessRadioCall(SpeechRecognitionEventArgs e)
         {
-            try
+            using (var activity = Constants.ActivitySource.StartActivity("SpeechRecognitionListener.ProcessRadioCall", ActivityKind.Server))
             {
-                switch (e.Result.Reason)
+                activity.AddTag("Frequency", _frequency);
+                activity.AddTag("BotType", _botType);
+                activity.AddTag("Callsign", _callsign);
+                try
                 {
-                    case ResultReason.RecognizedSpeech:
-                        await ProcessRecognizedCall(e);
-                        break;
-                    case ResultReason.NoMatch:
-                        Logger.Debug($"{_logClientId}| NOMATCH: Speech could not be recognized.");
-                        break;
+                    switch (e.Result.Reason)
+                    {
+                        case ResultReason.RecognizedSpeech:
+                            await ProcessRecognizedCall(e);
+                            break;
+                        case ResultReason.NoMatch:
+                            activity?.AddTag("Response", "No Recognition Match");
+                            Logger.Debug($"{_logClientId}| NOMATCH: Speech could not be recognized.");
+                            break;
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex, $"{_logClientId}| Error processing radio call");
-                Controller.Radio.TransmissionQueue.Enqueue(FailureMessage);
+                catch (Exception ex)
+                {
+                    activity?.RecordException(ex);
+                    Logger.Error(ex, $"{_logClientId}| Error processing radio call");
+                    Controller.Radio.TransmissionQueue.Enqueue(FailureMessage);
+                }
             }
         }
 
         private async Task ProcessRecognizedCall(SpeechRecognitionEventArgs e)
         {
-            Logger.Info($"{_logClientId}| Incoming Transmission: {e.Result.Text}");
-            var luisJson = Task.Run(() => LuisService.ParseIntent(e.Result.Text)).Result;
-            Logger.Debug($"{_logClientId}| LUIS Response: {luisJson}");
-
-            var radioCall = new BaseRadioCall(luisJson);
-
-            var response = Controller.ProcessRadioCall(radioCall);
-
-            if (!string.IsNullOrEmpty(response))
+            using (var activity = Constants.ActivitySource.StartActivity("ProcessRecognizedCall"))
             {
-                Logger.Info($"{_logClientId}| Outgoing Transmission: {response}");
-                var audioResponse = await Task.Run(() => Speaker.CreateResponse(
-                    $"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{Controller.Voice}\">{response}</voice></speak>"));
-                Controller.Radio.TransmissionQueue.Enqueue(audioResponse ?? FailureMessage);
-            }
-            else
-            {
-                Logger.Info($"{_logClientId}| Radio Call Ignored due to null response for Radio Call Processing");
-            }
+                Logger.Info($"{_logClientId}| Incoming Transmission: {e.Result.Text}");
+                var luisJson = Task.Run(() => LuisService.ParseIntent(e.Result.Text)).Result;
+                Logger.Debug($"{_logClientId}| LUIS Response: {luisJson}");
 
-            if (Controller.Radio.discordTransmissionLogChannelId > 0)
-                LogTransmissionToDiscord(radioCall, response);
+                var radioCall = new BaseRadioCall(luisJson);
+
+                activity?.AddTag("Sender", radioCall.Sender?.Callsign);
+                activity?.AddTag("Intent", radioCall.Intent);
+                activity?.AddTag("Request", radioCall.Message);
+                
+                var response = Controller.ProcessRadioCall(radioCall);
+                activity?.AddTag("Response Text", response);
+
+
+                if (!string.IsNullOrEmpty(response))
+                {
+                    Logger.Info($"{_logClientId}| Outgoing Transmission: {response}");
+                    var audioResponse = await Task.Run(() => Speaker.CreateResponse(
+                        $"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{Controller.Voice}\">{response}</voice></speak>"));
+                    if (audioResponse == null)
+                    {
+                        activity?.AddTag("Response", "Failure");
+                        activity?.AddEvent(new ActivityEvent("Synthesis Failure"));
+                        using (Constants.ActivitySource.StartActivity("EnqueueResponseAudio", ActivityKind.Producer))
+                        {
+                            Controller.Radio.TransmissionQueue.Enqueue(FailureMessage);
+                        }
+                    }
+                    else
+                    {
+                        activity?.AddTag("Response", "Success");
+                        using (Constants.ActivitySource.StartActivity("EnqueueResponseAudio", ActivityKind.Producer))
+                        {
+                            Controller.Radio.TransmissionQueue.Enqueue(audioResponse);
+                        }
+                    }
+                }
+                else
+                {
+                    activity?.AddTag("Response", "Ignored");
+                    Logger.Info($"{_logClientId}| Radio Call Ignored due to null response for Radio Call Processing");
+                }
+
+                if (Controller.Radio.discordTransmissionLogChannelId > 0)
+                    LogTransmissionToDiscord(radioCall, response);
+            }
         }
 
         private void LogTransmissionToDiscord(IRadioCall radioCall, string response)
         {
-            Logger.Debug($"{_logClientId}| Building Discord Request/Response message");
-            var transmission = $"Transmission Intent: {radioCall.Intent}\n" +
-                               $"Request: {radioCall.Message}\n" +
-                               $"Response: {response ?? "**IGNORED**"}";
-            _ = DiscordClient.LogTransmissionToDiscord(transmission, Controller.Radio).ConfigureAwait(false);
-        }
-
-        public async Task SendTransmission(string message)
-        {
-            var audioResponse = await Task.Run(() => Speaker.CreateResponse($"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{Controller.Voice}\">{message}</voice></speak>"));
-            Controller.Radio.TransmissionQueue.Enqueue(audioResponse);
+            using (Constants.ActivitySource.StartActivity("LogTransmissionToDiscord"))
+            {
+                Logger.Debug($"{_logClientId}| Building Discord Request/Response message");
+                var transmission = $"Transmission Intent: {radioCall.Intent}\n" +
+                                   $"Request: {radioCall.Message}\n" +
+                                   $"Response: {response ?? "**IGNORED**"}";
+                _ = DiscordClient.LogTransmissionToDiscord(transmission, Controller.Radio).ConfigureAwait(false);
+            }
         }
     }
 }

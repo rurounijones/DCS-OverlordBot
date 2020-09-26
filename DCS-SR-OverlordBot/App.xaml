@@ -1,4 +1,4 @@
-﻿<Application x:Class="DCS_SR_Client.App"
+﻿<Application x:Class="RurouniJones.DCS.OverlordBot.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              StartupUri="UI/ClientWindow/MainWindow.xaml"

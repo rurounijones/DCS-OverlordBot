@@ -26,40 +26,49 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
 
         public string ProcessRadioCall(IRadioCall radioCall)
         {
-            if (radioCall.Intent == "None")
-                return Task.Run(() => None(radioCall)).Result;
-
-            if(string.IsNullOrEmpty(radioCall.ReceiverName))
-                return Task.Run(() => None(radioCall)).Result;
-
-            if (radioCall.Sender == null)
-                return Task.Run(() => NullSender(radioCall)).Result;
-
-            if (radioCall.Sender.Id == null)
-                return Task.Run(() => UnverifiedSender(radioCall)).Result;
-
-            switch (radioCall.Intent)
+            using (var activity = Constants.ActivitySource.StartActivity("Controller.ProcessRadioCall"))
             {
-                case "RadioCheck":
-                    return Task.Run(() => RadioCheck(radioCall)).Result;
-                case "BogeyDope":
-                    return Task.Run(() => BogeyDope(radioCall)).Result;
-                case "BearingToAirbase":
-                    return Task.Run(() => BearingToAirbase(radioCall)).Result;
-                case "BearingToFriendlyPlayer":
-                    return Task.Run(() => BearingToFriendlyPlayer(radioCall)).Result;
-                case "SetWarningRadius":
-                    return Task.Run(() => SetWarningRadius(radioCall, Voice, Radio.TransmissionQueue)).Result;
-                case "Picture":
-                    return Task.Run(() => Picture(radioCall)).Result;
-                case "Declare":
-                    return Task.Run(() => Declare(radioCall)).Result;
-                case "ReadyToTaxi":
-                    return Task.Run(() => ReadyToTaxi(radioCall)).Result;
-                case "InboundToAirbase":
-                    return Task.Run(() => InboundToAirbase(radioCall)).Result;
-                default:
-                    return Task.Run(() => Unknown(radioCall)).Result;
+                if (radioCall.Intent == "None")
+                    return Task.Run(() => None(radioCall)).Result;
+
+                if (string.IsNullOrEmpty(radioCall.ReceiverName))
+                    return Task.Run(() => None(radioCall)).Result;
+
+                if (radioCall.Sender == null)
+                {
+                    activity?.AddTag("Response", "Not Recognized");
+                    return Task.Run(() => NullSender(radioCall)).Result;
+                }
+
+                if (radioCall.Sender.Id == null)
+                {
+                    activity?.AddTag("Response", "Not On Scope");
+                    return Task.Run(() => UnverifiedSender(radioCall)).Result;
+                }
+
+                switch (radioCall.Intent)
+                {
+                    case "RadioCheck":
+                        return Task.Run(() => RadioCheck(radioCall)).Result;
+                    case "BogeyDope":
+                        return Task.Run(() => BogeyDope(radioCall)).Result;
+                    case "BearingToAirbase":
+                        return Task.Run(() => BearingToAirbase(radioCall)).Result;
+                    case "BearingToFriendlyPlayer":
+                        return Task.Run(() => BearingToFriendlyPlayer(radioCall)).Result;
+                    case "SetWarningRadius":
+                        return Task.Run(() => SetWarningRadius(radioCall, Voice, Radio.TransmissionQueue)).Result;
+                    case "Picture":
+                        return Task.Run(() => Picture(radioCall)).Result;
+                    case "Declare":
+                        return Task.Run(() => Declare(radioCall)).Result;
+                    case "ReadyToTaxi":
+                        return Task.Run(() => ReadyToTaxi(radioCall)).Result;
+                    case "InboundToAirbase":
+                        return Task.Run(() => InboundToAirbase(radioCall)).Result;
+                    default:
+                        return Task.Run(() => Unknown(radioCall)).Result;
+                }
             }
         }
 

@@ -17,14 +17,31 @@ namespace RurouniJones.DCS.OverlordBot.SpeechOutput
 
         public static async Task<byte[]> CreateResponse(string text)
         {
-            using (var semaphore = new Semaphore(1, 1, "SpeechOutputSemaphore"))
+            using (Constants.ActivitySource.StartActivity("Speaker.CreateResponse"))
             {
-                try
+                using (var semaphore = new Semaphore(1, 1, "SpeechOutputSemaphore"))
                 {
-                    semaphore.WaitOne();
-                    using (var synthesizer = new SpeechSynthesizer(SpeechConfig, AudioConfig))
+                    SpeechSynthesizer synthesizer = null;
+                    try
                     {
-                        using (var speechSynthesisResult = await synthesizer.SpeakSsmlAsync(text))
+                        using (Constants.ActivitySource.StartActivity("WaitingOnSemaphore"))
+                        {
+                            semaphore.WaitOne();
+                        }
+
+                        using (Constants.ActivitySource.StartActivity("InitializingSpeechSynthesizer"))
+                        {
+                            synthesizer = new SpeechSynthesizer(SpeechConfig, AudioConfig);
+                        }
+
+                        SpeechSynthesisResult speechSynthesisResult;
+
+                        using (Constants.ActivitySource.StartActivity("SpeakSsmlAsync"))
+                        {
+                            speechSynthesisResult = await synthesizer.SpeakSsmlAsync(text);
+                        }
+
+                        using (Constants.ActivitySource.StartActivity("ProcessSpeechSynthesisResult"))
                         {
                             // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
                             switch (speechSynthesisResult.Reason)
@@ -35,7 +52,8 @@ namespace RurouniJones.DCS.OverlordBot.SpeechOutput
                                     return speechSynthesisResult.AudioData;
                                 case ResultReason.Canceled:
                                 {
-                                    var cancellation = SpeechSynthesisCancellationDetails.FromResult(speechSynthesisResult);
+                                    var cancellation =
+                                        SpeechSynthesisCancellationDetails.FromResult(speechSynthesisResult);
                                     Logger.Error("Speech Synthesis cancelled");
                                     Logger.Error($"Reason: {cancellation.Reason}");
                                     Logger.Error($"ErrorCode: {cancellation.ErrorCode}");
@@ -43,13 +61,18 @@ namespace RurouniJones.DCS.OverlordBot.SpeechOutput
                                     return null;
                                 }
                                 default:
-                                    Logger.Error($"Unexpected Speech Synthesis Result {speechSynthesisResult.Reason}");
+                                    Logger.Error(
+                                        $"Unexpected Speech Synthesis Result {speechSynthesisResult.Reason}");
                                     return null;
                             }
                         }
                     }
+                    finally
+                    {
+                        synthesizer?.Dispose();
+                        semaphore.Release();
+                    }
                 }
-                finally { semaphore.Release(); }
             }
         }
     }

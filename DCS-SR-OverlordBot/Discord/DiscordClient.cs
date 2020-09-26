@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -94,7 +95,11 @@ namespace RurouniJones.DCS.OverlordBot.Discord
             }
             try
             {
-                await _socket.GetGuild(TransmissionLogDiscordGuildId).GetTextChannel(radioInfo.discordTransmissionLogChannelId).SendMessageAsync(transmission);
+                using (Constants.ActivitySource.StartActivity("DiscordClient.LogToDiscord", ActivityKind.Client))
+                {
+                    await _socket.GetGuild(TransmissionLogDiscordGuildId)
+                        .GetTextChannel(radioInfo.discordTransmissionLogChannelId).SendMessageAsync(transmission);
+                }
             }
             catch (Exception e)
             {

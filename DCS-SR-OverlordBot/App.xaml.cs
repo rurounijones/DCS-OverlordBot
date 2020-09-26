@@ -9,12 +9,14 @@ using RurouniJones.DCS.OverlordBot.Network;
 using NLog;
 using Npgsql;
 using Npgsql.Logging;
-using RurouniJones.DCS.OverlordBot;
+using OpenTelemetry;
+using OpenTelemetry.Trace;
 using RurouniJones.DCS.OverlordBot.Util;
+using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
 using Timer = System.Threading.Timer;
 
-namespace DCS_SR_Client
+namespace RurouniJones.DCS.OverlordBot
 {
     /// <summary>
     ///     Interaction logic for App.xaml
@@ -29,6 +31,12 @@ namespace DCS_SR_Client
 
         public App()
         {
+            Sdk.CreateTracerProviderBuilder()
+                .AddSource($"OverlordBot {OverlordBot.Properties.Settings.Default.ServerName}")
+                .AddConsoleExporter()
+                .AddHttpClientInstrumentation()
+                .Build();
+
             AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionHandler;
 
             var location = AppDomain.CurrentDomain.BaseDirectory;
