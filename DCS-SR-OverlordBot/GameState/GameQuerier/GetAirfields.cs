@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading.Tasks;
 using NetTopologySuite.Geometries;
@@ -17,30 +18,38 @@ namespace RurouniJones.DCS.OverlordBot.GameState
             WHERE type = 'Ground+Static+Aerodrome'
             AND name != 'FARP';";
 
-            using (var connection = new NpgsqlConnection(ConnectionString()))
+            try
             {
-                await connection.OpenAsync();
-                using (var cmd = new NpgsqlCommand(command, connection))
+                using (var connection = new NpgsqlConnection(ConnectionString()))
                 {
-
-                    DbDataReader dbDataReader = await cmd.ExecuteReaderAsync();
-                    while (await dbDataReader.ReadAsync())
+                    await connection.OpenAsync();
+                    using (var cmd = new NpgsqlCommand(command, connection))
                     {
-                        var point = (Point)dbDataReader[1];
-                        var airfield = new Airfield
-                        {
-                            Name = dbDataReader.GetString(0),
-                            Position = new Geo.Geometries.Point(point.Y, point.X),
-                            Altitude = dbDataReader.GetDouble(2),
-                            Coalition = dbDataReader.GetInt32(3),
-                            WindHeading = (int)dbDataReader.GetDouble(4),
-                            WindSpeed = dbDataReader.GetInt32(5)
 
-                        };
-                        airfields.Add(airfield);
+                        DbDataReader dbDataReader = await cmd.ExecuteReaderAsync();
+                        while (await dbDataReader.ReadAsync())
+                        {
+                            var point = (Point) dbDataReader[1];
+                            var airfield = new Airfield
+                            {
+                                Name = dbDataReader.GetString(0),
+                                Position = new Geo.Geometries.Point(point.Y, point.X),
+                                Altitude = dbDataReader.GetDouble(2),
+                                Coalition = dbDataReader.GetInt32(3),
+                                WindHeading = (int) dbDataReader.GetDouble(4),
+                                WindSpeed = dbDataReader.GetInt32(5)
+
+                            };
+                            airfields.Add(airfield);
+                        }
+
+                        dbDataReader.Close();
                     }
-                    dbDataReader.Close();
                 }
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, "Error retrieving airfields");
             }
             return airfields;
         }
