@@ -27,12 +27,12 @@ namespace RurouniJones.DCS.OverlordBot.Util
                     airfield.Coalition = gameAirfield.Coalition;
                     airfield.WindHeading = airfield.WindHeading == -1 ? Properties.Settings.Default.WindHeading : gameAirfield.WindHeading;
                     airfield.WindSpeed = airfield.WindSpeed;
-                    Logger.Debug($"Updated {gameAirfield.Name}");
+                    Logger.Trace($"Updated {gameAirfield.Name}");
                 }
                 else
                 {
                     airfields.Add(gameAirfield);
-                    Logger.Debug($"Added {gameAirfield.Name}");
+                    Logger.Trace($"Added {gameAirfield.Name}");
                 }
             }
         }
