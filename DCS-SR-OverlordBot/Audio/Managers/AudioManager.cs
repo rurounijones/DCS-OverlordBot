@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -117,10 +118,14 @@ namespace RurouniJones.DCS.OverlordBot.Audio.Managers
                 Thread.CurrentThread.IsBackground = true;
                 while (true)
                 {
-                    if (ResponseQueue.TryDequeue(out var response) && response != null)
+                    if (!Client.SrsAudioClient.RadioSendingState.IsSending && ResponseQueue.TryDequeue(out var response) && response != null)
                     {
                         Logger.Trace($"{LogClientId}| Sending Response");
-                        await SendResponse(response, response.Length);
+                        using (var activity = Constants.ActivitySource.StartActivity("AudioManager.SendResponse", ActivityKind.Consumer))
+                        {
+                            activity?.AddTag("ResponseBytes", response.Length);
+                            await SendResponse(response, response.Length);
+                        }
                     }
                     Thread.Sleep(50);
                 }
