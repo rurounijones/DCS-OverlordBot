@@ -25,17 +25,24 @@ namespace RurouniJones.DCS.OverlordBot
     {
         private NotifyIcon _notifyIcon;
         private readonly bool _loggingReady;
-        private Timer _airfieldUpdateTimer;
 
         private static readonly CancellationTokenSource TokenSource = new CancellationTokenSource();
 
         public App()
         {
-            Sdk.CreateTracerProviderBuilder()
-                .AddSource($"OverlordBot {OverlordBot.Properties.Settings.Default.ServerName}")
-                .AddConsoleExporter()
-                .AddHttpClientInstrumentation()
-                .Build();
+            if (!string.IsNullOrEmpty(OverlordBot.Properties.Settings.Default.NewRelicApiKey))
+            {
+                Sdk.CreateTracerProviderBuilder()
+                    .AddSource($"OverlordBot {OverlordBot.Properties.Settings.Default.ServerName}")
+                    .AddHttpClientInstrumentation()
+                    .AddConsoleExporter()
+                    .AddNewRelicExporter(config =>
+                    {
+                        config.ApiKey = OverlordBot.Properties.Settings.Default.NewRelicApiKey;
+                        config.ServiceName = $"OverlordBot {OverlordBot.Properties.Settings.Default.ServerName}";
+                    })
+                    .Build();
+            }
 
             AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionHandler;
 
@@ -61,7 +68,7 @@ namespace RurouniJones.DCS.OverlordBot
 
             Task.Run(async () => await DiscordClient.Connect());
 
-            _airfieldUpdateTimer = new Timer(UpdateAirfields, null, 0, 60000);
+            var _ = new Timer(UpdateAirfields, null, 0, 60000);
         }
 
         private static void UpdateAirfields(object stateInfo)
@@ -90,7 +97,7 @@ namespace RurouniJones.DCS.OverlordBot
 
             _notifyIcon = new NotifyIcon
             {
-                Icon = RurouniJones.DCS.OverlordBot.Properties.Resources.audio_headset,
+                Icon = OverlordBot.Properties.Resources.audio_headset,
                 Visible = true,
                 ContextMenu = notifyIconContextMenu
             };

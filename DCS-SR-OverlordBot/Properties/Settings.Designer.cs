@@ -202,5 +202,14 @@ namespace RurouniJones.DCS.OverlordBot.Properties {
                 return ((string)(this["SRSHostId"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string NewRelicApiKey {
+            get {
+                return ((string)(this["NewRelicApiKey"]));
+            }
+        }
     }
 }
