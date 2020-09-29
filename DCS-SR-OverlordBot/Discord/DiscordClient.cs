@@ -60,7 +60,7 @@ namespace RurouniJones.DCS.OverlordBot.Discord
             /*
             if (message.Channel.GetType() == typeof(SocketDMChannel)
                 && message.Author.Id == 278154654347427840 // DOLT 1-2 RurouniJones's Discord ID
-                && message.Content.Split(' ')[0].Equals(Properties.Settings.Default.ServerName))
+                && message.Content.Split(' ')[0].Equals(Properties.Settings.Default.ServerShortName))
             {
                 var radioId = message.Content.Split(' ')[1];
                 var messageText = string.Join(" ", message.Content.Split(' ').Skip(2).ToArray());

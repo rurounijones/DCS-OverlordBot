@@ -36,10 +36,10 @@
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="ShadowLuisEndpointKey" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">add_luis_endpoint_key</Value>
+      <Value Profile="(Default)" />
     </Setting>
     <Setting Name="ShadowLuisAppId" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">add_luis_app_id</Value>
+      <Value Profile="(Default)" />
     </Setting>
     <Setting Name="DiscordToken" Type="System.String" Scope="Application">
       <Value Profile="(Default)">add_discord_token</Value>
@@ -47,8 +47,8 @@
     <Setting Name="TransmissionLogDiscordGuild" Type="System.UInt64" Scope="Application">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="ServerName" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">add_server_name_here</Value>
+    <Setting Name="ServerShortName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">add_server_short_name_here</Value>
     </Setting>
     <Setting Name="WindHeading" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">90</Value>
@@ -57,9 +57,9 @@
       <Value Profile="(Default)">add_srs_server_host_here</Value>
     </Setting>
     <Setting Name="SRSPort" Type="System.Int32" Scope="Application">
-      <Value Profile="(Default)">0</Value>
+      <Value Profile="(Default)">5002</Value>
     </Setting>
-    <Setting Name="SRSHostId" Type="System.String" Scope="Application">
+    <Setting Name="ServerName" Type="System.String" Scope="Application">
       <Value Profile="(Default)">human_friendly_name_of_server_for_display</Value>
     </Setting>
     <Setting Name="NewRelicApiKey" Type="System.String" Scope="Application">

@@ -11,7 +11,7 @@ namespace RurouniJones.DCS.OverlordBot
         public static readonly List<Airfield> Airfields = Populator.Airfields;
 
         public static ActivitySource ActivitySource = new ActivitySource(
-            $"OverlordBot {Properties.Settings.Default.ServerName}",
+            $"OverlordBot {Properties.Settings.Default.ServerShortName}",
             "Development");
     }
 

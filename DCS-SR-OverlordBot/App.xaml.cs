@@ -33,13 +33,13 @@ namespace RurouniJones.DCS.OverlordBot
             if (!string.IsNullOrEmpty(OverlordBot.Properties.Settings.Default.NewRelicApiKey))
             {
                 Sdk.CreateTracerProviderBuilder()
-                    .AddSource($"OverlordBot {OverlordBot.Properties.Settings.Default.ServerName}")
+                    .AddSource($"OverlordBot {OverlordBot.Properties.Settings.Default.ServerShortName}")
                     .AddHttpClientInstrumentation()
                     .AddConsoleExporter()
                     .AddNewRelicExporter(config =>
                     {
                         config.ApiKey = OverlordBot.Properties.Settings.Default.NewRelicApiKey;
-                        config.ServiceName = $"OverlordBot {OverlordBot.Properties.Settings.Default.ServerName}";
+                        config.ServiceName = $"OverlordBot {OverlordBot.Properties.Settings.Default.ServerShortName}";
                     })
                     .Build();
             }

@@ -51,7 +51,7 @@ namespace RurouniJones.DCS.OverlordBot.UI
 
             _port = Properties.Settings.Default.SRSPort;
 
-            ServerName.Text = Properties.Settings.Default.SRSHostId;
+            ServerName.Text = Properties.Settings.Default.ServerName;
             ServerEndpoint.Text = Properties.Settings.Default.SRSHost + ":" + _port;
 
             var radioJson = File.ReadAllText(AwacsRadiosFile);

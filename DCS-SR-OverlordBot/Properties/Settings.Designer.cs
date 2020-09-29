@@ -124,7 +124,7 @@ namespace RurouniJones.DCS.OverlordBot.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("add_luis_endpoint_key")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string ShadowLuisEndpointKey {
             get {
                 return ((string)(this["ShadowLuisEndpointKey"]));
@@ -133,7 +133,7 @@ namespace RurouniJones.DCS.OverlordBot.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("add_luis_app_id")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string ShadowLuisAppId {
             get {
                 return ((string)(this["ShadowLuisAppId"]));
@@ -160,10 +160,10 @@ namespace RurouniJones.DCS.OverlordBot.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("add_server_name_here")]
-        public string ServerName {
+        [global::System.Configuration.DefaultSettingValueAttribute("add_server_short_name_here")]
+        public string ServerShortName {
             get {
-                return ((string)(this["ServerName"]));
+                return ((string)(this["ServerShortName"]));
             }
         }
         
@@ -187,7 +187,7 @@ namespace RurouniJones.DCS.OverlordBot.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        [global::System.Configuration.DefaultSettingValueAttribute("5002")]
         public int SRSPort {
             get {
                 return ((int)(this["SRSPort"]));
@@ -197,9 +197,9 @@ namespace RurouniJones.DCS.OverlordBot.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("human_friendly_name_of_server_for_display")]
-        public string SRSHostId {
+        public string ServerName {
             get {
-                return ((string)(this["SRSHostId"]));
+                return ((string)(this["ServerName"]));
             }
         }
         
