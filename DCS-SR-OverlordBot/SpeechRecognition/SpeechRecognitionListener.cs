@@ -171,9 +171,9 @@ namespace RurouniJones.DCS.OverlordBot.SpeechRecognition
         {
             using (var activity = Constants.ActivitySource.StartActivity("SpeechRecognitionListener.ProcessRadioCall", ActivityKind.Server))
             {
-                activity.AddTag("Frequency", _frequency);
-                activity.AddTag("BotType", _botType);
-                activity.AddTag("Callsign", _callsign);
+                activity?.AddTag("Frequency", _frequency);
+                activity?.AddTag("BotType", _botType);
+                activity?.AddTag("Callsign", _callsign);
                 try
                 {
                     switch (e.Result.Reason)
