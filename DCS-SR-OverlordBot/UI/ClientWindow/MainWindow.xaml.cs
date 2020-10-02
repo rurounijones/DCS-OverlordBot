@@ -6,6 +6,8 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using RurouniJones.DCS.OverlordBot.Audio.Managers;
 using RurouniJones.DCS.OverlordBot.Settings;
@@ -13,6 +15,7 @@ using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.DCSState;
 using Newtonsoft.Json;
 using NLog;
+using RurouniJones.DCS.OverlordBot.Util;
 
 namespace RurouniJones.DCS.OverlordBot.UI
 {
@@ -56,6 +59,26 @@ namespace RurouniJones.DCS.OverlordBot.UI
 
             var radioJson = File.ReadAllText(AwacsRadiosFile);
             var awacsRadios = JsonConvert.DeserializeObject<List<RadioInformation>>(radioJson);
+
+            var speechAuthenticated = false;
+
+            // Wait until we have authorization with Azure before continuing. No point connecting to
+            // SRS if we cannot process anything.
+            var t = Task.Run(() => {
+                while (speechAuthenticated == false)
+                {
+                    var authorizationToken = SpeechAuthorizationToken.AuthorizationToken;
+                    if (authorizationToken == null)
+                    {
+                        Thread.Sleep(10000);
+                    }
+                    else
+                    {
+                        speechAuthenticated = true;
+                    }
+                }
+            });
+            t.Wait();
 
             foreach (var radio in awacsRadios)
             {

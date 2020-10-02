@@ -457,6 +457,7 @@
     <Compile Include="Settings\SynchedServerSettings.cs" />
     <Compile Include="Network\Client.cs" />
     <Compile Include="Settings\SettingsStore.cs" />
+    <Compile Include="Util\SpeechAuthorizationToken.cs" />
     <Page Include="UI\ClientWindow\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

@@ -2,7 +2,6 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
@@ -12,7 +11,6 @@ using Microsoft.CognitiveServices.Speech;
 using Microsoft.CognitiveServices.Speech.Audio;
 using NAudio.Wave;
 using NLog;
-using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using RurouniJones.DCS.OverlordBot.Audio.Managers;
 using RurouniJones.DCS.OverlordBot.Controllers;
@@ -20,6 +18,7 @@ using RurouniJones.DCS.OverlordBot.Discord;
 using RurouniJones.DCS.OverlordBot.Network;
 using RurouniJones.DCS.OverlordBot.RadioCalls;
 using RurouniJones.DCS.OverlordBot.SpeechOutput;
+using RurouniJones.DCS.OverlordBot.Util;
 
 namespace RurouniJones.DCS.OverlordBot.SpeechRecognition
 {
@@ -31,9 +30,6 @@ namespace RurouniJones.DCS.OverlordBot.SpeechRecognition
         // Used when an exception is thrown so that the caller isn't left wondering.
         private static readonly byte[] FailureMessage = File.ReadAllBytes("Data/equipment-failure.wav");
 
-        // Authorization token expires every 10 minutes. Renew it every 9 minutes.
-        private static readonly TimeSpan RefreshTokenDuration = TimeSpan.FromMinutes(9);
-
         private readonly AudioConfig _audioConfig;
 
         public readonly AbstractController Controller;
@@ -41,7 +37,6 @@ namespace RurouniJones.DCS.OverlordBot.SpeechRecognition
         public SrsAudioClient VoiceHandler;
 
         private TaskCompletionSource<int> _stopRecognition;
-        private CancellationTokenSource _source;
 
         private volatile bool _stop;
 
@@ -102,51 +97,6 @@ namespace RurouniJones.DCS.OverlordBot.SpeechRecognition
         }
 
         // Gets an authorization token by sending a POST request to the token service.
-        public static async Task<string> GetToken()
-        {
-            using (var activity = Constants.ActivitySource.StartActivity("SpeechRecognitionListener.TokenRenewal"))
-            {
-                using (var client = new HttpClient())
-                {
-                    client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key",
-                        Properties.Settings.Default.SpeechSubscriptionKey);
-                    var uriBuilder = new UriBuilder("https://" + Properties.Settings.Default.SpeechRegion +
-                                                    ".api.cognitive.microsoft.com/sts/v1.0/issueToken");
-
-                    using (var result = await client.PostAsync(uriBuilder.Uri.AbsoluteUri, null))
-                    {
-                        if (result.IsSuccessStatusCode)
-                        {
-                            return await result.Content.ReadAsStringAsync();
-                        }
-
-                        var exception = new HttpRequestException(
-                            $"Cannot get token from {uriBuilder}. Error: {result.StatusCode}");
-
-                        activity?.RecordException(exception);
-
-                        throw exception;
-                    }
-                }
-            }
-        }
-
-        // Renews authorization token periodically until cancellationToken is cancelled.
-        public static Task StartTokenRenewTask(CancellationToken cancellationToken, SpeechRecognizer recognizer)
-        {
-            return Task.Run(async () =>
-            {
-                while (!cancellationToken.IsCancellationRequested)
-                {
-                    await Task.Delay(RefreshTokenDuration, cancellationToken);
-
-                    if (!cancellationToken.IsCancellationRequested)
-                    {
-                        recognizer.AuthorizationToken = await GetToken();
-                    }
-                }
-            }, cancellationToken);
-        }
 
         public async Task StartListeningAsync()
         {
@@ -154,7 +104,8 @@ namespace RurouniJones.DCS.OverlordBot.SpeechRecognition
                 Logger.Debug($"{_logClientId}| Started Continuous Recognition");
 
                 // Initialize the recognizer
-                var authorizationToken = Task.Run(GetToken).Result;
+                var authorizationToken = SpeechAuthorizationToken.AuthorizationToken;
+
                 var speechConfig =
                     SpeechConfig.FromAuthorizationToken(authorizationToken, Properties.Settings.Default.SpeechRegion);
                 speechConfig.EndpointId = Properties.Settings.Default.SpeechCustomEndpointId;
@@ -162,10 +113,6 @@ namespace RurouniJones.DCS.OverlordBot.SpeechRecognition
 
                 // Setup the cancellation code
                 _stopRecognition = new TaskCompletionSource<int>();
-                _source = new CancellationTokenSource();
-
-                // Start the token renewal so we can do long-running recognition.
-                var tokenRenewTask = StartTokenRenewTask(_source.Token, recognizer);
 
                 recognizer.Recognized += async (s, e) => { await ProcessRadioCall(e); };
 
@@ -209,7 +156,6 @@ namespace RurouniJones.DCS.OverlordBot.SpeechRecognition
 
                 // Stops recognition.
                 await recognizer.StopContinuousRecognitionAsync().ConfigureAwait(false);
-                _source.Cancel();
                 Logger.Debug($"{_logClientId}| Stopped Continuous Recognition");
             }
         }
@@ -219,8 +165,6 @@ namespace RurouniJones.DCS.OverlordBot.SpeechRecognition
             Logger.Debug($"{_logClientId}| Stopping Continuous Recognition");
             _stop = true;
             _stopRecognition.TrySetResult(0);
-            _source.Cancel();
-
         }
 
         private async Task ProcessRadioCall(SpeechRecognitionEventArgs e)

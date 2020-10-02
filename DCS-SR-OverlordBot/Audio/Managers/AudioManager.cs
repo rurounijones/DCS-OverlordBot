@@ -12,6 +12,7 @@ using FragLabs.Audio.Codecs;
 using FragLabs.Audio.Codecs.Opus;
 using NAudio.Wave.SampleProviders;
 using NLog;
+using RurouniJones.DCS.OverlordBot.Util;
 
 namespace RurouniJones.DCS.OverlordBot.Audio.Managers
 {
@@ -49,7 +50,6 @@ namespace RurouniJones.DCS.OverlordBot.Audio.Managers
             _playerRadioInfo = playerRadioInfo;
             LogClientId =  _playerRadioInfo.radios[0].name;
             Client = new Network.Client(this, playerRadioInfo);
-
         }
 
         public void ConnectToSrs(IPEndPoint address)

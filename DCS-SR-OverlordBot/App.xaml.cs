@@ -12,7 +12,6 @@ using Npgsql.Logging;
 using OpenTelemetry;
 using OpenTelemetry.Trace;
 using RurouniJones.DCS.OverlordBot.Util;
-using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
 using Timer = System.Threading.Timer;
 
@@ -67,6 +66,9 @@ namespace RurouniJones.DCS.OverlordBot
             _loggingReady = true;
 
             Task.Run(async () => await DiscordClient.Connect());
+
+            SpeechAuthorizationToken.CancellationToken = TokenSource.Token;
+            Task.Run(async () => await SpeechAuthorizationToken.StartTokenRenewTask());
 
             var _ = new Timer(UpdateAirfields, null, 0, 60000);
         }
