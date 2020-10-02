@@ -15,7 +15,7 @@ namespace RurouniJones.DCS.OverlordBot.Audio.Providers
         //https://trac.ffmpeg.org/wiki/audio%20types
         public static readonly WaveFormat PcmMono16Ks16Le = new WaveFormat(16000, 1);
 
-        private readonly BufferedWaveProvider _speechAudioProvider;
+        public readonly BufferedWaveProvider _speechAudioProvider;
         public SpeechRecognitionListener SpeechRecognitionListener { get; set; }
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         public string LogClientId;

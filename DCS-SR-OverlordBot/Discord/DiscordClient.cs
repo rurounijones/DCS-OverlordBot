@@ -82,12 +82,12 @@ namespace RurouniJones.DCS.OverlordBot.Discord
             }*/
         }
 
-        public static async Task LogTransmissionToDiscord(string transmission, RadioInformation radioInfo)
+        public static async Task LogTransmissionToDiscord(string transmission, RadioInformation radioInfo, Network.Client client)
         {
-            transmission += $"\nClients on freq {radioInfo.freq / 1000000}MHz: {string.Join(", ", GetClientsOnFrequency(radioInfo))}\n" +
-            $"Total / Compatible / On Freq Callsigns : {GetHumanSrsClients().Count} / {GetBotCallsignCompatibleClients().Count} / {GetClientsOnFrequency(radioInfo).Count}\n" +
-            $"On Freq percentage of Total / Compatible: { Math.Round(GetClientsOnFrequency(radioInfo).Count / (double)GetHumanSrsClients().Count * 100, 2) }% / " +
-            $"{ Math.Round(GetClientsOnFrequency(radioInfo).Count / (double)GetBotCallsignCompatibleClients().Count * 100, 2) }%";
+            transmission += $"\nClients on freq {radioInfo.freq / 1000000}MHz: {string.Join(", ", GetClientsOnFrequency(radioInfo, client))}\n" +
+            $"Total / Compatible / On Freq Callsigns : {GetHumanSrsClients(client).Count} / {GetBotCallsignCompatibleClients(client).Count} / {GetClientsOnFrequency(radioInfo, client).Count}\n" +
+            $"On Freq percentage of Total / Compatible: { Math.Round(GetClientsOnFrequency(radioInfo, client).Count / (double)GetHumanSrsClients(client).Count * 100, 2) }% / " +
+            $"{ Math.Round(GetClientsOnFrequency(radioInfo, client).Count / (double)GetBotCallsignCompatibleClients(client).Count * 100, 2) }%";
 
             if (_socket == null || _socket.ConnectionState != ConnectionState.Connected)
             {
@@ -132,18 +132,16 @@ namespace RurouniJones.DCS.OverlordBot.Discord
             return Task.CompletedTask;
         }
 
-        private static List<string> GetHumanSrsClients()
+        private static List<string> GetHumanSrsClients(Network.Client srsClient)
         {
-            //var allClients = Client.Instance.Values;
-            //return (from client in allClients where client.Name != "OverlordBot" && !client.Name.Contains("ATIS") select client.Name).ToList();
-            return new List<string>();
+            var allClients = srsClient.Values;
+            return (from client in allClients where client.Name != "OverlordBot" && !client.Name.Contains("ATIS") select client.Name).ToList();
         }
 
-        private static List<string> GetBotCallsignCompatibleClients()
+        private static List<string> GetBotCallsignCompatibleClients(Network.Client srsClient)
         {
-            //var allClients = Client.Instance.Values;
-            //return (from client in allClients where client.Name != "OverlordBot" && !client.Name.Contains("ATIS") && IsClientNameCompatible(client.Name) select client.Name).ToList();
-            return new List<string>();
+            var allClients = srsClient.Values;
+            return (from client in allClients where client.Name != "OverlordBot" && !client.Name.Contains("ATIS") && IsClientNameCompatible(client.Name) select client.Name).ToList();
 
         }
 
@@ -152,12 +150,10 @@ namespace RurouniJones.DCS.OverlordBot.Discord
             return Regex.Match(name, @"[a-zA-Z]{3,} \d-\d{1,2}").Success || Regex.Match(name, @"[a-zA-Z]{3,} \d{2,3}").Success;
         }
 
-        private static List<string> GetClientsOnFrequency(RadioInformation radioInfo)
+        private static List<string> GetClientsOnFrequency(RadioInformation radioInfo, Network.Client srsClient)
         {
-            //var clientsOnFreq = Client.Instance.ClientsOnFreq(radioInfo.freq, RadioInformation.Modulation.AM);
-            //return (from client in clientsOnFreq where client.Name != "OverlordBot" select client.Name).ToList();
-            return new List<string>();
-
+            var clientsOnFreq = srsClient.ClientsOnFreq(radioInfo.freq, RadioInformation.Modulation.AM);
+            return (from client in clientsOnFreq where client.Name != "OverlordBot" select client.Name).ToList();
         }
     }
 }

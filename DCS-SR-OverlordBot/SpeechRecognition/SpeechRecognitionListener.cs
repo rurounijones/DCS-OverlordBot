@@ -35,6 +35,7 @@ namespace RurouniJones.DCS.OverlordBot.SpeechRecognition
         public readonly AbstractController Controller;
 
         public SrsAudioClient VoiceHandler;
+        public Client SrsClient;
 
         private TaskCompletionSource<int> _stopRecognition;
 
@@ -256,7 +257,7 @@ namespace RurouniJones.DCS.OverlordBot.SpeechRecognition
                 var transmission = $"Transmission Intent: {radioCall.Intent}\n" +
                                    $"Request: {radioCall.Message}\n" +
                                    $"Response: {response ?? "**IGNORED**"}";
-                _ = DiscordClient.LogTransmissionToDiscord(transmission, Controller.Radio).ConfigureAwait(false);
+                _ = DiscordClient.LogTransmissionToDiscord(transmission, Controller.Radio, SrsClient).ConfigureAwait(false);
             }
         }
     }

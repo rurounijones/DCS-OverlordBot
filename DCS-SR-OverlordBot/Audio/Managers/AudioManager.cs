@@ -61,8 +61,9 @@ namespace RurouniJones.DCS.OverlordBot.Audio.Managers
         {
             BotAudioProvider = new BotAudioProvider(Client.DcsPlayerRadioInfo.radios[0], ResponseQueue)
             {
-                SpeechRecognitionListener = { VoiceHandler = Client.SrsAudioClient }
+                SpeechRecognitionListener = { VoiceHandler = Client.SrsAudioClient, SrsClient = Client }
             };
+            
             StartResponseCheckLoop();
 
             try
