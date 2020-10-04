@@ -1,10 +1,13 @@
 ﻿using System.Collections.Generic;
+using RurouniJones.DCS.Airfields.Structure;
 
 namespace RurouniJones.DCS.Airfields.Controllers
 {
     public class TaxiInstructions
     {
         public string DestinationName { get; set; }
+
+        public List<TaxiPoint> TaxiPoints { get; set; }
 
         public List<string> TaxiwayNames { get; set; } = new List<string>();
 

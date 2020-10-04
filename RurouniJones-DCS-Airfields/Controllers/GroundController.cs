@@ -76,12 +76,14 @@ namespace RurouniJones.DCS.Airfields.Controllers
 
         private static TaxiInstructions CompileInstructions(TaxiPoint target, IEnumerable<TaggedEdge<TaxiPoint, string>> path)
         {
+            var taggedEdges = path.ToList();
+
             var taxiInstructions = new TaxiInstructions()
             {
-                DestinationName = target.Name
+                DestinationName = target.Name,
+                TaxiPoints = taggedEdges.Select(edge => edge.Target).ToList()
             };
 
-            var taggedEdges = path.ToList();
             foreach (var edge in taggedEdges)
             {
                 taxiInstructions.TaxiwayNames.Add(edge.Tag);
