@@ -17,8 +17,7 @@ namespace RurouniJones.DCS.Airfields.Controllers.Tests
             yield return new object[] { new TaxiScenario("Al Dhafra AB", "Uniform Spots 1", 10, new Point(24.216944646008, 54.563235561423), "Runway-3 1 Left", new List<string> { "Uniform", "Uniform 0" }) };
             
             yield return new object[] { new TaxiScenario("Anapa-Vityazevo", "Apron 1", 90, new Point(45.0101581, 37.3481765), "Runway-0 4", new List<string> { "Mike", "Alpha" }) };
-            yield return new object[] { new TaxiScenario("Anapa-Vityazevo", "Echo Spots", 90, new Point(45.0094606, 37.3635130), "Runway-0 4", new List<string> { "Echo", "Delta", "Mike", "Alpha" },
-                new List<string> { "Cross Runway-2 2 at your discretion" }) };
+            yield return new object[] { new TaxiScenario("Anapa-Vityazevo", "Echo Spots", 90, new Point(45.0094606, 37.3635130), "Runway-0 4", new List<string> { "Echo", "Delta", "Mike", "Alpha" }) };
 
             yield return new object[] { new TaxiScenario("Anapa-Vityazevo", "Apron 1", -1, new Point(45.0101581, 37.3481765), "Runway-0 4", new List<string> { "Mike", "Alpha" }) };
             yield return new object[] { new TaxiScenario("Anapa-Vityazevo", "Apron 1", 350, new Point(45.0101581, 37.3481765), "Runway-0 4", new List<string> { "Mike", "Alpha" }) };
@@ -33,8 +32,7 @@ namespace RurouniJones.DCS.Airfields.Controllers.Tests
             yield return new object[] { new TaxiScenario("Krasnodar-Pashkovsky", "Apron A", 90, new Point(45.038881971882, 39.14140614585), "Runway-0 5 Left", new List<string> { "Alfa" }) };
             yield return new object[] { new TaxiScenario("Krasnodar-Pashkovsky", "Apron 1", 90, new Point(45.047601257612, 39.200777416505), "Runway-0 5 Right", new List<string> { "November", "Echo" }) };
 
-            yield return new object[] { new TaxiScenario("Mineralnye Vody", "Maintenance Area", 90, new Point(44.223130773545, 43.104834499253), "Runway-1 2", new List<string> { "November", "Echo", "Alfa" },
-                new List<string> { "Cross Runway-3 0 at your discretion" }) };
+            yield return new object[] { new TaxiScenario("Mineralnye Vody", "Maintenance Area", 90, new Point(44.223130773545, 43.104834499253), "Runway-1 2", new List<string> { "November", "Echo", "Alfa" }) };
         }
 
         [DataTestMethod]
@@ -49,7 +47,7 @@ namespace RurouniJones.DCS.Airfields.Controllers.Tests
             {
                 DestinationName = scenario.Destination,
                 TaxiwayNames = scenario.Taxiways,
-                Comments = scenario.Comments
+                Comments = new List<string>()
             };
 
             var actual = controller.GetTaxiInstructions(scenario.StartPoint);
@@ -61,17 +59,16 @@ namespace RurouniJones.DCS.Airfields.Controllers.Tests
         {
             StringAssert.Contains(expected.DestinationName, actual.DestinationName);
             CollectionAssert.AreEqual(expected.TaxiwayNames, actual.TaxiwayNames);
-            CollectionAssert.AreEqual(expected.Comments, actual.Comments);
         }
         public class TaxiScenario
         {
-            public string Airfield { get; private set; }
-            public string Source { get; private set; }
-            public int Wind { get; private set; }
-            public Point StartPoint { get; private set; }
-            public string Destination { get; private set; }
-            public List<string> Taxiways { get; private set; }
-            public List<string> Comments { get; private set; } = new List<string>();
+            public string Airfield { get; }
+            public string Source { get; }
+            public int Wind { get; }
+            public Point StartPoint { get; }
+            public string Destination { get; }
+            public List<string> Taxiways { get; }
+            public List<string> Comments { get; } = new List<string>();
 
             public TaxiScenario(string airfield, string source, int wind, Point startPoint, string destination, List<string> taxiways)
             {
@@ -81,17 +78,6 @@ namespace RurouniJones.DCS.Airfields.Controllers.Tests
                 StartPoint = startPoint;
                 Destination = destination;
                 Taxiways = taxiways;
-            }
-
-            public TaxiScenario(string airfield, string source, int wind, Point startPoint, string destination, List<string> taxiways, List<string> comments)
-            {
-                Airfield = airfield;
-                Source = source;
-                Wind = wind;
-                StartPoint = startPoint;
-                Destination = destination;
-                Taxiways = taxiways;
-                Comments = comments;
             }
 
             public override string ToString()

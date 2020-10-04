@@ -81,16 +81,15 @@ namespace RurouniJones.DCS.Airfields.Controllers
             var taxiInstructions = new TaxiInstructions()
             {
                 DestinationName = target.Name,
-                TaxiPoints = taggedEdges.Select(edge => edge.Target).ToList()
+                TaxiPoints = taggedEdges.Select(edge => edge.Source).ToList(),
+                Comments = new List<string>()
             };
 
+            // Include the final TaxiPoint
+            taxiInstructions.TaxiPoints.Add(taggedEdges.Last().Target);
             foreach (var edge in taggedEdges)
             {
                 taxiInstructions.TaxiwayNames.Add(edge.Tag);
-                if (edge.Source is Runway runway && edge != taggedEdges.First())
-                {
-                    taxiInstructions.Comments.Add($"Cross {runway.Name} at your discretion");
-                }
             }
 
             taxiInstructions.TaxiwayNames = RemoveRepeating(taxiInstructions.TaxiwayNames);

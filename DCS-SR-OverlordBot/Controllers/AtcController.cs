@@ -53,11 +53,11 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
             return $"{radioCall.Sender.Callsign}, This is an ATC frequency";
         }
 
-        protected override string ReadyToTaxi(IRadioCall radioCall)
+        protected override string ReadyToTaxi(IRadioCall radioCall, string voice, ConcurrentQueue<byte[]> responseQueue)
         {
             if (!IsAddressedToController(radioCall))
                 return null;
-            return ResponsePrefix(radioCall) + "ground, " + ReadytoTaxi.Process(radioCall).Result;
+            return ResponsePrefix(radioCall) + "ground, " + ReadytoTaxi.Process(radioCall, voice, responseQueue).Result;
         }
 
         protected override string NullSender(IRadioCall _)

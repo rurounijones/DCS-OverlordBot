@@ -72,7 +72,7 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
             return ResponsePrefix(radioCall) + Intents.SetWarningRadius.Process(new SetWarningRadiusRadioCall(radioCall), voice, responseQueue).Result;
         }
 
-        protected override string ReadyToTaxi(IRadioCall radioCall)
+        protected override string ReadyToTaxi(IRadioCall radioCall, string voice, ConcurrentQueue<byte[]> responseQueue)
         {
             return ResponsePrefix(radioCall) + "this is an AWACS frequency.";
         }

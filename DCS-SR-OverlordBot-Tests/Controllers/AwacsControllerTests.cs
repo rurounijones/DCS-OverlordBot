@@ -131,66 +131,6 @@ namespace RurouniJones.DCS.OverlordBot.Controllers.Tests
         }
 
         [TestClass]
-        public class ReadyToTaxiMethod
-        {
-            private AwacsController _controller;
-            private Player _sender;
-            private Mock<IRadioCall> _mock;
-
-            [TestInitialize]
-            public void Init()
-            {
-                _controller = new AwacsController();
-
-                _sender = new Player()
-                {
-                    Id = "a1",
-                    Group = "dolt",
-                    Flight = 1,
-                    Plane = 2
-                };
-
-                _mock = new Mock<IRadioCall>();
-                _mock.SetupGet(call => call.Intent).Returns("ReadyToTaxi");
-
-            }
-
-            [TestMethod]
-            public void WhenNoAssignedAwacsCallSign_TellsTheSenderItIsAnAwacsFrequency()
-            {
-                _mock.SetupGet(call => call.Sender).Returns(_sender);
-                _mock.SetupGet(call => call.ReceiverName).Returns("Krymsk");
-                _mock.SetupGet(call => call.AwacsCallsign).Returns((string)null);
-                _mock.SetupGet(call => call.AirbaseName).Returns("Krymsk");
-
-                var radioCall = _mock.Object;
-
-                string expected = "dolt 1 2, Overlord, this is an AWACS frequency.";
-                string response = _controller.ProcessRadioCall(radioCall);
-
-                Assert.AreEqual(expected, response);
-            }
-
-            [TestMethod]
-            public void WhenAssignedAwacsCallSign_TellsTheSenderItIsAnAwacsFrequency()
-            {
-                _controller.Callsign = "Magic";
-
-                _mock.SetupGet(call => call.Sender).Returns(_sender);
-                _mock.SetupGet(call => call.ReceiverName).Returns("Krymsk");
-                _mock.SetupGet(call => call.AwacsCallsign).Returns("Magic");
-                _mock.SetupGet(call => call.AirbaseName).Returns("Krymsk");
-
-                var radioCall = _mock.Object;
-
-                string expected = "dolt 1 2, Magic, this is an AWACS frequency.";
-                string response = _controller.ProcessRadioCall(radioCall);
-
-                Assert.AreEqual(expected, response);
-            }
-        }
-
-        [TestClass]
         public class NullSenderMethod {
 
             private AwacsController _controller;

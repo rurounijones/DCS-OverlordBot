@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
 using NLog;
 using RurouniJones.DCS.Airfields.Controllers;
 using RurouniJones.DCS.Airfields.Structure;
+using RurouniJones.DCS.OverlordBot.Controllers;
 using RurouniJones.DCS.OverlordBot.RadioCalls;
 
 namespace RurouniJones.DCS.OverlordBot.Intents
@@ -23,7 +25,7 @@ namespace RurouniJones.DCS.OverlordBot.Intents
             DestinationName = "Unknown Destination"
         };
 
-        public static async Task<string> Process(IRadioCall radioCall)
+        public static async Task<string> Process(IRadioCall radioCall, string voice, ConcurrentQueue<byte[]> responseQueue)
         {
             var taxiInstructions = DummyInstructions;
             Airfield airfield;
@@ -41,7 +43,9 @@ namespace RurouniJones.DCS.OverlordBot.Intents
                     return "There are no ATC services currently available at this airfield.";
 
                 taxiInstructions = new GroundController(airfield).GetTaxiInstructions(radioCall.Sender.Position);
-                return ConvertTaxiInstructionsToSsml(taxiInstructions);
+                var spokenInstructions = ConvertTaxiInstructionsToSsml(taxiInstructions);
+                var _ = new TaxiProgressChecker(radioCall.Sender, airfield.Name, voice, taxiInstructions.TaxiPoints, responseQueue);
+                return spokenInstructions;
             }
             catch (NoActiveRunwaysFoundException ex)
             {

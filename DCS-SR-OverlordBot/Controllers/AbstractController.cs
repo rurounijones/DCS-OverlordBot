@@ -63,7 +63,7 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
                     case "Declare":
                         return Task.Run(() => Declare(radioCall)).Result;
                     case "ReadyToTaxi":
-                        return Task.Run(() => ReadyToTaxi(radioCall)).Result;
+                        return Task.Run(() => ReadyToTaxi(radioCall, Voice, Radio.TransmissionQueue)).Result;
                     case "InboundToAirbase":
                         return Task.Run(() => InboundToAirbase(radioCall)).Result;
                     default:
@@ -94,7 +94,7 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
 
         protected abstract string SetWarningRadius(IRadioCall radioCall, string voice, ConcurrentQueue<byte[]> responseQueue);
 
-        protected abstract string ReadyToTaxi(IRadioCall radioCall);
+        protected abstract string ReadyToTaxi(IRadioCall radioCall, string voice, ConcurrentQueue<byte[]> responseQueue);
 
         protected abstract string InboundToAirbase(IRadioCall radioCall);
 

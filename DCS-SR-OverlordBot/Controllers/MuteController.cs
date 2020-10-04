@@ -50,7 +50,7 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
             return null;
         }
 
-        protected override string ReadyToTaxi(IRadioCall radioCall)
+        protected override string ReadyToTaxi(IRadioCall radioCall, string voice, ConcurrentQueue<byte[]> responseQueue)
         {
             return null;
         }
