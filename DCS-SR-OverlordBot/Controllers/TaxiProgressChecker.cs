@@ -15,7 +15,8 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public static ConcurrentDictionary<string, TaxiProgressChecker> TaxiChecks = new ConcurrentDictionary<string, TaxiProgressChecker>();
+        public static ConcurrentDictionary<string, TaxiProgressChecker> TaxiChecks =
+            new ConcurrentDictionary<string, TaxiProgressChecker>();
 
         private readonly Timer _checkTimer;
         private readonly Player _sender;
@@ -30,7 +31,8 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
 
         private const double CheckInterval = 1000; // milliseconds
 
-        public TaxiProgressChecker(Player sender, string airfieldName, string voice, List<TaxiPoint> taxiPoints, ConcurrentQueue<byte[]> responseQueue)
+        public TaxiProgressChecker(Player sender, string airfieldName, string voice, List<TaxiPoint> taxiPoints,
+            ConcurrentQueue<byte[]> responseQueue)
         {
             _sender = sender;
             _airfieldName = airfieldName;
@@ -45,7 +47,7 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
             }
 
             // Do once immediately so we get the current taxi-point
-            Task.Run(async() => await CheckAsync());
+            Task.Run(async () => await CheckAsync());
 
             _checkTimer = new Timer(CheckInterval);
             _checkTimer.Elapsed += async (s, e) => await CheckAsync();
@@ -75,12 +77,14 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
                 if (_sender.Id == null || _sender.Id != previousId)
                 {
                     _sender.Id = "DELETED";
-                    Logger.Debug($"Stopping Taxi Progress Check. CallerId changed, New: {_sender.Id} , Old: {previousId}.");
+                    Logger.Debug(
+                        $"Stopping Taxi Progress Check. CallerId changed, New: {_sender.Id} , Old: {previousId}.");
                     Stop();
                     return;
                 }
 
-                var closestPoint =_taxiPoints.OrderBy(taxiPoint => taxiPoint.DistanceTo(_sender.Position.Coordinate)).First();
+                var closestPoint = _taxiPoints.OrderBy(taxiPoint => taxiPoint.DistanceTo(_sender.Position.Coordinate))
+                    .First();
 
                 // If this is true then we don't need to say the same commands again etc.
                 if (_currentTaxiPoint == closestPoint)
@@ -88,11 +92,11 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
 
                 // We want to get rid of all the previous TaxiPoints in the list. We do this instead of just getting rid of the first in case
                 // somehow the pilot manage to skip a TaxiPoint by going fast enough that they passed it before the check.
-                var index =_taxiPoints.IndexOf(_currentTaxiPoint);
+                var index = _taxiPoints.IndexOf(_currentTaxiPoint);
 
                 if (index > 1)
                     Logger.Trace($" {_sender.Id} skipped at least one taxi point");
-                
+
                 for (var i = _taxiPoints.Count - 1; i >= 0; i--)
                 {
                     if (i > index) continue;
@@ -100,40 +104,56 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
                     _taxiPoints.RemoveAt(i);
                 }
 
-                // Player has reached the end of the taxi route.
-                // We will probably need to change this when we actually have "Hold short" and "Line up and wait" commands.
-                if (_taxiPoints.Count <= 1)
-                {
-                    Logger.Debug($"Stopping Taxi Progress Check. {_sender.Id} has reached the end of the taxi route at {_currentTaxiPoint.Name}");
-                    Stop();
-                    return;
-                }
-
                 _currentTaxiPoint = closestPoint;
                 Logger.Debug($"New closest TaxiPoint to {_sender.Id} is {_currentTaxiPoint.Name}");
 
+                // Player has reached the end of the taxi route.
+                // We will probably need to change this when we actually have "Hold short" and "Line up and wait" commands.
+                if (_taxiPoints.Count == 1)
+                {
+                    Stop();
+                    if (!(_currentTaxiPoint is Runway))
+                    {
+                        Logger.Error(
+                            $"{_currentTaxiPoint.Name} is the last point in the taxi path but is not a runway");
+                        return;
+                    }
+                    Logger.Debug(
+                        $"Stopping Taxi Progress Check. {_sender.Id} has reached the end of the taxi route at {_currentTaxiPoint.Name}");
+                    await SendMessage($"Take-off {_currentTaxiPoint.Name} at your discretion");
+                    return;
+                }
 
-                Logger.Debug($"Next TaxiPoint for {_sender.Id} is {_taxiPoints[1].Name}");
                 if (!(_currentTaxiPoint is Runway))
                     return;
 
-                // If we have reached this bit in the code then the next taxi point is a runway so shout at the player.
-                var response = $"{_sender.Callsign}, {_airfieldName} ground, cross {_currentTaxiPoint.Name} at your discretion";
+                // If we have reached this bit in the code then the current taxi point is a runway that is not the terminus of the route
+                // so tell the player they are good to cross.
+                await SendMessage($"cross {_currentTaxiPoint.Name} at your discretion");
 
-                var ssmlResponse = $"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{_voice}\">{response}</voice></speak>";
-
-                var audioData = await Speaker.CreateResponse(ssmlResponse);
-
-                if (audioData != null)
-                {
-                    Logger.Info($"Outgoing Transmission: {response}");
-                    _responseQueue.Enqueue(audioData);
-                }
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 Logger.Error(ex, "Error checking taxi progress");
             }
 
+        }
+
+        private async Task SendMessage(string message)
+        {
+            var response =
+                $"{_sender.Callsign}, {_airfieldName} ground, {message}"; 
+
+            var ssmlResponse =
+                $"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{_voice}\">{response}</voice></speak>";
+
+            var audioData = await Speaker.CreateResponse(ssmlResponse);
+
+            if (audioData != null)
+            {
+                Logger.Info($"Outgoing Transmission: {response}");
+                _responseQueue.Enqueue(audioData);
+            }
         }
     }
 }

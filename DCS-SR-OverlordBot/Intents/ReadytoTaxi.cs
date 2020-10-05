@@ -43,6 +43,9 @@ namespace RurouniJones.DCS.OverlordBot.Intents
                     return "There are no ATC services currently available at this airfield.";
 
                 taxiInstructions = new GroundController(airfield).GetTaxiInstructions(radioCall.Sender.Position);
+
+                Logger.Debug($"{radioCall.Sender.Id} route is {string.Join(", ", taxiInstructions.TaxiPoints.Select(t => t.Name))}");
+
                 var spokenInstructions = ConvertTaxiInstructionsToSsml(taxiInstructions);
                 var _ = new TaxiProgressChecker(radioCall.Sender, airfield.Name, voice, taxiInstructions.TaxiPoints, responseQueue);
                 return spokenInstructions;
