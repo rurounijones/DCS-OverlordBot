@@ -2,7 +2,6 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using FragLabs.Audio.Codecs;
@@ -11,7 +10,6 @@ using Microsoft.CognitiveServices.Speech;
 using Microsoft.CognitiveServices.Speech.Audio;
 using NAudio.Wave;
 using NLog;
-using OpenTelemetry.Trace;
 using RurouniJones.DCS.OverlordBot.Audio.Managers;
 using RurouniJones.DCS.OverlordBot.Controllers;
 using RurouniJones.DCS.OverlordBot.Discord;
@@ -170,36 +168,28 @@ namespace RurouniJones.DCS.OverlordBot.SpeechRecognition
 
         private async Task ProcessRadioCall(SpeechRecognitionEventArgs e)
         {
-            using (var activity = Constants.ActivitySource.StartActivity("SpeechRecognitionListener.ProcessRadioCall", ActivityKind.Server))
+            try
             {
-                activity?.AddTag("Frequency", _frequency);
-                activity?.AddTag("BotType", _botType);
-                activity?.AddTag("Callsign", _callsign);
-                try
+                switch (e.Result.Reason)
                 {
-                    switch (e.Result.Reason)
-                    {
-                        case ResultReason.RecognizedSpeech:
-                            await ProcessRecognizedCall(e);
-                            break;
-                        case ResultReason.NoMatch:
-                            activity?.AddTag("Response", "No Recognition Match");
-                            Logger.Debug($"{_logClientId}| NOMATCH: Speech could not be recognized.");
-                            break;
-                    }
+                    case ResultReason.RecognizedSpeech:
+                        await ProcessRecognizedCall(e);
+                        break;
+                    case ResultReason.NoMatch:
+                        Logger.Debug($"{_logClientId}| NOMATCH: Speech could not be recognized.");
+                        break;
                 }
-                catch (Exception ex)
-                {
-                    activity?.RecordException(ex);
-                    Logger.Error(ex, $"{_logClientId}| Error processing radio call");
-                    Controller.Radio.TransmissionQueue.Enqueue(FailureMessage);
-                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, $"{_logClientId}| Error processing radio call");
+                Controller.Radio.TransmissionQueue.Enqueue(FailureMessage);
             }
         }
 
         private async Task ProcessRecognizedCall(SpeechRecognitionEventArgs e)
         {
-            using (var activity = Constants.ActivitySource.StartActivity("ProcessRecognizedCall"))
+            using (var activity = Constants.ActivitySource.StartActivity("ProcessRecognizedCall", ActivityKind.Server))
             {
                 Logger.Info($"{_logClientId}| Incoming Transmission: {e.Result.Text}");
                 var luisJson = Task.Run(() => LuisService.ParseIntent(e.Result.Text)).Result;
@@ -207,13 +197,15 @@ namespace RurouniJones.DCS.OverlordBot.SpeechRecognition
 
                 var radioCall = new BaseRadioCall(luisJson);
 
+                activity?.AddTag("Frequency", _frequency);
+                activity?.AddTag("BotType", _botType);
+                activity?.AddTag("Callsign", _callsign);
                 activity?.AddTag("Sender", radioCall.Sender?.Callsign);
                 activity?.AddTag("Intent", radioCall.Intent);
                 activity?.AddTag("Request", radioCall.Message);
                 
                 var response = Controller.ProcessRadioCall(radioCall);
                 activity?.AddTag("Response Text", response);
-
 
                 if (!string.IsNullOrEmpty(response))
                 {
