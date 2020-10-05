@@ -127,6 +127,7 @@ namespace RurouniJones.DCS.OverlordBot.SpeechRecognition
                         if (e.ErrorCode != CancellationErrorCode.BadRequest &&
                             e.ErrorCode != CancellationErrorCode.ConnectionFailure)
                         {
+                            Logger.Trace($"{_logClientId}| Sending Failure Message");
                             Controller.Radio.TransmissionQueue.Enqueue(FailureMessage);
                         }
                     }
@@ -183,6 +184,7 @@ namespace RurouniJones.DCS.OverlordBot.SpeechRecognition
             catch (Exception ex)
             {
                 Logger.Error(ex, $"{_logClientId}| Error processing radio call");
+                Logger.Trace($"{_logClientId}| Sending Failure Message");
                 Controller.Radio.TransmissionQueue.Enqueue(FailureMessage);
             }
         }
@@ -216,8 +218,10 @@ namespace RurouniJones.DCS.OverlordBot.SpeechRecognition
                     {
                         activity?.AddTag("Response", "Failure");
                         activity?.AddEvent(new ActivityEvent("Synthesis Failure"));
+                        Logger.Error($"{_logClientId}| Synthesis Failure");
                         using (Constants.ActivitySource.StartActivity("EnqueueResponseAudio", ActivityKind.Producer))
                         {
+                            Logger.Trace($"{_logClientId}| Sending Failure Message");
                             Controller.Radio.TransmissionQueue.Enqueue(FailureMessage);
                         }
                     }
