@@ -87,6 +87,14 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
                 var closestPoint = _taxiPoints.OrderBy(taxiPoint => taxiPoint.DistanceTo(_sender.Position.Coordinate))
                     .First();
 
+                // If the player is more than 5 miles from the closest TaxiPoint they they are long gone and should not longer
+                // be monitored
+                if (closestPoint.DistanceTo(_sender.Position.Coordinate) > 5)
+                {
+                    Stop();
+                    return;
+                }
+
                 // If this is true then we don't need to say the same commands again etc.
                 if (_currentTaxiPoint == closestPoint)
                     return;
@@ -107,34 +115,31 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
 
                 _currentTaxiPoint = closestPoint;
                 Logger.Debug($"New closest TaxiPoint to {_sender.Id} is {_currentTaxiPoint.Name}");
-                using (var activity =
-                    Constants.ActivitySource.StartActivity("TaxiProgressChecker.SendTaxiInstruction", ActivityKind.Consumer))
+
+                if (_currentTaxiPoint is Runway)
                 {
-                    // Player has reached the end of the taxi route.
-                    // We will probably need to change this when we actually have "Hold short" and "Line up and wait" commands.
-                    if (_taxiPoints.Count == 1)
+                    using (var activity = Constants.ActivitySource.StartActivity("TaxiProgressChecker.SendTaxiInstruction", ActivityKind.Consumer))
                     {
-                        Stop();
-                        if (!(_currentTaxiPoint is Runway))
+                        if (_taxiPoints.Count == 1)
                         {
-                            Logger.Error(
-                                $"{_currentTaxiPoint.Name} is the last point in the taxi path but is not a runway");
-                            return;
+                            Logger.Debug(
+                                $"Stopping Taxi Progress Check. {_sender.Id} has reached the end of the taxi route at {_currentTaxiPoint.Name}");
+                            activity?.AddTag("Response", "RunwayTakeOff");
+                            await SendMessage($"Take-off {_currentTaxiPoint.Name} at your discretion");
                         }
-
-                        Logger.Debug(
-                            $"Stopping Taxi Progress Check. {_sender.Id} has reached the end of the taxi route at {_currentTaxiPoint.Name}");
-                        activity?.AddTag("Response", "RunwayTakeOff");
-                        await SendMessage($"Take-off {_currentTaxiPoint.Name} at your discretion");
-                        return;
+                        else
+                        {
+                            activity?.AddTag("Response", "RunwayCrossing");
+                            // If we have reached this bit in the code then the current taxi point is a runway that is not the terminus of the route
+                            // so tell the player they are good to cross.
+                            await SendMessage($"cross {_currentTaxiPoint.Name} at your discretion");
+                        }
                     }
-
-                    activity?.AddTag("Response", "RunwayCrossing");
-                    // If we have reached this bit in the code then the current taxi point is a runway that is not the terminus of the route
-                    // so tell the player they are good to cross.
-                    await SendMessage($"cross {_currentTaxiPoint.Name} at your discretion");
+                } else if (_taxiPoints.Count == 1)
+                {
+                    Logger.Error(
+                        $"{_currentTaxiPoint.Name} is the last point in the taxi path but is not a runway");
                 }
-
             }
             catch (Exception ex)
             {
