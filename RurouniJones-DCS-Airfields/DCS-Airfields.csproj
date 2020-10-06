@@ -80,6 +80,9 @@
     <None Include="Data\Airfields\Krymsk.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Data\Airfields\Kutaisi.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Data\Airfields\Maykop-Khanskaya.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

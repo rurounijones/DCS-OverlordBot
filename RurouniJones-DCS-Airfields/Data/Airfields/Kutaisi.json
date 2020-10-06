@@ -1,0 +1,426 @@
+{
+  "name": "Kutaisi",
+  "lat": 42.179154028210135,
+  "lon": 42.495686358535849,
+  "alt": 45.010047912597656,
+  "parkingSpots": [
+    {
+      "name": "Ramp North",
+      "lat": 42.18257783097,
+      "lon": 42.47807397512
+    },
+    {
+      "name": "Ramp South",
+      "lat": 42.172034380129,
+      "lon": 42.467980011262
+    },
+    {
+      "name": "Ramp East",
+      "lat": 42.17609044976,
+      "lon": 42.496921269391
+    },
+    {
+      "name": "Ramp West",
+      "lat": 42.182051046406,
+      "lon": 42.464580279438
+    },
+    {
+      "name": "Whiskey Spots",
+      "lat": 42.170618776394,
+      "lon": 42.467794905308
+    },
+    {
+      "name": "November Spots",
+      "lat": 42.183135598944,
+      "lon": 42.495754014744
+    },
+    {
+      "name": "November Hangars 1",
+      "lat": 42.179583509335,
+      "lon": 42.468507318994
+    },
+    {
+      "name": "November Hangars 2",
+      "lat": 42.179847380941,
+      "lon": 42.47067775057
+    },
+    {
+      "name": "November Hangars 3",
+      "lat": 42.180294638819,
+      "lon": 42.472431391069
+    },
+    {
+      "name": "November Hangars 4",
+      "lat": 42.182318796568,
+      "lon": 42.488247399753
+    },
+    {
+      "name": "November Hangars 5",
+      "lat": 42.182270949678,
+      "lon": 42.48999226701
+    },
+    {
+      "name": "November Hangars 6",
+      "lat": 42.182639938394,
+      "lon": 42.492854488671
+    }
+  ],
+  "runways": [
+    {
+      "heading": 260,
+      "name": "Runway-2 6",
+      "lat": 42.17944611638,
+      "lon": 42.495827211525
+    },
+    {
+      "heading": 80,
+      "name": "Runway-0 8",
+      "lat": 42.175735834703,
+      "lon": 42.466605415942
+    }
+  ],
+  "junctions": [
+    {
+      "name": "Echo Sierra",
+      "lat": 42.175984240433,
+      "lon": 42.496543966509
+    },
+    {
+      "name": "Alfa November",
+      "lat": 42.179251032161,
+      "lon": 42.46582017232
+    },
+    {
+      "name": "Delta November",
+      "lat": 42.182889305625,
+      "lon": 42.495038048261
+    },
+    {
+      "name": "Bravo November",
+      "lat": 42.179970526199,
+      "lon": 42.47164562796
+    },
+    {
+      "name": "Charlie November",
+      "lat": 42.18218211241,
+      "lon": 42.489214683845
+    },
+    {
+      "name": "Whiskey Sierra",
+      "lat": 42.17229825592,
+      "lon": 42.467390195616
+    },
+    {
+      "name": "Bravo Runway",
+      "lat": 42.176573502612,
+      "lon": 42.473241923358
+    },
+    {
+      "name": "Charlie Runway",
+      "lat": 42.178590863,
+      "lon": 42.489266069697
+    }
+  ],
+  "taxipaths": [
+    {
+      "name": "Charlie",
+      "source": "Charlie November",
+      "target": "Charlie Runway",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Charlie Runway",
+      "target": "Charlie November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Alfa November",
+      "target": "Bravo November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Bravo November",
+      "target": "Alfa November",
+      "cost": 1
+    },
+    {
+      "name": "Whiskey",
+      "source": "Whiskey Sierra",
+      "target": "Runway-0 8",
+      "cost": 1
+    },
+    {
+      "name": "Whiskey",
+      "source": "Runway-0 8",
+      "target": "Whiskey Sierra",
+      "cost": 1
+    },
+    {
+      "name": "Bravo",
+      "source": "Bravo November",
+      "target": "Bravo Runway",
+      "cost": 1
+    },
+    {
+      "name": "Bravo",
+      "source": "Bravo Runway",
+      "target": "Bravo November",
+      "cost": 1
+    },
+    {
+      "name": "Runway",
+      "source": "Bravo Runway",
+      "target": "Runway-0 8",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway-0 8",
+      "target": "Bravo Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway-2 6",
+      "target": "Charlie Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Charlie Runway",
+      "target": "Runway-2 6",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Charlie Runway",
+      "target": "Bravo Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Bravo Runway",
+      "target": "Charlie Runway",
+      "cost": 999
+    },
+    {
+      "name": "November",
+      "source": "Charlie November",
+      "target": "Delta November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Delta November",
+      "target": "Charlie November",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Echo Sierra",
+      "target": "Runway-2 6",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Runway-2 6",
+      "target": "Echo Sierra",
+      "cost": 1
+    },
+    {
+      "name": "Sierra",
+      "source": "Echo Sierra",
+      "target": "Whiskey Sierra",
+      "cost": 1
+    },
+    {
+      "name": "Sierra",
+      "source": "Whiskey Sierra",
+      "target": "Echo Sierra",
+      "cost": 1
+    },
+    {
+      "name": "Whiskey",
+      "source": "Whiskey Spots",
+      "target": "Whiskey Sierra",
+      "cost": 1
+    },
+    {
+      "name": "Whiskey",
+      "source": "Whiskey Sierra",
+      "target": "Whiskey Spots",
+      "cost": 999
+    },
+    {
+      "name": "Echo",
+      "source": "Ramp East",
+      "target": "Echo Sierra",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Echo Sierra",
+      "target": "Ramp East",
+      "cost": 99
+    },
+    {
+      "name": "November",
+      "source": "Ramp North",
+      "target": "Charlie November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Charlie November",
+      "target": "Ramp North",
+      "cost": 99
+    },
+    {
+      "name": "November",
+      "source": "Ramp North",
+      "target": "Delta November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Delta November",
+      "target": "Ramp North",
+      "cost": 100
+    },
+    {
+      "name": "Alfa",
+      "source": "Ramp West",
+      "target": "Alfa November",
+      "cost": 1
+    },
+    {
+      "name": "Alfa",
+      "source": "Alfa November",
+      "target": "Ramp West",
+      "cost": 99
+    },
+    {
+      "name": "Sierra",
+      "source": "Ramp South",
+      "target": "Whiskey Sierra",
+      "cost": 1
+    },
+    {
+      "name": "Sierra",
+      "source": "Whiskey Sierra",
+      "target": "Ramp South",
+      "cost": 99
+    },
+    {
+      "name": "November",
+      "source": "November Spots",
+      "target": "Delta November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Delta November",
+      "target": "November Spots",
+      "cost": 999
+    },
+    {
+      "name": "November",
+      "source": "November Hangars 1",
+      "target": "Alfa November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Alfa November",
+      "target": "November Hangars 1",
+      "cost": 999
+    },
+    {
+      "name": "November",
+      "source": "November Hangars 2",
+      "target": "Bravo November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Bravo November",
+      "target": "November Hangars 2",
+      "cost": 999
+    },
+    {
+      "name": "November",
+      "source": "November Hangars 3",
+      "target": "Bravo November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Bravo November",
+      "target": "November Hangars 3",
+      "cost": 999
+    },
+    {
+      "name": "November",
+      "source": "November Hangars 4",
+      "target": "Charlie November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Charlie November",
+      "target": "November Hangars 4",
+      "cost": 999
+    },
+    {
+      "name": "November",
+      "source": "November Hangars 5",
+      "target": "Charlie November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Charlie November",
+      "target": "November Hangars 5",
+      "cost": 999
+    },
+    {
+      "name": "November",
+      "source": "November Hangars 6",
+      "target": "Delta November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Delta November",
+      "target": "November Hangars 6",
+      "cost": 999
+    },
+    {
+      "name": "Delta",
+      "source": "Delta November",
+      "target": "Runway-2 6",
+      "cost": 1
+    },
+    {
+      "name": "Delta",
+      "source": "Runway-2 6",
+      "target": "Delta November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Charlie November",
+      "target": "Bravo November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Bravo November",
+      "target": "Charlie November",
+      "cost": 1
+    }
+  ]
+}
