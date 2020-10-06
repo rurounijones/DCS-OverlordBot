@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Timers;
 using NLog;
@@ -103,18 +104,23 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
 
                 Logger.Debug($"New contact {contact.Id}");
 
-                var response = $"{_sender.Callsign}, {_awacs}, Threat, {BogeyDope.BuildResponse(_sender, contact)}";
-                Logger.Debug($"Response: {response}");
-
-                var ssmlResponse = $"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{_voice}\">{response}</voice></speak>";
-
-                var audioData = await Speaker.CreateResponse(ssmlResponse);
-
-                if (audioData != null)
+                using (var activity =
+                    Constants.ActivitySource.StartActivity("WarningRadiusChecker.SendWarning", ActivityKind.Consumer))
                 {
-                    Logger.Info($"Outgoing Transmission: {response}");
-                    _responseQueue.Enqueue(audioData);
-                    WarningStates[_sender.Id].Add(contact.Id);
+                    var response = $"{_sender.Callsign}, {_awacs}, Threat, {BogeyDope.BuildResponse(_sender, contact)}";
+                    Logger.Debug($"Response: {response}");
+
+                    var ssmlResponse =
+                        $"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{_voice}\">{response}</voice></speak>";
+
+                    var audioData = await Speaker.CreateResponse(ssmlResponse);
+
+                    if (audioData != null)
+                    {
+                        Logger.Info($"Outgoing Transmission: {response}");
+                        _responseQueue.Enqueue(audioData);
+                        WarningStates[_sender.Id].Add(contact.Id);
+                    }
                 }
             }
             catch (Exception ex)
