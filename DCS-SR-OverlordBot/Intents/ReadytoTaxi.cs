@@ -5,8 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using NLog;
 using RurouniJones.DCS.Airfields.Controllers;
-using RurouniJones.DCS.Airfields.Structure;
 using RurouniJones.DCS.OverlordBot.Controllers;
+using RurouniJones.DCS.OverlordBot.Models;
 using RurouniJones.DCS.OverlordBot.RadioCalls;
 
 namespace RurouniJones.DCS.OverlordBot.Intents
@@ -47,7 +47,7 @@ namespace RurouniJones.DCS.OverlordBot.Intents
                 Logger.Debug($"{radioCall.Sender.Id} route is {string.Join(", ", taxiInstructions.TaxiPoints.Select(t => t.Name))}");
 
                 var spokenInstructions = ConvertTaxiInstructionsToSsml(taxiInstructions);
-                var _ = new TaxiProgressChecker(radioCall.Sender, airfield.Name, voice, taxiInstructions.TaxiPoints, responseQueue);
+                var _ = new TaxiProgressChecker(radioCall.Sender, airfield, voice, taxiInstructions.TaxiPoints, responseQueue);
                 return spokenInstructions;
             }
             catch (NoActiveRunwaysFoundException ex)

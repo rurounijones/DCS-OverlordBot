@@ -9,20 +9,18 @@ using NLog;
 using RurouniJones.DCS.Airfields.Structure;
 using RurouniJones.DCS.OverlordBot.GameState;
 using RurouniJones.DCS.OverlordBot.SpeechOutput;
+using Airfield = RurouniJones.DCS.OverlordBot.Models.Airfield;
 
 namespace RurouniJones.DCS.OverlordBot.Controllers
 {
-    class TaxiProgressChecker
+    public class TaxiProgressChecker
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
-        public static ConcurrentDictionary<string, TaxiProgressChecker> TaxiChecks =
-            new ConcurrentDictionary<string, TaxiProgressChecker>();
 
         private readonly Timer _checkTimer;
         private readonly Player _sender;
 
-        private readonly string _airfieldName;
+        private readonly Airfield _airfield;
         private readonly string _voice;
 
         private readonly List<TaxiPoint> _taxiPoints;
@@ -32,19 +30,19 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
 
         private const double CheckInterval = 1000; // milliseconds
 
-        public TaxiProgressChecker(Player sender, string airfieldName, string voice, List<TaxiPoint> taxiPoints,
+        public TaxiProgressChecker(Player sender, Airfield airfield, string voice, List<TaxiPoint> taxiPoints,
             ConcurrentQueue<byte[]> responseQueue)
         {
             _sender = sender;
-            _airfieldName = airfieldName;
+            _airfield = airfield;
             _voice = voice;
             _taxiPoints = taxiPoints;
             _responseQueue = responseQueue;
 
-            if (TaxiChecks.ContainsKey(_sender.Id))
+            if (_airfield.TaxiingAircraft.ContainsKey(_sender.Id))
             {
-                TaxiChecks[_sender.Id].Stop();
-                TaxiChecks.TryRemove(_sender.Id, out _);
+                _airfield.TaxiingAircraft[_sender.Id].Stop();
+                _airfield.TaxiingAircraft.TryRemove(_sender.Id, out _);
             }
 
             // Do once immediately so we get the current taxi-point
@@ -55,7 +53,7 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
 
             _checkTimer.Start();
 
-            TaxiChecks[_sender.Id] = this;
+            _airfield.TaxiingAircraft[_sender.Id] = this;
         }
 
         private void Stop()
@@ -63,7 +61,7 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
             Logger.Debug($"Stopping taxi progress check for {_sender.Id}");
             _checkTimer.Stop();
             _checkTimer.Close();
-            TaxiChecks.TryRemove(_sender.Id, out _);
+            _airfield.TaxiingAircraft.TryRemove(_sender.Id, out _);
         }
 
         private async Task CheckAsync()
@@ -151,7 +149,7 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
         private async Task SendMessage(string message)
         {
             var response =
-                $"{_sender.Callsign}, {_airfieldName} ground, {message}"; 
+                $"{_sender.Callsign}, {_airfield.Name} ground, {message}"; 
 
             var ssmlResponse =
                 $"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{_voice}\">{response}</voice></speak>";

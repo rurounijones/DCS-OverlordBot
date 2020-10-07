@@ -4,7 +4,7 @@ using System.Data.Common;
 using System.Threading.Tasks;
 using NetTopologySuite.Geometries;
 using Npgsql;
-using RurouniJones.DCS.Airfields.Structure;
+using RurouniJones.DCS.OverlordBot.Models;
 
 namespace RurouniJones.DCS.OverlordBot.GameState
 {

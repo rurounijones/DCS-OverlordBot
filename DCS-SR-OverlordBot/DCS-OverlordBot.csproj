@@ -341,6 +341,7 @@
     <Compile Include="Audio\Models\ClientAudio.cs" />
     <Compile Include="Controllers\TaxiProgressChecker.cs" />
     <Compile Include="Discord\DiscordClient.cs" />
+    <Compile Include="Models\Airfield.cs" />
     <Compile Include="Network\Models\RadioSendingState.cs" />
     <Compile Include="Network\SrsDataClient.cs" />
     <Compile Include="Network\SrsAudioClient.cs" />
