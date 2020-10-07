@@ -1,23 +1,69 @@
 {
   "name": "Anapa-Vityazevo",
-  "lon": 37.35978347755592,
-  "lat": 45.01317473377168,
-  "alt": 43.00004196166992,
-  "runways": [
+  "lat": 45.013174733771677,
+  "lon": 37.359783477555922,
+  "alt": 43.000041961669922,
+  "parkingSpots": [
     {
-      "name": "Runway-0 4",
-      "lat": 44.99635264512,
-      "lon": 37.335871691948,
-      "heading":  40
+      "name": "Whiskey Spots",
+      "lat": 45.0025587,
+      "lon": 37.3325848
     },
     {
-      "name": "Runway-2 2",
-      "lat": 45.013562231472,
-      "lon": 37.359744919983,
-      "heading": 220
+      "name": "Apron 2",
+      "lat": 45.0052733,
+      "lon": 37.3415787
+    },
+    {
+      "name": "Apron 1",
+      "lat": 45.0101579,
+      "lon": 37.3481762
+    },
+    {
+      "name": "East Apron",
+      "lat": 45.011298718132,
+      "lon": 37.364347816973
+    },
+    {
+      "name": "East Apron 1",
+      "lat": 45.009448531727,
+      "lon": 37.367123153259
+    },
+    {
+      "name": "Maintenance Area",
+      "lat": 45.0069344,
+      "lon": 37.3381935
+    },
+    {
+      "name": "Echo Spots",
+      "lat": 45.0094606,
+      "lon": 37.363513
+    },
+    {
+      "name": "Echo Spots 1",
+      "lat": 45.0102612,
+      "lon": 37.3691373
+    },
+    {
+      "name": "Echo Spots 2",
+      "lat": 45.0072648,
+      "lon": 37.3679661
     }
   ],
-
+  "runways": [
+    {
+      "heading": 40,
+      "name": "Runway-0 4",
+      "lat": 44.99635264512,
+      "lon": 37.335871691948
+    },
+    {
+      "heading": 220,
+      "name": "Runway-2 2",
+      "lat": 45.013562231472,
+      "lon": 37.359744919983
+    }
+  ],
   "junctions": [
     {
       "name": "Alpha Mike",
@@ -60,55 +106,6 @@
       "lon": 37.3462753
     }
   ],
-
-  "parkingSpots": [
-    {
-      "name": "Whiskey Spots",
-      "lat": 45.0025587,
-      "lon": 37.3325848
-    },
-    {
-      "name": "Apron 2",
-      "lat": 45.0052733,
-      "lon": 37.3415787
-    },
-    {
-      "name": "Apron 1",
-      "lat": 45.0101579,
-      "lon": 37.3481762
-    },
-    {
-      "name": "East Apron",
-      "lat": 45.011298718132,
-      "lon": 37.364347816973
-    },
-    {
-      "name": "East Apron 1",
-      "lat": 45.009448531727,
-      "lon": 37.367123153259
-    },
-    {
-      "name": "Maintenance Area",
-      "lat": 45.0069344,
-      "lon": 37.3381935
-    },
-    {
-      "name": "Echo Spots",
-      "lat": 45.0094606,
-      "lon": 37.3635130
-    },
-    {
-      "name": "Echo Spots 1",
-      "lat": 45.0102612,
-      "lon": 37.3691373
-    },
-    {
-      "name": "Echo Spots 2",
-      "lat": 45.0072648,
-      "lon": 37.3679661
-    }
-  ],
-
   "taxipaths": [
     {
       "name": "Alpha",
@@ -338,7 +335,7 @@
       "target": "East Apron",
       "cost": 100
     },
-	{
+    {
       "name": "Echo",
       "source": "East Apron 1",
       "target": "Runway-2 2",
@@ -397,6 +394,109 @@
       "source": "Apron 1",
       "target": "Delta Mike",
       "cost": 1
+    },
+    {
+      "name": "Final",
+      "source": "Initial-0 4",
+      "target": "Runway-0 4",
+      "cost": 1
+    },
+    {
+      "name": "Inbound",
+      "source": "Entry-Exit West",
+      "target": "Initial-0 4",
+      "cost": 1
+    },
+    {
+      "name": "Inbound",
+      "source": "Entry South",
+      "target": "Initial-0 4",
+      "cost": 1
+    },
+    {
+      "name": "Outbound",
+      "source": "Runway-0 4",
+      "target": "Exit South",
+      "cost": 1
+    },
+    {
+      "name": "Outbound",
+      "source": "Runway-2 2",
+      "target": "Exit South",
+      "cost": 1
+    },
+    {
+      "name": "Outbound",
+      "source": "Runway-0 4",
+      "target": "Entry-Exit West",
+      "cost": 1
+    },
+    {
+      "name": "Final",
+      "source": "Initial-2 2",
+      "target": "Runway-2 2",
+      "cost": 0
+    },
+    {
+      "name": "Inbound",
+      "source": "Entry-Exit North",
+      "target": "Initial-2 2",
+      "cost": 0
+    },
+    {
+      "name": "Inbound",
+      "source": "Entry-Exit East",
+      "target": "Initial-2 2",
+      "cost": 0
+    },
+    {
+      "name": "Outbound",
+      "source": "Runway-2 2",
+      "target": "Entry-Exit North",
+      "cost": 0
+    },
+    {
+      "name": "Outbound",
+      "source": "Runway-2 2",
+      "target": "Entry-Exit East",
+      "cost": 0
+    }
+  ],
+  "waypoints": [
+    {
+      "name": "Initial-0 4",
+      "lat": 0.0,
+      "lon": 0.0
+    },
+    {
+      "name": "Initial-2 2",
+      "lat": 0.0,
+      "lon": 0.0
+    },
+    {
+      "name": "Entry-Exit North",
+      "lat": 0.0,
+      "lon": 0.0
+    },
+    {
+      "name": "Entry-Exit East",
+      "lat": 0.0,
+      "lon": 0.0
+    },
+    {
+      "name": "Entry-Exit West",
+      "lat": 45.0122,
+      "lon": 37.2223667
+    },
+    {
+      "name": "Entry South",
+      "lat": 44.8947,
+      "lon": 37.2905167
+    },
+    {
+      "name": "Exit South",
+      "lat": 0.0,
+      "lon": 0.0
     }
   ]
 }

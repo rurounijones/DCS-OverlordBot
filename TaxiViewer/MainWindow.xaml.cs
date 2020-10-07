@@ -90,7 +90,9 @@ namespace TaxiViewer
 
             foreach (NavigationPoint navigationPoint in airfield.NavigationGraph.Vertices)
             {
+
                 var node = graph.AddNode(navigationPoint.Name);
+                node.UserData = navigationPoint;
                 switch (navigationPoint)
                 {
                     case Runway _:
@@ -117,7 +119,15 @@ namespace TaxiViewer
                 var displayEdge = graph.AddEdge(edge.Source.Name, edge.Tag, edge.Target.Name);
                 displayEdge.UserData = edge;
 
-                if (airfield.NavigationCost[edge] >= 999)
+                if (edge.Source is Runway && edge.Target is WayPoint)
+                {
+                    displayEdge.Attr.Color = Color.Purple;
+                }
+                else if (edge.Source is WayPoint)
+                {
+                    displayEdge.Attr.Color = Color.Purple;
+                }
+                else if (airfield.NavigationCost[edge] >= 999)
                 {
                     displayEdge.Attr.Color = Color.Red;
                 }
@@ -128,6 +138,11 @@ namespace TaxiViewer
                 else
                 {
                     displayEdge.Attr.Color = Color.Green;
+                }
+
+                if (edge.Source is WayPoint || edge.Target is WayPoint)
+                {
+                    displayEdge.Attr.AddStyle(Microsoft.Msagl.Drawing.Style.Dashed);
                 }
             }
 
@@ -148,7 +163,7 @@ namespace TaxiViewer
                 {
                     SourceNode = node;
                 } 
-                else if (graphViewer.ObjectUnderMouseCursor.DrawingObject is Label label)
+                else if (graphViewer.ObjectUnderMouseCursor?.DrawingObject is Label label)
                 {
                     var cost = airfield.NavigationCost[(TaggedEdge<NavigationPoint, string>)label.Owner.UserData];
 
@@ -174,6 +189,12 @@ namespace TaxiViewer
                 {
                     TargetNode = (VNode)graphViewer.ObjectUnderMouseCursor;
 
+                    if (SourceNode.Node.UserData is WayPoint && !(TargetNode.Node.UserData is WayPoint) && !(TargetNode.Node.UserData is Runway))
+                        return;
+
+                    if (!(SourceNode.Node.UserData is Runway) && !(SourceNode.Node.UserData is WayPoint) && TargetNode.Node.UserData is WayPoint)
+                        return;
+
                     graphViewer.Graph = graph;
 
                     string taxiName = null;
@@ -189,9 +210,17 @@ namespace TaxiViewer
                     var reverseEdge = graph.AddEdge(TargetNode.Node.Id, taxiName, SourceNode.Node.Id);
 
                     int mainCost = 1;
-                    int reverseCost;
+                    int reverseCost = 1;
 
-                    if(SourceNode.Node.Id.Contains("Apron") || SourceNode.Node.Id.Contains("Ramp"))
+                    if (SourceNode.Node.UserData is WayPoint || TargetNode.Node.UserData is WayPoint)
+                    {
+                        mainEdge.Attr.AddStyle(Microsoft.Msagl.Drawing.Style.Dashed);
+                        reverseEdge.Attr.Color = Color.Purple;
+                        reverseEdge.Attr.AddStyle(Microsoft.Msagl.Drawing.Style.Dashed);
+                        reverseEdge.Attr.Color = Color.Purple;
+
+                    }
+                    else if(SourceNode.Node.Id.Contains("Apron") || SourceNode.Node.Id.Contains("Ramp"))
                     {
                         reverseCost = 100;
                         reverseEdge.Attr.Color = Color.Orange;
