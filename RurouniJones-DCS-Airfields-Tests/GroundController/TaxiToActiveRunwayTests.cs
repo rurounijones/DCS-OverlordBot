@@ -33,6 +33,9 @@ namespace RurouniJones.DCS.Airfields.Controllers.Tests
             yield return new object[] { new TaxiScenario("Krasnodar-Pashkovsky", "Apron 1", 90, new Point(45.047601257612, 39.200777416505), "Runway-0 5 Right", new List<string> { "November", "Echo" }) };
 
             yield return new object[] { new TaxiScenario("Mineralnye Vody", "Maintenance Area", 90, new Point(44.223130773545, 43.104834499253), "Runway-1 2", new List<string> { "November", "Echo", "Alfa" }) };
+
+            yield return new object[] { new TaxiScenario("Maykop-Khanskaya", "Apron 2 1", 270, new Point(44.671288619807, 40.030771437314), "Runway-2 2", new List<string> { "Victor", "Echo"}) };
+
         }
 
         [DataTestMethod]
