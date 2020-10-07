@@ -23,14 +23,14 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
         private readonly Airfield _airfield;
         private readonly string _voice;
 
-        private readonly List<TaxiPoint> _taxiPoints;
-        private TaxiPoint _currentTaxiPoint;
+        private readonly List<NavigationPoint> _taxiPoints;
+        private NavigationPoint _currentTaxiPoint;
 
         private readonly ConcurrentQueue<byte[]> _responseQueue;
 
         private const double CheckInterval = 1000; // milliseconds
 
-        public TaxiProgressChecker(Player sender, Airfield airfield, string voice, List<TaxiPoint> taxiPoints,
+        public TaxiProgressChecker(Player sender, Airfield airfield, string voice, List<NavigationPoint> taxiPoints,
             ConcurrentQueue<byte[]> responseQueue)
         {
             _sender = sender;

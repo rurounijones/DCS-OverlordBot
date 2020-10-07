@@ -56,10 +56,12 @@
     <Compile Include="Structure\Airfield.cs" />
     <Compile Include="Structure\Junction.cs" />
     <Compile Include="Structure\ParkingSpot.cs" />
+    <Compile Include="Structure\WayPoint.cs" />
     <Compile Include="Structure\Runway.cs" />
-    <Compile Include="Structure\TaxiPath.cs" />
-    <Compile Include="Structure\TaxiPoint.cs" />
+    <Compile Include="Structure\NavigationPath.cs" />
+    <Compile Include="Structure\NavigationPoint.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Structure\TaxiPoint.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Airfields\Al Dhafra AB.json">

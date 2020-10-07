@@ -68,7 +68,7 @@ namespace TaxiViewer
             
             foreach (var taxiPath in airfield.Taxiways)
             {
-                taxiPath.Cost = (int) airfield.TaxiwayCost.FirstOrDefault(x => x.Key.Source.Name == taxiPath.Source && x.Key.Target.Name == taxiPath.Target).Value;
+                taxiPath.Cost = (int) airfield.NavigationCost.FirstOrDefault(x => x.Key.Source.Name == taxiPath.Source && x.Key.Target.Name == taxiPath.Target).Value;
             }
 
             try
@@ -88,36 +88,40 @@ namespace TaxiViewer
 
             Graph graph = new Graph();
 
-            foreach (TaxiPoint taxiPoint in airfield.TaxiNavigationGraph.Vertices)
+            foreach (NavigationPoint navigationPoint in airfield.NavigationGraph.Vertices)
             {
-                var node = graph.AddNode(taxiPoint.Name);
-                if (taxiPoint is Runway)
+                var node = graph.AddNode(navigationPoint.Name);
+                switch (navigationPoint)
                 {
-                    node.Attr.Shape = Shape.DoubleCircle;
-                    node.Attr.Color = Color.Green;
-                }
-                else if (taxiPoint is Junction)
-                {
-                    node.Attr.Shape = Shape.Hexagon;
-                    node.Attr.Color = Color.Blue;
-                }
-                else if (taxiPoint is ParkingSpot)
-                {
-                    node.Attr.Shape = Shape.Octagon;
-                    node.Attr.Color = Color.Orange;
+                    case Runway _:
+                        node.Attr.Shape = Shape.DoubleCircle;
+                        node.Attr.Color = Color.Green;
+                        break;
+                    case Junction _:
+                        node.Attr.Shape = Shape.Hexagon;
+                        node.Attr.Color = Color.Blue;
+                        break;
+                    case ParkingSpot _:
+                        node.Attr.Shape = Shape.Octagon;
+                        node.Attr.Color = Color.Orange;
+                        break;
+                    case WayPoint _:
+                        node.Attr.Shape = Shape.Box;
+                        node.Attr.Color = Color.Purple;
+                        break;
                 }
             }
 
-            foreach (TaggedEdge<TaxiPoint, string> edge in airfield.TaxiNavigationGraph.Edges)
+            foreach (TaggedEdge<NavigationPoint, string> edge in airfield.NavigationGraph.Edges)
             {
                 var displayEdge = graph.AddEdge(edge.Source.Name, edge.Tag, edge.Target.Name);
                 displayEdge.UserData = edge;
 
-                if (airfield.TaxiwayCost[edge] >= 999)
+                if (airfield.NavigationCost[edge] >= 999)
                 {
                     displayEdge.Attr.Color = Color.Red;
                 }
-                else if (airfield.TaxiwayCost[edge] >= 99)
+                else if (airfield.NavigationCost[edge] >= 99)
                 {
                     displayEdge.Attr.Color = Color.Orange;
                 }
@@ -146,18 +150,18 @@ namespace TaxiViewer
                 } 
                 else if (graphViewer.ObjectUnderMouseCursor.DrawingObject is Label label)
                 {
-                    var cost = airfield.TaxiwayCost[(TaggedEdge<TaxiPoint, string>)label.Owner.UserData];
+                    var cost = airfield.NavigationCost[(TaggedEdge<NavigationPoint, string>)label.Owner.UserData];
 
                     switch (cost)
                     {
                         case 1:
-                            airfield.TaxiwayCost[(TaggedEdge<TaxiPoint, string>)label.Owner.UserData] = 100;
+                            airfield.NavigationCost[(TaggedEdge<NavigationPoint, string>)label.Owner.UserData] = 100;
                             break;
                         case 100:
-                            airfield.TaxiwayCost[(TaggedEdge<TaxiPoint, string>)label.Owner.UserData] = 999;
+                            airfield.NavigationCost[(TaggedEdge<NavigationPoint, string>)label.Owner.UserData] = 999;
                             break;
                         case 999:
-                            airfield.TaxiwayCost[(TaggedEdge<TaxiPoint, string>)label.Owner.UserData] = 1;
+                            airfield.NavigationCost[(TaggedEdge<NavigationPoint, string>)label.Owner.UserData] = 1;
                             break;
                     }
                     DisplayGraph();
@@ -205,7 +209,7 @@ namespace TaxiViewer
                         reverseEdge.Attr.Color = Color.Green;
                     }
 
-                    airfield.Taxiways.Add(new TaxiPath()
+                    airfield.Taxiways.Add(new NavigationPath
                     {
                         Source = SourceNode.Node.Id,
                         Target = TargetNode.Node.Id,
@@ -213,7 +217,7 @@ namespace TaxiViewer
                         Cost = mainCost,
                     });
 
-                    airfield.Taxiways.Add(new TaxiPath()
+                    airfield.Taxiways.Add(new NavigationPath
                     {
                         Source = TargetNode.Node.Id,
                         Target = SourceNode.Node.Id,

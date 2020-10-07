@@ -66,11 +66,17 @@ namespace RurouniJones.DCS.Airfields.Structure
         /// <summary>
         /// A list of Taxipaths
         /// 
-        /// A taxi path is a taxiway with a specific source and target TaxiPoint.
+        /// A taxi path is a taxiway with a specific source and target NavigationPoint.
         /// If a taxiway is to be navigated in both directions then it needs two taxipaths, one going each way.
         /// </summary>
         [JsonProperty(PropertyName = "taxipaths")]
-        public List<TaxiPath> Taxiways { get; set; } = new List<TaxiPath>();
+        public List<NavigationPath> Taxiways { get; set; } = new List<NavigationPath>();
+
+        /// <summary>
+        /// A list of Waypoints for inbound and outbound aircraft that are in the air.
+        /// </summary>
+        [JsonProperty(PropertyName = "waypoints")]
+        public List<WayPoint> WayPoints { get; set; } = new List<WayPoint>();
 
         /// <summary>
         /// Position of the airfield 
@@ -101,57 +107,40 @@ namespace RurouniJones.DCS.Airfields.Structure
         public int Coalition { get; set; } = 0;
 
         [JsonIgnore]
-        public readonly AdjacencyGraph<TaxiPoint, TaggedEdge<TaxiPoint, string>> TaxiNavigationGraph = new AdjacencyGraph<TaxiPoint, TaggedEdge<TaxiPoint, string>>();
+        public readonly AdjacencyGraph<NavigationPoint, TaggedEdge<NavigationPoint, string>> NavigationGraph = new AdjacencyGraph<NavigationPoint, TaggedEdge<NavigationPoint, string>>();
 
         [JsonIgnore]
-        public Dictionary<TaggedEdge<TaxiPoint, string>, double> TaxiwayCost;
+        public Dictionary<TaggedEdge<NavigationPoint, string>, double> NavigationCost;
 
         [JsonIgnore]
-        public Func<TaggedEdge<TaxiPoint, string>, double> TaxiwayCostFunction
-        {
-            get
-            {
-                return AlgorithmExtensions.GetIndexer(TaxiwayCost);
-            }
-        }
+        public Func<TaggedEdge<NavigationPoint, string>, double> NavigationCostFunction => AlgorithmExtensions.GetIndexer(NavigationCost);
 
         [JsonIgnore]
-        public IEnumerable<TaxiPoint> TaxiPoints {
-            get {
-                return TaxiNavigationGraph.Vertices;
-            }
-        }
+        public IEnumerable<TaxiPoint> TaxiPoints => NavigationGraph.Vertices.OfType<TaxiPoint>();
 
         [OnDeserialized]
         public void BuildTaxiGraph(StreamingContext context)
         {
             Logger.Debug($"{Name} airfield JSON deserialized");
-            foreach(Runway runway in Runways)
-            {
-                TaxiNavigationGraph.AddVertex(runway);
-            }
-            foreach (ParkingSpot parkingSpot in ParkingSpots)
-            {
-                TaxiNavigationGraph.AddVertex(parkingSpot);
-            }
-            foreach (Junction junction in Junctions)
-            {
-                TaxiNavigationGraph.AddVertex(junction);
-            }
 
-            TaxiwayCost = new Dictionary<TaggedEdge<TaxiPoint, string>, double>(TaxiNavigationGraph.EdgeCount);
+            Runways.ForEach(runway => NavigationGraph.AddVertex(runway));
+            ParkingSpots.ForEach(parkingSpot => NavigationGraph.AddVertex(parkingSpot));
+            Junctions.ForEach(junction => NavigationGraph.AddVertex(junction));
+            WayPoints.ForEach(wayPoint => NavigationGraph.AddVertex(wayPoint));
 
-            foreach (TaxiPath taxiway in Taxiways)
+            NavigationCost = new Dictionary<TaggedEdge<NavigationPoint, string>, double>(NavigationGraph.EdgeCount);
+
+            foreach (NavigationPath taxiway in Taxiways)
             {
-                TaxiPoint source = TaxiNavigationGraph.Vertices.First(taxiPoint => taxiPoint.Name.Equals(taxiway.Source));
-                TaxiPoint target = TaxiNavigationGraph.Vertices.First(taxiPoint => taxiPoint.Name.Equals(taxiway.Target));
+                NavigationPoint source = NavigationGraph.Vertices.First(taxiPoint => taxiPoint.Name.Equals(taxiway.Source));
+                NavigationPoint target = NavigationGraph.Vertices.First(taxiPoint => taxiPoint.Name.Equals(taxiway.Target));
                 string tag = taxiway.Name;
 
-                TaggedEdge<TaxiPoint, string> edge = new TaggedEdge<TaxiPoint, string>(source, target, tag);
+                TaggedEdge<NavigationPoint, string> edge = new TaggedEdge<NavigationPoint, string>(source, target, tag);
 
-                TaxiNavigationGraph.AddEdge(edge);
+                NavigationGraph.AddEdge(edge);
 
-                TaxiwayCost.Add(edge, taxiway.Cost);
+                NavigationCost.Add(edge, taxiway.Cost);
             }
             Logger.Debug($"{Name} airfield navigation graph built");
 

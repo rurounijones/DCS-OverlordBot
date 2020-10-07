@@ -2,7 +2,7 @@
 
 namespace RurouniJones.DCS.Airfields.Structure
 {
-    public class TaxiPath
+    public class NavigationPath
     {
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }

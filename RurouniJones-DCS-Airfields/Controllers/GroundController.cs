@@ -40,10 +40,10 @@ namespace RurouniJones.DCS.Airfields.Controllers
 
         private TaxiInstructions GetTaxiInstructionsWhenMultipleRunways(TaxiPoint source, List<Runway> runways)
         {
-            var tryGetPaths = _airfield.TaxiNavigationGraph.ShortestPathsDijkstra(_airfield.TaxiwayCostFunction, source);
+            var tryGetPaths = _airfield.NavigationGraph.ShortestPathsDijkstra(_airfield.NavigationCostFunction, source);
 
             var cheapestPathCost = double.PositiveInfinity;
-            IEnumerable<TaggedEdge<TaxiPoint, string>> cheapestPath = new List<TaggedEdge<TaxiPoint, string>>();
+            IEnumerable<TaggedEdge<NavigationPoint, string>> cheapestPath = new List<TaggedEdge<NavigationPoint, string>>();
             Runway closestRunway = null;
 
             foreach(var runway in runways)
@@ -59,9 +59,9 @@ namespace RurouniJones.DCS.Airfields.Controllers
             return CompileInstructions(closestRunway, cheapestPath);
         }
 
-        private TaxiInstructions GetTaxiInstructionsWhenSingleRunway(TaxiPoint source, TaxiPoint target)
+        private TaxiInstructions GetTaxiInstructionsWhenSingleRunway(TaxiPoint source, Runway target)
         {
-            var tryGetPaths = _airfield.TaxiNavigationGraph.ShortestPathsDijkstra(_airfield.TaxiwayCostFunction, source);
+            var tryGetPaths = _airfield.NavigationGraph.ShortestPathsDijkstra(_airfield.NavigationCostFunction, source);
             if (tryGetPaths(target, out var path))
             {
                 return CompileInstructions(target, path);
@@ -69,12 +69,12 @@ namespace RurouniJones.DCS.Airfields.Controllers
             throw new TaxiPathNotFoundException($"No taxi path found from {source.Name} to {target.Name}");
         }
 
-        private double PathCost(IEnumerable<TaggedEdge<TaxiPoint, string>> path)
+        private double PathCost(IEnumerable<TaggedEdge<NavigationPoint, string>> path)
         {
-            return path.Sum(edge => _airfield.TaxiwayCost[edge]);
+            return path.Sum(edge => _airfield.NavigationCost[edge]);
         }
 
-        private static TaxiInstructions CompileInstructions(TaxiPoint target, IEnumerable<TaggedEdge<TaxiPoint, string>> path)
+        private static TaxiInstructions CompileInstructions(NavigationPoint target, IEnumerable<TaggedEdge<NavigationPoint, string>> path)
         {
             var taggedEdges = path.ToList();
 
@@ -85,7 +85,7 @@ namespace RurouniJones.DCS.Airfields.Controllers
                 Comments = new List<string>()
             };
 
-            // Include the final TaxiPoint
+            // Include the final NavigationPoint
             taxiInstructions.TaxiPoints.Add(taggedEdges.Last().Target);
             foreach (var edge in taggedEdges)
             {
