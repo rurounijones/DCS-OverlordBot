@@ -1,0 +1,130 @@
+{
+  "name": "Batumi",
+  "lat": 41.6030556,
+  "lon": 41.6091667,
+  "alt": 9.7536,
+  "parkingSpots": [
+    {
+      "name": "Apron 1",
+      "lat": 41.605847357443,
+      "lon": 41.610261357044
+    }
+  ],
+  "runways": [
+    {
+      "heading": 120,
+      "name": "Runway 1 2",
+      "lat": 41.615315571899,
+      "lon": 41.591578137698
+    },
+    {
+      "heading": 300,
+      "name": "Runway 3 0",
+      "lat": 41.603377445892,
+      "lon": 41.609673569012
+    }
+  ],
+  "junctions": [
+    {
+      "name": "Charlie Whiskey",
+      "lat": 41.605517280964,
+      "lon": 41.60956169211
+    },
+    {
+      "name": "Delta Whiskey",
+      "lat": 41.604847135432,
+      "lon": 41.610578307715
+    },
+    {
+      "name": "Charlie Runway",
+      "lat": 41.605028631683,
+      "lon": 41.607673734637
+    }
+  ],
+  "taxipaths": [
+    {
+      "name": "Runway",
+      "source": "Charlie Runway",
+      "target": "Runway 3 0",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway 3 0",
+      "target": "Charlie Runway",
+      "cost": 999
+    },
+    {
+      "name": "Whiskey",
+      "source": "Charlie Whiskey",
+      "target": "Delta Whiskey",
+      "cost": 1
+    },
+    {
+      "name": "Whiskey",
+      "source": "Delta Whiskey",
+      "target": "Charlie Whiskey",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Charlie Whiskey",
+      "target": "Charlie Runway",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Charlie Runway",
+      "target": "Charlie Whiskey",
+      "cost": 1
+    },
+    {
+      "name": "Delta",
+      "source": "Delta Whiskey",
+      "target": "Runway 3 0",
+      "cost": 1
+    },
+    {
+      "name": "Delta",
+      "source": "Runway 3 0",
+      "target": "Delta Whiskey",
+      "cost": 1
+    },
+    {
+      "name": "Whiskey",
+      "source": "Delta Whiskey",
+      "target": "Apron 1",
+      "cost": 99
+    },
+    { 
+      "name": "Whiskey",
+      "source": "Apron 1",
+      "target": "Delta Whiskey",
+      "cost": 1
+    },
+    {
+      "name": "Whiskey",
+      "source": "Charlie Whiskey",
+      "target": "Apron 1",
+      "cost": 99
+    },
+    {
+      "name": "Whiskey",
+      "source": "Apron 1",
+      "target": "Charlie Whiskey",
+      "cost": 1
+    },
+    {
+      "name": "Runway",
+      "source": "Charlie Runway",
+      "target": "Runway 1 2",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway 1 2",
+      "target": "Charlie Runway",
+      "cost": 999
+    }
+  ]
+}
