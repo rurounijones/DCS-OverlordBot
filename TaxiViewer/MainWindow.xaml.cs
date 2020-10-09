@@ -131,7 +131,7 @@ namespace TaxiViewer
                 {
                     displayEdge.Attr.Color = Color.Red;
                 }
-                else if (airfield.NavigationCost[edge] >= 99)
+                else if (airfield.NavigationCost[edge] >= 100)
                 {
                     displayEdge.Attr.Color = Color.Orange;
                 }
@@ -169,6 +169,10 @@ namespace TaxiViewer
 
                     switch (cost)
                     {
+                        // 0 shouldn't happen but has happened in the past due to bugs so cater to it.
+                        case 0:
+                            airfield.NavigationCost[(TaggedEdge<NavigationPoint, string>)label.Owner.UserData] = 100;
+                            break;
                         case 1:
                             airfield.NavigationCost[(TaggedEdge<NavigationPoint, string>)label.Owner.UserData] = 100;
                             break;
@@ -199,43 +203,54 @@ namespace TaxiViewer
 
                     string taxiName = null;
 
-                    taxiName = SourceNode.Node.Id.Split()
-                         .Intersect(TargetNode.Node.Id.Split())
-                         .FirstOrDefault();
+                    taxiName = SourceNode.Node.Id.Replace('-', ' ')
+                        .Split()
+                        .Intersect(TargetNode.Node.Id.Replace('-', ' ').Split())
+                        .FirstOrDefault();
 
-                    // The main route
+                    // Default everything to green and cost 1
                     var mainEdge = graph.AddEdge(SourceNode.Node.Id, taxiName, TargetNode.Node.Id);
                     mainEdge.Attr.Color = Color.Green;
+                    var mainCost = 1;
 
                     var reverseEdge = graph.AddEdge(TargetNode.Node.Id, taxiName, SourceNode.Node.Id);
-
-                    int mainCost = 1;
-                    int reverseCost = 1;
+                    reverseEdge.Attr.Color = Color.Green;
+                    var reverseCost = 1;
 
                     if (SourceNode.Node.UserData is WayPoint || TargetNode.Node.UserData is WayPoint)
                     {
+                        mainEdge.Attr.Color = Color.Purple;
                         mainEdge.Attr.AddStyle(Microsoft.Msagl.Drawing.Style.Dashed);
                         reverseEdge.Attr.Color = Color.Purple;
                         reverseEdge.Attr.AddStyle(Microsoft.Msagl.Drawing.Style.Dashed);
-                        reverseEdge.Attr.Color = Color.Purple;
-
-                    }
-                    else if(SourceNode.Node.Id.Contains("Apron") || SourceNode.Node.Id.Contains("Ramp"))
+                    } 
+                    if(SourceNode.Node.Id.Contains("Apron") || SourceNode.Node.Id.Contains("Ramp"))
                     {
-                        reverseCost = 100;
                         reverseEdge.Attr.Color = Color.Orange;
+                        reverseCost = 100;
                     }
-                    else if(SourceNode.Node.Id.Contains("Runway") && TargetNode.Node.Id.Contains("Runway"))
+                    if(TargetNode.Node.Id.Contains("Apron") || TargetNode.Node.Id.Contains("Ramp"))
                     {
-                        mainCost = 999;
-                        mainEdge.Attr.Color = Color.Red;
-                        reverseCost = 999;
+                        mainEdge.Attr.Color = Color.Orange;
+                        mainCost = 100;
+                    }
+                    if(SourceNode.Node.Id.Contains("Spot") || SourceNode.Node.Id.Contains("Maintenance"))
+                    {
                         reverseEdge.Attr.Color = Color.Red;
+                        reverseCost = 999;
                     }
-                    else
+                    if(TargetNode.Node.Id.Contains("Spot") || TargetNode.Node.Id.Contains("Maintenance"))
                     {
-                        reverseCost = 1;
-                        reverseEdge.Attr.Color = Color.Green;
+                        mainEdge.Attr.Color = Color.Red;
+                        mainCost = 999;
+                    }
+                    if(SourceNode.Node.Id.Contains("Runway") && TargetNode.Node.Id.Contains("Runway"))
+                    {
+                        mainEdge.Attr.Color = Color.Red;
+                        mainCost = 999;
+
+                        reverseEdge.Attr.Color = Color.Red;
+                        reverseCost = 999;
                     }
 
                     airfield.Taxiways.Add(new NavigationPath
