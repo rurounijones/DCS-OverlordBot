@@ -22,6 +22,9 @@ namespace TaxiViewer
         private static VNode SourceNode;
         private static VNode TargetNode;
 
+        private static GraphViewer _graphViewer;
+        private static Graph _graph;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -65,12 +68,6 @@ namespace TaxiViewer
 
         private void Save_Airfield(object sender, RoutedEventArgs e)
         {
-            
-            foreach (var taxiPath in airfield.Taxiways)
-            {
-                taxiPath.Cost = (int) airfield.NavigationCost.FirstOrDefault(x => x.Key.Source.Name == taxiPath.Source && x.Key.Target.Name == taxiPath.Target).Value;
-            }
-
             try
             {
                 var json = JsonConvert.SerializeObject(airfield, Formatting.Indented);
@@ -86,12 +83,12 @@ namespace TaxiViewer
         {
             GraphPanel.Children.Clear();
 
-            Graph graph = new Graph();
+            _graph = new Graph();
 
             foreach (NavigationPoint navigationPoint in airfield.NavigationGraph.Vertices)
             {
 
-                var node = graph.AddNode(navigationPoint.Name);
+                var node = _graph.AddNode(navigationPoint.Name);
                 node.UserData = navigationPoint;
                 switch (navigationPoint)
                 {
@@ -116,7 +113,7 @@ namespace TaxiViewer
 
             foreach (TaggedEdge<NavigationPoint, string> edge in airfield.NavigationGraph.Edges)
             {
-                var displayEdge = graph.AddEdge(edge.Source.Name, edge.Tag, edge.Target.Name);
+                var displayEdge = _graph.AddEdge(edge.Source.Name, edge.Tag, edge.Target.Name);
                 displayEdge.UserData = edge;
 
                 if (edge.Source is Runway && edge.Target is WayPoint)
@@ -146,135 +143,137 @@ namespace TaxiViewer
                 }
             }
 
-            GraphViewer graphViewer = new GraphViewer
+            _graphViewer = new GraphViewer
             {
                 LayoutEditingEnabled = false,
             };
 
-            graphViewer.BindToPanel(GraphPanel);
+            _graphViewer.BindToPanel(GraphPanel);
+            _graphViewer.MouseDown += MouseDownHandler;
+            _graphViewer.MouseUp += MouseUpHandler;
+            _graphViewer.Graph = _graph;
+        }
 
+        private void MouseDownHandler(object s, MsaglMouseEventArgs ev)
+        {
+            if (!ev.RightButtonIsPressed || !(bool) AddTaxiPathButton.IsChecked)
+                return;
 
-            graphViewer.MouseDown += (s, ev) =>
+            if (_graphViewer.ObjectUnderMouseCursor is VNode node)
             {
-                if (!ev.RightButtonIsPressed || !(bool)AddTaxiPathButton.IsChecked)
+                SourceNode = node;
+            }
+            else if (_graphViewer.ObjectUnderMouseCursor?.DrawingObject is Label label)
+            {
+                var taggedEdge = (TaggedEdge<NavigationPoint, string>) label.Owner.UserData;
+
+                if (taggedEdge == null)
                     return;
 
-                if (graphViewer.ObjectUnderMouseCursor is VNode node)
-                {
-                    SourceNode = node;
-                } 
-                else if (graphViewer.ObjectUnderMouseCursor?.DrawingObject is Label label)
-                {
-                    var cost = airfield.NavigationCost[(TaggedEdge<NavigationPoint, string>)label.Owner.UserData];
+                var taxiPath = airfield.Taxiways.Find(x =>
+                    x.Source == taggedEdge.Source.Name && x.Target == taggedEdge.Target.Name);
 
-                    switch (cost)
-                    {
-                        // 0 shouldn't happen but has happened in the past due to bugs so cater to it.
-                        case 0:
-                            airfield.NavigationCost[(TaggedEdge<NavigationPoint, string>)label.Owner.UserData] = 100;
-                            break;
-                        case 1:
-                            airfield.NavigationCost[(TaggedEdge<NavigationPoint, string>)label.Owner.UserData] = 100;
-                            break;
-                        case 100:
-                            airfield.NavigationCost[(TaggedEdge<NavigationPoint, string>)label.Owner.UserData] = 999;
-                            break;
-                        case 999:
-                            airfield.NavigationCost[(TaggedEdge<NavigationPoint, string>)label.Owner.UserData] = 1;
-                            break;
-                    }
-                    DisplayGraph();
+                var cost = airfield.NavigationCost[taggedEdge];
+
+                switch (cost)
+                {
+
+                    // 0 shouldn't happen but has happened in the past due to bugs so cater to it.
+                    case 0:
+                        airfield.NavigationCost[taggedEdge] = 100;
+                        taxiPath.Cost = 100;
+                        break;
+                    case 1:
+                        airfield.NavigationCost[taggedEdge] = 100;
+                        taxiPath.Cost = 100;
+                        break;
+                    case 100:
+                        airfield.NavigationCost[taggedEdge] = 999;
+                        taxiPath.Cost = 999;
+                        break;
+                    case 999:
+                        airfield.NavigationCost[taggedEdge] = 1;
+                        taxiPath.Cost = 1;
+                        break;
                 }
-            };
 
-            graphViewer.MouseUp += (s, ev) =>
+                DisplayGraph();
+            }
+        }
+
+        private void MouseUpHandler(object s, MsaglMouseEventArgs ev)
+        {
+            if (_graphViewer.ObjectUnderMouseCursor is VNode && (bool)AddTaxiPathButton.IsChecked && SourceNode != null && (VNode)_graphViewer.ObjectUnderMouseCursor != SourceNode)
             {
-                if (graphViewer.ObjectUnderMouseCursor is VNode && (bool)AddTaxiPathButton.IsChecked && SourceNode != null && (VNode)graphViewer.ObjectUnderMouseCursor != SourceNode)
+                TargetNode = (VNode)_graphViewer.ObjectUnderMouseCursor;
+
+                if (SourceNode.Node.UserData is WayPoint && !(TargetNode.Node.UserData is WayPoint) && !(TargetNode.Node.UserData is Runway))
+                    return;
+
+                if (!(SourceNode.Node.UserData is Runway) && !(SourceNode.Node.UserData is WayPoint) && TargetNode.Node.UserData is WayPoint)
+                    return;
+
+                var taxiName = SourceNode.Node.Id.Replace('-', ' ')
+                    .Split()
+                    .Intersect(TargetNode.Node.Id.Replace('-', ' ').Split())
+                    .FirstOrDefault();
+
+                var mainCost = 1;
+                var reverseCost = 1;
+
+                if(SourceNode.Node.Id.Contains("Apron") || SourceNode.Node.Id.Contains("Ramp"))
                 {
-                    TargetNode = (VNode)graphViewer.ObjectUnderMouseCursor;
-
-                    if (SourceNode.Node.UserData is WayPoint && !(TargetNode.Node.UserData is WayPoint) && !(TargetNode.Node.UserData is Runway))
-                        return;
-
-                    if (!(SourceNode.Node.UserData is Runway) && !(SourceNode.Node.UserData is WayPoint) && TargetNode.Node.UserData is WayPoint)
-                        return;
-
-                    graphViewer.Graph = graph;
-
-                    string taxiName = null;
-
-                    taxiName = SourceNode.Node.Id.Replace('-', ' ')
-                        .Split()
-                        .Intersect(TargetNode.Node.Id.Replace('-', ' ').Split())
-                        .FirstOrDefault();
-
-                    // Default everything to green and cost 1
-                    var mainEdge = graph.AddEdge(SourceNode.Node.Id, taxiName, TargetNode.Node.Id);
-                    mainEdge.Attr.Color = Color.Green;
-                    var mainCost = 1;
-
-                    var reverseEdge = graph.AddEdge(TargetNode.Node.Id, taxiName, SourceNode.Node.Id);
-                    reverseEdge.Attr.Color = Color.Green;
-                    var reverseCost = 1;
-
-                    if (SourceNode.Node.UserData is WayPoint || TargetNode.Node.UserData is WayPoint)
-                    {
-                        mainEdge.Attr.Color = Color.Purple;
-                        mainEdge.Attr.AddStyle(Microsoft.Msagl.Drawing.Style.Dashed);
-                        reverseEdge.Attr.Color = Color.Purple;
-                        reverseEdge.Attr.AddStyle(Microsoft.Msagl.Drawing.Style.Dashed);
-                    } 
-                    if(SourceNode.Node.Id.Contains("Apron") || SourceNode.Node.Id.Contains("Ramp"))
-                    {
-                        reverseEdge.Attr.Color = Color.Orange;
-                        reverseCost = 100;
-                    }
-                    if(TargetNode.Node.Id.Contains("Apron") || TargetNode.Node.Id.Contains("Ramp"))
-                    {
-                        mainEdge.Attr.Color = Color.Orange;
-                        mainCost = 100;
-                    }
-                    if(SourceNode.Node.Id.Contains("Spot") || SourceNode.Node.Id.Contains("Maintenance"))
-                    {
-                        reverseEdge.Attr.Color = Color.Red;
-                        reverseCost = 999;
-                    }
-                    if(TargetNode.Node.Id.Contains("Spot") || TargetNode.Node.Id.Contains("Maintenance"))
-                    {
-                        mainEdge.Attr.Color = Color.Red;
-                        mainCost = 999;
-                    }
-                    if(SourceNode.Node.Id.Contains("Runway") && TargetNode.Node.Id.Contains("Runway"))
-                    {
-                        mainEdge.Attr.Color = Color.Red;
-                        mainCost = 999;
-
-                        reverseEdge.Attr.Color = Color.Red;
-                        reverseCost = 999;
-                    }
-
-                    airfield.Taxiways.Add(new NavigationPath
-                    {
-                        Source = SourceNode.Node.Id,
-                        Target = TargetNode.Node.Id,
-                        Name = taxiName,
-                        Cost = mainCost,
-                    });
-
-                    airfield.Taxiways.Add(new NavigationPath
-                    {
-                        Source = TargetNode.Node.Id,
-                        Target = SourceNode.Node.Id,
-                        Name = taxiName,
-                        Cost = reverseCost,
-                    });
-
-                    graphViewer.Graph = graph;
+                    reverseCost = 100;
                 }
+                if(TargetNode.Node.Id.Contains("Apron") || TargetNode.Node.Id.Contains("Ramp"))
+                {
+                    mainCost = 100;
+                }
+                if(SourceNode.Node.Id.Contains("Spot") || SourceNode.Node.Id.Contains("Maintenance"))
+                {
+                    reverseCost = 999;
+                }
+                if(TargetNode.Node.Id.Contains("Spot") || TargetNode.Node.Id.Contains("Maintenance"))
+                {
+                    mainCost = 999;
+                }
+                if(SourceNode.Node.Id.Contains("Runway") && TargetNode.Node.Id.Contains("Runway"))
+                {
+                    mainCost = 999;
+                    reverseCost = 999;
+                }
+
+                // Add to the Taxiways for searching
+                airfield.Taxiways.Add(new NavigationPath
+                {
+                    Source = SourceNode.Node.Id,
+                    Target = TargetNode.Node.Id,
+                    Name = taxiName,
+                    Cost = mainCost,
+                });
+
+                airfield.Taxiways.Add(new NavigationPath
+                {
+                    Source = TargetNode.Node.Id,
+                    Target = SourceNode.Node.Id,
+                    Name = taxiName,
+                    Cost = reverseCost,
+                });
+
+                // Add to the underlying graph for data for refreshing UI
+                var mainEdge = new TaggedEdge<NavigationPoint, string>((NavigationPoint) SourceNode.Node.UserData,
+                    (NavigationPoint) TargetNode.Node.UserData, taxiName);
+                airfield.NavigationGraph.AddEdge(mainEdge);
+                airfield.NavigationCost[mainEdge] = mainCost;
+
+                var reverseEdge = new TaggedEdge<NavigationPoint, string>((NavigationPoint) TargetNode.Node.UserData,
+                    (NavigationPoint) SourceNode.Node.UserData, taxiName);
+                airfield.NavigationGraph.AddEdge(reverseEdge);
+                airfield.NavigationCost[reverseEdge] = reverseCost;
+
                 SourceNode = null;
-            }; 
-            
-            graphViewer.Graph = graph;
+                DisplayGraph();
+            }
         }
     }
 }
