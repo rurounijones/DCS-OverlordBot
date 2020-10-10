@@ -1,0 +1,368 @@
+{
+  "name": "Kobuleti",
+  "lat": 41.93210535345338,
+  "lon": 41.876483823101026,
+  "alt": 18.010017395019531,
+  "parkingSpots": [
+    {
+      "name": "November Spots",
+      "lat": 41.931163755833,
+      "lon": 41.855951686492
+    },
+    {
+      "name": "November Spots 1",
+      "lat": 41.933183382133,
+      "lon": 41.866346205174
+    },
+    {
+      "name": "Sierra Spots",
+      "lat": 41.928742263691,
+      "lon": 41.870141966976
+    },
+    {
+      "name": "Sierra Spots 1",
+      "lat": 41.929550182823,
+      "lon": 41.872942670821
+    },
+    {
+      "name": "Sierra Spots 2",
+      "lat": 41.929657470579,
+      "lon": 41.875664357122
+    },
+    {
+      "name": "Alpha Spot 1",
+      "lat": 41.929738481665,
+      "lon": 41.8779577384
+    },
+    {
+      "name": "Alpha Spot 2",
+      "lat": 41.931176394144,
+      "lon": 41.878689553872
+    },
+    {
+      "name": "Apron South",
+      "lat": 41.927207096646,
+      "lon": 41.858091577615
+    },
+    {
+      "name": "Apron South 1",
+      "lat": 41.928519063952,
+      "lon": 41.866368914833
+    }
+  ],
+  "runways": [
+    {
+      "heading": 70,
+      "name": "Runway 0 7",
+      "lat": 41.927422541265,
+      "lon": 41.849960367615
+    },
+    {
+      "heading": 250,
+      "name": "Runway 2 5",
+      "lat": 41.932486226475,
+      "lon": 41.877050563948
+    }
+  ],
+  "junctions": [
+    {
+      "name": "Alpha Sierra",
+      "lat": 41.930942095623,
+      "lon": 41.877382103281
+    },
+    {
+      "name": "Bravo Sierra",
+      "lat": 41.930195863049,
+      "lon": 41.872748274398
+    },
+    {
+      "name": "Bravo Runway",
+      "lat": 41.931352917653,
+      "lon": 41.872355015572
+    },
+    {
+      "name": "Echo November",
+      "lat": 41.933904917508,
+      "lon": 41.87648538132
+    },
+    {
+      "name": "Charlie November Runway",
+      "lat": 41.928195084477,
+      "lon": 41.854000364016
+    },
+    {
+      "name": "Charlie Sierra",
+      "lat": 41.927324292158,
+      "lon": 41.854302857098
+    }
+  ],
+  "taxipaths": [
+    {
+      "name": "Sierra",
+      "source": "Alpha Sierra",
+      "target": "Bravo Sierra",
+      "cost": 1
+    },
+    {
+      "name": "Sierra",
+      "source": "Bravo Sierra",
+      "target": "Alpha Sierra",
+      "cost": 1
+    },
+    {
+      "name": "Sierra",
+      "source": "Charlie Sierra",
+      "target": "Bravo Sierra",
+      "cost": 1
+    },
+    {
+      "name": "Sierra",
+      "source": "Bravo Sierra",
+      "target": "Charlie Sierra",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Sierra",
+      "target": "Runway 2 5",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Runway 2 5",
+      "target": "Alpha Sierra",
+      "cost": 1
+    },
+    {
+      "name": "Sierra",
+      "source": "Charlie Sierra",
+      "target": "Runway 0 7",
+      "cost": 1
+    },
+    {
+      "name": "Sierra",
+      "source": "Runway 0 7",
+      "target": "Charlie Sierra",
+      "cost": 1
+    },
+    {
+      "name": "Bravo",
+      "source": "Bravo Runway",
+      "target": "Bravo Sierra",
+      "cost": 1
+    },
+    {
+      "name": "Bravo",
+      "source": "Bravo Sierra",
+      "target": "Bravo Runway",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Charlie November Runway",
+      "target": "Charlie Sierra",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Charlie Sierra",
+      "target": "Charlie November Runway",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Echo November",
+      "target": "Charlie November Runway",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Charlie November Runway",
+      "target": "Echo November",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Echo November",
+      "target": "Runway 2 5",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Runway 2 5",
+      "target": "Echo November",
+      "cost": 1
+    },
+    {
+      "name": "Runway",
+      "source": "Bravo Runway",
+      "target": "Runway 2 5",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway 2 5",
+      "target": "Bravo Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Charlie November Runway",
+      "target": "Runway 0 7",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway 0 7",
+      "target": "Charlie November Runway",
+      "cost": 999
+    },
+    {
+      "name": "November",
+      "source": "November Spots",
+      "target": "Echo November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Echo November",
+      "target": "November Spots",
+      "cost": 999
+    },
+    {
+      "name": "November",
+      "source": "November Spots 1",
+      "target": "Echo November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Echo November",
+      "target": "November Spots 1",
+      "cost": 999
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Spot 1",
+      "target": "Alpha Sierra",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Sierra",
+      "target": "Alpha Spot 1",
+      "cost": 999
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Spot 2",
+      "target": "Alpha Sierra",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Sierra",
+      "target": "Alpha Spot 2",
+      "cost": 999
+    },
+    {
+      "name": "Sierra",
+      "source": "Sierra Spots",
+      "target": "Bravo Sierra",
+      "cost": 1
+    },
+    {
+      "name": "Sierra",
+      "source": "Bravo Sierra",
+      "target": "Sierra Spots",
+      "cost": 999
+    },
+    {
+      "name": "Sierra",
+      "source": "Sierra Spots 1",
+      "target": "Bravo Sierra",
+      "cost": 1
+    },
+    {
+      "name": "Sierra",
+      "source": "Bravo Sierra",
+      "target": "Sierra Spots 1",
+      "cost": 999
+    },
+    {
+      "name": "Sierra",
+      "source": "Sierra Spots 2",
+      "target": "Bravo Sierra",
+      "cost": 1
+    },
+    {
+      "name": "Sierra",
+      "source": "Bravo Sierra",
+      "target": "Sierra Spots 2",
+      "cost": 999
+    },
+    {
+      "name": "Sierra",
+      "source": "Apron South",
+      "target": "Charlie Sierra",
+      "cost": 1
+    },
+    {
+      "name": "Sierra",
+      "source": "Charlie Sierra",
+      "target": "Apron South",
+      "cost": 100
+    },
+    {
+      "name": "Sierra",
+      "source": "Apron South 1",
+      "target": "Charlie Sierra",
+      "cost": 1
+    },
+    {
+      "name": "Sierra",
+      "source": "Charlie Sierra",
+      "target": "Apron South 1",
+      "cost": 100
+    },
+    {
+      "name": "Runway",
+      "source": "Charlie November Runway",
+      "target": "Bravo Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Bravo Runway",
+      "target": "Charlie November Runway",
+      "cost": 999
+    }
+  ],
+  "waypoints": [
+    {
+      "name": "CRP Black Sea",
+      "lat": 	42.0187667,
+      "lon": 41.7520667
+    }, {
+      "name": "CRP North - East",
+      "lat": 	42.0007333,
+      "lon": 42.0015500
+    }, {
+      "name": "CRP East",
+      "lat": 	41.9098833,
+      "lon": 42.0077500
+    }, {
+      "name": "CRP South",
+      "lat": 	41.8235833,
+      "lon": 41.7726667
+    }, {
+      "name": "INITIAL 0 7",
+      "lat": 	0,
+      "lon": 0
+    }, {
+      "name": "INITIAL 2 5",
+      "lat": 	0,
+      "lon": 0
+    }
+  ]
+}
