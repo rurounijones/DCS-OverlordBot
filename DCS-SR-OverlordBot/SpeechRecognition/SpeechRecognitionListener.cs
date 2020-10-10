@@ -197,7 +197,7 @@ namespace RurouniJones.DCS.OverlordBot.SpeechRecognition
                 var luisJson = Task.Run(() => LuisService.ParseIntent(e.Result.Text)).Result;
                 Logger.Debug($"{_logClientId}| LUIS Response: {luisJson}");
 
-                var radioCall = new BaseRadioCall(luisJson);
+                IRadioCall radioCall = Controller is AtcController ? new AtcRadioCall(luisJson) : new BaseRadioCall(luisJson);
 
                 activity?.AddTag("Frequency", _frequency);
                 activity?.AddTag("BotType", _botType);

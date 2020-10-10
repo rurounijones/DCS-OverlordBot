@@ -354,6 +354,7 @@
     <Compile Include="Controllers\AwacsController.cs" />
     <Compile Include="GameState\GameQuerier\GetAirfields.cs" />
     <Compile Include="GameState\GameQuerier\GetBearingToNearestFriendlyAirbase.cs" />
+    <Compile Include="RadioCalls\AtcRadioCall.cs" />
     <Compile Include="RadioCalls\BaseRadioCall.cs" />
     <Compile Include="Intents\ReadytoTaxi.cs" />
     <Compile Include="Constants.cs" />

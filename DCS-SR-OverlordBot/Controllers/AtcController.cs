@@ -77,7 +77,8 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
 
         protected override bool IsAddressedToController(IRadioCall radioCall)
         {
-            return Constants.Airfields.Any(airfield => airfield.Name.Equals(radioCall.AirbaseName));
+            var atcRadioCall = (AtcRadioCall) radioCall;
+            return Constants.Airfields.Any(airfield => airfield.Name.Equals(atcRadioCall.AirbaseName) && atcRadioCall.ControlName != "traffic");
         }
 
         private static string ResponsePrefix(IRadioCall radioCall)
