@@ -10,5 +10,32 @@ namespace RurouniJones.DCS.OverlordBot.Models
     public class Airfield : Airfields.Structure.Airfield
     {
         public ConcurrentDictionary<string, TaxiProgressChecker> TaxiingAircraft { get; } = new ConcurrentDictionary<string, TaxiProgressChecker>();
+
+        public Airfield() {}
+
+        public Airfield(Airfields.Structure.Airfield airfieldStructure)
+        {
+            Name = airfieldStructure.Name;
+            Latitude = airfieldStructure.Latitude;
+            Longitude = airfieldStructure.Longitude;
+            Altitude = airfieldStructure.Altitude;
+            Position = airfieldStructure.Position;
+
+            ParkingSpots = airfieldStructure.ParkingSpots;
+            Runways = airfieldStructure.Runways;
+            Junctions = airfieldStructure.Junctions;
+            Taxiways = airfieldStructure.Taxiways;
+            WayPoints = airfieldStructure.WayPoints;
+            TaxiPoints = airfieldStructure.TaxiPoints;
+
+            WindHeading = airfieldStructure.WindHeading;
+            WindSpeed = airfieldStructure.WindSpeed;
+
+            Coalition = airfieldStructure.Coalition;
+
+            NavigationGraph = airfieldStructure.NavigationGraph;
+            NavigationCost = airfieldStructure.NavigationCost;
+            NavigationCostFunction = airfieldStructure.NavigationCostFunction;
+        }
     }
 }

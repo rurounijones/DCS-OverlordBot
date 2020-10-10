@@ -106,17 +106,21 @@ namespace RurouniJones.DCS.Airfields.Structure
         [JsonIgnore]
         public int Coalition { get; set; } = 0;
 
-        [JsonIgnore]
-        public readonly AdjacencyGraph<NavigationPoint, TaggedEdge<NavigationPoint, string>> NavigationGraph = new AdjacencyGraph<NavigationPoint, TaggedEdge<NavigationPoint, string>>();
+        [JsonIgnore] public AdjacencyGraph<NavigationPoint, TaggedEdge<NavigationPoint, string>> NavigationGraph =
+            new AdjacencyGraph<NavigationPoint, TaggedEdge<NavigationPoint, string>>();
 
         [JsonIgnore]
         public Dictionary<TaggedEdge<NavigationPoint, string>, double> NavigationCost;
 
-        [JsonIgnore]
-        public Func<TaggedEdge<NavigationPoint, string>, double> NavigationCostFunction => AlgorithmExtensions.GetIndexer(NavigationCost);
+        [JsonIgnore] public Func<TaggedEdge<NavigationPoint, string>, double> NavigationCostFunction;
 
         [JsonIgnore]
-        public IEnumerable<TaxiPoint> TaxiPoints => NavigationGraph.Vertices.OfType<TaxiPoint>();
+        public IEnumerable<TaxiPoint> TaxiPoints
+        {
+            get => NavigationGraph.Vertices.OfType<TaxiPoint>();
+            set => _taxiPoints = value;
+        }
+        private IEnumerable<TaxiPoint> _taxiPoints;
 
         [OnDeserialized]
         public void BuildTaxiGraph(StreamingContext context)
@@ -142,6 +146,7 @@ namespace RurouniJones.DCS.Airfields.Structure
 
                 NavigationCost.Add(edge, taxiway.Cost);
             }
+            NavigationCostFunction = AlgorithmExtensions.GetIndexer(NavigationCost);
             Logger.Debug($"{Name} airfield navigation graph built");
 
         }

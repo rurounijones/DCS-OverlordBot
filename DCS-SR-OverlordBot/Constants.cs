@@ -9,8 +9,9 @@ namespace RurouniJones.DCS.OverlordBot
 {
     public static class Constants
     {
-        public static readonly List<Airfield> Airfields = Populator.Airfields.Cast<Airfield>().ToList();
-
+        public static readonly List<Airfield> Airfields =
+            Populator.Airfields.Select(airfieldStructure => new Airfield(airfieldStructure)).ToList();
+            
         public static ActivitySource ActivitySource = new ActivitySource(
             $"OverlordBot {Properties.Settings.Default.ServerShortName}",
             "Development");
@@ -25,7 +26,6 @@ namespace RurouniJones.DCS.OverlordBot
 
     internal static class CoalitionMethods
     {
-
         public static Coalition GetOpposingCoalition(this Coalition coalition)
         {
             switch (coalition)

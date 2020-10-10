@@ -172,6 +172,9 @@
     <Reference Include="OpenTelemetry.Instrumentation.Http, Version=0.6.0.1, Culture=neutral, PublicKeyToken=7bd6737fe5b67e3c, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenTelemetry.Instrumentation.Http.0.6.0-beta.1\lib\net461\OpenTelemetry.Instrumentation.Http.dll</HintPath>
     </Reference>
+    <Reference Include="QuikGraph, Version=2.2.0.0, Culture=neutral, PublicKeyToken=46bd58b0789759cb, processorArchitecture=MSIL">
+      <HintPath>..\packages\QuikGraph.2.2.0\lib\net45\QuikGraph.dll</HintPath>
+    </Reference>
     <Reference Include="SharpConfig, Version=3.2.7.0, Culture=neutral, PublicKeyToken=c1deedac91bd7724, processorArchitecture=MSIL">
       <HintPath>..\packages\sharpconfig.3.2.6.1\lib\net20\SharpConfig.dll</HintPath>
     </Reference>
