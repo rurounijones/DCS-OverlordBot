@@ -25,6 +25,7 @@ namespace RurouniJones.DCS.Airfields.Controllers.Tests
 
             yield return new object[] { new TaxiScenario("Anapa-Vityazevo", "Apron 1", 270, new Point(45.0101581, 37.3481765), "Runway-2 2", new List<string> { "Mike", "Delta" }) };
             yield return new object[] { new TaxiScenario("Anapa-Vityazevo", "Echo Spots", 270, new Point(45.0094606, 37.3635130), "Runway-2 2", new List<string> { "Echo" }) };
+            yield return new object[] { new TaxiScenario("Anapa-Vityazevo", "Echo Spots", 40, new Point(45.0094606, 37.3635130), "Runway-0 4", new List<string> { "Echo", "Delta", "Mike", "Alpha" }) };
             
             yield return new object[] { new TaxiScenario("Krasnodar-Center", "Echo Spots 1", 340, new Point(45.082339143765, 38.954220071576), "Runway-2 7", new List<string> { "Echo" }) };
             yield return new object[] { new TaxiScenario("Krasnodar-Center", "Echo Spots 1", 270, new Point(45.082339143765, 38.954220071576), "Runway-2 7", new List<string> { "Echo" }) };
