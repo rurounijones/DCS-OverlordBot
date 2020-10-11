@@ -30,6 +30,12 @@
                     return "<phoneme alphabet=\"ipa\" ph=\"ɡʲɪlʲɪnd͡ʐˈʐɨk\">Gelendzhik</phoneme>";
                 case "kobuleti":
                     return "<phoneme alphabet=\"ipa\" ph=\"kʰɔbulɛtʰi\">Kobuleti</phoneme>";
+                case "anapa-vityazevo":
+                    return "Anapa";
+                case "krasnodar-center":
+                    return "Kras Center";
+                case "krasnodar-pashkovsky":
+                    return "Kras Pash";
             }
             // Remove all the ancillery words that we do not care about when spoken. Include the leading space. This is a 
             // catch-all for reducing the length of airfields that do not have a specific pronunciation defined above.

@@ -1,4 +1,6 @@
-﻿namespace RurouniJones.DCS.OverlordBot.RadioCalls
+﻿using System.Linq;
+
+namespace RurouniJones.DCS.OverlordBot.RadioCalls
 {
     class AtcRadioCall : BaseRadioCall
     {
@@ -7,8 +9,7 @@
         public AtcRadioCall(string luisJson) : base(luisJson)
         {
             ControlName = LuisResponse.Entities
-                .Find(x => x.Type.Equals("airbase_control_name")).Entity;
+                .FirstOrDefault(x => x.Type.Equals("airbase_control_name"))?.Entity;
         }
-
     }
 }
