@@ -62,11 +62,6 @@ namespace RurouniJones.DCS.Airfields.Controllers.Ground
             throw new TaxiPathNotFoundException($"No taxi path found from {source.Name} to {target.Name}");
         }
 
-        private double PathCost(IEnumerable<TaggedEdge<NavigationPoint, string>> path)
-        {
-            return path.Sum(edge => _airfield.NavigationCost[edge]);
-        }
-
         private static TaxiInstructions CompileInstructions(NavigationPoint target, IEnumerable<TaggedEdge<NavigationPoint, string>> path)
         {
             var taggedEdges = path.ToList();
