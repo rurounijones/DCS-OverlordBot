@@ -1,8 +1,8 @@
 ﻿using System;
-using RurouniJones.DCS.Airfields.Structure;
 using System.Collections.Generic;
+using RurouniJones.DCS.Airfields.Structure;
 
-namespace RurouniJones.DCS.Airfields.Controllers
+namespace RurouniJones.DCS.Airfields.Controllers.Util
 {
     internal class ActiveRunwayDecider
     {
@@ -45,12 +45,6 @@ namespace RurouniJones.DCS.Airfields.Controllers
                 }
             }
             return activeRunways;
-        }
-    }
-    public class NoActiveRunwaysFoundException : Exception
-    {
-        public NoActiveRunwaysFoundException(string message) : base(message)
-        {
         }
     }
 }

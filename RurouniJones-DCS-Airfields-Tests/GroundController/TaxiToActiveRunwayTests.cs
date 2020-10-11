@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
+using RurouniJones.DCS.Airfields.Controllers.Ground;
 
 namespace RurouniJones.DCS.Airfields.Controllers.Tests
 {

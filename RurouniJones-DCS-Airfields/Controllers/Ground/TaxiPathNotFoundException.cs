@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RurouniJones.DCS.Airfields.Controllers
+namespace RurouniJones.DCS.Airfields.Controllers.Ground
 {
     public class TaxiPathNotFoundException : Exception
     {

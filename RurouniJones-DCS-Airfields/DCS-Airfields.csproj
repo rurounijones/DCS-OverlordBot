@@ -48,10 +48,13 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controllers\ActiveRunwayDecider.cs" />
-    <Compile Include="Controllers\GroundController.cs" />
-    <Compile Include="Controllers\TaxiInstructions.cs" />
-    <Compile Include="Controllers\TaxiPathNotFoundException.cs" />
+    <Compile Include="Controllers\Approach\ApproachController.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\Ground\GroundController.cs" />
+    <Compile Include="Controllers\Ground\TaxiInstructions.cs" />
+    <Compile Include="Controllers\Ground\TaxiPathNotFoundException.cs" />
+    <Compile Include="Controllers\Util\ActiveRunwayDecider.cs" />
+    <Compile Include="Controllers\Util\NoActiveRunwaysFoundException.cs" />
     <Compile Include="Populator.cs" />
     <Compile Include="Structure\Airfield.cs" />
     <Compile Include="Structure\Junction.cs" />

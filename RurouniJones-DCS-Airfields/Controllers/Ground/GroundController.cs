@@ -1,24 +1,17 @@
 ﻿using System;
-using Geo.Geometries;
-using NLog;
-using QuikGraph;
-using QuikGraph.Algorithms;
-using RurouniJones.DCS.Airfields.Structure;
 using System.Collections.Generic;
 using System.Linq;
+using Geo.Geometries;
+using QuikGraph;
+using QuikGraph.Algorithms;
+using RurouniJones.DCS.Airfields.Controllers.Util;
+using RurouniJones.DCS.Airfields.Structure;
 
-namespace RurouniJones.DCS.Airfields.Controllers
+namespace RurouniJones.DCS.Airfields.Controllers.Ground
 {
-    public class GroundController
+    public class GroundController : BaseController
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
-        private readonly Airfield _airfield;
-
-        public GroundController(Airfield airfield)
-        {
-            _airfield = airfield;
-        }
+        public GroundController(Airfield airfield) : base(airfield) {}
 
         public TaxiInstructions GetTaxiInstructions(Point callerPosition)
         {
