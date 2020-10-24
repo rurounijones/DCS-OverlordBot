@@ -8,6 +8,11 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using Microsoft.Msagl.Core.Geometry.Curves;
+using Microsoft.Msagl.Core.Layout;
+using Microsoft.Msagl.Layout.MDS;
+using Microsoft.Msagl.Miscellaneous;
+using Label = Microsoft.Msagl.Drawing.Label;
 
 namespace TaxiViewer
 {
@@ -24,6 +29,8 @@ namespace TaxiViewer
 
         private static GraphViewer _graphViewer;
         private static Graph _graph;
+
+        LayoutAlgorithmSettings settings = new MdsLayoutSettings();
 
         public MainWindow()
         {
@@ -45,6 +52,8 @@ namespace TaxiViewer
                     airfield = JsonConvert.DeserializeObject<Airfield>(File.ReadAllText(FileName));
                     ReloadAirfieldButton.IsEnabled = true;
                     SaveAirfieldButton.IsEnabled = true;
+                    AddTaxiPathButton.IsEnabled = true;
+                    DisplayRealGraphButton.IsEnabled = true;
 
                     DisplayGraph();
                 } catch(Exception _)
@@ -79,10 +88,8 @@ namespace TaxiViewer
             }
         }
 
-        private void DisplayGraph()
+        private void BuildGraph()
         {
-            GraphPanel.Children.Clear();
-
             _graph = new Graph();
 
             foreach (NavigationPoint navigationPoint in airfield.NavigationGraph.Vertices)
@@ -142,7 +149,26 @@ namespace TaxiViewer
                     displayEdge.Attr.AddStyle(Microsoft.Msagl.Drawing.Style.Dashed);
                 }
             }
+        }
 
+        private void DisplayGraph()
+        {
+            GraphPanel.Children.Clear();
+
+            BuildGraph();
+
+            if(DisplayRealGraphButton.IsChecked != null && (bool) DisplayRealGraphButton.IsChecked)
+            {
+                DisplayRealGraph();
+            }
+            else
+            {
+                DisplayAbstractGraph();
+            }
+        }
+
+        private void DisplayAbstractGraph()
+        {
             _graphViewer = new GraphViewer
             {
                 LayoutEditingEnabled = false,
@@ -152,6 +178,52 @@ namespace TaxiViewer
             _graphViewer.MouseDown += MouseDownHandler;
             _graphViewer.MouseUp += MouseUpHandler;
             _graphViewer.Graph = _graph;
+        }
+
+        private void DisplayRealGraph()
+        {
+            _graph.CreateGeometryGraph();
+
+            foreach (TaxiPoint taxiPoint in airfield.TaxiPoints)
+            {
+
+                var dnode = _graph.Nodes.FirstOrDefault(node => node.Id.Equals(taxiPoint.Name));
+                if (dnode != null)
+                {
+                    dnode.GeometryNode.BoundaryCurve = CreateLabelAndBoundary(taxiPoint, dnode);
+                }
+                else
+                {
+                    MessageBox.Show($"Error Displaying {taxiPoint.Name}", "Display Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                }
+            }
+
+            LayoutHelpers.RouteAndLabelEdges(_graph.GeometryGraph, settings, _graph.GeometryGraph.Edges);
+
+            _graphViewer = new GraphViewer
+            {
+                LayoutEditingEnabled = false,
+                NeedToCalculateLayout = false
+            };
+
+            _graphViewer.BindToPanel(GraphPanel);
+            _graphViewer.Graph = _graph;
+        }
+
+        static ICurve CreateLabelAndBoundary(TaxiPoint taxiPoint, Microsoft.Msagl.Drawing.Node node)
+        {
+            node.Attr.Shape = Shape.DrawFromGeometry;
+            node.Attr.LabelMargin *= 2;
+            node.Attr.Color = Color.Red;
+
+            node.Label.IsVisible = false;
+
+            double y = (taxiPoint.Latitude - airfield.Latitude) * 100000;
+            double x = (taxiPoint.Longitude - airfield.Longitude) * 100000;
+            var positionalPoint = new Microsoft.Msagl.Core.Geometry.Point(x, y);
+
+            return CurveFactory.CreateCircle(5, positionalPoint);
         }
 
         private void MouseDownHandler(object s, MsaglMouseEventArgs ev)
@@ -274,6 +346,11 @@ namespace TaxiViewer
                 SourceNode = null;
                 DisplayGraph();
             }
+        }
+
+        private void DisplayRealGraphButton_Clicked(object sender, RoutedEventArgs e)
+        {
+            DisplayGraph();
         }
     }
 }
