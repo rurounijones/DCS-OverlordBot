@@ -125,29 +125,40 @@ namespace RurouniJones.DCS.Airfields.Structure
         [OnDeserialized]
         public void BuildTaxiGraph(StreamingContext context)
         {
-            Logger.Debug($"{Name} airfield JSON deserialized");
-
-            Runways.ForEach(runway => NavigationGraph.AddVertex(runway));
-            ParkingSpots.ForEach(parkingSpot => NavigationGraph.AddVertex(parkingSpot));
-            Junctions.ForEach(junction => NavigationGraph.AddVertex(junction));
-            WayPoints.ForEach(wayPoint => NavigationGraph.AddVertex(wayPoint));
-
-            NavigationCost = new Dictionary<TaggedEdge<NavigationPoint, string>, double>(NavigationGraph.EdgeCount);
-
-            foreach (NavigationPath taxiway in Taxiways)
+            try
             {
-                NavigationPoint source = NavigationGraph.Vertices.First(taxiPoint => taxiPoint.Name.Equals(taxiway.Source));
-                NavigationPoint target = NavigationGraph.Vertices.First(taxiPoint => taxiPoint.Name.Equals(taxiway.Target));
-                string tag = taxiway.Name;
+                Logger.Debug($"{Name} airfield JSON deserialized");
 
-                TaggedEdge<NavigationPoint, string> edge = new TaggedEdge<NavigationPoint, string>(source, target, tag);
+                Runways.ForEach(runway => NavigationGraph.AddVertex(runway));
+                ParkingSpots.ForEach(parkingSpot => NavigationGraph.AddVertex(parkingSpot));
+                Junctions.ForEach(junction => NavigationGraph.AddVertex(junction));
+                WayPoints.ForEach(wayPoint => NavigationGraph.AddVertex(wayPoint));
 
-                NavigationGraph.AddEdge(edge);
+                NavigationCost = new Dictionary<TaggedEdge<NavigationPoint, string>, double>(NavigationGraph.EdgeCount);
 
-                NavigationCost.Add(edge, taxiway.Cost);
+                foreach (NavigationPath taxiway in Taxiways)
+                {
+                    NavigationPoint source =
+                        NavigationGraph.Vertices.First(taxiPoint => taxiPoint.Name.Equals(taxiway.Source));
+                    NavigationPoint target =
+                        NavigationGraph.Vertices.First(taxiPoint => taxiPoint.Name.Equals(taxiway.Target));
+                    string tag = taxiway.Name;
+
+                    TaggedEdge<NavigationPoint, string> edge =
+                        new TaggedEdge<NavigationPoint, string>(source, target, tag);
+
+                    NavigationGraph.AddEdge(edge);
+
+                    NavigationCost.Add(edge, taxiway.Cost);
+                }
+
+                NavigationCostFunction = AlgorithmExtensions.GetIndexer(NavigationCost);
+                Logger.Debug($"{Name} airfield navigation graph built");
             }
-            NavigationCostFunction = AlgorithmExtensions.GetIndexer(NavigationCost);
-            Logger.Debug($"{Name} airfield navigation graph built");
+            catch (Exception e)
+            {
+                Logger.Error(e, $"Could not build navigation graph for {Name}");
+            }
 
         }
     }
