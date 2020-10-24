@@ -1,0 +1,148 @@
+{
+  "name": "Nalchik",
+  "lat": 43.509984735059668,
+  "lon": 43.624886288019482,
+  "alt": 430.01043701171875,
+  "parkingSpots": [
+    {
+      "name": "Apron 2",
+      "lat": 43.513191090253,
+      "lon": 43.642730413694
+    },
+    {
+      "name": "Apron 1",
+      "lat": 43.511471416956,
+      "lon": 43.639408325336
+    }
+  ],
+  "runways": [
+    {
+      "heading": 0,
+      "name": "Runway-2 4",
+      "lat": 43.518316486373,
+      "lon": 43.648060213843
+    },
+    {
+      "heading": 0,
+      "name": "Runway-0 6",
+      "lat": 43.509731716809,
+      "lon": 43.624995136183
+    }
+  ],
+  "junctions": [
+    {
+      "name": "Alpha Bravo",
+      "lat": 43.510433711327,
+      "lon": 43.634927366122
+    },
+    {
+      "name": "Bravo Runway",
+      "lat": 43.511521538913,
+      "lon": 43.629869013259
+    },
+    {
+      "name": "Alpha Runway",
+      "lat": 43.50970347608,
+      "lon": 43.624861870914
+    }
+  ],
+  "taxipaths": [
+    {
+      "name": "Runway",
+      "source": "Alpha Runway",
+      "target": "Runway-2 4",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway-2 4",
+      "target": "Alpha Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Bravo Runway",
+      "target": "Runway-2 4",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway-2 4",
+      "target": "Bravo Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Alpha Runway",
+      "target": "Runway-0 6",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway-0 6",
+      "target": "Alpha Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Bravo Runway",
+      "target": "Runway-0 6",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway-0 6",
+      "target": "Bravo Runway",
+      "cost": 999
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Runway",
+      "target": "Alpha Bravo",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Bravo",
+      "target": "Alpha Runway",
+      "cost": 1
+    },
+    {
+      "name": "Bravo",
+      "source": "Bravo Runway",
+      "target": "Alpha Bravo",
+      "cost": 1
+    },
+    {
+      "name": "Bravo",
+      "source": "Alpha Bravo",
+      "target": "Bravo Runway",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Apron 1",
+      "target": "Alpha Bravo",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Bravo",
+      "target": "Apron 1",
+      "cost": 100
+    },
+    {
+      "name": "Alpha",
+      "source": "Apron 2",
+      "target": "Alpha Bravo",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Bravo",
+      "target": "Apron 2",
+      "cost": 100
+    }
+  ],
+  "waypoints": []
+}

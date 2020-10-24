@@ -1,0 +1,457 @@
+{
+  "name": "Tbilisi-Lochini",
+  "lat": 41.67471935873423,
+  "lon": 44.946876591924308,
+  "alt": 479.69482421875,
+  "parkingSpots": [
+    {
+      "name": "Apron 3",
+      "lat": 41.673434518047,
+      "lon": 44.955536867845
+    },
+    {
+      "name": "Apron 4",
+      "lat": 41.668620174252,
+      "lon": 44.964878785177
+    },
+    {
+      "name": "Apron 2",
+      "lat": 41.676233121529,
+      "lon": 44.955438450172
+    },
+    {
+      "name": "Apron 1",
+      "lat": 41.674451861731,
+      "lon": 44.95681411362
+    },
+    {
+      "name": "Apron 1 Spots 1",
+      "lat": 41.670525542729,
+      "lon": 44.9628713565
+    },
+    {
+      "name": "Apron 1 Spots 2",
+      "lat": 41.673517595451,
+      "lon": 44.958489631613
+    },
+    {
+      "name": "Apron 5",
+      "lat": 41.680269251425,
+      "lon": 44.945403281808
+    },
+    {
+      "name": "Helipad North",
+      "lat": 41.679191550301,
+      "lon": 44.949299665854
+    }
+  ],
+  "runways": [
+    {
+      "heading": 0,
+      "name": "Runway-1 2 Right",
+      "lat": 41.677147059166,
+      "lon": 44.943271161681
+    },
+    {
+      "heading": 0,
+      "name": "Runway-3 0 Left",
+      "lat": 41.659267531803,
+      "lon": 44.966262652346
+    },
+    {
+      "heading": 0,
+      "name": "Helicopter Runway",
+      "lat": 41.679642914286,
+      "lon": 44.944523088185
+    }
+  ],
+  "junctions": [
+    {
+      "name": "Bravo November",
+      "lat": 41.675607493313,
+      "lon": 44.947942200512
+    },
+    {
+      "name": "Bravo Delta",
+      "lat": 41.676519225568,
+      "lon": 44.951040897879
+    },
+    {
+      "name": "Foxtrot November",
+      "lat": 41.671848122666,
+      "lon": 44.953417237845
+    },
+    {
+      "name": "Alpha November",
+      "lat": 41.670408423858,
+      "lon": 44.95543079303
+    },
+    {
+      "name": "Echo November",
+      "lat": 41.66401094553,
+      "lon": 44.964559500374
+    },
+    {
+      "name": "Bravo Charlie",
+      "lat": 41.676791007665,
+      "lon": 44.952113731229
+    },
+    {
+      "name": "Charlie Foxtrot",
+      "lat": 41.67418951277,
+      "lon": 44.955918363778
+    },
+    {
+      "name": "Alpha Charlie",
+      "lat": 41.672757639647,
+      "lon": 44.957990322851
+    },
+    {
+      "name": "Bravo Runway",
+      "lat": 41.675012728053,
+      "lon": 44.946033468556
+    },
+    {
+      "name": "Alpha Runway",
+      "lat": 41.669024559793,
+      "lon": 44.953834680077
+    },
+    {
+      "name": "Echo Runway",
+      "lat": 41.65923713697,
+      "lon": 44.966319101405
+    },
+    {
+      "name": "Delta Xray",
+      "lat": 41.678854155312,
+      "lon": 44.949010832169
+    }
+  ],
+  "taxipaths": [
+    {
+      "name": "Runway",
+      "source": "Runway-1 2 Right",
+      "target": "Bravo Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Bravo Runway",
+      "target": "Runway-1 2 Right",
+      "cost": 999
+    },
+    {
+      "name": "Bravo",
+      "source": "Bravo Runway",
+      "target": "Bravo November",
+      "cost": 1
+    },
+    {
+      "name": "Bravo",
+      "source": "Bravo November",
+      "target": "Bravo Runway",
+      "cost": 1
+    },
+    {
+      "name": "Bravo",
+      "source": "Bravo November",
+      "target": "Bravo Delta",
+      "cost": 1
+    },
+    {
+      "name": "Bravo",
+      "source": "Bravo Delta",
+      "target": "Bravo November",
+      "cost": 1
+    },
+    {
+      "name": "Delta",
+      "source": "Bravo Delta",
+      "target": "Delta Xray",
+      "cost": 1
+    },
+    {
+      "name": "Delta",
+      "source": "Delta Xray",
+      "target": "Bravo Delta",
+      "cost": 1
+    },
+    {
+      "name": "Delta",
+      "source": "Delta Xray",
+      "target": "Apron 5",
+      "cost": 100
+    },
+    {
+      "name": "Delta",
+      "source": "Apron 5",
+      "target": "Delta Xray",
+      "cost": 1
+    },
+    {
+      "name": "Delta",
+      "source": "Apron 5",
+      "target": "Helicopter Runway",
+      "cost": 1
+    },
+    {
+      "name": "Delta",
+      "source": "Helicopter Runway",
+      "target": "Apron 5",
+      "cost": 100
+    },
+    {
+      "name": "Xray",
+      "source": "Helipad North",
+      "target": "Delta Xray",
+      "cost": 1
+    },
+    {
+      "name": "Xray",
+      "source": "Delta Xray",
+      "target": "Helipad North",
+      "cost": 1
+    },
+    {
+      "name": "Runway",
+      "source": "Runway-3 0 Left",
+      "target": "Echo Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Echo Runway",
+      "target": "Runway-3 0 Left",
+      "cost": 999
+    },
+    {
+      "name": "Echo",
+      "source": "Echo Runway",
+      "target": "Echo November",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Echo November",
+      "target": "Echo Runway",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Echo November",
+      "target": "Apron 4",
+      "cost": 100
+    },
+    {
+      "name": "Echo",
+      "source": "Apron 4",
+      "target": "Echo November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Echo November",
+      "target": "Alpha November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Alpha November",
+      "target": "Echo November",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha November",
+      "target": "Alpha Runway",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Runway",
+      "target": "Alpha November",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha November",
+      "target": "Alpha Charlie",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Charlie",
+      "target": "Alpha November",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Alpha Charlie",
+      "target": "Apron 1",
+      "cost": 100
+    },
+    {
+      "name": "Charlie",
+      "source": "Apron 1",
+      "target": "Alpha Charlie",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Alpha Charlie",
+      "target": "Apron 1 Spots 2",
+      "cost": 999
+    },
+    {
+      "name": "Charlie",
+      "source": "Apron 1 Spots 2",
+      "target": "Alpha Charlie",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Alpha Charlie",
+      "target": "Apron 1 Spots 1",
+      "cost": 999
+    },
+    {
+      "name": "Charlie",
+      "source": "Apron 1 Spots 1",
+      "target": "Alpha Charlie",
+      "cost": 1
+    },
+    {
+      "name": "Foxtrot",
+      "source": "Charlie Foxtrot",
+      "target": "Apron 3",
+      "cost": 100
+    },
+    {
+      "name": "Foxtrot",
+      "source": "Apron 3",
+      "target": "Charlie Foxtrot",
+      "cost": 1
+    },
+    {
+      "name": "Foxtrot",
+      "source": "Apron 3",
+      "target": "Foxtrot November",
+      "cost": 1
+    },
+    {
+      "name": "Foxtrot",
+      "source": "Foxtrot November",
+      "target": "Apron 3",
+      "cost": 100
+    },
+    {
+      "name": "November",
+      "source": "Foxtrot November",
+      "target": "Alpha November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Alpha November",
+      "target": "Foxtrot November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Foxtrot November",
+      "target": "Bravo November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Bravo November",
+      "target": "Foxtrot November",
+      "cost": 1
+    },
+    {
+      "name": "Bravo",
+      "source": "Bravo Charlie",
+      "target": "Bravo Delta",
+      "cost": 1
+    },
+    {
+      "name": "Bravo",
+      "source": "Bravo Delta",
+      "target": "Bravo Charlie",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Bravo Charlie",
+      "target": "Alpha Charlie",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Alpha Charlie",
+      "target": "Bravo Charlie",
+      "cost": 1
+    },
+    {
+      "name": "Runway",
+      "source": "Alpha Runway",
+      "target": "Runway-1 2 Right",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway-1 2 Right",
+      "target": "Alpha Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Bravo Runway",
+      "target": "Runway-3 0 Left",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway-3 0 Left",
+      "target": "Bravo Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Echo Runway",
+      "target": "Runway-1 2 Right",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway-1 2 Right",
+      "target": "Echo Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Alpha Runway",
+      "target": "Runway-3 0 Left",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway-3 0 Left",
+      "target": "Alpha Runway",
+      "cost": 999
+    },
+    {
+      "name": "Charlie",
+      "source": "Apron 2",
+      "target": "Bravo Charlie",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Bravo Charlie",
+      "target": "Apron 2",
+      "cost": 100
+    }
+  ],
+  "waypoints": []
+}

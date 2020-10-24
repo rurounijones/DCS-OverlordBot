@@ -1,0 +1,308 @@
+{
+  "name": "Soganlug",
+  "lat": 41.641163266786613,
+  "lon": 44.947183065316693,
+  "alt": 449.41024780273438,
+  "parkingSpots": [
+    {
+      "name": "Apron 2",
+      "lat": 41.649445019,
+      "lon": 44.935105430877
+    },
+    {
+      "name": "Apron 3",
+      "lat": 41.647797299076,
+      "lon": 44.937846590201
+    },
+    {
+      "name": "Apron 1",
+      "lat": 41.657111612917,
+      "lon": 44.925711970576
+    },
+    {
+      "name": "Echo Spot",
+      "lat": 41.642912290211,
+      "lon": 44.941898549325
+    }
+  ],
+  "runways": [
+    {
+      "heading": 0,
+      "name": "Runway-3 1",
+      "lat": 41.644139576358,
+      "lon": 44.944440597757
+    },
+    {
+      "heading": 0,
+      "name": "Runway-1 3",
+      "lat": 41.65764013854,
+      "lon": 44.929394399113
+    }
+  ],
+  "junctions": [
+    {
+      "name": "Delta Echo",
+      "lat": 41.64703175658,
+      "lon": 44.938137463185
+    },
+    {
+      "name": "Charlie Echo",
+      "lat": 41.650076882308,
+      "lon": 44.935307650047
+    },
+    {
+      "name": "Alpha Runway",
+      "lat": 41.657841487709,
+      "lon": 44.929125055556
+    },
+    {
+      "name": "Beta Echo",
+      "lat": 41.652362517966,
+      "lon": 44.93307594499
+    },
+    {
+      "name": "Beta Runway",
+      "lat": 41.653186362993,
+      "lon": 44.934302591773
+    },
+    {
+      "name": "Alpha Echo",
+      "lat": 41.65709975547,
+      "lon": 44.927795418972
+    },
+    {
+      "name": "Charlie Runway",
+      "lat": 41.651028225248,
+      "lon": 44.936707173272
+    },
+    {
+      "name": "Delta Runway",
+      "lat": 41.648234084481,
+      "lon": 44.939811605519
+    },
+    {
+      "name": "Echo Runway",
+      "lat": 41.641198646991,
+      "lon": 44.947627683557
+    }
+  ],
+  "taxipaths": [
+    {
+      "name": "Runway",
+      "source": "Runway-3 1",
+      "target": "Echo Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Echo Runway",
+      "target": "Runway-3 1",
+      "cost": 999
+    },
+    {
+      "name": "Echo",
+      "source": "Echo Runway",
+      "target": "Delta Echo",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Delta Echo",
+      "target": "Echo Runway",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Delta Echo",
+      "target": "Charlie Echo",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Charlie Echo",
+      "target": "Delta Echo",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Charlie Echo",
+      "target": "Beta Echo",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Beta Echo",
+      "target": "Charlie Echo",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Beta Echo",
+      "target": "Alpha Echo",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Alpha Echo",
+      "target": "Beta Echo",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Echo",
+      "target": "Alpha Runway",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Runway",
+      "target": "Alpha Echo",
+      "cost": 1
+    },
+    {
+      "name": "Runway",
+      "source": "Alpha Runway",
+      "target": "Runway-1 3",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway-1 3",
+      "target": "Alpha Runway",
+      "cost": 999
+    },
+    {
+      "name": null,
+      "source": "Apron 1",
+      "target": "Alpha Echo",
+      "cost": 1
+    },
+    {
+      "name": null,
+      "source": "Alpha Echo",
+      "target": "Apron 1",
+      "cost": 100
+    },
+    {
+      "name": "Echo",
+      "source": "Apron 2",
+      "target": "Charlie Echo",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Charlie Echo",
+      "target": "Apron 2",
+      "cost": 100
+    },
+    {
+      "name": "Echo",
+      "source": "Apron 3",
+      "target": "Delta Echo",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Delta Echo",
+      "target": "Apron 3",
+      "cost": 100
+    },
+    {
+      "name": "Delta",
+      "source": "Delta Runway",
+      "target": "Delta Echo",
+      "cost": 1
+    },
+    {
+      "name": "Delta",
+      "source": "Delta Echo",
+      "target": "Delta Runway",
+      "cost": 1
+    },
+    {
+      "name": "Beta",
+      "source": "Beta Runway",
+      "target": "Beta Echo",
+      "cost": 1
+    },
+    {
+      "name": "Beta",
+      "source": "Beta Echo",
+      "target": "Beta Runway",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Echo Spot",
+      "target": "Charlie Echo",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Charlie Echo",
+      "target": "Echo Spot",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Charlie Runway",
+      "target": "Charlie Echo",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Charlie Echo",
+      "target": "Charlie Runway",
+      "cost": 1
+    },
+    {
+      "name": "Runway",
+      "source": "Alpha Runway",
+      "target": "Beta Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Beta Runway",
+      "target": "Alpha Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Beta Runway",
+      "target": "Charlie Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Charlie Runway",
+      "target": "Beta Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Charlie Runway",
+      "target": "Delta Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Delta Runway",
+      "target": "Charlie Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Delta Runway",
+      "target": "Echo Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Echo Runway",
+      "target": "Delta Runway",
+      "cost": 999
+    }
+  ],
+  "waypoints": []
+}

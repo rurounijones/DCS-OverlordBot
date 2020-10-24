@@ -1,0 +1,859 @@
+{
+  "name": "Vaziani",
+  "lat": 41.637735936261556,
+  "lon": 45.019090938460067,
+  "alt": 464.50045776367188,
+  "parkingSpots": [
+    {
+      "name": "Ramp 3",
+      "lat": 41.621274730448,
+      "lon": 45.038544890255
+    },
+    {
+      "name": "Kilo Spots 1",
+      "lat": 41.632616360264,
+      "lon": 45.028488047034
+    },
+    {
+      "name": "November Spots 6",
+      "lat": 41.633381794459,
+      "lon": 45.030048049415
+    },
+    {
+      "name": "November Spots 7",
+      "lat": 41.634303948107,
+      "lon": 45.027872273383
+    },
+    {
+      "name": "November Spots 8",
+      "lat": 41.636222441445,
+      "lon": 45.025552786723
+    },
+    {
+      "name": "November Spots 10",
+      "lat": 41.639397635625,
+      "lon": 45.023348226029
+    },
+    {
+      "name": "Lima Spots 1",
+      "lat": 41.639807864316,
+      "lon": 45.025797367775
+    },
+    {
+      "name": "Lima Spots 2",
+      "lat": 41.641472279807,
+      "lon": 45.026068792966
+    },
+    {
+      "name": "Lima Spots 3",
+      "lat": 41.641632111524,
+      "lon": 45.030597015321
+    },
+    {
+      "name": "Lima Spots 4",
+      "lat": 41.640417391973,
+      "lon": 45.030472500584
+    },
+    {
+      "name": "November Spots 9",
+      "lat": 41.637371850452,
+      "lon": 45.024195299115
+    },
+    {
+      "name": "November Spots 10",
+      "lat": 41.628447283429,
+      "lon": 45.035664141401
+    },
+    {
+      "name": "Delta Spots 1",
+      "lat": 41.627085774066,
+      "lon": 45.034759658136
+    },
+    {
+      "name": "November Spots 11",
+      "lat": 41.626531553971,
+      "lon": 45.035652033717
+    },
+    {
+      "name": "November Spots 12",
+      "lat": 41.625837815066,
+      "lon": 45.036221654929
+    },
+    {
+      "name": "Ramp 1",
+      "lat": 41.638221501839,
+      "lon": 45.021553449052
+    },
+    {
+      "name": "Ramp 2",
+      "lat": 41.622910804323,
+      "lon": 45.038995233219
+    },
+    {
+      "name": "Ramp 4",
+      "lat": 41.628509764852,
+      "lon": 45.038354877448
+    },
+    {
+      "name": "November Spots 1",
+      "lat": 41.624752743391,
+      "lon": 45.037107340494
+    },
+    {
+      "name": "November Spots 3",
+      "lat": 41.629413424901,
+      "lon": 45.035493239228
+    },
+    {
+      "name": "India Spots 1",
+      "lat": 41.626762611323,
+      "lon": 45.038080358113
+    },
+    {
+      "name": "Golf Spots 1",
+      "lat": 41.627794549513,
+      "lon": 45.03984483165
+    },
+    {
+      "name": "Golf Spots 2",
+      "lat": 41.627908248081,
+      "lon": 45.037066133142
+    },
+    {
+      "name": "November Spots 2",
+      "lat": 41.627555381458,
+      "lon": 45.035400702436
+    },
+    {
+      "name": "November Spots 4",
+      "lat": 41.630737997435,
+      "lon": 45.034224523611
+    },
+    {
+      "name": "Juliette Spots 1",
+      "lat": 41.631514450562,
+      "lon": 45.03329393849
+    },
+    {
+      "name": "November Spots 5",
+      "lat": 41.632677327761,
+      "lon": 45.032323241171
+    }
+  ],
+  "runways": [
+    {
+      "heading": 0,
+      "name": "Runway-1 3",
+      "lat": 41.637407095616,
+      "lon": 45.019006465856
+    },
+    {
+      "heading": 0,
+      "name": "Runway-3 1",
+      "lat": 41.620646755592,
+      "lon": 45.035486539906
+    }
+  ],
+  "junctions": [
+    {
+      "name": "Alpha Sierra",
+      "lat": 41.638976992811,
+      "lon": 45.020491383814
+    },
+    {
+      "name": "Bravo Runway",
+      "lat": 41.635701432747,
+      "lon": 45.020668636803
+    },
+    {
+      "name": "Bravo November",
+      "lat": 41.637840462858,
+      "lon": 45.023592722227
+    },
+    {
+      "name": "Bravo Sierra",
+      "lat": 41.637003918132,
+      "lon": 45.022455705418
+    },
+    {
+      "name": "Charlie Runway",
+      "lat": 41.631096940307,
+      "lon": 45.02521462327
+    },
+    {
+      "name": "Delta Runway",
+      "lat": 41.62496393828,
+      "lon": 45.031253727174
+    },
+    {
+      "name": "Echo November",
+      "lat": 41.621887245504,
+      "lon": 45.039325887477
+    },
+    {
+      "name": "Charlie Sierra",
+      "lat": 41.632397486252,
+      "lon": 45.02701922964
+    },
+    {
+      "name": "Echo Sierra ",
+      "lat": 41.621316902613,
+      "lon": 45.037902467385
+    },
+    {
+      "name": "Delta Sierra",
+      "lat": 41.625971583224,
+      "lon": 45.03335625455
+    },
+    {
+      "name": "Golf November",
+      "lat": 41.627966070706,
+      "lon": 45.03545203546
+    },
+    {
+      "name": "Delta November",
+      "lat": 41.626853157186,
+      "lon": 45.035363197764
+    },
+    {
+      "name": "Juliette November",
+      "lat": 41.631583497274,
+      "lon": 45.03338407378
+    },
+    {
+      "name": "Charlie November",
+      "lat": 41.63361284158,
+      "lon": 45.028628929614
+    },
+    {
+      "name": "Lima November",
+      "lat": 41.640303765575,
+      "lon": 45.023155334042
+    },
+    {
+      "name": "Charlie Kilo",
+      "lat": 41.633033150696,
+      "lon": 45.027955861062
+    },
+    {
+      "name": "Golf India",
+      "lat": 41.627862285133,
+      "lon": 45.038145786056
+    }
+  ],
+  "taxipaths": [
+    {
+      "name": "Sierra",
+      "source": "Ramp 1",
+      "target": "Alpha Sierra",
+      "cost": 1
+    },
+    {
+      "name": "Sierra",
+      "source": "Alpha Sierra",
+      "target": "Ramp 1",
+      "cost": 100
+    },
+    {
+      "name": "Sierra",
+      "source": "Bravo Sierra",
+      "target": "Alpha Sierra",
+      "cost": 1
+    },
+    {
+      "name": "Sierra",
+      "source": "Alpha Sierra",
+      "target": "Bravo Sierra",
+      "cost": 1
+    },
+    {
+      "name": "Bravo",
+      "source": "Bravo Sierra",
+      "target": "Bravo Runway",
+      "cost": 1
+    },
+    {
+      "name": "Bravo",
+      "source": "Bravo Runway",
+      "target": "Bravo Sierra",
+      "cost": 1
+    },
+    {
+      "name": "Bravo",
+      "source": "Bravo Sierra",
+      "target": "Bravo November",
+      "cost": 1
+    },
+    {
+      "name": "Bravo",
+      "source": "Bravo November",
+      "target": "Bravo Sierra",
+      "cost": 1
+    },
+    {
+      "name": "Sierra",
+      "source": "Charlie Sierra",
+      "target": "Bravo Sierra",
+      "cost": 1
+    },
+    {
+      "name": "Sierra",
+      "source": "Bravo Sierra",
+      "target": "Charlie Sierra",
+      "cost": 1
+    },
+    {
+      "name": "Sierra",
+      "source": "Delta Sierra",
+      "target": "Charlie Sierra",
+      "cost": 1
+    },
+    {
+      "name": "Sierra",
+      "source": "Charlie Sierra",
+      "target": "Delta Sierra",
+      "cost": 1
+    },
+    {
+      "name": "Sierra",
+      "source": "Delta Sierra",
+      "target": "Echo Sierra ",
+      "cost": 1
+    },
+    {
+      "name": "Sierra",
+      "source": "Echo Sierra ",
+      "target": "Delta Sierra",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Echo Sierra ",
+      "target": "Echo November",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Echo November",
+      "target": "Echo Sierra ",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Echo November",
+      "target": "Delta November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Delta November",
+      "target": "Echo November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Delta November",
+      "target": "Golf November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Golf November",
+      "target": "Delta November",
+      "cost": 1
+    },
+    {
+      "name": "Golf",
+      "source": "Golf November",
+      "target": "Golf India",
+      "cost": 1
+    },
+    {
+      "name": "Golf",
+      "source": "Golf India",
+      "target": "Golf November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Golf November",
+      "target": "Juliette November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Juliette November",
+      "target": "Golf November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Juliette November",
+      "target": "Charlie November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Charlie November",
+      "target": "Juliette November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Charlie November",
+      "target": "Bravo November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Bravo November",
+      "target": "Charlie November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Bravo November",
+      "target": "Lima November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Lima November",
+      "target": "Bravo November",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Charlie Sierra",
+      "target": "Charlie Runway",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Charlie Runway",
+      "target": "Charlie Sierra",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Charlie Sierra",
+      "target": "Charlie Kilo",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Charlie Kilo",
+      "target": "Charlie Sierra",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Charlie Kilo",
+      "target": "Charlie November",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Charlie November",
+      "target": "Charlie Kilo",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Ramp 3",
+      "target": "Echo Sierra ",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Echo Sierra ",
+      "target": "Ramp 3",
+      "cost": 100
+    },
+    {
+      "name": "November",
+      "source": "Ramp 2",
+      "target": "Echo November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Echo November",
+      "target": "Ramp 2",
+      "cost": 100
+    },
+    {
+      "name": "Golf",
+      "source": "Ramp 4",
+      "target": "Golf India",
+      "cost": 1
+    },
+    {
+      "name": "Golf",
+      "source": "Golf India",
+      "target": "Ramp 4",
+      "cost": 100
+    },
+    {
+      "name": "Golf",
+      "source": "Golf Spots 1",
+      "target": "Golf India",
+      "cost": 1
+    },
+    {
+      "name": "Golf",
+      "source": "Golf India",
+      "target": "Golf Spots 1",
+      "cost": 999
+    },
+    {
+      "name": "Golf",
+      "source": "Golf Spots 2",
+      "target": "Golf India",
+      "cost": 1
+    },
+    {
+      "name": "Golf",
+      "source": "Golf India",
+      "target": "Golf Spots 2",
+      "cost": 999
+    },
+    {
+      "name": "Lima",
+      "source": "Lima Spots 1",
+      "target": "Lima November",
+      "cost": 1
+    },
+    {
+      "name": "Lima",
+      "source": "Lima November",
+      "target": "Lima Spots 1",
+      "cost": 999
+    },
+    {
+      "name": "Lima",
+      "source": "Lima Spots 2",
+      "target": "Lima November",
+      "cost": 1
+    },
+    {
+      "name": "Lima",
+      "source": "Lima November",
+      "target": "Lima Spots 2",
+      "cost": 999
+    },
+    {
+      "name": "Lima",
+      "source": "Lima Spots 3",
+      "target": "Lima November",
+      "cost": 1
+    },
+    {
+      "name": "Lima",
+      "source": "Lima November",
+      "target": "Lima Spots 3",
+      "cost": 999
+    },
+    {
+      "name": "Lima",
+      "source": "Lima Spots 4",
+      "target": "Lima November",
+      "cost": 1
+    },
+    {
+      "name": "Lima",
+      "source": "Lima November",
+      "target": "Lima Spots 4",
+      "cost": 999
+    },
+    {
+      "name": "November",
+      "source": "November Spots 10",
+      "target": "Bravo November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Bravo November",
+      "target": "November Spots 10",
+      "cost": 999
+    },
+    {
+      "name": "November",
+      "source": "November Spots 9",
+      "target": "Bravo November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Bravo November",
+      "target": "November Spots 9",
+      "cost": 999
+    },
+    {
+      "name": "November",
+      "source": "November Spots 8",
+      "target": "Bravo November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Bravo November",
+      "target": "November Spots 8",
+      "cost": 999
+    },
+    {
+      "name": "November",
+      "source": "November Spots 7",
+      "target": "Charlie November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Charlie November",
+      "target": "November Spots 7",
+      "cost": 999
+    },
+    {
+      "name": "November",
+      "source": "November Spots 6",
+      "target": "Charlie November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Charlie November",
+      "target": "November Spots 6",
+      "cost": 999
+    },
+    {
+      "name": "Juliette",
+      "source": "Juliette Spots 1",
+      "target": "Juliette November",
+      "cost": 1
+    },
+    {
+      "name": "Juliette",
+      "source": "Juliette November",
+      "target": "Juliette Spots 1",
+      "cost": 999
+    },
+    {
+      "name": "India",
+      "source": "India Spots 1",
+      "target": "Golf India",
+      "cost": 1
+    },
+    {
+      "name": "India",
+      "source": "Golf India",
+      "target": "India Spots 1",
+      "cost": 999
+    },
+    {
+      "name": "Kilo",
+      "source": "Kilo Spots 1",
+      "target": "Charlie Kilo",
+      "cost": 1
+    },
+    {
+      "name": "Kilo",
+      "source": "Charlie Kilo",
+      "target": "Kilo Spots 1",
+      "cost": 999
+    },
+    {
+      "name": "Delta",
+      "source": "Delta Spots 1",
+      "target": "Delta Sierra",
+      "cost": 1
+    },
+    {
+      "name": "Delta",
+      "source": "Delta Sierra",
+      "target": "Delta Spots 1",
+      "cost": 999
+    },
+    {
+      "name": "November",
+      "source": "November Spots 1",
+      "target": "Delta November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Delta November",
+      "target": "November Spots 1",
+      "cost": 999
+    },
+    {
+      "name": "November",
+      "source": "November Spots 11",
+      "target": "Delta November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Delta November",
+      "target": "November Spots 11",
+      "cost": 999
+    },
+    {
+      "name": "November",
+      "source": "November Spots 12",
+      "target": "Delta November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Delta November",
+      "target": "November Spots 12",
+      "cost": 999
+    },
+    {
+      "name": "November",
+      "source": "November Spots 2",
+      "target": "Delta November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Delta November",
+      "target": "November Spots 2",
+      "cost": 999
+    },
+    {
+      "name": "November",
+      "source": "November Spots 3",
+      "target": "Golf November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Golf November",
+      "target": "November Spots 3",
+      "cost": 999
+    },
+    {
+      "name": "November",
+      "source": "November Spots 4",
+      "target": "Juliette November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Juliette November",
+      "target": "November Spots 4",
+      "cost": 999
+    },
+    {
+      "name": "November",
+      "source": "November Spots 5",
+      "target": "Juliette November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Juliette November",
+      "target": "November Spots 5",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Charlie Runway",
+      "target": "Delta Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Delta Runway",
+      "target": "Charlie Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Bravo Runway",
+      "target": "Charlie Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Charlie Runway",
+      "target": "Bravo Runway",
+      "cost": 999
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Sierra",
+      "target": "Runway-1 3",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Runway-1 3",
+      "target": "Alpha Sierra",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Runway-3 1",
+      "target": "Echo Sierra ",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Echo Sierra ",
+      "target": "Runway-3 1",
+      "cost": 1
+    },
+    {
+      "name": "Runway",
+      "source": "Runway-3 1",
+      "target": "Delta Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Delta Runway",
+      "target": "Runway-3 1",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway-1 3",
+      "target": "Bravo Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Bravo Runway",
+      "target": "Runway-1 3",
+      "cost": 999
+    },
+    {
+      "name": "Delta",
+      "source": "Delta Runway",
+      "target": "Delta Sierra",
+      "cost": 1
+    },
+    {
+      "name": "Delta",
+      "source": "Delta Sierra",
+      "target": "Delta Runway",
+      "cost": 1
+    },
+    {
+      "name": "Delta",
+      "source": "Delta November",
+      "target": "Delta Sierra",
+      "cost": 1
+    },
+    {
+      "name": "Delta",
+      "source": "Delta Sierra",
+      "target": "Delta November",
+      "cost": 1
+    }
+  ],
+  "waypoints": []
+}

@@ -1,0 +1,359 @@
+{
+  "name": "Gudauta",
+  "lat": 43.124233340197144,
+  "lon": 40.564175768400638,
+  "alt": 21.010030746459961,
+  "parkingSpots": [
+    {
+      "name": "Apron 2",
+      "lat": 43.118657878236,
+      "lon": 40.570471175036
+    },
+    {
+      "name": "Apron 1",
+      "lat": 43.104763376963,
+      "lon": 40.569002843604
+    },
+    {
+      "name": "XRay Spots",
+      "lat": 43.116342175329,
+      "lon": 40.56144355326
+    }
+  ],
+  "runways": [
+    {
+      "heading": 0,
+      "name": "Runway-1 5",
+      "lat": 43.123741026263,
+      "lon": 40.564052939993
+    },
+    {
+      "heading": 0,
+      "name": "Runway-3 3",
+      "lat": 43.10484451975,
+      "lon": 40.575429486692
+    }
+  ],
+  "junctions": [
+    {
+      "name": "Alpha Zulu",
+      "lat": 43.107108340898,
+      "lon": 40.565496792456
+    },
+    {
+      "name": "Alpha Runway",
+      "lat": 43.124257087806,
+      "lon": 40.563776321223
+    },
+    {
+      "name": "Alpha Echo",
+      "lat": 43.103545535195,
+      "lon": 40.57306674151
+    },
+    {
+      "name": "Delta Runway",
+      "lat": 43.119483882153,
+      "lon": 40.566635260985
+    },
+    {
+      "name": "Echo Runway",
+      "lat": 43.10437658735,
+      "lon": 40.575753746635
+    },
+    {
+      "name": "Charlie Runway",
+      "lat": 43.119479620596,
+      "lon": 40.566618991656
+    },
+    {
+      "name": "Echo Whiskey",
+      "lat": 43.103962897822,
+      "lon": 40.574479935783
+    },
+    {
+      "name": "Alpha Charlie",
+      "lat": 43.118630529743,
+      "lon": 40.563832039245
+    },
+    {
+      "name": "Alpha Yankee",
+      "lat": 43.10877582757,
+      "lon": 40.565243498173
+    },
+    {
+      "name": "Charlie Whiskey",
+      "lat": 43.119092175475,
+      "lon": 40.565405749861
+    },
+    {
+      "name": "Alpha Xray",
+      "lat": 43.117164650347,
+      "lon": 40.56403741101
+    },
+    {
+      "name": "Alpha Bravo",
+      "lat": 43.120631994775,
+      "lon": 40.563111358949
+    },
+    {
+      "name": "Bravo Runway",
+      "lat": 43.121365871325,
+      "lon": 40.565501711783
+    }
+  ],
+  "taxipaths": [
+    {
+      "name": "Runway",
+      "source": "Runway-1 5",
+      "target": "Alpha Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Alpha Runway",
+      "target": "Runway-1 5",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Alpha Runway",
+      "target": "Bravo Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Bravo Runway",
+      "target": "Alpha Runway",
+      "cost": 999
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Runway",
+      "target": "Alpha Bravo",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Bravo",
+      "target": "Alpha Runway",
+      "cost": 1
+    },
+    {
+      "name": "Bravo",
+      "source": "Alpha Bravo",
+      "target": "Bravo Runway",
+      "cost": 1
+    },
+    {
+      "name": "Bravo",
+      "source": "Bravo Runway",
+      "target": "Alpha Bravo",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Bravo",
+      "target": "Alpha Charlie",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Charlie",
+      "target": "Alpha Bravo",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Charlie",
+      "target": "Alpha Xray",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Xray",
+      "target": "Alpha Charlie",
+      "cost": 1
+    },
+    {
+      "name": "Xray",
+      "source": "XRay Spots",
+      "target": "Alpha Xray",
+      "cost": 1
+    },
+    {
+      "name": "Xray",
+      "source": "Alpha Xray",
+      "target": "XRay Spots",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Alpha Runway",
+      "target": "Charlie Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Charlie Runway",
+      "target": "Alpha Runway",
+      "cost": 1
+    },
+    {
+      "name": "Runway",
+      "source": "Charlie Runway",
+      "target": "Delta Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Delta Runway",
+      "target": "Charlie Runway",
+      "cost": 1
+    },
+    {
+      "name": "Runway",
+      "source": "Delta Runway",
+      "target": "Echo Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Echo Runway",
+      "target": "Delta Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Echo Runway",
+      "target": "Runway-3 3",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway-3 3",
+      "target": "Echo Runway",
+      "cost": 999
+    },
+    {
+      "name": "Echo",
+      "source": "Echo Runway",
+      "target": "Echo Whiskey",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Echo Whiskey",
+      "target": "Echo Runway",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Echo Whiskey",
+      "target": "Alpha Echo",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Alpha Echo",
+      "target": "Echo Whiskey",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Echo",
+      "target": "Alpha Zulu",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Zulu",
+      "target": "Alpha Echo",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Zulu",
+      "target": "Alpha Yankee",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Yankee",
+      "target": "Alpha Zulu",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Yankee",
+      "target": "Alpha Xray",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Xray",
+      "target": "Alpha Yankee",
+      "cost": 1
+    },
+    {
+      "name": "Whiskey",
+      "source": "Echo Whiskey",
+      "target": "Charlie Whiskey",
+      "cost": 1
+    },
+    {
+      "name": "Whiskey",
+      "source": "Charlie Whiskey",
+      "target": "Echo Whiskey",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Charlie Whiskey",
+      "target": "Charlie Runway",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Charlie Runway",
+      "target": "Charlie Whiskey",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Charlie Whiskey",
+      "target": "Alpha Charlie",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Alpha Charlie",
+      "target": "Charlie Whiskey",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Apron 1",
+      "target": "Alpha Yankee",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Yankee",
+      "target": "Apron 1",
+      "cost": 100
+    },
+    {
+      "name": "Delta",
+      "source": "Apron 2",
+      "target": "Delta Runway",
+      "cost": 1
+    },
+    {
+      "name": "Delta",
+      "source": "Delta Runway",
+      "target": "Apron 2",
+      "cost": 100
+    }
+  ],
+  "waypoints": []
+}

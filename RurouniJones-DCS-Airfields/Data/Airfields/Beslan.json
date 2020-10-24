@@ -1,0 +1,102 @@
+{
+  "name": "Beslan",
+  "lat": 43.208500987380937,
+  "lon": 44.588922553542936,
+  "alt": 524.00579833984375,
+  "parkingSpots": [
+    {
+      "name": "Apron South",
+      "lat": 43.202956665079,
+      "lon": 44.60745750332
+    }
+  ],
+  "runways": [
+    {
+      "heading": 0,
+      "name": "Runway-0 9",
+      "lat": 43.208303584153,
+      "lon": 44.588370506268
+    },
+    {
+      "heading": 0,
+      "name": "Runway-2 7",
+      "lat": 43.203125996876,
+      "lon": 44.623129968874
+    }
+  ],
+  "junctions": [
+    {
+      "name": "Runway Whiskey",
+      "lat": 43.205856212091,
+      "lon": 44.604482882374
+    },
+    {
+      "name": "Echo Runway",
+      "lat": 43.204739246686,
+      "lon": 44.612019987375
+    }
+  ],
+  "taxipaths": [
+    {
+      "name": "Runway",
+      "source": "Runway Whiskey",
+      "target": "Runway-0 9",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway-0 9",
+      "target": "Runway Whiskey",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Echo Runway",
+      "target": "Runway-2 7",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway-2 7",
+      "target": "Echo Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway Whiskey",
+      "target": "Echo Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Echo Runway",
+      "target": "Runway Whiskey",
+      "cost": 999
+    },
+    {
+      "name": "Echo",
+      "source": "Apron South",
+      "target": "Echo Runway",
+      "cost": 1
+    },
+    {
+      "name": "Echo",
+      "source": "Echo Runway",
+      "target": "Apron South",
+      "cost": 100
+    },
+    {
+      "name": "Whiskey",
+      "source": "Apron South",
+      "target": "Runway Whiskey",
+      "cost": 1
+    },
+    {
+      "name": "Whiskey",
+      "source": "Runway Whiskey",
+      "target": "Apron South",
+      "cost": 100
+    }
+  ],
+  "waypoints": []
+}

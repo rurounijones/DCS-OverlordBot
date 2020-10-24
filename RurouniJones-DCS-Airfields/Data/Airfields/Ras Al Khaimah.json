@@ -1,0 +1,189 @@
+{
+  "name": "Ras Al Khaimah",
+  "lat": 25.602222222222224,
+  "lon": 55.941666666666663,
+  "alt": 21.640800000000002,
+  "parkingSpots": [
+    {
+      "name": "Parking Area 1",
+      "lat": 25.616949510341,
+      "lon": 55.940666163052
+    },
+    {
+      "name": "Parking Area 2",
+      "lat": 25.594685498035,
+      "lon": 55.93861296405
+    }
+  ],
+  "runways": [
+    {
+      "heading": 160,
+      "name": "Runway-1 6",
+      "lat": 25.629213751776,
+      "lon": 55.93406314457
+    },
+    {
+      "heading": 340,
+      "name": "Runway-3 4",
+      "lat": 25.59744556734,
+      "lon": 55.943625778911
+    }
+  ],
+  "junctions": [
+    {
+      "name": "Runway Sierra",
+      "lat": 25.614376808608,
+      "lon": 55.938852135523
+    },
+    {
+      "name": "Alpha Runway",
+      "lat": 25.627191732219,
+      "lon": 55.934675635724
+    },
+    {
+      "name": "Bravo Mike Runway",
+      "lat": 25.599399458419,
+      "lon": 55.943037351062
+    },
+    {
+      "name": "Runway November",
+      "lat": 25.616353040453,
+      "lon": 55.938264603902
+    }
+  ],
+  "taxipaths": [
+    {
+      "name": "November",
+      "source": "Parking Area 1",
+      "target": "Runway November",
+      "cost": 1
+    },
+    {
+      "name": "November",
+      "source": "Runway November",
+      "target": "Parking Area 1",
+      "cost": 999
+    },
+    {
+      "name": "Sierra",
+      "source": "Parking Area 1",
+      "target": "Runway Sierra",
+      "cost": 1
+    },
+    {
+      "name": "Sierra",
+      "source": "Runway Sierra",
+      "target": "Parking Area 1",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway November",
+      "target": "Runway Sierra",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway Sierra",
+      "target": "Runway November",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway November",
+      "target": "Alpha Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Alpha Runway",
+      "target": "Runway November",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Alpha Runway",
+      "target": "Runway-1 6",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway-1 6",
+      "target": "Alpha Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway Sierra",
+      "target": "Bravo Mike Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Bravo Mike Runway",
+      "target": "Runway Sierra",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Bravo Mike Runway",
+      "target": "Runway-3 4",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway-3 4",
+      "target": "Bravo Mike Runway",
+      "cost": 999
+    },
+    {
+      "name": "Mike",
+      "source": "Parking Area 2",
+      "target": "Bravo Mike Runway",
+      "cost": 1
+    },
+    {
+      "name": "Mike",
+      "source": "Bravo Mike Runway",
+      "target": "Parking Area 2",
+      "cost": 100
+    },
+    {
+      "name": "Lima",
+      "source": "Parking Area 2",
+      "target": "Runway-3 4",
+      "cost": 1
+    },
+    {
+      "name": "Lima",
+      "source": "Runway-3 4",
+      "target": "Parking Area 2",
+      "cost": 100
+    },
+    {
+      "name": "Alpha",
+      "source": "Alpha Runway",
+      "target": "Runway-1 6",
+      "cost": 1
+    },
+    {
+      "name": "Alpha",
+      "source": "Runway-1 6",
+      "target": "Alpha Runway",
+      "cost": 1
+    },
+    {
+      "name": "Bravo",
+      "source": "Bravo Mike Runway",
+      "target": "Runway-3 4",
+      "cost": 1
+    },
+    {
+      "name": "Bravo",
+      "source": "Runway-3 4",
+      "target": "Bravo Mike Runway",
+      "cost": 1
+    }
+  ],
+  "waypoints": []
+}
