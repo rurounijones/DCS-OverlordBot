@@ -208,6 +208,8 @@ namespace TaxiViewer
             };
 
             _graphViewer.BindToPanel(GraphPanel);
+            _graphViewer.MouseDown += MouseDownHandler;
+            _graphViewer.MouseUp += MouseUpHandler;
             _graphViewer.Graph = _graph;
         }
 
@@ -216,8 +218,8 @@ namespace TaxiViewer
             node.Attr.LabelMargin *= 2;
             node.Label.IsVisible = false;
 
-            double y = (taxiPoint.Latitude - airfield.Latitude) * 300000;
-            double x = (taxiPoint.Longitude - airfield.Longitude) * 300000;
+            double y = (taxiPoint.Latitude - airfield.Latitude) * 200000;
+            double x = (taxiPoint.Longitude - airfield.Longitude) * 200000;
             var positionalPoint = new Microsoft.Msagl.Core.Geometry.Point(x, y);
 
             switch (taxiPoint)
@@ -233,7 +235,6 @@ namespace TaxiViewer
                     node.Attr.Color = Color.Orange;
                     return CurveFactory.CreateOctagon(100, 30, positionalPoint);
             }
-
 
             return CurveFactory.CreateCircle(5, positionalPoint);
         }
