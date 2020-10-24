@@ -213,15 +213,27 @@ namespace TaxiViewer
 
         static ICurve CreateLabelAndBoundary(TaxiPoint taxiPoint, Microsoft.Msagl.Drawing.Node node)
         {
-            node.Attr.Shape = Shape.DrawFromGeometry;
             node.Attr.LabelMargin *= 2;
-            node.Attr.Color = Color.Red;
-
             node.Label.IsVisible = false;
 
-            double y = (taxiPoint.Latitude - airfield.Latitude) * 100000;
-            double x = (taxiPoint.Longitude - airfield.Longitude) * 100000;
+            double y = (taxiPoint.Latitude - airfield.Latitude) * 300000;
+            double x = (taxiPoint.Longitude - airfield.Longitude) * 300000;
             var positionalPoint = new Microsoft.Msagl.Core.Geometry.Point(x, y);
+
+            switch (taxiPoint)
+            {
+                case Runway _:
+                    node.Attr.Color = Color.Green;
+                    return CurveFactory.CreateCircle(50, positionalPoint);
+                case Junction _:
+                    node.Attr.Shape = Shape.Hexagon;
+                    node.Attr.Color = Color.Blue;
+                    return CurveFactory.CreateHexagon(100, 30, positionalPoint);
+                case ParkingSpot _:
+                    node.Attr.Color = Color.Orange;
+                    return CurveFactory.CreateOctagon(100, 30, positionalPoint);
+            }
+
 
             return CurveFactory.CreateCircle(5, positionalPoint);
         }
