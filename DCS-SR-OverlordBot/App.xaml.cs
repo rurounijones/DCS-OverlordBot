@@ -99,7 +99,7 @@ namespace RurouniJones.DCS.OverlordBot
 
             _notifyIcon = new NotifyIcon
             {
-                Icon = OverlordBot.Properties.Resources.audio_headset,
+                Icon = OverlordBot.Properties.Resources.OverlordBotMinimal,
                 Visible = true,
                 ContextMenu = notifyIconContextMenu
             };

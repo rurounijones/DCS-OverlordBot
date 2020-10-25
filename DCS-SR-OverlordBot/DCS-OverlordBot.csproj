@@ -67,7 +67,7 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>audio-headset.ico</ApplicationIcon>
+    <ApplicationIcon>OverlordBotMinimal.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -496,16 +496,14 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="audio-headset.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Data\equipment-failure.wav">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Resource Include="OverlordBotMinimal.ico" />
+    <None Include="Resources\OverlordBotFull.ico" />
+    <Resource Include="OverlordBotFull.ico" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target AfterTargets="AfterBuild;NonWinFodyTarget" Name="CleanReferenceCopyLocalPaths">
     <Delete Files="@(ReferenceCopyLocalPaths->'$(OutDir)%(DestinationSubDirectory)%(Filename)%(Extension)')" />

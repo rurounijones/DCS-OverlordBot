@@ -63,9 +63,19 @@ namespace RurouniJones.DCS.OverlordBot.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        public static System.Drawing.Icon audio_headset {
+        public static System.Drawing.Icon OverlordBotFull {
             get {
-                object obj = ResourceManager.GetObject("audio_headset", resourceCulture);
+                object obj = ResourceManager.GetObject("OverlordBotFull", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        public static System.Drawing.Icon OverlordBotMinimal {
+            get {
+                object obj = ResourceManager.GetObject("OverlordBotMinimal", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
