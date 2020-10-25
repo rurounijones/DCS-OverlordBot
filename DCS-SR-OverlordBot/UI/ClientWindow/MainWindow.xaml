@@ -5,9 +5,9 @@
                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                       xmlns:local="clr-namespace:RurouniJones.DCS.OverlordBot.UI"
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                      Title="OverlordBot for SRS"
+                      Title="OverlordBot"
                       Width="450"
-                      Height="412.001"
+                      Height="200"
                       d:DataContext="{d:DesignInstance local:MainWindow}"
                       ResizeMode="CanMinimize"
                       mc:Ignorable="d" SizeToContent="Height">

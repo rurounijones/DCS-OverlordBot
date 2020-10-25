@@ -40,7 +40,8 @@ namespace RurouniJones.DCS.OverlordBot.UI
             WindowStartupLocation = WindowStartupLocation.Manual;
             Left = _settings.GetPositionSetting(SettingsKeys.ClientX).DoubleValue;
             Top = _settings.GetPositionSetting(SettingsKeys.ClientY).DoubleValue;
-            Title += " - 1.12.0.0";
+            Title += " - 1.12.0.0 - ";
+            Title += Properties.Settings.Default.ServerShortName;
 
             _logger.Debug("Connecting on Startup");
 
