@@ -110,7 +110,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
 
             SrsDataClient.DisconnectExternalAwacsMode();
             SrsDataClient.Disconnect();
-            SrsAudioClient.RequestStop();
+            SrsAudioClient?.RequestStop();
 
             DcsPlayerRadioInfo.Reset();
             PlayerCoalitionLocationMetadata.Reset();
