@@ -49,17 +49,17 @@ namespace RurouniJones.DCS.Airfields.Controllers.Approach
             }
 
             // Sort so that we get the cheapest ones first
-            var cheapestPathByCost = paths.OrderBy(pair => pair.Key).ToList();
+            var cheapestPathsByCost = paths.OrderBy(pair => pair.Key).ToList();
 
             // This is the cheapest one, so we want this one and any that have the same cost
             // since there could be multiple entry points for a given active runway(s).
-            var cheapestCost = paths[0].Key;
+            var cheapestCost = cheapestPathsByCost.First().Key;
 
-            cheapestPathByCost.RemoveAll(pair => pair.Key > cheapestCost);
+            cheapestPathsByCost.RemoveAll(pair => pair.Key > cheapestCost);
 
             // And finally return the paths so the caller can find the one with the closest
             // start point to the player, which will be the actual approach path.
-            return cheapestPathByCost.Select(pathPair => pathPair.Value).ToList();
+            return cheapestPathsByCost.Select(pathPair => pathPair.Value).ToList();
         }
     }
 }

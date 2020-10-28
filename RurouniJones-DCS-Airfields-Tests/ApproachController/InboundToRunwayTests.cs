@@ -14,8 +14,8 @@ namespace RurouniJones.DCS.Airfields.Controllers.Tests
         {
             yield return new object[] { new ApproachScenario("Anapa-Vityazevo", 090, new Point(44.0101581, 37.3481765), new List<string>{"Entry South", "Initial-0 4", "Runway-0 4"}) };
             yield return new object[] { new ApproachScenario("Anapa-Vityazevo", 090, new Point(46.0101581, 37.3481765), new List<string>{"Entry-Exit West", "Initial-0 4", "Runway-0 4"}) };
-            //yield return new object[] { new ApproachScenario("Anapa-Vityazevo", 270, new Point(44.0101581, 37.3481765), new List<string>{"Entry-Exit East", "Initial-2 2", "Runway-2 2"}) };
-            //yield return new object[] { new ApproachScenario("Anapa-Vityazevo", 270, new Point(46.0101581, 37.3481765), new List<string>{"Entry-Exit North", "Initial-2 2", "Runway-2 2"}) };
+            yield return new object[] { new ApproachScenario("Anapa-Vityazevo", 270, new Point(44.0101581, 37.3481765), new List<string>{"Entry-Exit East", "Initial-2 2", "Runway-2 2"}) };
+            yield return new object[] { new ApproachScenario("Anapa-Vityazevo", 270, new Point(46.0101581, 37.3481765), new List<string>{"Entry-Exit North", "Initial-2 2", "Runway-2 2"}) };
         }
 
         [DataTestMethod]
