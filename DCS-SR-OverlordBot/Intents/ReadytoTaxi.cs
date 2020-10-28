@@ -4,7 +4,6 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
 using NLog;
-using RurouniJones.DCS.Airfields.Controllers;
 using RurouniJones.DCS.Airfields.Controllers.Ground;
 using RurouniJones.DCS.Airfields.Controllers.Util;
 using RurouniJones.DCS.OverlordBot.Controllers;
@@ -41,7 +40,7 @@ namespace RurouniJones.DCS.OverlordBot.Intents
             }
             try
             {
-                if (airfield.Runways.Count == 0)
+                if (airfield.Runways.Count == 0 || airfield.NavigationGraph.EdgeCount == 0)
                     return "There are no ATC services currently available at this airfield.";
 
                 taxiInstructions = new GroundController(airfield).GetTaxiInstructions(radioCall.Sender.Position);
