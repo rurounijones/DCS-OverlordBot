@@ -465,23 +465,23 @@
   "waypoints": [
     {
       "name": "Initial-0 4",
-      "lat": 0.0,
-      "lon": 0.0
+      "lat": 44.968494408832,
+      "lon": 37.295967005446
     },
     {
       "name": "Initial-2 2",
-      "lat": 0.0,
-      "lon": 0.0
+      "lat": 45.040899386835,
+      "lon": 37.400080564567
     },
     {
       "name": "Entry-Exit North",
-      "lat": 0.0,
-      "lon": 0.0
+      "lat": 45.1082167,
+      "lon": 37.3957667
     },
     {
       "name": "Entry-Exit East",
-      "lat": 0.0,
-      "lon": 0.0
+      "lat": 45.0409450,
+      "lon": 37.4930833
     },
     {
       "name": "Entry-Exit West",
@@ -495,8 +495,8 @@
     },
     {
       "name": "Exit South",
-      "lat": 0.0,
-      "lon": 0.0
+      "lat": 44.9139833,
+      "lon": 37.4015000
     }
   ]
 }
