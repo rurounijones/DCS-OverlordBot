@@ -65,9 +65,11 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
             return "Last transmitter, I could not recognize your call-sign";
         }
 
-        protected override string InboundToAirbase(IRadioCall radioCall)
+        protected override string InboundToAirbase(IRadioCall radioCall, string voice, ConcurrentQueue<byte[]> responseQueue)
         {
-            return ResponsePrefix(radioCall) + " tower, copy inbound.";
+            if (!IsAddressedToController(radioCall))
+                return null;
+            return ResponsePrefix(radioCall) + "approach, " + Intents.InboundToAirbase.Process(radioCall, voice, responseQueue).Result;
         }
 
         protected override string UnverifiedSender(IRadioCall radioCall)

@@ -77,7 +77,7 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
             return ResponsePrefix(radioCall) + "this is an AWACS frequency.";
         }
 
-        protected override string InboundToAirbase(IRadioCall radioCall)
+        protected override string InboundToAirbase(IRadioCall radioCall, string voice, ConcurrentQueue<byte[]> responseQueue)
         {
             return ResponsePrefix(radioCall) + "this is an AWACS frequency.";
         }

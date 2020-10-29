@@ -342,8 +342,10 @@
     <Compile Include="Audio\Providers\AudioProvider.cs" />
     <Compile Include="Audio\Managers\AudioManager.cs" />
     <Compile Include="Audio\Models\ClientAudio.cs" />
+    <Compile Include="Controllers\ApproachChecker.cs" />
     <Compile Include="Controllers\TaxiProgressChecker.cs" />
     <Compile Include="Discord\DiscordClient.cs" />
+    <Compile Include="Intents\InboundToAirbase.cs" />
     <Compile Include="Models\Airfield.cs" />
     <Compile Include="Network\Models\RadioSendingState.cs" />
     <Compile Include="Network\SrsDataClient.cs" />

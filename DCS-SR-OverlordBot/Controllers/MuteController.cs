@@ -55,7 +55,7 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
             return null;
         }
 
-        protected override string InboundToAirbase(IRadioCall radioCall)
+        protected override string InboundToAirbase(IRadioCall radioCall, string voice, ConcurrentQueue<byte[]> responseQueue)
         {
             return null;
         }

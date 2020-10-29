@@ -65,7 +65,7 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
                     case "ReadyToTaxi":
                         return Task.Run(() => ReadyToTaxi(radioCall, Voice, Radio.TransmissionQueue)).Result;
                     case "InboundToAirbase":
-                        return Task.Run(() => InboundToAirbase(radioCall)).Result;
+                        return Task.Run(() => InboundToAirbase(radioCall, Voice, Radio.TransmissionQueue)).Result;
                     default:
                         return Task.Run(() => Unknown(radioCall)).Result;
                 }
@@ -96,7 +96,7 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
 
         protected abstract string ReadyToTaxi(IRadioCall radioCall, string voice, ConcurrentQueue<byte[]> responseQueue);
 
-        protected abstract string InboundToAirbase(IRadioCall radioCall);
+        protected abstract string InboundToAirbase(IRadioCall radioCall, string voice, ConcurrentQueue<byte[]> responseQueue);
 
         protected abstract bool IsAddressedToController(IRadioCall radioCall);
 
