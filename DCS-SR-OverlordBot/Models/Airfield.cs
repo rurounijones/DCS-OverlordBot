@@ -10,6 +10,7 @@ namespace RurouniJones.DCS.OverlordBot.Models
     public class Airfield : Airfields.Structure.Airfield
     {
         public ConcurrentDictionary<string, TaxiProgressChecker> TaxiingAircraft { get; } = new ConcurrentDictionary<string, TaxiProgressChecker>();
+        public ConcurrentDictionary<string, ApproachChecker> ApproachingAircraft { get; } = new ConcurrentDictionary<string, ApproachChecker>();
 
         public Airfield() {}
 
