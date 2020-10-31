@@ -148,8 +148,9 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
 
         private async Task SendMessage(string message)
         {
+            var name = AirbasePronouncer.PronounceAirbase(_airfield.Name);
             var response =
-                $"{_sender.Callsign}, {_airfield.Name} ground, {message}"; 
+                $"{_sender.Callsign}, {name} ground, {message}"; 
 
             var ssmlResponse =
                 $"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{_voice}\">{response}</voice></speak>";

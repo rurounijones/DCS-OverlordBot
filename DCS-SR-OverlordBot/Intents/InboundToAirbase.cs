@@ -8,6 +8,7 @@ using NLog;
 using RurouniJones.DCS.Airfields.Controllers.Approach;
 using RurouniJones.DCS.Airfields.Controllers.Util;
 using RurouniJones.DCS.Airfields.Structure;
+using RurouniJones.DCS.OverlordBot.Controllers;
 using RurouniJones.DCS.OverlordBot.RadioCalls;
 using RurouniJones.DCS.OverlordBot.Util;
 using Airfield = RurouniJones.DCS.OverlordBot.Models.Airfield;
@@ -40,7 +41,9 @@ namespace RurouniJones.DCS.OverlordBot.Intents
                     Longitude = radioCall.Sender.Position.Coordinate.Longitude
                 };
                 
-                approachRoute.Prepend(currentPosition);
+                approachRoute = approachRoute.Prepend(currentPosition).ToList();
+
+                new ApproachChecker(radioCall.Sender, airfield, voice, approachRoute, responseQueue);
 
                 return response;
             }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -29,21 +30,16 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
         private readonly string _voice;
 
         private readonly List<NavigationPoint> _wayPoints;
-
+        
         private readonly StateMachine<State, Trigger> _approachState;
 
-        private StateMachine<State, Trigger>.TriggerWithParameters<NavigationPoint> _startInboundTrigger;
-        private StateMachine<State, Trigger>.TriggerWithParameters<NavigationPoint> _turnInitialTrigger;
-        private StateMachine<State, Trigger>.TriggerWithParameters<NavigationPoint> _turnFinalTrigger;
-        private StateMachine<State, Trigger>.TriggerWithParameters<NavigationPoint> _enterShortFinalTrigger;
-
-        
-        public enum State {Flying, Inbound, Initial, Final, ShortFinal}
-        public enum Trigger { StartInbound, TurnInitial, TurnFinal, EnterShortFinal}
+        public enum State {Flying, Inbound, Base, Final, ShortFinal}
+        public enum Trigger { StartInbound, TurnBase, TurnFinal, EnterShortFinal}
 
         private readonly ConcurrentQueue<byte[]> _responseQueue;
 
-        private readonly int _checkInterval = new TimeSpan(0, 0, 0, 1).Seconds;
+        private readonly int _checkInterval = 1000; //new TimeSpan(0, 0, 0, 1).Milliseconds;
+        private readonly int _transmissionInterval = 20000; //new TimeSpan(0, 0, 0, 1).Milliseconds;
 
         public ApproachChecker(Player sender, Airfield airfield, string voice, List<NavigationPoint> wayPoints,
             ConcurrentQueue<byte[]> responseQueue)
@@ -53,86 +49,88 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
             _voice = voice;
             _wayPoints = wayPoints;
             _responseQueue = responseQueue;
-            _lastInstruction = DateTime.Now;
-
-            _approachState = new StateMachine<State, Trigger>(State.Flying);
-            ConfigureStateMachine();
-
-            _approachState.FireAsync(_startInboundTrigger, wayPoints.First());
+            _lastInstruction = DateTime.Now; // - new TimeSpan(0,0,0,10); // Fudge it since transmission takes time
 
             if (_airfield.ApproachingAircraft.ContainsKey(_sender.Id))
             {
                 _airfield.ApproachingAircraft[_sender.Id].Stop();
                 _airfield.ApproachingAircraft.TryRemove(_sender.Id, out _);
             }
+
+            _approachState = new StateMachine<State, Trigger>(State.Flying);
+            ConfigureStateMachine();
+
+            _approachState.FireAsync(Trigger.StartInbound);
             
             _airfield.ApproachingAircraft[_sender.Id] = this;
         }
 
         private void ConfigureStateMachine()
         {
-            _startInboundTrigger = _approachState.SetTriggerParameters<NavigationPoint>(Trigger.StartInbound);
-            _turnInitialTrigger = _approachState.SetTriggerParameters<NavigationPoint>(Trigger.TurnInitial);
-            _turnFinalTrigger = _approachState.SetTriggerParameters<NavigationPoint>(Trigger.TurnFinal);
-            _enterShortFinalTrigger = _approachState.SetTriggerParameters<NavigationPoint>(Trigger.EnterShortFinal);
-
             _approachState.Configure(State.Flying)
                 .Permit(Trigger.StartInbound, State.Inbound);
 
             _approachState.Configure(State.Inbound)
-                .OnEntryFromAsync(_startInboundTrigger, StartInbound)
-                .Permit(Trigger.TurnInitial, State.Initial);
+                .OnEntryFromAsync(Trigger.StartInbound, StartInbound)
+                .Permit(Trigger.TurnBase, State.Base)
+                .PermitReentry(Trigger.StartInbound);
 
-            _approachState.Configure(State.Initial)
-                .OnEntryFromAsync(_turnInitialTrigger, TurnInitial)
+            _approachState.Configure(State.Base)
+                .OnEntryFromAsync(Trigger.TurnBase, TurnBase)
                 .Permit(Trigger.TurnFinal, State.Final);
 
             _approachState.Configure(State.Final)
-                .OnEntryFromAsync(_turnFinalTrigger, TurnFinal)
+                .OnEntryFromAsync(Trigger.TurnFinal, TurnFinal)
                 .Permit(Trigger.EnterShortFinal, State.ShortFinal);
 
             _approachState.Configure(State.ShortFinal)
-                .OnEntryFromAsync(_enterShortFinalTrigger, EnterShortFinal);
+                .OnEntryFromAsync(Trigger.EnterShortFinal, EnterShortFinal);
         }
 
-        private async Task StartInbound(NavigationPoint startPoint)
+        private async Task StartInbound()
         {
             await Task.Run(() =>
             {
+                Logger.Debug($"{_sender.Id} Starting inbound, current waypoint {_wayPoints[0].Name}");
+                _lastInstruction = DateTime.Now;
+                _checkTimer?.Stop();
+                _wayPoints.RemoveAt(0);
                 _checkTimer = new Timer(_checkInterval);
-                _checkTimer.Elapsed += async (s, e) => await CheckInboundAsync(startPoint);
+                _checkTimer.Elapsed += async (s, e) => await CheckInboundAsync();
                 _checkTimer.Start();
             });
         }
 
-        private async Task TurnInitial(NavigationPoint entryPoint)
+        private async Task TurnBase()
         {
+            Logger.Debug($"{_sender.Id} Turning base");
             _checkTimer.Stop();
+            _wayPoints.RemoveAt(0);
             _checkTimer = new Timer(_checkInterval);
             
-            var nextWayPoint = _wayPoints[_wayPoints.IndexOf(entryPoint) + 1];
-
-            _checkTimer.Elapsed += async (s, e) => await FireTriggerOnNextWayPoint(nextWayPoint, 0.5, _turnFinalTrigger);
+            _checkTimer.Elapsed += async (s, e) => await FireTriggerOnNextWayPoint(1.35, Trigger.TurnFinal);
             _checkTimer.Start();
-            await TransmitHeadingToNextWaypoint(entryPoint);
+            await TransmitHeadingToNextWaypoint();
         }
 
-        private async Task TurnFinal(NavigationPoint initialPoint)
+        private async Task TurnFinal()
         {
+            Logger.Debug($"{_sender.Id} Turning final");
             _checkTimer.Stop();
+            _wayPoints.RemoveAt(0);
             _checkTimer = new Timer(_checkInterval);
             
-            var nextWayPoint = _wayPoints[_wayPoints.IndexOf(initialPoint) + 1];
-
-            _checkTimer.Elapsed += async (s, e) => await FireTriggerOnNextWayPoint(nextWayPoint, 0.5, _enterShortFinalTrigger);
+            _checkTimer.Elapsed += async (s, e) => await FireTriggerOnNextWayPoint(1.5, Trigger.EnterShortFinal);
             _checkTimer.Start();
-            await TransmitHeadingToNextWaypoint(initialPoint);
+            var runway = (Runway) _wayPoints.First();
+            await SendMessage($"turn final {runway.Name}");
         }
 
-        private async Task EnterShortFinal(NavigationPoint runway)
+        private async Task EnterShortFinal()
         {
+            Logger.Debug($"{_sender.Id} entering short final");
             _checkTimer.Stop();
-            await SendMessage($"Check gear, land {runway.Name} at your discretion");
+            await SendMessage($"Check gear, land {_wayPoints.First().Name} at your discretion");
             await Task.Run(Stop);
         }
 
@@ -144,17 +142,16 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
             _airfield.ApproachingAircraft.TryRemove(_sender.Id, out _);
         }
 
-        private async Task FireTriggerOnNextWayPoint(NavigationPoint nextWayPoint, double distance, StateMachine<State, Trigger>.TriggerWithParameters<NavigationPoint> trigger)
+        private async Task FireTriggerOnNextWayPoint(double distance, Trigger trigger)
         {
             if (await IsPlayerDeleted())
                 return;
 
-            if (nextWayPoint.DistanceTo(_sender.Position.Coordinate) < distance)
+            if (_wayPoints.First().DistanceTo(_sender.Position.Coordinate) < distance)
             {
-                await _approachState.FireAsync(trigger, nextWayPoint);
+                await _approachState.FireAsync(trigger);
             }
         }
-
 
         private async Task<bool> IsPlayerDeleted()
         {
@@ -162,29 +159,44 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
             await GameQuerier.PopulatePilotData(_sender);
 
             // If the caller does not exist any more or the ID has been reused for a different object then cancel the check.
-            if (_sender.Id == null || _sender.Id != previousId)
-            {
-                _sender.Id = "DELETED";
-                Logger.Debug(
-                    $"Stopping Approach Progress Check. CallerId changed, New: {_sender.Id} , Old: {previousId}.");
-                Stop();
-                return true;
-            }
-
-            return false;
+            if (_sender.Id != null && _sender.Id == previousId) return false;
+            _sender.Id = "DELETED";
+            Logger.Debug(
+                $"Stopping Approach Progress Check. CallerId changed, New: {_sender.Id} , Old: {previousId}.");
+            Stop();
+            return true;
         }
 
-        private async Task CheckInboundAsync(NavigationPoint currentWayPoint)
+        private async Task CheckInboundAsync()
         {
+            Logger.Debug($"Inbound Progress Check for {_sender.Id}");
             if (await IsPlayerDeleted())
                 return;
 
-            var nextWayPoint = _wayPoints[_wayPoints.IndexOf(currentWayPoint) + 1];
+            var nextWayPoint = _wayPoints.First();
+
+            Logger.Debug($"{_sender.Id} is {nextWayPoint.DistanceTo(_sender.Position.Coordinate)} KM from {nextWayPoint.Name}");
+
 
             // THINK ABOUT: Change this fixed value to a relative ratio based on the distances?
             if (nextWayPoint.DistanceTo(_sender.Position.Coordinate) < 1)
             {
-                await _approachState.FireAsync(_turnInitialTrigger, nextWayPoint);
+                if (nextWayPoint.Name.Contains("Entry"))
+                {
+                    await _approachState.FireAsync(Trigger.TurnBase);
+
+                }
+                else
+                {
+                    await _approachState.FireAsync(Trigger.StartInbound);
+
+                }
+                return;
+            }
+
+            // No point with last minute instructions when we are sending them to initial soon anyway
+            if (nextWayPoint.DistanceTo(_sender.Position.Coordinate) < 2.5)
+            {
                 return;
             }
 
@@ -194,6 +206,15 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
                 return;
             }
 
+            Logger.Debug($"{_sender.Id}. {(DateTime.Now - _lastInstruction).TotalSeconds} since last transmission");
+            if ((DateTime.Now - _lastInstruction).TotalMilliseconds < _transmissionInterval)
+            {
+                Logger.Debug($"Time between two transmissions too low, returning");
+                return;
+            }
+
+            Logger.Debug($"Time between two transmissions ok");
+
             var sH = (int) _sender.Heading;
             var wH = (int) Geospatial.BearingTo(_sender.Position.Coordinate,
                 new Coordinate(nextWayPoint.Latitude, nextWayPoint.Longitude));
@@ -201,18 +222,20 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
             var headingDiff = Math.Min((wH - sH) < 0 ? wH - sH + 360 : wH - sH,
                 (sH - wH) < 0 ? sH - wH + 360 : sH - wH);
 
-            if ((headingDiff <= 5) || (DateTime.Now - _lastInstruction).Seconds <= 10) 
+            Logger.Debug($"Headings: Waypoint {wH}, Player {sH}, diff {headingDiff}");
+
+            if (headingDiff <= 5) 
                 return;
-            
+
             var magneticHeading = Regex.Replace(Geospatial.TrueToMagnetic(_sender.Position, wH).ToString("000"),
                 "\\d{1}", " $0");
             _lastInstruction = DateTime.Now;
             await SendMessage($"fly heading {magneticHeading}");
         }
 
-        private async Task TransmitHeadingToNextWaypoint(NavigationPoint currentWaypoint)
+        private async Task TransmitHeadingToNextWaypoint()
         {
-            var nextWayPoint = _wayPoints[_wayPoints.IndexOf(currentWaypoint) + 1];
+            var nextWayPoint = _wayPoints.First();
 
             var wH = (int) Geospatial.BearingTo(_sender.Position.Coordinate,
                 new Coordinate(nextWayPoint.Latitude, nextWayPoint.Longitude));
@@ -221,13 +244,14 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
                 "\\d{1}", " $0");
 
             _lastInstruction = DateTime.Now;
-            await SendMessage($"fly heading {magneticHeading}");
+            await SendMessage($"fly heading {magneticHeading} for {nextWayPoint.Name}");
         }
 
         private async Task SendMessage(string message)
         {
+            var name = AirbasePronouncer.PronounceAirbase(_airfield.Name);
             var response =
-                $"{_sender.Callsign}, {_airfield.Name} approach, {message}"; 
+                $"{_sender.Callsign}, {name} approach, {message}"; 
 
             var ssmlResponse =
                 $"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{_voice}\">{response}</voice></speak>";

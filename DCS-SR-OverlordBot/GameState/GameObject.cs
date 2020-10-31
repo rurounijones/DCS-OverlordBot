@@ -11,6 +11,7 @@ namespace RurouniJones.DCS.OverlordBot.GameState
         public Coalition Coalition { get; set; }
         public double Altitude { get; set; }
         public int? Heading { get; set; }
+        public int? Speed { get; set; }
         public string Name { get; set; }
     }
 }

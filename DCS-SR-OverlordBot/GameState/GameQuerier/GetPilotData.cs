@@ -21,7 +21,7 @@ namespace RurouniJones.DCS.OverlordBot.GameState
             var flight = sender.Flight;
             var plane = sender.Plane;
 
-            var command = @"SELECT id, position, coalition, altitude, pilot FROM public.units WHERE (pilot ILIKE '" + $"%{group} {flight}-{plane}%' OR pilot ILIKE '" + $"%{group} {flight}{plane}%')";
+            var command = @"SELECT id, position, coalition, altitude, pilot, speed, heading FROM public.units WHERE (pilot ILIKE '" + $"%{group} {flight}-{plane}%' OR pilot ILIKE '" + $"%{group} {flight}{plane}%')";
             using (var connection = new NpgsqlConnection(ConnectionString()))
             {
                 await connection.OpenAsync();
@@ -36,12 +36,16 @@ namespace RurouniJones.DCS.OverlordBot.GameState
                         var coalition = dbDataReader.GetInt32(2);
                         var altitude = dbDataReader.GetDouble(3);
                         var pilot = dbDataReader.GetString(4);
+                        var speed = dbDataReader.GetInt32(5);
+                        var heading = dbDataReader.GetInt32(6);
                         dbDataReader.Close();
                         sender.Id = id;
                         sender.Position = new Geo.Geometries.Point(position.Y, position.X);
                         sender.Coalition = (Coalition)coalition;
                         sender.Pilot = pilot;
                         sender.Altitude = altitude;
+                        sender.Heading = heading;
+                        sender.Speed = speed;
                     }
                     else
                     {

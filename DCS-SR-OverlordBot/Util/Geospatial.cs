@@ -61,17 +61,18 @@ namespace RurouniJones.DCS.OverlordBot.Util
         // The TRUE bearing, on the caucuses, in DCS is the same as the MAGNETIC bearing in real-life
         // so for things like bearings to match up correctly using haversine calculations we need to
         // convert the result to magnetic TWICE.
+        public static double CaucasusHeadingFix(Point position, double trueBearing)
+        {
+            if (!IsCaucasus(position)) return trueBearing;
+            var magneticBearing = trueBearing + CalculateOffset(position) - CaucasusFudgeFactor;
+            Logger.Debug($"True Bearing: {trueBearing}, Caucasus 'true' heading {magneticBearing}");
+            return magneticBearing;
+
+        }
+
         public static double TrueToMagnetic(Point position, double trueBearing)
         {
-            double magneticBearing;
-            if (IsCaucasus(position))
-            {
-                magneticBearing = trueBearing - (2 * CalculateOffset(position) - CaucasusFudgeFactor);
-            }
-            else
-            {
-                magneticBearing = trueBearing - CalculateOffset(position);
-            }
+            var magneticBearing = trueBearing - CalculateOffset(position);
 
             if (magneticBearing < 0)
             {
@@ -83,15 +84,8 @@ namespace RurouniJones.DCS.OverlordBot.Util
 
         public static double MagneticToTrue(Point position, double trueBearing)
         {
-            double magneticBearing;
-            if (IsCaucasus(position))
-            {
-                magneticBearing = trueBearing + (2 * CalculateOffset(position) - CaucasusFudgeFactor);
-            }
-            else
-            {
-                magneticBearing = trueBearing + CalculateOffset(position);
-            }
+            double magneticBearing = trueBearing + CalculateOffset(position);
+
             if (magneticBearing > 360)
             {
                 magneticBearing -= 360;
