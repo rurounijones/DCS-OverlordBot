@@ -69,6 +69,7 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
                 {
                     WarningStates.TryAdd(_sender.Id, new List<string>());
                 }
+
                 var previousId = _sender.Id;
                 await GameQuerier.PopulatePilotData(_sender);
 
@@ -77,12 +78,14 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
                 if (_sender.Id == null || _sender.Id != previousId)
                 {
                     _sender.Id = "DELETED";
-                    Logger.Debug($"Stopping Warning Radius Check. CallerId changed, New: {_sender.Id} , Old: {previousId}.");
+                    Logger.Debug(
+                        $"Stopping Warning Radius Check. CallerId changed, New: {_sender.Id} , Old: {previousId}.");
                     Stop();
                     return;
                 }
 
-                var contact = await GameQuerier.GetBogeyDope(_sender.Coalition, _sender.Group, _sender.Flight, _sender.Plane);
+                var contact =
+                    await GameQuerier.GetBogeyDope(_sender.Coalition, _sender.Group, _sender.Flight, _sender.Plane);
 
                 if (contact == null)
                 {
@@ -126,6 +129,10 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
             catch (Exception ex)
             {
                 Logger.Error(ex, "Error checking warning radius");
+            }
+            finally
+            {
+                Stop();
             }
         }
     }

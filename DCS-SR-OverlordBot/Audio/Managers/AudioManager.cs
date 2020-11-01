@@ -119,6 +119,18 @@ namespace RurouniJones.DCS.OverlordBot.Audio.Managers
                 Thread.CurrentThread.IsBackground = true;
                 while (true)
                 {
+                    if (Client == null)
+                    {
+                        Logger.Error($"{LogClientId}| Client is Null");
+                        continue;
+                    }
+
+                    if (Client.SrsAudioClient == null)
+                    {
+                        Logger.Error($"{LogClientId}| Client.SrsAudioClient is Null");
+                        continue;
+                    }
+
                     if (!Client.SrsAudioClient.RadioSendingState.IsSending && ResponseQueue.TryDequeue(out var response) && response != null)
                     {
                         Logger.Trace($"{LogClientId}| Sending Response");
@@ -171,7 +183,7 @@ namespace RurouniJones.DCS.OverlordBot.Audio.Managers
                     //encode as opus bytes
                     var buff = _encoder.Encode(packetBuffer, SegmentFrames, out var len);
 
-                    if (Client.SrsAudioClient != null && buff != null && len > 0)
+                    if (Client?.SrsAudioClient != null && buff != null && len > 0)
                     {
                         //create copy with small buffer
                         var encoded = new byte[len];
