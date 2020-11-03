@@ -125,7 +125,8 @@ namespace RurouniJones.DCS.OverlordBot.SpeechRecognition
                         Logger.Trace($"{_logClientId}| CANCELLED: ErrorDetails={e.ErrorDetails}");
 
                         if (e.ErrorCode != CancellationErrorCode.BadRequest &&
-                            e.ErrorCode != CancellationErrorCode.ConnectionFailure)
+                            e.ErrorCode != CancellationErrorCode.ConnectionFailure &&
+                            e.ErrorCode != CancellationErrorCode.AuthenticationFailure)
                         {
                             Logger.Trace($"{_logClientId}| Sending Failure Message");
                             Controller.Radio.TransmissionQueue.Enqueue(FailureMessage);

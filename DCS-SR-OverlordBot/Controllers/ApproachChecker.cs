@@ -24,6 +24,7 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
         private Timer _checkTimer;
         private readonly Player _sender;
         private DateTime _lastInstruction;
+        private DateTime _startTime;
 
 
         private readonly Airfield _airfield;
@@ -38,8 +39,8 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
 
         private readonly ConcurrentQueue<byte[]> _responseQueue;
 
-        private readonly int _checkInterval = 1000; //new TimeSpan(0, 0, 0, 1).Milliseconds;
-        private readonly int _transmissionInterval = 20000; //new TimeSpan(0, 0, 0, 1).Milliseconds;
+        private readonly int _checkInterval = 1000;
+        private readonly int _transmissionInterval = 20000;
 
         public ApproachChecker(Player sender, Airfield airfield, string voice, List<NavigationPoint> wayPoints,
             ConcurrentQueue<byte[]> responseQueue)
@@ -49,7 +50,8 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
             _voice = voice;
             _wayPoints = wayPoints;
             _responseQueue = responseQueue;
-            _lastInstruction = DateTime.Now; // - new TimeSpan(0,0,0,10); // Fudge it since transmission takes time
+            _lastInstruction = DateTime.Now;
+            _startTime = DateTime.Now;
 
             if (_airfield.ApproachingAircraft.ContainsKey(_sender.Id))
             {
@@ -85,6 +87,15 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
 
             _approachState.Configure(State.ShortFinal)
                 .OnEntryFromAsync(Trigger.EnterShortFinal, EnterShortFinal);
+        }
+
+        private async Task CheckDuration()
+        {
+            if ((DateTime.Now - _startTime).TotalMinutes > 10)
+            {
+                Logger.Debug($"Inbound for more than 10 minutes. Stopping check.");
+                Stop();
+            }
         }
 
         private async Task StartInbound()
@@ -144,6 +155,7 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
 
         private async Task FireTriggerOnNextWayPoint(double distance, Trigger trigger)
         {
+            await CheckDuration();
             if (await IsPlayerDeleted())
                 return;
 
@@ -170,6 +182,7 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
         private async Task CheckInboundAsync()
         {
             Logger.Debug($"Inbound Progress Check for {_sender.Id}");
+            await CheckDuration();
             if (await IsPlayerDeleted())
                 return;
 
@@ -251,7 +264,7 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
         {
             var name = AirbasePronouncer.PronounceAirbase(_airfield.Name);
             var response =
-                $"{_sender.Callsign}, {name} approach, {message}"; 
+                $"{_sender.Callsign}, {message}"; 
 
             var ssmlResponse =
                 $"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{_voice}\">{response}</voice></speak>";
