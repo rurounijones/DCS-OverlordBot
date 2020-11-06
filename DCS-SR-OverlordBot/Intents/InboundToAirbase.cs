@@ -33,7 +33,7 @@ namespace RurouniJones.DCS.OverlordBot.Intents
                 var initialMagneticBearing =
                     Regex.Replace(Geospatial.TrueToMagnetic(radioCall.Sender.Position, initialTrueBearing).ToString("000"), "\\d{1}", " $0");
 
-                var response = $"fly heading {initialMagneticBearing}, descend and maintain 2,000, for vectors to {approachRoute.Last().Name}, {approachRoute.First().Name}";
+                var response = $"fly heading {initialMagneticBearing}, descend and maintain 2,000, reduce speed 2 0 0 knots, for vectors to {approachRoute.Last().Name}, {approachRoute.First().Name}";
 
                 var currentPosition = new NavigationPoint {
                     Name = "Current Position",

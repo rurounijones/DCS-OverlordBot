@@ -123,7 +123,7 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
             
             _checkTimer.Elapsed += async (s, e) => await FireTriggerOnNextWayPoint(1.35, Trigger.TurnFinal);
             _checkTimer.Start();
-            await TransmitHeadingToNextWaypoint();
+            await TransmitHeadingToNextWaypoint("descend and maintain 1000, reduce speed your discretion");
         }
 
         private async Task TurnFinal()
@@ -249,7 +249,7 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
             await SendMessage($"fly heading {magneticHeading}");
         }
 
-        private async Task TransmitHeadingToNextWaypoint()
+        private async Task TransmitHeadingToNextWaypoint(string comment)
         {
             var nextWayPoint = _wayPoints.First();
 
@@ -260,7 +260,7 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
                 "\\d{1}", " $0");
 
             _lastInstruction = DateTime.Now;
-            await SendMessage($"fly heading {magneticHeading} for {nextWayPoint.Name}");
+            await SendMessage($"fly heading {magneticHeading} for {nextWayPoint.Name} {comment}");
         }
 
         private async Task SendMessage(string message)
