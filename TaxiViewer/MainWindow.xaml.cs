@@ -92,7 +92,7 @@ namespace TaxiViewer
         {
             _graph = new Graph();
 
-            foreach (NavigationPoint navigationPoint in airfield.NavigationGraph.Vertices)
+            foreach (var navigationPoint in airfield.NavigationGraph.Vertices)
             {
 
                 var node = _graph.AddNode(navigationPoint.Name);
@@ -118,7 +118,7 @@ namespace TaxiViewer
                 }
             }
 
-            foreach (TaggedEdge<NavigationPoint, string> edge in airfield.NavigationGraph.Edges)
+            foreach (var edge in airfield.NavigationGraph.Edges)
             {
                 var displayEdge = _graph.AddEdge(edge.Source.Name, edge.Tag, edge.Target.Name);
                 displayEdge.UserData = edge;
@@ -184,17 +184,17 @@ namespace TaxiViewer
         {
             _graph.CreateGeometryGraph();
 
-            foreach (TaxiPoint taxiPoint in airfield.TaxiPoints)
+            foreach (var navigationPoint in airfield.NavigationGraph.Vertices)
             {
 
-                var dnode = _graph.Nodes.FirstOrDefault(node => node.Id.Equals(taxiPoint.Name));
+                var dnode = _graph.Nodes.FirstOrDefault(node => node.Id.Equals(navigationPoint.Name));
                 if (dnode != null)
                 {
-                    dnode.GeometryNode.BoundaryCurve = CreateLabelAndBoundary(taxiPoint, dnode);
+                    dnode.GeometryNode.BoundaryCurve = CreateLabelAndBoundary(navigationPoint, dnode);
                 }
                 else
                 {
-                    MessageBox.Show($"Error Displaying {taxiPoint.Name}", "Display Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"Error Displaying {navigationPoint.Name}", "Display Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
                 }
             }
@@ -213,16 +213,16 @@ namespace TaxiViewer
             _graphViewer.Graph = _graph;
         }
 
-        static ICurve CreateLabelAndBoundary(TaxiPoint taxiPoint, Microsoft.Msagl.Drawing.Node node)
+        private static ICurve CreateLabelAndBoundary(NavigationPoint navigationPoint, Microsoft.Msagl.Drawing.Node node)
         {
             node.Attr.LabelMargin *= 2;
             node.Label.IsVisible = false;
 
-            double y = (taxiPoint.Latitude - airfield.Latitude) * 200000;
-            double x = (taxiPoint.Longitude - airfield.Longitude) * 200000;
+            var y = (navigationPoint.Latitude - airfield.Latitude) * 200000;
+            var x = (navigationPoint.Longitude - airfield.Longitude) * 200000;
             var positionalPoint = new Microsoft.Msagl.Core.Geometry.Point(x, y);
 
-            switch (taxiPoint)
+            switch (navigationPoint)
             {
                 case Runway _:
                     node.Attr.Color = Color.Green;
@@ -234,6 +234,9 @@ namespace TaxiViewer
                 case ParkingSpot _:
                     node.Attr.Color = Color.Orange;
                     return CurveFactory.CreateOctagon(100, 30, positionalPoint);
+                case WayPoint _:
+                    node.Attr.Color = Color.Purple;
+                    return CurveFactory.CreateRectangle(100, 30, positionalPoint);
             }
 
             return CurveFactory.CreateCircle(5, positionalPoint);
