@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using RurouniJones.DCS.OverlordBot.Audio.Managers;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Discord;
 using Discord.WebSocket;
@@ -84,10 +83,10 @@ namespace RurouniJones.DCS.OverlordBot.Discord
 
         public static async Task LogTransmissionToDiscord(string transmission, RadioInformation radioInfo, Network.Client client)
         {
-            transmission += $"\nClients on freq {radioInfo.freq / 1000000}MHz: {string.Join(", ", GetClientsOnFrequency(radioInfo, client))}\n" +
-            $"Total / Compatible / On Freq Callsigns : {GetHumanSrsClients(client).Count} / {GetBotCallsignCompatibleClients(client).Count} / {GetClientsOnFrequency(radioInfo, client).Count}\n" +
-            $"On Freq percentage of Total / Compatible: { Math.Round(GetClientsOnFrequency(radioInfo, client).Count / (double)GetHumanSrsClients(client).Count * 100, 2) }% / " +
-            $"{ Math.Round(GetClientsOnFrequency(radioInfo, client).Count / (double)GetBotCallsignCompatibleClients(client).Count * 100, 2) }%";
+            transmission += $"\nClients on freq {radioInfo.freq / 1000000}MHz: {string.Join(", ", client.GetHumansOnFreq(radioInfo))}\n" +
+            $"Total / Compatible / On Freq Callsigns : {client.GetHumanSrsClients().Count} / {client.GetBotCallsignCompatibleClients().Count} / {client.GetHumansOnFreq(radioInfo).Count}\n" +
+            $"On Freq percentage of Total / Compatible: { Math.Round(client.GetHumansOnFreq(radioInfo).Count / (double)client.GetHumanSrsClients().Count * 100, 2) }% / " +
+            $"{ Math.Round(client.GetHumansOnFreq(radioInfo).Count / (double)client.GetBotCallsignCompatibleClients().Count * 100, 2) }%";
 
             if (_socket == null || _socket.ConnectionState != ConnectionState.Connected)
             {
@@ -130,30 +129,6 @@ namespace RurouniJones.DCS.OverlordBot.Discord
         {
             Console.WriteLine(msg.ToString());
             return Task.CompletedTask;
-        }
-
-        private static List<string> GetHumanSrsClients(Network.Client srsClient)
-        {
-            var allClients = srsClient.Values;
-            return (from client in allClients where client.Name != "OverlordBot" && !client.Name.Contains("ATIS") select client.Name).ToList();
-        }
-
-        private static List<string> GetBotCallsignCompatibleClients(Network.Client srsClient)
-        {
-            var allClients = srsClient.Values;
-            return (from client in allClients where client.Name != "OverlordBot" && !client.Name.Contains("ATIS") && IsClientNameCompatible(client.Name) select client.Name).ToList();
-
-        }
-
-        private static bool IsClientNameCompatible(string name)
-        {
-            return Regex.Match(name, @"[a-zA-Z]{3,} \d-\d{1,2}").Success || Regex.Match(name, @"[a-zA-Z]{3,} \d{2,3}").Success;
-        }
-
-        private static List<string> GetClientsOnFrequency(RadioInformation radioInfo, Network.Client srsClient)
-        {
-            var clientsOnFreq = srsClient.ClientsOnFreq(radioInfo.freq, RadioInformation.Modulation.AM);
-            return (from client in clientsOnFreq where client.Name != "OverlordBot" select client.Name).ToList();
         }
     }
 }

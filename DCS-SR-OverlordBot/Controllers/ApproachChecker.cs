@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -29,6 +28,8 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
 
         private readonly Airfield _airfield;
         private readonly string _voice;
+
+        public static readonly ConcurrentDictionary<string, ApproachChecker> ApproachChecks = new ConcurrentDictionary<string, ApproachChecker>();
 
         private readonly List<NavigationPoint> _wayPoints;
         
@@ -65,6 +66,7 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
             _approachState.FireAsync(Trigger.StartInbound);
             
             _airfield.ApproachingAircraft[_sender.Id] = this;
+            ApproachChecks[_sender.Id] = this;
         }
 
         private void ConfigureStateMachine()
@@ -145,12 +147,13 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
             await Task.Run(Stop);
         }
 
-        private void Stop()
+        public void Stop()
         {
             Logger.Debug($"Stopping approach progress check for {_sender.Id}");
             _checkTimer.Stop();
             _checkTimer.Close();
             _airfield.ApproachingAircraft.TryRemove(_sender.Id, out _);
+            ApproachChecks.TryRemove(_sender.Id, out _);
         }
 
         private async Task FireTriggerOnNextWayPoint(double distance, Trigger trigger)

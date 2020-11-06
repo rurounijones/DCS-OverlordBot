@@ -11,9 +11,9 @@ using Npgsql;
 using Npgsql.Logging;
 using OpenTelemetry;
 using OpenTelemetry.Trace;
+using RurouniJones.DCS.OverlordBot.Controllers;
 using RurouniJones.DCS.OverlordBot.Util;
 using MessageBox = System.Windows.MessageBox;
-using Timer = System.Threading.Timer;
 
 namespace RurouniJones.DCS.OverlordBot
 {
@@ -24,6 +24,8 @@ namespace RurouniJones.DCS.OverlordBot
     {
         private NotifyIcon _notifyIcon;
         private readonly bool _loggingReady;
+
+        private readonly System.Timers.Timer _airfieldUpdateTimer;
 
         private static readonly CancellationTokenSource TokenSource = new CancellationTokenSource();
 
@@ -70,12 +72,9 @@ namespace RurouniJones.DCS.OverlordBot
             SpeechAuthorizationToken.CancellationToken = TokenSource.Token;
             Task.Run(async () => await SpeechAuthorizationToken.StartTokenRenewTask());
 
-            var _ = new Timer(UpdateAirfields, null, 0, 60000);
-        }
-
-        private static void UpdateAirfields(object stateInfo)
-        {
-            AirfieldUpdater.UpdateAirfields();
+            _airfieldUpdateTimer = new System.Timers.Timer(60000);
+            _airfieldUpdateTimer.Elapsed += (s, e) =>  AirfieldUpdater.UpdateAirfields();
+            _airfieldUpdateTimer.Start();
         }
 
         private void InitNotificationIcon()
@@ -121,8 +120,29 @@ namespace RurouniJones.DCS.OverlordBot
         protected override void OnExit(ExitEventArgs e)
         {
             TokenSource.Cancel();
+            _airfieldUpdateTimer.Stop();
+            _airfieldUpdateTimer.Dispose();
             Task.Run(DiscordClient.Disconnect);
             SrsDataClient.ApplicationStopped = true;
+
+            foreach( var checker in WarningRadiusChecker.WarningChecks)
+            {
+                checker.Value.Stop();
+                WarningRadiusChecker.WarningChecks.TryRemove(checker.Key, out _);
+            }
+
+            foreach( var checker in TaxiProgressChecker.TaxiChecks)
+            {
+                checker.Value.Stop();
+                TaxiProgressChecker.TaxiChecks.TryRemove(checker.Key, out _);
+            }
+
+            foreach( var checker in ApproachChecker.ApproachChecks)
+            {
+                checker.Value.Stop();
+                ApproachChecker.ApproachChecks.TryRemove(checker.Key, out _);
+            }
+
             _notifyIcon.Visible = false;
             base.OnExit(e);
         }

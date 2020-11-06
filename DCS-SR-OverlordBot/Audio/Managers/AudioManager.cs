@@ -42,13 +42,13 @@ namespace RurouniJones.DCS.OverlordBot.Audio.Managers
 
         public readonly Network.Client Client;
 
-        private DCSPlayerRadioInfo _playerRadioInfo;
+        public DCSPlayerRadioInfo PlayerRadioInfo;
         public string LogClientId;
 
         public AudioManager(DCSPlayerRadioInfo playerRadioInfo)
         {
-            _playerRadioInfo = playerRadioInfo;
-            LogClientId =  _playerRadioInfo.radios[0].name;
+            PlayerRadioInfo = playerRadioInfo;
+            LogClientId =  PlayerRadioInfo.radios[0].name;
             Client = new Network.Client(this, playerRadioInfo);
         }
 

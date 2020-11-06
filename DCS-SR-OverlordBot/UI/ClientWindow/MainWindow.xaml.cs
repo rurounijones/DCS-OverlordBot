@@ -21,7 +21,7 @@ namespace RurouniJones.DCS.OverlordBot.UI
 {
     public partial class MainWindow
     {
-        private static readonly List<AudioManager> AudioManagers = new List<AudioManager>();
+        public static readonly List<AudioManager> AudioManagers = new List<AudioManager>();
         public static readonly string AwacsRadiosFile = "awacs-radios.json";
 
         private readonly Logger _logger = LogManager.GetCurrentClassLogger();
@@ -30,6 +30,8 @@ namespace RurouniJones.DCS.OverlordBot.UI
         private readonly IPAddress _resolvedIp;
 
         private readonly SettingsStore _settings = SettingsStore.Instance;
+
+        private static readonly MetricsManager MetricsManager = MetricsManager.Instance;
 
         public MainWindow()
         {
@@ -103,10 +105,13 @@ namespace RurouniJones.DCS.OverlordBot.UI
                 audioManager.ConnectToSrs(new IPEndPoint(_resolvedIp, _port));
                 AudioManagers.Add(audioManager);
             }
+            if (!string.IsNullOrEmpty(OverlordBot.Properties.Settings.Default.NewRelicApiKey))
+                MetricsManager.Start();
         }
 
         private static void Stop()
         {
+            MetricsManager.Stop();
             foreach (var audioManager in AudioManagers)
             {
                 audioManager.StopEncoding();

@@ -15,8 +15,8 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private static readonly ConcurrentDictionary<string, List<string>> WarningStates = new ConcurrentDictionary<string, List<string>>();
-        public static ConcurrentDictionary<string, WarningRadiusChecker> WarningChecks = new ConcurrentDictionary<string, WarningRadiusChecker>();
+        public static readonly ConcurrentDictionary<string, List<string>> WarningStates = new ConcurrentDictionary<string, List<string>>();
+        public static readonly ConcurrentDictionary<string, WarningRadiusChecker> WarningChecks = new ConcurrentDictionary<string, WarningRadiusChecker>();
 
         private readonly Timer _checkTimer;
         private readonly Player _sender;
@@ -44,26 +44,27 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
             _checkTimer = new Timer(CheckInterval);
             _checkTimer.Elapsed += async (s, e) => await CheckAsync();
 
-            Logger.Debug($"Starting {distance} mile Radius Warning Check for {sender.Id}");
+            Logger.Debug($"{_sender.Id} - {_sender.Callsign}: Starting {distance} mile Radius Warning Check");
 
             _checkTimer.Start();
 
             WarningChecks[_sender.Id] = this;
         }
 
-        private void Stop()
+        public void Stop()
         {
-            Logger.Debug($"Stopping Warning Check for {_sender.Id}");
+            Logger.Debug($"{_sender.Id} - {_sender.Callsign}: Stopping Warning Check");
             _checkTimer.Stop();
-            WarningStates.TryRemove(_sender.Id, out _);
             _checkTimer.Close();
+            WarningStates.TryRemove(_sender.Id, out _);
+            WarningChecks.TryRemove(_sender.Id, out _);
         }
 
         private async Task CheckAsync()
         {
             try
             {
-                Logger.Debug($"Peforming Warning Radius check for {_sender.Id}");
+                Logger.Debug($"{_sender.Id} - {_sender.Callsign}: Peforming Warning Radius check");
 
                 if (WarningStates.ContainsKey(_sender.Id) == false)
                 {
@@ -79,7 +80,7 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
                 {
                     _sender.Id = "DELETED";
                     Logger.Debug(
-                        $"Stopping Warning Radius Check. CallerId changed, New: {_sender.Id} , Old: {previousId}.");
+                        $"{_sender.Id} - {_sender.Callsign}: Stopping Warning Radius Check. CallerId changed, New: {_sender.Id} , Old: {previousId}.");
                     Stop();
                     return;
                 }
@@ -89,29 +90,29 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
 
                 if (contact == null)
                 {
-                    Logger.Debug($"No contacts found for {_sender.Id})");
+                    Logger.Debug($"{_sender.Id} - {_sender.Callsign}: No contacts found");
                     return;
                 }
 
                 if (contact.Range > _distance)
                 {
-                    Logger.Debug($"Contact {contact.Id} is more than {_distance} miles ({contact.Range})");
+                    Logger.Debug($"{_sender.Id} - {_sender.Callsign}: Contact {contact.Id} is more than {_distance} miles ({contact.Range})");
                     return;
                 }
 
                 if (WarningStates[_sender.Id].Contains(contact.Id))
                 {
-                    Logger.Debug($"Contact {contact.Id} already reported");
+                    Logger.Debug($"{_sender.Id} - {_sender.Callsign}: Contact {contact.Id} already reported");
                     return;
                 }
 
-                Logger.Debug($"New contact {contact.Id}");
+                Logger.Debug($"{_sender.Id} - {_sender.Callsign}: New contact {contact.Id} at {contact.Range} miles");
 
                 using (var activity =
                     Constants.ActivitySource.StartActivity("WarningRadiusChecker.SendWarning", ActivityKind.Consumer))
                 {
                     var response = $"{_sender.Callsign}, {_awacs}, Threat, {BogeyDope.BuildResponse(_sender, contact)}";
-                    Logger.Debug($"Response: {response}");
+                    Logger.Debug($"{_sender.Id} - {_sender.Callsign}: Response: {response}");
 
                     var ssmlResponse =
                         $"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{_voice}\">{response}</voice></speak>";
@@ -120,7 +121,7 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
 
                     if (audioData != null)
                     {
-                        Logger.Info($"Outgoing Transmission: {response}");
+                        Logger.Info($"{_sender.Id} - {_sender.Callsign}: Outgoing Transmission: {response}");
                         _responseQueue.Enqueue(audioData);
                         WarningStates[_sender.Id].Add(contact.Id);
                     }
@@ -128,11 +129,7 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
             }
             catch (Exception ex)
             {
-                Logger.Error(ex, "Error checking warning radius");
-            }
-            finally
-            {
-                Stop();
+                Logger.Error(ex, $"{_sender.Id} - {_sender.Callsign}: Error checking warning radius");
             }
         }
     }

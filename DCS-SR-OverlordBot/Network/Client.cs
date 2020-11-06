@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network;
@@ -169,6 +170,29 @@ namespace RurouniJones.DCS.OverlordBot.Network
                 let receivingRadio = radioInfo.CanHearTransmission(freq, modulation, 0, currentUnitId, new List<int>(), out _, out _)
                 where receivingRadio != null
                 select client.Value).ToList();
+        }
+
+        public List<string> GetHumanSrsClients()
+        {
+            var allClients = _clients.Values;
+            return (from client in allClients where !client.Name.Contains("OverlordBot") && !client.Name.Contains("ATIS") && !client.Name.Contains("---") select client.Name).ToList();
+        }
+
+        public List<string> GetBotCallsignCompatibleClients()
+        {
+            var allClients = _clients.Values;
+            return (from client in allClients where client.Name != "OverlordBot" && !client.Name.Contains("ATIS") && !client.Name.Contains("---") && IsClientNameCompatible(client.Name) select client.Name).ToList();
+        }
+
+        public bool IsClientNameCompatible(string name)
+        {
+            return Regex.Match(name, @"[a-zA-Z]{3,} \d-\d{1,2}").Success || Regex.Match(name, @"[a-zA-Z]{3,} \d{2,3}").Success;
+        }
+
+        public List<string> GetHumansOnFreq(RadioInformation radioInfo)
+        {
+            var clientsOnFreq = ClientsOnFreq(radioInfo.freq, radioInfo.modulation);
+            return (from client in clientsOnFreq where client.Name != "OverlordBot" select client.Name).ToList();
         }
 
         #endregion

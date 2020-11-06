@@ -26,6 +26,8 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
         private readonly List<NavigationPoint> _taxiPoints;
         private NavigationPoint _currentTaxiPoint;
 
+        public static readonly ConcurrentDictionary<string, TaxiProgressChecker> TaxiChecks = new ConcurrentDictionary<string, TaxiProgressChecker>();
+
         private readonly ConcurrentQueue<byte[]> _responseQueue;
 
         private const double CheckInterval = 1000; // milliseconds
@@ -54,14 +56,17 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
             _checkTimer.Start();
 
             _airfield.TaxiingAircraft[_sender.Id] = this;
+            TaxiChecks[_sender.Id] = this;
+
         }
 
-        private void Stop()
+        public void Stop()
         {
             Logger.Debug($"Stopping taxi progress check for {_sender.Id}");
             _checkTimer.Stop();
             _checkTimer.Close();
             _airfield.TaxiingAircraft.TryRemove(_sender.Id, out _);
+            TaxiChecks.TryRemove(_sender.Id, out _);
         }
 
         private async Task CheckAsync()

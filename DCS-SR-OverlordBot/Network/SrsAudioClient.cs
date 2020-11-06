@@ -158,7 +158,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
         public void RequestStop()
         {
             _stop = true;
-            _listener.Close();
+            _listener?.Close();
 
             _stopFlag.Cancel();
             _pingStop.Cancel();
