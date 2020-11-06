@@ -421,6 +421,106 @@
       "source": "Bravo November",
       "target": "Charlie November",
       "cost": 1
+    },
+    {
+      "name": "Inbound",
+      "source": "Entry-Exit South",
+      "target": "Initial-2 6",
+      "cost": 1
+    },
+    {
+      "name": "Outbound",
+      "source": "Initial-2 6",
+      "target": "Entry-Exit South",
+      "cost": 1
+    },
+    {
+      "name": "Inbound",
+      "source": "Entry-Exit South",
+      "target": "Initial-0 8",
+      "cost": 1
+    },
+    {
+      "name": "Outbound",
+      "source": "Initial-0 8",
+      "target": "Entry-Exit South",
+      "cost": 1
+    },
+    {
+      "name": "Inbound",
+      "source": "Entry-Exit West",
+      "target": "Initial-0 8",
+      "cost": 1
+    },
+    {
+      "name": "Outbound",
+      "source": "Initial-0 8",
+      "target": "Entry-Exit West",
+      "cost": 1
+    },
+    {
+      "name": "Inbound",
+      "source": "Entry-Exit East",
+      "target": "Initial-2 6",
+      "cost": 1
+    },
+    {
+      "name": "Outbound",
+      "source": "Initial-2 6",
+      "target": "Entry-Exit East",
+      "cost": 1
+    },
+    {
+      "name": "Final",
+      "source": "Initial-2 6",
+      "target": "Runway-2 6",
+      "cost": 1
+    },
+    {
+      "name": "Outbound",
+      "source": "Runway-2 6",
+      "target": "Initial-2 6",
+      "cost": 1
+    },
+    {
+      "name": "Final",
+      "source": "Initial-0 8",
+      "target": "Runway-0 8",
+      "cost": 1
+    },
+    {
+      "name": "Outbound",
+      "source": "Runway-0 8",
+      "target": "Initial-0 8",
+      "cost": 1
+    }
+  ],
+  "waypoints": [
+    // Entry-Exit north unused because it goes straight to a runway
+    {
+      "name": "Initial-0 8",
+      "lat": 42.1696226,
+      "lon": 42.4166988
+    },
+    {
+      "name": "Initial-2 6",
+      "lat": 42.1860209,
+      "lon": 42.5474729
+    },
+    {
+      "name": "Entry-Exit East",
+      "lat": 42.2028833,
+      "lon": 42.6524167
+    },
+    {
+      "name": "Entry-Exit West",
+      "lat": 42.1300667,
+      "lon": 42.3003
+    },
+    {
+      "name": "Entry-Exit South",
+      "lat": 42.1046167,
+      "lon": 42.5304
     }
   ]
 }
