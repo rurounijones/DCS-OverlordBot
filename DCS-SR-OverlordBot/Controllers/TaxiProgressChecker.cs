@@ -32,6 +32,8 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
 
         private const double CheckInterval = 1000; // milliseconds
 
+        private string _previousId;
+
         public TaxiProgressChecker(Player sender, Airfield airfield, string voice, List<NavigationPoint> taxiPoints,
             ConcurrentQueue<byte[]> responseQueue)
         {
@@ -62,11 +64,12 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
 
         public void Stop()
         {
-            Logger.Debug($"Stopping taxi progress check for {_sender.Id}");
+            var id = _sender.Id.Equals("DELETED") ? _previousId : _sender.Id;
+            Logger.Debug($"Stopping taxi progress check for {id}");
             _checkTimer.Stop();
-            _checkTimer.Close();
-            _airfield.TaxiingAircraft.TryRemove(_sender.Id, out _);
-            TaxiChecks.TryRemove(_sender.Id, out _);
+            _checkTimer.Dispose();
+            _airfield.TaxiingAircraft.TryRemove(id, out _);
+            TaxiChecks.TryRemove(id, out _);
         }
 
         private async Task CheckAsync()
@@ -74,15 +77,16 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
             try
             {
                 Logger.Debug($"Peforming Taxi Progress check for {_sender.Id}");
-                var previousId = _sender.Id;
+                _previousId = _sender.Id;
                 await GameQuerier.PopulatePilotData(_sender);
 
-                // If the caller does not exist any more or the ID has been reused for a different object then cancel the check.
-                if (_sender.Id == null || _sender.Id != previousId)
+                // If the caller does not exist any more or the ID has been reused for a different object
+                // then cancel the check.
+                if (_sender.Id == null || _sender.Id != _previousId)
                 {
                     _sender.Id = "DELETED";
                     Logger.Debug(
-                        $"Stopping Taxi Progress Check. CallerId changed, New: {_sender.Id} , Old: {previousId}.");
+                        $"{_sender.Id} - {_sender.Callsign}: Stopping Warning Radius Check. CallerId changed, New: {_sender.Id} , Old: {_previousId}.");
                     Stop();
                     return;
                 }
@@ -127,15 +131,36 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
                         {
                             Logger.Debug(
                                 $"Stopping Taxi Progress Check. {_sender.Id} has reached the end of the taxi route at {_currentTaxiPoint.Name}");
-                            activity?.AddTag("Response", "RunwayTakeOff");
-                            await SendMessage($"Take-off {_currentTaxiPoint.Name} at your discretion");
+
+                            // Check to see if we have any aircraft on initial or final
+                            if(_airfield.ApproachingAircraft.Values.Any(x => (x.CurrentState == ApproachChecker.State.Base || x.CurrentState == ApproachChecker.State.Final || x.CurrentState == ApproachChecker.State.ShortFinal)
+                                                                             && x.Destination == _taxiPoints.First()))
+                            {
+                                activity?.AddTag("Response", "Hold Short");
+                                await SendMessage($"Hold short {_currentTaxiPoint.Name}");
+                            }
+                            else
+                            {
+                                activity?.AddTag("Response", "RunwayTakeOff");
+                                await SendMessage($"Take-off {_currentTaxiPoint.Name} at your discretion");
+                                Stop();
+                            }
                         }
                         else
                         {
-                            activity?.AddTag("Response", "RunwayCrossing");
-                            // If we have reached this bit in the code then the current taxi point is a runway that is not the terminus of the route
-                            // so tell the player they are good to cross.
-                            await SendMessage($"cross {_currentTaxiPoint.Name} at your discretion");
+                            if(_airfield.ApproachingAircraft.Values.Any(x => (x.CurrentState == ApproachChecker.State.Base || x.CurrentState == ApproachChecker.State.Final || x.CurrentState == ApproachChecker.State.ShortFinal)
+                                                                             && x.Destination == _taxiPoints.First()))
+                            {
+                                activity?.AddTag("Response", "Hold Short");
+                                await SendMessage($"Hold short {_currentTaxiPoint.Name}");
+                            }
+                            else
+                            {
+                                activity?.AddTag("Response", "RunwayCrossing");
+                                // If we have reached this bit in the code then the current taxi point is a runway that is not the terminus of the route
+                                // so tell the player they are good to cross.
+                                await SendMessage($"cross {_currentTaxiPoint.Name} at your discretion");
+                            }
                         }
                     }
                 } else if (_taxiPoints.Count == 1)
@@ -153,9 +178,7 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
 
         private async Task SendMessage(string message)
         {
-            var name = AirbasePronouncer.PronounceAirbase(_airfield.Name);
-            var response =
-                $"{_sender.Callsign}, {name} ground, {message}"; 
+            var response = $"{_sender.Callsign}, {message}"; 
 
             var ssmlResponse =
                 $"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{_voice}\">{response}</voice></speak>";

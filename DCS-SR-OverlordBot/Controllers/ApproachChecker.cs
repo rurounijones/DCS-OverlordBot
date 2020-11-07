@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Timers;
+using System.Xaml;
 using Geo;
 using NLog;
 using RurouniJones.DCS.Airfields.Structure;
@@ -25,7 +26,6 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
         private DateTime _lastInstruction;
         private DateTime _startTime;
 
-
         private readonly Airfield _airfield;
         private readonly string _voice;
 
@@ -35,13 +35,18 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
         
         private readonly StateMachine<State, Trigger> _approachState;
 
-        public enum State {Flying, Inbound, Base, Final, ShortFinal}
-        public enum Trigger { StartInbound, TurnBase, TurnFinal, EnterShortFinal}
+        public State CurrentState => _approachState.State;
+        public NavigationPoint Destination => _wayPoints.Last();
+
+        public enum State {Flying, Inbound, Base, Final, ShortFinal, Landed, Taxi, Aborted}
+        public enum Trigger { StartInbound, TurnBase, TurnFinal, EnterShortFinal, Touchdown, LeaveRunway, Abort }
 
         private readonly ConcurrentQueue<byte[]> _responseQueue;
 
         private readonly int _checkInterval = 1000;
         private readonly int _transmissionInterval = 20000;
+
+        private string _previousId;
 
         public ApproachChecker(Player sender, Airfield airfield, string voice, List<NavigationPoint> wayPoints,
             ConcurrentQueue<byte[]> responseQueue)
@@ -88,14 +93,21 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
                 .Permit(Trigger.EnterShortFinal, State.ShortFinal);
 
             _approachState.Configure(State.ShortFinal)
-                .OnEntryFromAsync(Trigger.EnterShortFinal, EnterShortFinal);
+                .OnEntryFromAsync(Trigger.EnterShortFinal, EnterShortFinal)
+                .Permit(Trigger.Touchdown, State.Landed);
+
+            _approachState.Configure(State.Landed)
+                .OnEntryFromAsync(Trigger.TurnFinal, Touchdown)
+                .Permit(Trigger.LeaveRunway, State.Taxi);
+
+            _approachState.OnUnhandledTrigger((s, t, u) => Stop());
         }
 
         private async Task CheckDuration()
         {
             if ((DateTime.Now - _startTime).TotalMinutes > 10)
             {
-                Logger.Debug($"Inbound for more than 10 minutes. Stopping check.");
+                Logger.Debug($"{_sender.Id} - {_sender.Callsign}: Inbound for more than 10 minutes. Stopping check.");
                 Stop();
             }
         }
@@ -104,7 +116,7 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
         {
             await Task.Run(() =>
             {
-                Logger.Debug($"{_sender.Id} Starting inbound, current waypoint {_wayPoints[0].Name}");
+                Logger.Debug($"{_sender.Id} - {_sender.Callsign}: Starting inbound, current waypoint {_wayPoints[0].Name}");
                 _lastInstruction = DateTime.Now;
                 _checkTimer?.Stop();
                 _wayPoints.RemoveAt(0);
@@ -116,7 +128,7 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
 
         private async Task TurnBase()
         {
-            Logger.Debug($"{_sender.Id} Turning base");
+            Logger.Debug($"{_sender.Id} - {_sender.Callsign}: Turning base");
             _checkTimer.Stop();
             _wayPoints.RemoveAt(0);
             _checkTimer = new Timer(_checkInterval);
@@ -128,7 +140,7 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
 
         private async Task TurnFinal()
         {
-            Logger.Debug($"{_sender.Id} Turning final");
+            Logger.Debug($"{_sender.Id} - {_sender.Callsign}: Turning final");
             _checkTimer.Stop();
             _wayPoints.RemoveAt(0);
             _checkTimer = new Timer(_checkInterval);
@@ -141,19 +153,48 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
 
         private async Task EnterShortFinal()
         {
-            Logger.Debug($"{_sender.Id} entering short final");
+            Logger.Debug($"{_sender.Id} - {_sender.Callsign}: entering short final");
             _checkTimer.Stop();
             await SendMessage($"Check gear, land {_wayPoints.First().Name} at your discretion");
-            await Task.Run(Stop);
+            _checkTimer.Elapsed += async (s, e) => await HasTouchedDown();
+            _checkTimer.Start();
+        }
+
+        private async Task HasTouchedDown()
+        {
+            if (_sender.Altitude < (_airfield.Altitude + 3))
+                await _approachState.FireAsync(Trigger.Touchdown);
+        }
+
+        private async Task Touchdown()
+        {
+            Logger.Debug($"{_sender.Id} - {_sender.Callsign}: touched down");
+            _checkTimer.Stop();
+            _checkTimer.Elapsed += async (s, e) => await IsExitedRunway();
+            _checkTimer.Start();
+        }
+
+        private async Task IsExitedRunway()
+        {
+            var closestPoint = _airfield.TaxiPoints.OrderBy(taxiPoint => taxiPoint.DistanceTo(_sender.Position.Coordinate))
+                .First();
+            if (!closestPoint.Name.Contains("Runway"))
+            {
+                Logger.Debug($"{_sender.Id} - {_sender.Callsign}: Left runway");
+                _checkTimer.Stop();
+                Stop();
+                await _approachState.FireAsync(Trigger.LeaveRunway);
+            }
         }
 
         public void Stop()
         {
-            Logger.Debug($"Stopping approach progress check for {_sender.Id}");
+            var id = _sender.Id.Equals("DELETED") ? _previousId : _sender.Id;
+            Logger.Debug($"{id} - {_sender.Callsign}: Stopping approach progress check");
             _checkTimer.Stop();
-            _checkTimer.Close();
-            _airfield.ApproachingAircraft.TryRemove(_sender.Id, out _);
-            ApproachChecks.TryRemove(_sender.Id, out _);
+            _checkTimer.Dispose();
+            _airfield.ApproachingAircraft.TryRemove(id, out _);
+            ApproachChecks.TryRemove(id, out _);
         }
 
         private async Task FireTriggerOnNextWayPoint(double distance, Trigger trigger)
@@ -170,21 +211,21 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
 
         private async Task<bool> IsPlayerDeleted()
         {
-            var previousId = _sender.Id;
+            _previousId = _sender.Id;
             await GameQuerier.PopulatePilotData(_sender);
 
             // If the caller does not exist any more or the ID has been reused for a different object then cancel the check.
-            if (_sender.Id != null && _sender.Id == previousId) return false;
+            if (_sender.Id != null && _sender.Id == _previousId) return false;
             _sender.Id = "DELETED";
             Logger.Debug(
-                $"Stopping Approach Progress Check. CallerId changed, New: {_sender.Id} , Old: {previousId}.");
+                $"{_previousId} - {_sender.Callsign}: Stopping Approach Progress Check. CallerId changed, New: {_sender.Id} , Old: {_previousId}.");
             Stop();
             return true;
         }
 
         private async Task CheckInboundAsync()
         {
-            Logger.Debug($"Inbound Progress Check for {_sender.Id}");
+            Logger.Debug($"{_sender.Id} - {_sender.Callsign}: Inbound Progress Check");
             await CheckDuration();
             if (await IsPlayerDeleted())
                 return;
@@ -218,18 +259,18 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
 
             if (_sender.Heading == null)
             {
-                Logger.Debug($"{_sender.Id} heading was null");
+                Logger.Debug($"{_sender.Id} - {_sender.Callsign}: heading was null");
                 return;
             }
 
-            Logger.Debug($"{_sender.Id}. {(DateTime.Now - _lastInstruction).TotalSeconds} since last transmission");
+            Logger.Debug($"{_sender.Id} - {_sender.Callsign}: {(DateTime.Now - _lastInstruction).TotalSeconds} since last transmission");
             if ((DateTime.Now - _lastInstruction).TotalMilliseconds < _transmissionInterval)
             {
-                Logger.Debug($"Time between two transmissions too low, returning");
+                Logger.Debug($"{_sender.Id} - {_sender.Callsign}: Time between two transmissions too low, returning");
                 return;
             }
 
-            Logger.Debug($"Time between two transmissions ok");
+            Logger.Debug($"{_sender.Id} - {_sender.Callsign}: Time between two transmissions ok");
 
             var sH = (int) _sender.Heading;
             var wH = (int) Geospatial.BearingTo(_sender.Position.Coordinate,
@@ -238,7 +279,7 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
             var headingDiff = Math.Min((wH - sH) < 0 ? wH - sH + 360 : wH - sH,
                 (sH - wH) < 0 ? sH - wH + 360 : sH - wH);
 
-            Logger.Debug($"Headings: Waypoint {wH}, Player {sH}, diff {headingDiff}");
+            Logger.Debug($"{_sender.Id} - {_sender.Callsign}: Headings: Waypoint {wH}, Player {sH}, diff {headingDiff}");
 
             if (headingDiff <= 5) 
                 return;
@@ -265,9 +306,7 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
 
         private async Task SendMessage(string message)
         {
-            var name = AirbasePronouncer.PronounceAirbase(_airfield.Name);
-            var response =
-                $"{_sender.Callsign}, {message}"; 
+            var response = $"{_sender.Callsign}, {message}"; 
 
             var ssmlResponse =
                 $"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{_voice}\">{response}</voice></speak>";
@@ -276,7 +315,7 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
 
             if (audioData != null)
             {
-                Logger.Info($"Outgoing Transmission: {response}");
+                Logger.Info($"{_sender.Id} - {_sender.Callsign}: Outgoing Transmission: {response}");
                 _responseQueue.Enqueue(audioData);
             }
         }

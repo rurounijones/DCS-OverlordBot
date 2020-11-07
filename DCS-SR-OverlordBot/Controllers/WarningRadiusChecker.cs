@@ -27,6 +27,8 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
 
         private const double CheckInterval = 5000; // milliseconds
 
+        private string _previousId;
+
         public WarningRadiusChecker(Player sender, string awacs, string voice, int distance, ConcurrentQueue<byte[]> responseQueue)
         {
             _sender = sender;
@@ -37,8 +39,17 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
 
             if (WarningChecks.ContainsKey(_sender.Id))
             {
+                Logger.Trace($"{_sender.Id} - {_sender.Callsign} already in WarningChecks");
                 WarningChecks[_sender.Id].Stop();
-                WarningChecks.TryRemove(_sender.Id, out _);
+                Logger.Trace($"{_sender.Id} - {_sender.Callsign} removed from WarningChecks: {WarningChecks.TryRemove(_sender.Id, out _)}");
+            }
+
+            if (WarningStates.ContainsKey(_sender.Id))
+            {
+                Logger.Trace($"{_sender.Id} - {_sender.Callsign} already in WarningStates");
+                WarningStates.TryRemove(_sender.Id, out _);
+                Logger.Trace($"{_sender.Id} - {_sender.Callsign} removed from WarningStates: {WarningChecks.TryRemove(_sender.Id, out _)}");
+
             }
 
             _checkTimer = new Timer(CheckInterval);
@@ -53,11 +64,12 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
 
         public void Stop()
         {
-            Logger.Debug($"{_sender.Id} - {_sender.Callsign}: Stopping Warning Check");
+            var id = _sender.Id.Equals("DELETED") ? _previousId : _sender.Id;
+            Logger.Debug($"{id} - {_sender.Callsign}: Stopping Warning Check");
             _checkTimer.Stop();
-            _checkTimer.Close();
-            WarningStates.TryRemove(_sender.Id, out _);
-            WarningChecks.TryRemove(_sender.Id, out _);
+            _checkTimer.Dispose();
+            Logger.Trace($"{id} - {_sender.Callsign} removed from WarningChecks: {WarningChecks.TryRemove(id, out _)}");
+            Logger.Trace($"{id} - {_sender.Callsign} removed from WarningStates: {WarningStates.TryRemove(id, out _)}");
         }
 
         private async Task CheckAsync()
@@ -71,16 +83,16 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
                     WarningStates.TryAdd(_sender.Id, new List<string>());
                 }
 
-                var previousId = _sender.Id;
+                _previousId = _sender.Id;
                 await GameQuerier.PopulatePilotData(_sender);
 
                 // If the caller does not exist any more or the ID has been reused for a different object
                 // then cancel the check.
-                if (_sender.Id == null || _sender.Id != previousId)
+                if (_sender.Id == null || _sender.Id != _previousId)
                 {
                     _sender.Id = "DELETED";
                     Logger.Debug(
-                        $"{_sender.Id} - {_sender.Callsign}: Stopping Warning Radius Check. CallerId changed, New: {_sender.Id} , Old: {previousId}.");
+                        $"{_sender.Id} - {_sender.Callsign}: Stopping Warning Radius Check. CallerId changed, New: {_sender.Id} , Old: {_previousId}.");
                     Stop();
                     return;
                 }
