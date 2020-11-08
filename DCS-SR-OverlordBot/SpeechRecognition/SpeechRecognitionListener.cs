@@ -215,8 +215,18 @@ namespace RurouniJones.DCS.OverlordBot.SpeechRecognition
                 if (!string.IsNullOrEmpty(response))
                 {
                     Logger.Info($"{_logClientId}| Outgoing Transmission: {response}");
+
+                    // Try twice to avoid transient Cock-ups resulting in a failure response
                     var audioResponse = await Task.Run(() => Speaker.CreateResponse(
                         $"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{Controller.Voice}\">{response}</voice></speak>"));
+
+                    if (audioResponse == null)
+                    {
+                        Logger.Debug($"{_logClientId}| First Synthesis failed, trying again");
+                        audioResponse = await Task.Run(() => Speaker.CreateResponse(
+                            $"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{Controller.Voice}\">{response}</voice></speak>"));
+                    }
+
                     if (audioResponse == null)
                     {
                         activity?.AddTag("Response", "Failure");

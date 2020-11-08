@@ -15,13 +15,14 @@ namespace RurouniJones.DCS.OverlordBot.SpeechOutput
         private static readonly RadioStreamWriter StreamWriter = new RadioStreamWriter(null);
         private static readonly AudioConfig AudioConfig = AudioConfig.FromStreamOutput(StreamWriter);
 
+        private static readonly SpeechSynthesizer Synthesizer = new SpeechSynthesizer(SpeechConfig, AudioConfig);
+
         public static async Task<byte[]> CreateResponse(string text)
         {
             using (Constants.ActivitySource.StartActivity("Speaker.CreateResponse"))
             {
                 using (var semaphore = new Semaphore(1, 1, "SpeechOutputSemaphore"))
                 {
-                    SpeechSynthesizer synthesizer = null;
                     try
                     {
                         using (Constants.ActivitySource.StartActivity("WaitingOnSemaphore"))
@@ -29,16 +30,11 @@ namespace RurouniJones.DCS.OverlordBot.SpeechOutput
                             semaphore.WaitOne();
                         }
 
-                        using (Constants.ActivitySource.StartActivity("InitializingSpeechSynthesizer"))
-                        {
-                            synthesizer = new SpeechSynthesizer(SpeechConfig, AudioConfig);
-                        }
-
                         SpeechSynthesisResult speechSynthesisResult;
 
                         using (Constants.ActivitySource.StartActivity("SpeakSsmlAsync"))
                         {
-                            speechSynthesisResult = await synthesizer.SpeakSsmlAsync(text);
+                            speechSynthesisResult = await Synthesizer.SpeakSsmlAsync(text);
                         }
 
                         using (Constants.ActivitySource.StartActivity("ProcessSpeechSynthesisResult"))
@@ -69,7 +65,6 @@ namespace RurouniJones.DCS.OverlordBot.SpeechOutput
                     }
                     finally
                     {
-                        synthesizer?.Dispose();
                         semaphore.Release();
                     }
                 }
