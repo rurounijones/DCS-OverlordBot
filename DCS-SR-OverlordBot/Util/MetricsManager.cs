@@ -3,8 +3,10 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Timers;
+using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using NewRelic.Telemetry;
 using NewRelic.Telemetry.Metrics;
+using RurouniJones.DCS.OverlordBot.Audio.Managers;
 using RurouniJones.DCS.OverlordBot.Controllers;
 using RurouniJones.DCS.OverlordBot.UI;
 
@@ -72,7 +74,7 @@ namespace RurouniJones.DCS.OverlordBot.Util
                 new Dictionary<string, object> { {"callsign", "HasCallsign"} }, 
                 client.GetBotCallsignCompatibleClients().Count);
  
-            var players = client.GetHumanSrsClients();
+            var players = client.GetHumanSrsClientNames();
             foreach (var sl2 in  client.GetBotCallsignCompatibleClients() )
             {
                 players.Remove(sl2);
@@ -100,21 +102,62 @@ namespace RurouniJones.DCS.OverlordBot.Util
 
             var metrics = new List<NewRelicMetric> { playersOnSrs, botCompatiblePlayersOnSrs, warningCheckers, taxiCheckers, approachCheckers };
 
+            var frequencyCount = new Dictionary<double, int>();
+
+            List<double> botFreqs = new List<double>();
+
             // Get per-client metrics
+
+            // Get stats for the frequencies the bot is listening on
             foreach (var audioManager in MainWindow.AudioManagers)
             {
                 var radioInfo = audioManager.PlayerRadioInfo.radios.First();
-
+                botFreqs.Add(radioInfo.freq);
                 metrics.Add(NewRelicMetric.CreateGaugeMetric("PlayersOnFrequency", 
                         DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
                         new Dictionary<string, object> { {"frequency", $"{radioInfo.freq / 1000000} - Bot {radioInfo.botType}"} }, 
-                        audioManager.Client.GetHumansOnFreq(audioManager.PlayerRadioInfo.radios.First()).Count)
-                );
+                        audioManager.Client.GetHumansOnFreq(audioManager.PlayerRadioInfo.radios.First()).Count));
+                metrics.Add(NewRelicMetric.CreateGaugeMetric("PlayersOnBotFrequency", 
+                    DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                    new Dictionary<string, object> { {"frequency", $"{radioInfo.freq / 1000000} - Bot {radioInfo.botType}"} }, 
+                    audioManager.Client.GetHumansOnFreq(audioManager.PlayerRadioInfo.radios.First()).Count));
             }
 
+
+            // Get stats for the frequencies the players are on that the bot may not be on
+            foreach (var playerClient in MainWindow.AudioManagers.First().Client.GetHumanSrsClients())
+            {
+                // We just want people in aircraft
+                if (playerClient.Coalition == 0 || playerClient.RadioInfo.unit.Equals("External AWACS") ||  playerClient.RadioInfo.unit.Equals("CA"))
+                    continue;
+
+                foreach (var radio in playerClient.RadioInfo.radios)
+                {
+                    if (botFreqs.Contains(radio.freq) || (int) radio.freq == 1 || radio.modulation == RadioInformation.Modulation.INTERCOM)
+                        continue;
+                    var freq = radio.freq;
+                    if (frequencyCount.ContainsKey(freq))
+                    {
+                        frequencyCount[freq] += 1;
+                    }
+                    else
+                    {
+                        frequencyCount.Add(freq, 1);
+                    }
+                }
+            }
+
+            foreach (var data in frequencyCount)
+            {
+                metrics.Add(NewRelicMetric.CreateGaugeMetric("PlayersOnFrequency",
+                    DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                    new Dictionary<string, object> {{"frequency", $"{data.Key / 1000000}"}},
+                    data.Value));
+            }
+
+            // Radio Call counts
             var counts = new Dictionary<string, Dictionary<string, int>>();
-
-
+            
             while(RadioCallIntents.Count > 0)
             {
                 RadioCallIntents.TryDequeue(out var call);

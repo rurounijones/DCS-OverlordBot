@@ -210,6 +210,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
                                                 if (updatedSrClient.RadioInfo != null)
                                                 {
                                                     srClient.RadioInfo = updatedSrClient.RadioInfo;
+                                                    srClient.RadioInfo.inAircraft = updatedSrClient.RadioInfo.inAircraft;
                                                     srClient.RadioInfo.LastUpdate = DateTime.Now.Ticks;
                                                 }
                                                 else

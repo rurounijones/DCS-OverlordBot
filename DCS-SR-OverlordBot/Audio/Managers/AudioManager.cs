@@ -180,8 +180,17 @@ namespace RurouniJones.DCS.OverlordBot.Audio.Managers
                         }
                     }
 
+                    byte[] buff = null;
+                    var len = 0;
                     //encode as opus bytes
-                    var buff = _encoder.Encode(packetBuffer, SegmentFrames, out var len);
+                    try
+                    {
+                        buff = _encoder.Encode(packetBuffer, SegmentFrames, out len);
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Error($"{LogClientId}| Error encoding Audio Bytes");
+                    }
 
                     if (Client?.SrsAudioClient != null && buff != null && len > 0)
                     {

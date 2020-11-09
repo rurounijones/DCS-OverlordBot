@@ -84,8 +84,8 @@ namespace RurouniJones.DCS.OverlordBot.Discord
         public static async Task LogTransmissionToDiscord(string transmission, RadioInformation radioInfo, Network.Client client)
         {
             transmission += $"\nClients on freq {radioInfo.freq / 1000000}MHz: {string.Join(", ", client.GetHumansOnFreq(radioInfo))}\n" +
-            $"Total / Compatible / On Freq Callsigns : {client.GetHumanSrsClients().Count} / {client.GetBotCallsignCompatibleClients().Count} / {client.GetHumansOnFreq(radioInfo).Count}\n" +
-            $"On Freq percentage of Total / Compatible: { Math.Round(client.GetHumansOnFreq(radioInfo).Count / (double)client.GetHumanSrsClients().Count * 100, 2) }% / " +
+            $"Total / Compatible / On Freq Callsigns : {client.GetHumanSrsClientNames().Count} / {client.GetBotCallsignCompatibleClients().Count} / {client.GetHumansOnFreq(radioInfo).Count}\n" +
+            $"On Freq percentage of Total / Compatible: { Math.Round(client.GetHumansOnFreq(radioInfo).Count / (double)client.GetHumanSrsClientNames().Count * 100, 2) }% / " +
             $"{ Math.Round(client.GetHumansOnFreq(radioInfo).Count / (double)client.GetBotCallsignCompatibleClients().Count * 100, 2) }%";
 
             if (_socket == null || _socket.ConnectionState != ConnectionState.Connected)

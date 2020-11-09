@@ -172,7 +172,13 @@ namespace RurouniJones.DCS.OverlordBot.Network
                 select client.Value).ToList();
         }
 
-        public List<string> GetHumanSrsClients()
+        public List<SRClient> GetHumanSrsClients()
+        {
+            var allClients = _clients.Values;
+            return (from client in allClients where !client.Name.Contains("OverlordBot") && !client.Name.Contains("ATIS") && !client.Name.Contains("---") select client).ToList();
+        }
+
+        public List<string> GetHumanSrsClientNames()
         {
             var allClients = _clients.Values;
             return (from client in allClients where !client.Name.Contains("OverlordBot") && !client.Name.Contains("ATIS") && !client.Name.Contains("---") select client.Name).ToList();
