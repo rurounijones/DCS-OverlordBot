@@ -122,7 +122,7 @@ namespace RurouniJones.DCS.OverlordBot
             TokenSource.Cancel();
             _airfieldUpdateTimer.Stop();
             _airfieldUpdateTimer.Dispose();
-            Task.Run(DiscordClient.Disconnect);
+            Task.Run(async () => await DiscordClient.Disconnect());
             SrsDataClient.ApplicationStopped = true;
 
             foreach( var checker in WarningRadiusChecker.WarningChecks)

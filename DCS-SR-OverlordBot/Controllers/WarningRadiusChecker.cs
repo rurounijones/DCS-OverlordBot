@@ -129,7 +129,14 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
                     var ssmlResponse =
                         $"<speak version=\"1.0\" xmlns=\"https://www.w3.org/2001/10/synthesis\" xml:lang=\"en-US\"><voice name =\"{_voice}\">{response}</voice></speak>";
 
+                    // Try twice for timeout reasons
                     var audioData = await Speaker.CreateResponse(ssmlResponse);
+
+                    if (audioData == null)
+                    {
+                        Logger.Debug($"{_sender.Id} - {_sender.Callsign}:| First Synthesis failed, trying again");
+                        audioData = await Task.Run(() => Speaker.CreateResponse(ssmlResponse));
+                    }
 
                     if (audioData != null)
                     {

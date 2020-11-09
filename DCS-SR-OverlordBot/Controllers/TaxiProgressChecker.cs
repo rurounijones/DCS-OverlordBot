@@ -185,6 +185,12 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
 
             var audioData = await Speaker.CreateResponse(ssmlResponse);
 
+            if (audioData == null)
+            {
+                Logger.Debug($"{_sender.Id} - {_sender.Callsign}:| First Synthesis failed, trying again");
+                audioData = await Task.Run(() => Speaker.CreateResponse(ssmlResponse));
+            }
+
             if (audioData != null)
             {
                 Logger.Info($"Outgoing Transmission: {response}");
