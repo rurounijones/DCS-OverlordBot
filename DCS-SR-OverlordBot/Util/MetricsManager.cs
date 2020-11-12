@@ -6,7 +6,6 @@ using System.Timers;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using NewRelic.Telemetry;
 using NewRelic.Telemetry.Metrics;
-using RurouniJones.DCS.OverlordBot.Audio.Managers;
 using RurouniJones.DCS.OverlordBot.Controllers;
 using RurouniJones.DCS.OverlordBot.UI;
 
@@ -108,19 +107,42 @@ namespace RurouniJones.DCS.OverlordBot.Util
 
             // Get per-client metrics
 
+            var totalPlayerCount = client.GetHumanSrsClientNames().Count;
+            var playerOnBotFreqCount = 0;
+
             // Get stats for the frequencies the bot is listening on
             foreach (var audioManager in MainWindow.AudioManagers)
             {
                 var radioInfo = audioManager.PlayerRadioInfo.radios.First();
+                var playersOnFreqCount = audioManager.Client.GetHumansOnFreq(audioManager.PlayerRadioInfo.radios.First()).Count;
+                playerOnBotFreqCount += playersOnFreqCount;
+
                 botFreqs.Add(radioInfo.freq);
                 metrics.Add(NewRelicMetric.CreateGaugeMetric("PlayersOnFrequency", 
                         DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
                         new Dictionary<string, object> { {"frequency", $"{radioInfo.freq / 1000000} - Bot {radioInfo.botType}"} }, 
-                        audioManager.Client.GetHumansOnFreq(audioManager.PlayerRadioInfo.radios.First()).Count));
+                        playersOnFreqCount));
                 metrics.Add(NewRelicMetric.CreateGaugeMetric("PlayersOnBotFrequency", 
                     DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
                     new Dictionary<string, object> { {"frequency", $"{radioInfo.freq / 1000000} - Bot {radioInfo.botType}"} }, 
-                    audioManager.Client.GetHumansOnFreq(audioManager.PlayerRadioInfo.radios.First()).Count));
+                    playersOnFreqCount));
+            }
+
+            if (totalPlayerCount == 0 || playerOnBotFreqCount == 0)
+            {
+                metrics.Add(NewRelicMetric.CreateGaugeMetric("PlayersOnBotFrequencyPercentage",
+                    DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                    null,
+                    0));
+            }
+            else
+            {
+                var percentage = (double) playerOnBotFreqCount / totalPlayerCount * 100;
+
+                metrics.Add(NewRelicMetric.CreateGaugeMetric("PlayersOnBotFrequencyPercentage",
+                    DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                    null,
+                    (int) percentage));
             }
 
 
