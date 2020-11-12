@@ -34,8 +34,13 @@ namespace RurouniJones.DCS.OverlordBot.Audio.Providers
             };
             _silence =  new byte[_speechAudioProvider.WaveFormat.AverageBytesPerSecond * 2];
             SpeechRecognitionListener = new SpeechRecognitionListener(_speechAudioProvider, responseQueue, receivedRadioInfo);
+        }
+
+        public void StartListening()
+        {
             Task.Run(() => SpeechRecognitionListener.StartListeningAsync());
         }
+
 
         public void AddClientAudioSamples(ClientAudio audio)
         {

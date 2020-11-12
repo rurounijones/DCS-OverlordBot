@@ -50,6 +50,11 @@ namespace RurouniJones.DCS.OverlordBot.Audio.Managers
             PlayerRadioInfo = playerRadioInfo;
             LogClientId =  PlayerRadioInfo.radios[0].name;
             Client = new Network.Client(this, playerRadioInfo);
+
+            BotAudioProvider = new BotAudioProvider(Client.DcsPlayerRadioInfo.radios[0], ResponseQueue)
+            {
+                SpeechRecognitionListener = { VoiceHandler = Client.SrsAudioClient, SrsClient = Client }
+            };
         }
 
         public void ConnectToSrs(IPEndPoint address)
@@ -59,11 +64,7 @@ namespace RurouniJones.DCS.OverlordBot.Audio.Managers
 
         public void StartEncoding()
         {
-            BotAudioProvider = new BotAudioProvider(Client.DcsPlayerRadioInfo.radios[0], ResponseQueue)
-            {
-                SpeechRecognitionListener = { VoiceHandler = Client.SrsAudioClient, SrsClient = Client }
-            };
-            
+            BotAudioProvider.StartListening();
             StartResponseCheckLoop();
 
             try
