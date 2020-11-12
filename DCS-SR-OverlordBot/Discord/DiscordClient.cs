@@ -19,6 +19,8 @@ namespace RurouniJones.DCS.OverlordBot.Discord
         private static readonly string Token = Properties.Settings.Default.DiscordToken;
         private static readonly ulong TransmissionLogDiscordGuildId = Properties.Settings.Default.TransmissionLogDiscordGuild;
 
+        private static bool _stop;
+
         public static async Task Connect()
         {
             // This is an optional feature so we will not connect to discord unless the client token is present
@@ -108,6 +110,7 @@ namespace RurouniJones.DCS.OverlordBot.Discord
 
         public static async Task Disconnect()
         {
+            _stop = true;
             if (_socket != null)
             {
                 await _socket.StopAsync();
@@ -116,6 +119,8 @@ namespace RurouniJones.DCS.OverlordBot.Discord
 
         private static async Task Reconnect(Exception e)
         {
+            if (_stop)
+                return;
             Logger.Info("Disconnected from Discord");
             if (e != null)
             {
