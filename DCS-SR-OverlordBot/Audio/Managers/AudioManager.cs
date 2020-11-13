@@ -45,6 +45,8 @@ namespace RurouniJones.DCS.OverlordBot.Audio.Managers
         public DCSPlayerRadioInfo PlayerRadioInfo;
         public string LogClientId;
 
+        private volatile bool _stop;
+
         public AudioManager(DCSPlayerRadioInfo playerRadioInfo)
         {
             PlayerRadioInfo = playerRadioInfo;
@@ -85,6 +87,7 @@ namespace RurouniJones.DCS.OverlordBot.Audio.Managers
 
         public void StopEncoding()
         {
+            Logger.Info($"{LogClientId} - Stopping Encoding");
             Task.Run(async () => await BotAudioProvider.SpeechRecognitionListener.StopRecognition());
             Client.Disconnect();
             _clientAudioMixer?.RemoveAllMixerInputs();
@@ -96,14 +99,10 @@ namespace RurouniJones.DCS.OverlordBot.Audio.Managers
             _decoder?.Dispose();
             _decoder = null;
           
-            if (Client.SrsAudioClient != null)
-            {
-                Client.SrsAudioClient.RequestStop();
-                Client.SrsAudioClient = null;
-            }
-
             SpeakerMax = -100;
             MicMax = -100;
+
+            _stop = true;
 
             MessageHub.Instance.ClearSubscriptions();
         }
@@ -118,21 +117,13 @@ namespace RurouniJones.DCS.OverlordBot.Audio.Managers
             new Thread(async () =>
             {
                 Thread.CurrentThread.IsBackground = true;
-                while (true)
+                while (!_stop)
                 {
-                    if (Client == null)
-                    {
-                        Logger.Error($"{LogClientId}| Client is Null");
-                        continue;
-                    }
-
-                    if (Client.SrsAudioClient == null)
-                    {
-                        Logger.Error($"{LogClientId}| Client.SrsAudioClient is Null");
-                        continue;
-                    }
-
-                    if (!Client.SrsAudioClient.RadioSendingState.IsSending && ResponseQueue.TryDequeue(out var response) && response != null)
+                    if (Client.IsDataConnected &&
+                        Client.IsAudioConnected &&
+                        !Client.SrsAudioClient.RadioSendingState.IsSending &&
+                        ResponseQueue.TryDequeue(out var response) &&
+                        response != null)
                     {
                         Logger.Trace($"{LogClientId}| Sending Response");
                         using (var activity = Constants.ActivitySource.StartActivity("AudioManager.SendResponse", ActivityKind.Consumer))

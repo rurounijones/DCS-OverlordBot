@@ -17,7 +17,7 @@ namespace RurouniJones.DCS.OverlordBot.RadioCalls
         /// <summary>
         /// The intent of the radio transmission
         /// </summary>
-        public virtual string Intent => LuisResponse.TopScoringIntent["intent"];
+        public virtual string Intent => LuisResponse.TopScoringIntent?["intent"];
 
         public string Message => LuisResponse.Query;
 

@@ -42,12 +42,12 @@ namespace RurouniJones.DCS.OverlordBot.Network
 
         private readonly IPEndPoint _serverEndpoint;
 
-        private volatile bool _stop;
+        private volatile bool _requestStop;
 
-        private Timer _timer;
+        private Timer _transmissionEndCheckTimer;
 
         private long _udpLastReceived;
-        private readonly DispatcherTimer _updateTimer;
+        private DispatcherTimer _udpTimeoutChecker;
 
         public SrsAudioClient(Client mainClient)
         {
@@ -57,13 +57,9 @@ namespace RurouniJones.DCS.OverlordBot.Network
             _mainClient = mainClient;
 
             _serverEndpoint = mainClient.Endpoint;
-
-            _updateTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(5) };
-            _updateTimer.Tick += UpdateAudioConnectionStatus;
-            _updateTimer.Start();
         }
 
-        private void UpdateAudioConnectionStatus(object sender, EventArgs e)
+        private void CheckUdpTimeout(object sender, EventArgs e)
         {
             var diff = TimeSpan.FromTicks(DateTime.Now.Ticks - _udpLastReceived);
 
@@ -74,8 +70,8 @@ namespace RurouniJones.DCS.OverlordBot.Network
             }
             else
             {
-                Logger.Info($"{_mainClient.LogClientId}| {diff.Seconds} seconds since last Received UDP data from Server");
-                _mainClient.Disconnect();
+                Logger.Info($"{_mainClient.LogClientId}| {diff.Seconds} seconds since last Received UDP data from Server. Stopping Audio Client");
+                _mainClient.IsAudioConnected = false;
             }
         }
 
@@ -92,26 +88,25 @@ namespace RurouniJones.DCS.OverlordBot.Network
 
         public void Listen()
         {
+            _requestStop = false;
             _udpLastReceived = 0;
-            _listener = new UdpClient();
-            try
-            {
-                _listener.AllowNatTraversal(true);
-            }
-            catch { }
+
+            _udpTimeoutChecker = new DispatcherTimer { Interval = TimeSpan.FromSeconds(5) };
+            _udpTimeoutChecker.Tick += CheckUdpTimeout;
+            _udpTimeoutChecker.Start();
 
             var decoderThread = new Thread(UdpAudioDecode) {Name = $"{_mainClient.LogClientId}|  Audio Decoder"};
             decoderThread.Start();
 
             StartTransmissionEndCheckTimer();
 
-            StartPing();
-
             _packetNumber = 1; //reset packet number
 
             var localListenEndpoint = new IPEndPoint(IPAddress.Any, 0); // 0 means random unused port
+            
+            Thread.Sleep(5000);
 
-            while (!_stop)
+            while (!_requestStop)
             {
                 try
                 {
@@ -134,36 +129,31 @@ namespace RurouniJones.DCS.OverlordBot.Network
                 }
             }
 
-            //stop UI Refreshing
-            _updateTimer.Stop();
-
-            _mainClient.Disconnect();
+            Logger.Debug($"{_mainClient.LogClientId}| Stopping ListenLoop. RequestStop is {_requestStop}");
+            _mainClient.IsAudioConnected = false;
         }
 
         public void StartTransmissionEndCheckTimer()
         {
-            StopTimer();
-
-            _timer = new Timer(CheckTransmissionEnded, TimeSpan.FromMilliseconds(JitterBuffer));
-            _timer.Start();
-        }
-
-        public void StopTimer()
-        {
-            if (_timer == null) return;
-            _timer.Stop();
-            _timer = null;
+            _transmissionEndCheckTimer = new Timer(CheckTransmissionEnded, TimeSpan.FromMilliseconds(JitterBuffer));
+            _transmissionEndCheckTimer.Start();
         }
 
         public void RequestStop()
         {
-            _stop = true;
-            _listener?.Close();
+            _requestStop = true;
+
+            _transmissionEndCheckTimer?.Stop();
+            _transmissionEndCheckTimer = null;
+
+            _udpTimeoutChecker?.Stop();
+            _udpTimeoutChecker = null;
 
             _stopFlag.Cancel();
             _pingStop.Cancel();
 
-            StopTimer();
+            _listener?.Dispose();
+            _listener = null;
         }
 
         private SRClient IsClientMetaDataValid(string clientGuid)
@@ -178,7 +168,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
         {
             try
             {
-                while (!_stop)
+                while (!_requestStop)
                 {
                     try
                     {
@@ -317,7 +307,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
                     }
                     catch (Exception ex)
                     {
-                        if (!_stop)
+                        if (!_requestStop)
                         {
                             Logger.Info(ex, $"{_mainClient.LogClientId}| Failed to decode audio from Packet");
                         }
@@ -328,6 +318,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
             {
                 Logger.Info($"{_mainClient.LogClientId}| Stopped DeJitter Buffer");
             }
+            _mainClient.IsAudioConnected = false;
         }
 
         private List<int> CurrentlyBlockedRadios()
@@ -514,52 +505,52 @@ namespace RurouniJones.DCS.OverlordBot.Network
             return false;
         }
 
-        private void StartPing()
+        public void StartPing()
         {
             Logger.Debug($"{_mainClient.LogClientId}| Pinging Server - Starting");
 
             var message = _guidAsciiBytes;
+            
+            _listener = new UdpClient();
+            try
+            {
+                _listener.AllowNatTraversal(true);
+            }
+            catch { }
 
             // Force immediate ping once to avoid race condition before starting to listen
             _listener.Send(message, message.Length, _serverEndpoint);
+            _mainClient.IsAudioConnected = true;
 
-            var thread = new Thread(() =>
+            //wait for initial sync - then ping
+            if (_pingStop.Token.WaitHandle.WaitOne(TimeSpan.FromSeconds(2)))
             {
-                //wait for initial sync - then ping
-                if (_pingStop.Token.WaitHandle.WaitOne(TimeSpan.FromSeconds(2)))
+                return;
+            }
+
+            while (!_requestStop)
+            {
+                //Logger.Info("Pinging Server");
+                try
+                {
+                    if (!RadioSendingState.IsSending)
+                    {
+                        Logger.Trace($"{_mainClient.LogClientId}| Sending UDP Ping to server {_serverEndpoint}: {_guid}");
+                        _listener?.Send(message, message.Length, _serverEndpoint);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Logger.Error(e, $"{_mainClient.LogClientId}| Exception Sending UDP Ping! " + e.Message);
+                }
+
+                if ( _pingStop.Token.WaitHandle.WaitOne(TimeSpan.FromSeconds(15)))
                 {
                     return;
                 }
+            }
 
-                while (!_stop)
-                {
-                    //Logger.Info("Pinging Server");
-                    try
-                    {
-                        if (!RadioSendingState.IsSending)
-                        {
-                            Logger.Trace($"{_mainClient.LogClientId}| Sending UDP Ping to server {_serverEndpoint}: {_guid}");
-                            _listener?.Send(message, message.Length, _serverEndpoint);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.Error(e, $"{_mainClient.LogClientId}| Exception Sending UDP Ping! " + e.Message);
-                    }
-
-                    //wait for cancel or quit
-                    var cancelled = _pingStop.Token.WaitHandle.WaitOne(TimeSpan.FromSeconds(15));
-
-                    if (cancelled)
-                    {
-                        Logger.Debug($"{_mainClient.LogClientId}| Stopping UDP Server Ping to {_serverEndpoint} due to cancellation");
-                        return;
-                    }
-                }
-
-                Logger.Debug($"{_mainClient.LogClientId}| Stopping UDP Server Ping to {_serverEndpoint} due to leaving thread");
-            }) {Name = $"{_mainClient.LogClientId}| UDP Ping Sender"};
-            thread.Start();
+            Logger.Debug($"{_mainClient.LogClientId}| Stopping PingLoop because RequestStop is {_requestStop}");
         }
     }
 }

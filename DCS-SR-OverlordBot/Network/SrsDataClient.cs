@@ -3,8 +3,6 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading;
-using System.Windows;
 using RurouniJones.DCS.OverlordBot.Settings;
 using Ciribob.DCS.SimpleRadio.Standalone.Common;
 using Ciribob.DCS.SimpleRadio.Standalone.Common.Network;
@@ -17,14 +15,9 @@ namespace RurouniJones.DCS.OverlordBot.Network
 {
     public class SrsDataClient
     {
-        public delegate void ConnectCallback(bool result);
-
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        private volatile bool _stop;
-
         public static string ServerVersion = "Unknown";
-        private ConnectCallback _connectionCallback;
         private IPEndPoint _serverEndpoint;
         private TcpClient _tcpClient;
 
@@ -35,22 +28,12 @@ namespace RurouniJones.DCS.OverlordBot.Network
 
         private const int MaxDecodeErrors = 5;
 
-        public static volatile bool ApplicationStopped = false;
+        private volatile bool _requestStop;
 
         public SrsDataClient(Client mainClient)
         {
             _mainClient = mainClient;
             _guid = mainClient.ShortGuid;
-        }
-
-        public void TryConnect(IPEndPoint endpoint, ConnectCallback callback)
-        {
-            _connectionCallback = callback;
-            _serverEndpoint = endpoint;
-
-            var tcpThread = new Thread(Connect) {Name = $"{_mainClient.LogClientId}| SRS Data"};
-
-            tcpThread.Start();
         }
 
         public void ConnectExternalAwacsMode()
@@ -78,51 +61,42 @@ namespace RurouniJones.DCS.OverlordBot.Network
                 MsgType = NetworkMessage.MessageType.EXTERNAL_AWACS_MODE_PASSWORD
             };
 
-            SendToServer(message);
+            if (SendToServer(message)) return;
+            Logger.Error("Error connecting to external AWACS mode");
+            _requestStop = true;
         }
 
-        public void DisconnectExternalAwacsMode()
+        public bool Connect(IPEndPoint endpoint)
         {
-            _mainClient.ExternalAwacsModeConnected = false;
-            _mainClient.PlayerCoalitionLocationMetadata.side = 0;
-            _mainClient.PlayerCoalitionLocationMetadata.name = "";
-            _mainClient.DcsPlayerRadioInfo.name = "";
-            _mainClient.DcsPlayerRadioInfo.LastUpdate = 0;
-            _mainClient.LastSent = 0;
-        }
+            _serverEndpoint = endpoint;
 
-        private void Connect()
-        {
-            var connectionError = false;
+            _requestStop = false;
+            _tcpClient = new TcpClient();
 
-            using (_tcpClient = new TcpClient())
+            try
             {
-                try
+                _tcpClient.SendTimeout = 10000;
+                _tcpClient.NoDelay = true;
+
+                // Wait for 10 seconds before aborting connection attempt - no SRS server running/port opened in that case
+                _tcpClient.ConnectAsync(_serverEndpoint.Address, _serverEndpoint.Port).Wait(TimeSpan.FromSeconds(10));
+
+                if (_tcpClient.Connected)
                 {
-                    _tcpClient.SendTimeout = 10000;
                     _tcpClient.NoDelay = true;
-
-                    // Wait for 10 seconds before aborting connection attempt - no SRS server running/port opened in that case
-                    _tcpClient.ConnectAsync(_serverEndpoint.Address, _serverEndpoint.Port).Wait(TimeSpan.FromSeconds(10));
-
-                    if (_tcpClient.Connected)
-                    {
-                        _tcpClient.NoDelay = true;
-
-                        _connectionCallback(true);
-                        ClientSyncLoop();
-                    }
-                    else
-                    {
-                        Logger.Error($"{_mainClient.LogClientId}| Failed to connect to server @ {_serverEndpoint}");
-                    }
+                    return true;
                 }
-                catch (Exception ex)
-                {
-                    Logger.Error(ex, $"{_mainClient.LogClientId}| Could not connect to server");
-                }
+
+                Logger.Error($"{_mainClient.LogClientId}| Failed to connect to server @ {_serverEndpoint}");
+                return false;
+
             }
-            _connectionCallback(false);
+            catch (Exception ex)
+            {
+                Logger.Error(ex, $"{_mainClient.LogClientId}| Could not connect to server");
+                return false;
+            }
+
         }
 
         private void SendAwacsRadioInformation()
@@ -148,7 +122,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
             SendToServer(message);
         }
 
-        private void ClientSyncLoop()
+        public void ClientSyncLoop()
         {
             //clear the clients list
             _mainClient.Clear();
@@ -160,7 +134,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
                 {
                     var sideInfo = _mainClient.PlayerCoalitionLocationMetadata;
                     //start the loop off by sending a SYNC Request
-                    SendToServer(new NetworkMessage
+                    var success = SendToServer(new NetworkMessage
                     {
                         Client = new SRClient
                         {
@@ -172,8 +146,15 @@ namespace RurouniJones.DCS.OverlordBot.Network
                         MsgType = NetworkMessage.MessageType.SYNC
                     });
 
+                    if (!success)
+                    {
+                        Logger.Error($"{_mainClient.LogClientId}| Error sending initial SYNC");
+                        _mainClient.IsDataConnected = false;
+                        return;
+                    }
+
                     string line;
-                    while ((line = reader.ReadLine()) != null && ApplicationStopped == false)
+                    while (_requestStop == false && (line = reader.ReadLine()) != null)
                     {
                         try
                         {
@@ -181,215 +162,199 @@ namespace RurouniJones.DCS.OverlordBot.Network
                             decodeErrors = 0; //reset counter
                             if (serverMessage != null)
                             {
-                                Logger.Trace($"{_mainClient.LogClientId}| Message {serverMessage.MsgType} received: {line}");
-                                switch (serverMessage.MsgType)
+                                Logger.Trace($"{_mainClient.LogClientId}| Message {serverMessage.MsgType} received: {line}"); 
+                                if(!ProcessMessage(serverMessage, line))
                                 {
-                                    case NetworkMessage.MessageType.PING:
-                                        // Do nothing for now
-                                        break;
-                                    case NetworkMessage.MessageType.RADIO_UPDATE:
-                                    case NetworkMessage.MessageType.UPDATE:
-
-                                        if (serverMessage.ServerSettings != null)
-                                        {
-                                            _serverSettings.Decode(serverMessage.ServerSettings);
-                                        }
-
-                                        if (_mainClient.ContainsKey(serverMessage.Client.ClientGuid))
-                                        {
-                                            var srClient = _mainClient[serverMessage.Client.ClientGuid];
-                                            var updatedSrClient = serverMessage.Client;
-                                            if (srClient != null)
-                                            {
-                                                srClient.LastUpdate = DateTime.Now.Ticks;
-                                                srClient.Name = updatedSrClient.Name;
-                                                srClient.Coalition = updatedSrClient.Coalition;
-
-                                                srClient.LatLngPosition = updatedSrClient.LatLngPosition;
-
-                                                if (updatedSrClient.RadioInfo != null)
-                                                {
-                                                    srClient.RadioInfo = updatedSrClient.RadioInfo;
-                                                    srClient.RadioInfo.inAircraft = updatedSrClient.RadioInfo.inAircraft;
-                                                    srClient.RadioInfo.LastUpdate = DateTime.Now.Ticks;
-                                                }
-                                                else
-                                                {
-                                                    //radio update but null RadioInfo means no change
-                                                    if (serverMessage.MsgType ==
-                                                        NetworkMessage.MessageType.RADIO_UPDATE &&
-                                                        srClient.RadioInfo != null)
-                                                    {
-                                                        srClient.RadioInfo.LastUpdate = DateTime.Now.Ticks;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        else
-                                        {
-                                            var connectedClient = serverMessage.Client;
-                                            connectedClient.LastUpdate = DateTime.Now.Ticks;
-
-                                            //init with LOS true so you can hear them incase of bad DCS install where
-                                            //LOS isnt working
-                                            connectedClient.LineOfSightLoss = 0.0f;
-                                            //0.0 is NO LOSS therefore full Line of sight
-
-                                            _mainClient[serverMessage.Client.ClientGuid] = connectedClient;
-                                        }
-
-                                        if (_mainClient.ExternalAwacsModeSelected &&
-                                            !_serverSettings.GetSettingAsBool(ServerSettingsKeys.EXTERNAL_AWACS_MODE))
-                                        {
-                                            Logger.Error($"{_mainClient.LogClientId}| This server does not support External Awacs mode");
-                                            _mainClient.Disconnect();
-                                        }
-
-                                        break;
-                                    case NetworkMessage.MessageType.SYNC:
-                                        //check server version
-                                        if (serverMessage.Version == null)
-                                        {
-                                            Logger.Error($"{_mainClient.LogClientId}| Disconnecting Unversioned Server");
-                                            _mainClient.Disconnect();
-                                            break;
-                                        }
-
-                                        var serverVersion = Version.Parse(serverMessage.Version);
-                                        var protocolVersion = Version.Parse(UpdaterChecker.MINIMUM_PROTOCOL_VERSION);
-
-                                        ServerVersion = serverMessage.Version;
-
-                                        if (serverVersion < protocolVersion)
-                                        {
-                                            Logger.Error($"{_mainClient.LogClientId}| Server version ({serverMessage.Version}) older than minimum" + 
-                                                         "procotol version ({UpdaterChecker.MINIMUM_PROTOCOL_VERSION}) - disconnecting");
-
-                                            ShowVersionMistmatchWarning(serverMessage.Version);
-
-                                            _mainClient.Disconnect();
-                                            break;
-                                        }
-
-                                        if (serverMessage.Clients != null)
-                                        {
-                                            foreach (var client in serverMessage.Clients)
-                                            {
-                                                client.LastUpdate = DateTime.Now.Ticks;
-                                                //init with LOS true so you can hear them incase of bad DCS install where
-                                                //LOS isnt working
-                                                client.LineOfSightLoss = 0.0f;
-                                                //0.0 is NO LOSS therefore full Line of sight
-                                                _mainClient[client.ClientGuid] = client;
-                                            }
-                                        }
-                                        //add server settings
-                                        _serverSettings.Decode(serverMessage.ServerSettings);
-
-                                        if (_mainClient.ExternalAwacsModeSelected &&
-                                            !_serverSettings.GetSettingAsBool(ServerSettingsKeys.EXTERNAL_AWACS_MODE))
-                                        {
-                                            Logger.Error($"{_mainClient.LogClientId}| This server does not support External Awacs mode");
-                                            _mainClient.Disconnect();
-                                        }
-
-                                        break;
-
-                                    case NetworkMessage.MessageType.SERVER_SETTINGS:
-
-                                        _serverSettings.Decode(serverMessage.ServerSettings);
-                                        ServerVersion = serverMessage.Version;
-
-                                        if (_mainClient.ExternalAwacsModeSelected &&
-                                            !_serverSettings.GetSettingAsBool(ServerSettingsKeys.EXTERNAL_AWACS_MODE))
-                                        {
-                                            Logger.Error($"{_mainClient.LogClientId}| This server does not support External Awacs mode");
-                                            _mainClient.Disconnect();
-                                        }
-                                        break;
-                                    case NetworkMessage.MessageType.CLIENT_DISCONNECT:
-
-                                        _mainClient.TryRemove(serverMessage.Client.ClientGuid, out var outClient);
-
-                                        if (outClient != null)
-                                        {
-                                            MessageHub.Instance.Publish(outClient);
-                                        }
-
-                                        break;
-                                    case NetworkMessage.MessageType.VERSION_MISMATCH:
-                                        Logger.Error($"{_mainClient.LogClientId}| Version Mismatch Between Client ({UpdaterChecker.VERSION}) & Server ({serverMessage.Version}) - Disconnecting");
-                                        _mainClient.Disconnect();
-                                        break;
-                                    case NetworkMessage.MessageType.EXTERNAL_AWACS_MODE_PASSWORD:
-                                        if (serverMessage.Client.Coalition > 0)
-                                        {
-                                            Logger.Info($"{_mainClient.LogClientId}| External AWACS mode authentication succeeded, coalition {0}", serverMessage.Client.Coalition == 1 ? "red" : "blue");
-                                            _mainClient.PlayerCoalitionLocationMetadata.side = serverMessage.Client.Coalition;
-                                            _mainClient.PlayerCoalitionLocationMetadata.name = _mainClient.LastSeenName;
-                                            _mainClient.DcsPlayerRadioInfo.name = _mainClient.LastSeenName;
-                                            SendAwacsRadioInformation();
-                                        }
-                                        else
-                                        {
-                                            Logger.Info($"{_mainClient.LogClientId}| External AWACS mode authentication failed");
-                                            _mainClient.Disconnect();
-                                        }
-                                        break;
-                                    default:
-                                        Logger.Error($"{_mainClient.LogClientId}| Received unknown " + line);
-                                        break;
+                                    break;
                                 }
+                                
                             }
                         }
                         catch (Exception ex)
                         {
                             Logger.Error(ex, $"{_mainClient.LogClientId}| Error decoding message from server: {line}");
                             decodeErrors++;
-                            if (!_stop)
-                            {
-                                Logger.Error(ex, $"{_mainClient.LogClientId}| Client exception reading from socket ");
-                            }
+                            Logger.Error(ex, $"{_mainClient.LogClientId}| Client exception reading from socket ");
 
                             if (decodeErrors <= MaxDecodeErrors) continue;
-                            Logger.Error($"{_mainClient.LogClientId}| Too many errors decoding server messagse. disconnecting");
-                            _mainClient.Disconnect();
+                            Logger.Error($"{_mainClient.LogClientId}| Too many errors decoding server messages. Aborting Connection");
                             break;
                         }
-
-                        // do something with line
                     }
+                    Logger.Debug($"{_mainClient.LogClientId}| Stopping ClientSyncLoop. RequestStop is {_requestStop}");
                 }
                 catch (Exception ex)
                 {
-                    if (!_stop)
-                    {
-                        Logger.Error(ex, $"{_mainClient.LogClientId}| Client exception reading - Disconnecting ");
-                    }
+                        Logger.Error(ex, $"{_mainClient.LogClientId}| Client exception reading ");
                 }
             }
-
-            //disconnected - reset DCS Info
-            _mainClient.DcsPlayerRadioInfo.LastUpdate = 0;
-
-            //clear the clients list
-            _mainClient.Clear();
-            _mainClient.Disconnect();
+            _mainClient.IsAudioConnected = false;
         }
 
-        private static void ShowVersionMistmatchWarning(string serverVersion)
+        private bool ProcessMessage(NetworkMessage serverMessage, string line)
         {
-            MessageBox.Show("The SRS server you're connecting to is incompatible with this Client. " +
-                            "\n\nMake sure to always run the latest version of the SRS Server & Client" +
-                            $"\n\nServer Version: {serverVersion}" +
-                            $"\nClient Version: {UpdaterChecker.VERSION}" +
-                            $"\nMinimum Version: {UpdaterChecker.MINIMUM_PROTOCOL_VERSION}",
-                            "SRS Server Incompatible",
-                            MessageBoxButton.OK,
-                            MessageBoxImage.Error);
+            switch (serverMessage.MsgType)
+            {
+                case NetworkMessage.MessageType.PING:
+                    // Do nothing for now
+                    break;
+                case NetworkMessage.MessageType.RADIO_UPDATE:
+                case NetworkMessage.MessageType.UPDATE:
+
+                    if (serverMessage.ServerSettings != null)
+                    {
+                        _serverSettings.Decode(serverMessage.ServerSettings);
+                    }
+
+                    if (_mainClient.ContainsKey(serverMessage.Client.ClientGuid))
+                    {
+                        var srClient = _mainClient[serverMessage.Client.ClientGuid];
+                        var updatedSrClient = serverMessage.Client;
+                        if (srClient != null)
+                        {
+                            srClient.LastUpdate = DateTime.Now.Ticks;
+                            srClient.Name = updatedSrClient.Name;
+                            srClient.Coalition = updatedSrClient.Coalition;
+
+                            srClient.LatLngPosition = updatedSrClient.LatLngPosition;
+
+                            if (updatedSrClient.RadioInfo != null)
+                            {
+                                srClient.RadioInfo = updatedSrClient.RadioInfo;
+                                srClient.RadioInfo.inAircraft = updatedSrClient.RadioInfo.inAircraft;
+                                srClient.RadioInfo.LastUpdate = DateTime.Now.Ticks;
+                            }
+                            else
+                            {
+                                //radio update but null RadioInfo means no change
+                                if (serverMessage.MsgType ==
+                                    NetworkMessage.MessageType.RADIO_UPDATE &&
+                                    srClient.RadioInfo != null)
+                                {
+                                    srClient.RadioInfo.LastUpdate = DateTime.Now.Ticks;
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        var connectedClient = serverMessage.Client;
+                        connectedClient.LastUpdate = DateTime.Now.Ticks;
+
+                        //init with LOS true so you can hear them incase of bad DCS install where
+                        //LOS isnt working
+                        connectedClient.LineOfSightLoss = 0.0f;
+                        //0.0 is NO LOSS therefore full Line of sight
+
+                        _mainClient[serverMessage.Client.ClientGuid] = connectedClient;
+                    }
+
+                    if (_mainClient.ExternalAwacsModeSelected &&
+                        !_serverSettings.GetSettingAsBool(ServerSettingsKeys.EXTERNAL_AWACS_MODE))
+                    {
+                        Logger.Error($"{_mainClient.LogClientId}| This server does not support External Awacs mode");
+                        return false;
+                    }
+
+                    break;
+                case NetworkMessage.MessageType.SYNC:
+                    //check server version
+                    if (serverMessage.Version == null)
+                    {
+                        Logger.Error($"{_mainClient.LogClientId}| Unversioned Server - Aborting Connection");
+                        return false;
+                    }
+
+                    var serverVersion = Version.Parse(serverMessage.Version);
+                    var protocolVersion = Version.Parse(UpdaterChecker.MINIMUM_PROTOCOL_VERSION);
+
+                    ServerVersion = serverMessage.Version;
+
+                    if (serverVersion < protocolVersion)
+                    {
+                        Logger.Error($"{_mainClient.LogClientId}| Server version ({serverMessage.Version}) older than minimum" +
+                                     "procotol version ({UpdaterChecker.MINIMUM_PROTOCOL_VERSION}) - Aborting Connection");
+
+                        return false;
+                    }
+
+                    if (serverMessage.Clients != null)
+                    {
+                        foreach (var client in serverMessage.Clients)
+                        {
+                            client.LastUpdate = DateTime.Now.Ticks;
+                            //init with LOS true so you can hear them incase of bad DCS install where
+                            //LOS isnt working
+                            client.LineOfSightLoss = 0.0f;
+                            //0.0 is NO LOSS therefore full Line of sight
+                            _mainClient[client.ClientGuid] = client;
+                        }
+                    }
+
+                    //add server settings
+                    _serverSettings.Decode(serverMessage.ServerSettings);
+
+                    if (_mainClient.ExternalAwacsModeSelected &&
+                        !_serverSettings.GetSettingAsBool(ServerSettingsKeys.EXTERNAL_AWACS_MODE))
+                    {
+                        Logger.Error($"{_mainClient.LogClientId}| This server does not support External Awacs mode - Aborting Connection");
+                        return false;
+                    }
+
+                    break;
+
+                case NetworkMessage.MessageType.SERVER_SETTINGS:
+
+                    _serverSettings.Decode(serverMessage.ServerSettings);
+                    ServerVersion = serverMessage.Version;
+
+                    if (_mainClient.ExternalAwacsModeSelected &&
+                        !_serverSettings.GetSettingAsBool(ServerSettingsKeys.EXTERNAL_AWACS_MODE))
+                    {
+                        Logger.Error($"{_mainClient.LogClientId}| This server does not support External Awacs mode - Aborting Connection");
+                        return false;
+                    }
+
+                    break;
+                case NetworkMessage.MessageType.CLIENT_DISCONNECT:
+
+                    _mainClient.TryRemove(serverMessage.Client.ClientGuid, out var outClient);
+
+                    if (outClient != null)
+                    {
+                        MessageHub.Instance.Publish(outClient);
+                    }
+                    break;
+                case NetworkMessage.MessageType.VERSION_MISMATCH:
+                    Logger.Error(
+                        $"{_mainClient.LogClientId}| Version Mismatch Between Client ({UpdaterChecker.VERSION}) & Server ({serverMessage.Version}) - Aborting Connection");
+                    return false;
+                case NetworkMessage.MessageType.EXTERNAL_AWACS_MODE_PASSWORD:
+                    if (serverMessage.Client.Coalition > 0)
+                    {
+                        Logger.Info($"{_mainClient.LogClientId}| External AWACS mode authentication succeeded, coalition {0}",
+                            serverMessage.Client.Coalition == 1 ? "red" : "blue");
+                        _mainClient.PlayerCoalitionLocationMetadata.side = serverMessage.Client.Coalition;
+                        _mainClient.PlayerCoalitionLocationMetadata.name = _mainClient.LastSeenName;
+                        _mainClient.DcsPlayerRadioInfo.name = _mainClient.LastSeenName;
+                        SendAwacsRadioInformation();
+                    }
+                    else
+                    {
+                        Logger.Info($"{_mainClient.LogClientId}| External AWACS mode authentication failed");
+                        return false;
+                    }
+
+                    break;
+                default:
+                    Logger.Error($"{_mainClient.LogClientId}| Received unknown " + line);
+                    break;
+            }
+
+            return true;
         }
 
-        private void SendToServer(NetworkMessage message)
+        private bool SendToServer(NetworkMessage message)
         {
             try
             {
@@ -403,34 +368,31 @@ namespace RurouniJones.DCS.OverlordBot.Network
                 {
                     _tcpClient.GetStream().Write(bytes, 0, bytes.Length);
                     Logger.Trace($"{_mainClient.LogClientId}| Message {message.MsgType} sent: {json}");
+                    return true;
 
                 } catch (ObjectDisposedException ex)
                 {
                     Logger.Debug(ex, $"{_mainClient.LogClientId}| Tried writing message type {message.MsgType} to a disposed TcpClient");
+                    return false;
                 }
                 //Need to flush?
             }
             catch (Exception ex)
             {
-                if (!_stop)
-                {
-                    Logger.Error(ex, $"{_mainClient.LogClientId}| Client exception sending message type {message.MsgType} to server");
-                }
-
-                _mainClient.Disconnect();
+                Logger.Error(ex, $"{_mainClient.LogClientId}| Client exception sending message type {message.MsgType} to server");
+                return false;
             }
         }
 
         //implement IDispose? To close stuff properly?
-        public void Disconnect()
+        public void RequestStop()
         {
-            _stop = true;
+            _requestStop = true;
 
-            _tcpClient?.Close(); // this'll stop the socket blocking
+            _tcpClient?.Dispose(); // this'll stop the socket blocking
+            _tcpClient = null;
 
             Logger.Error($"{_mainClient.LogClientId}| Disconnecting data connection from server");
-            _mainClient.IsDataConnected = false;
-
         }
     }
 }
