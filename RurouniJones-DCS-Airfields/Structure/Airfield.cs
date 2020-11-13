@@ -55,6 +55,12 @@ namespace RurouniJones.DCS.Airfields.Structure
         public List<Runway> Runways { get; set; } = new List<Runway>();
 
         /// <summary>
+        /// A list of all the nodes that make up a runway
+        /// </summary>
+        [JsonIgnore]
+        public Dictionary<Runway, List<NavigationPoint>> RunwayNodes { get; set; } = new Dictionary<Runway, List<NavigationPoint>>();
+
+        /// <summary>
         /// A list of Taxi Junctions
         /// 
         /// A Taxi Junction is any place where two taxiways meet each other and where they meet either a Parking Spot
@@ -160,6 +166,28 @@ namespace RurouniJones.DCS.Airfields.Structure
                 Logger.Error(e, $"Could not build navigation graph for {Name}");
             }
 
+            // Now populate the runway nodes so we know all the nodes that make up a runway
+            try
+            {
+                foreach(var runway in Runways)
+                {
+                    NavigationPoint node = runway;
+                    var nodes = new List<NavigationPoint> {node};
+                    while (true)
+                    {
+                        var edges = NavigationGraph.Edges.Where(x => x.Source == node);
+                        node = edges.First(x => x.Tag == "Runway" && !nodes.Contains(x.Target)).Target;
+                        nodes.Add(node);
+                        if (node is Runway) break;
+                    }
+                    RunwayNodes.Add(runway, nodes);
+                    Logger.Debug($"{Name} {runway} nodes built");
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, $"Could not build runway nodes for  graph for {Name}");
+            }
         }
     }
 }
