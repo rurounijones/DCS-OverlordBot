@@ -68,6 +68,7 @@
     <Compile Include="Controllers\AwacsControllerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\GeospatialTests.cs" />
+    <Compile Include="Util\LevenshteinDistanceTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

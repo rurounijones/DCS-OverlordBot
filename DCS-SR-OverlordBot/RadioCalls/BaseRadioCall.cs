@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using RurouniJones.DCS.OverlordBot.GameState;
 using RurouniJones.DCS.OverlordBot.RadioCalls.LuisModels;
+using RurouniJones.DCS.OverlordBot.Util;
 
 namespace RurouniJones.DCS.OverlordBot.RadioCalls
 {
@@ -139,6 +140,10 @@ namespace RurouniJones.DCS.OverlordBot.RadioCalls
             }
 
             var groupEntity = entities.Find(x => x.Entity.Equals(group));
+            if (groupEntity is null)
+            {
+                groupEntity = entities.Find(x => LevenshteinDistance.Calculate(x, group) == 1);
+            }
             if (groupEntity?.Resolution?.Values?.Count > 0)
             {
                 group = groupEntity.Resolution.Values[0];

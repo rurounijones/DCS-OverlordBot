@@ -312,6 +312,7 @@
     <Compile Include="RadioCalls\LuisModels\LuisEntity.cs" />
     <Compile Include="RadioCalls\LuisModels\LuisResponse.cs" />
     <Compile Include="Util\AirfieldUpdater.cs" />
+    <Compile Include="Util\LevenshteinDistance.cs" />
     <Compile Include="Util\Geospatial.cs" />
     <Compile Include="Controllers\WarningRadiusChecker.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
