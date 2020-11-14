@@ -133,7 +133,7 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
                                 $"Stopping Taxi Progress Check. {_sender.Id} has reached the end of the taxi route at {_currentTaxiPoint.Name}");
 
                             // Check to see if we have any aircraft on initial or final
-                            if(_airfield.ApproachingAircraft.Values.Any(x => (x.CurrentState == ApproachChecker.State.Base || x.CurrentState == ApproachChecker.State.Final || x.CurrentState == ApproachChecker.State.ShortFinal)
+                            if(_airfield.ControlledAircraft.Values.Any(x => (x.CurrentState == AtcProgressChecker.State.Base || x.CurrentState == AtcProgressChecker.State.Final || x.CurrentState == AtcProgressChecker.State.ShortFinal)
                                                                              && x.Destination == _taxiPoints.First()))
                             {
                                 activity?.AddTag("Response", "Hold Short");
@@ -148,7 +148,7 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
                         }
                         else
                         {
-                            if(_airfield.ApproachingAircraft.Values.Any(x => (x.CurrentState == ApproachChecker.State.Base || x.CurrentState == ApproachChecker.State.Final || x.CurrentState == ApproachChecker.State.ShortFinal)
+                            if(_airfield.ControlledAircraft.Values.Any(x => (x.CurrentState == AtcProgressChecker.State.Base || x.CurrentState == AtcProgressChecker.State.Final || x.CurrentState == AtcProgressChecker.State.ShortFinal)
                                                                              && x.Destination == _taxiPoints.First()))
                             {
                                 activity?.AddTag("Response", "Hold Short");

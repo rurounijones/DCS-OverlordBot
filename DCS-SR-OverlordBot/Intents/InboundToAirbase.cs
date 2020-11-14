@@ -43,7 +43,7 @@ namespace RurouniJones.DCS.OverlordBot.Intents
                 
                 approachRoute = approachRoute.Prepend(currentPosition).ToList();
 
-                new ApproachChecker(radioCall.Sender, airfield, voice, approachRoute, responseQueue);
+                new AtcProgressChecker(radioCall.Sender, airfield, voice, approachRoute, responseQueue);
 
                 return response;
             }

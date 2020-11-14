@@ -10,7 +10,7 @@ namespace RurouniJones.DCS.OverlordBot.Models
     public class Airfield : Airfields.Structure.Airfield
     {
         public ConcurrentDictionary<string, TaxiProgressChecker> TaxiingAircraft { get; } = new ConcurrentDictionary<string, TaxiProgressChecker>();
-        public ConcurrentDictionary<string, ApproachChecker> ApproachingAircraft { get; } = new ConcurrentDictionary<string, ApproachChecker>();
+        public ConcurrentDictionary<string, AtcProgressChecker> ControlledAircraft { get; } = new ConcurrentDictionary<string, AtcProgressChecker>();
 
         public Airfield() {}
 
@@ -24,6 +24,7 @@ namespace RurouniJones.DCS.OverlordBot.Models
 
             ParkingSpots = airfieldStructure.ParkingSpots;
             Runways = airfieldStructure.Runways;
+            RunwayNodes = airfieldStructure.RunwayNodes;
             Junctions = airfieldStructure.Junctions;
             Taxiways = airfieldStructure.Taxiways;
             WayPoints = airfieldStructure.WayPoints;

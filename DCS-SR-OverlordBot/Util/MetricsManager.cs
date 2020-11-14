@@ -89,17 +89,12 @@ namespace RurouniJones.DCS.OverlordBot.Util
                 new Dictionary<string, object> { {"type", "WarningRadius"} },
                 WarningRadiusChecker.WarningChecks.Count);
 
-            var taxiCheckers =  NewRelicMetric.CreateGaugeMetric("CheckerThreads",
+            var atcCheckers =  NewRelicMetric.CreateGaugeMetric("CheckerThreads",
                 null,
-                new Dictionary<string, object> { {"type", "Taxi"} },
-                TaxiProgressChecker.TaxiChecks.Count);
-            
-            var approachCheckers =  NewRelicMetric.CreateGaugeMetric("CheckerThreads",
-                null,
-                new Dictionary<string, object> { {"type", "Approach"} },
-                ApproachChecker.ApproachChecks.Count);
+                new Dictionary<string, object> { {"type", "Atc"} },
+                AtcProgressChecker.AtcChecks.Count);
 
-            var metrics = new List<NewRelicMetric> { playersOnSrs, botCompatiblePlayersOnSrs, warningCheckers, taxiCheckers, approachCheckers };
+            var metrics = new List<NewRelicMetric> { playersOnSrs, botCompatiblePlayersOnSrs, warningCheckers, atcCheckers};
 
             var frequencyCount = new Dictionary<double, int>();
 
@@ -183,6 +178,7 @@ namespace RurouniJones.DCS.OverlordBot.Util
             while(RadioCallIntents.Count > 0)
             {
                 RadioCallIntents.TryDequeue(out var call);
+                if (call.Key == null) break;
                 if(!counts.ContainsKey(call.Key))
                     counts.Add(call.Key, new Dictionary<string, int> { {call.Value, 1} });
                 else if(!counts[call.Key].ContainsKey(call.Value))

@@ -176,9 +176,17 @@ namespace RurouniJones.DCS.Airfields.Structure
                     while (true)
                     {
                         var edges = NavigationGraph.Edges.Where(x => x.Source == node);
-                        node = edges.First(x => x.Tag == "Runway" && !nodes.Contains(x.Target)).Target;
-                        nodes.Add(node);
-                        if (node is Runway) break;
+                        try
+                        {
+                            node = edges.First(x => x.Tag == "Runway" && !nodes.Contains(x.Target)).Target;
+                            nodes.Add(node);
+                            if (node is Runway) break;
+
+                        }
+                        catch (InvalidOperationException)
+                        {
+                            break;
+                        }
                     }
                     RunwayNodes.Add(runway, nodes);
                     Logger.Debug($"{Name} {runway} nodes built");

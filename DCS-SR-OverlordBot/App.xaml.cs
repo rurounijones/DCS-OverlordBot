@@ -136,10 +136,10 @@ namespace RurouniJones.DCS.OverlordBot
                 TaxiProgressChecker.TaxiChecks.TryRemove(checker.Key, out _);
             }
 
-            foreach( var checker in ApproachChecker.ApproachChecks)
+            foreach( var checker in AtcProgressChecker.AtcChecks)
             {
                 checker.Value.Stop();
-                ApproachChecker.ApproachChecks.TryRemove(checker.Key, out _);
+                AtcProgressChecker.AtcChecks.TryRemove(checker.Key, out _);
             }
 
             _notifyIcon.Visible = false;
