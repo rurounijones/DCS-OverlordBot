@@ -142,7 +142,7 @@ namespace RurouniJones.DCS.OverlordBot.RadioCalls
             var groupEntity = entities.Find(x => x.Entity.Equals(group));
             if (groupEntity is null)
             {
-                groupEntity = entities.Find(x => LevenshteinDistance.Calculate(x, group) == 1);
+                groupEntity = entities.Find(x => LevenshteinDistance.Calculate(x.Entity, group) == 1);
             }
             if (groupEntity?.Resolution?.Values?.Count > 0)
             {
