@@ -130,12 +130,6 @@ namespace RurouniJones.DCS.OverlordBot
                 WarningRadiusChecker.WarningChecks.TryRemove(checker.Key, out _);
             }
 
-            foreach( var checker in TaxiProgressChecker.TaxiChecks)
-            {
-                checker.Value.Stop();
-                TaxiProgressChecker.TaxiChecks.TryRemove(checker.Key, out _);
-            }
-
             foreach( var checker in AtcProgressChecker.AtcChecks)
             {
                 checker.Value.Stop();

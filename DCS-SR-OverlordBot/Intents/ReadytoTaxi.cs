@@ -48,7 +48,7 @@ namespace RurouniJones.DCS.OverlordBot.Intents
                 Logger.Debug($"{radioCall.Sender.Id} route is {string.Join(", ", taxiInstructions.TaxiPoints.Select(t => t.Name))}");
 
                 var spokenInstructions = ConvertTaxiInstructionsToSsml(taxiInstructions);
-                var _ = new TaxiProgressChecker(radioCall.Sender, airfield, voice, taxiInstructions.TaxiPoints, responseQueue);
+                new AtcProgressChecker(radioCall.Sender, airfield, voice, taxiInstructions.TaxiPoints, responseQueue).CalledTaxi();
                 return spokenInstructions;
             }
             catch (NoActiveRunwaysFoundException ex)

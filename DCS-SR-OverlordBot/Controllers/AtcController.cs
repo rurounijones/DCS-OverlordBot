@@ -15,11 +15,15 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
 
         protected override string Unknown(IRadioCall radioCall)
         {
+            if (!IsAddressedToController(radioCall))
+                return null;
             return ResponsePrefix(radioCall) + ", I could not understand your transmission";
         }
 
         protected override string RadioCheck(IRadioCall radioCall)
         {
+            if (!IsAddressedToController(radioCall))
+                return null;
             return ResponsePrefix(radioCall) + "ground, five-by-five";
         }
 
@@ -60,8 +64,10 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
             return ResponsePrefix(radioCall) + "ground, " + ReadytoTaxi.Process(radioCall, voice, responseQueue).Result;
         }
 
-        protected override string NullSender(IRadioCall _)
+        protected override string NullSender(IRadioCall radioCall)
         {
+            if (!IsAddressedToController(radioCall))
+                return null;
             return "Last transmitter, I could not recognize your call-sign";
         }
 
@@ -74,6 +80,8 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
 
         protected override string UnverifiedSender(IRadioCall radioCall)
         {
+            if (!IsAddressedToController(radioCall))
+                return null;
             return ResponsePrefix(radioCall) + ", I cannot find you on scope.";
         }
 

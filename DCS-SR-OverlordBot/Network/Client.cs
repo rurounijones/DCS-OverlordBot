@@ -129,7 +129,7 @@ namespace RurouniJones.DCS.OverlordBot.Network
             _udpListenerThread = new Thread(SrsAudioClient.Listen) {Name = $"{LogClientId} Audio Listener"};
             _udpListenerThread.Start();
 
-            _udpPingThread = new Thread(SrsAudioClient.StartPing)  {Name = $"{LogClientId} Ping Threadr"};
+            _udpPingThread = new Thread(SrsAudioClient.StartPing)  {Name = $"{LogClientId} Ping Threader"};
             _udpPingThread.Start();
 
         }
