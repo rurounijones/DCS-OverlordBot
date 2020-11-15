@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -81,7 +80,7 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
         private NavigationPoint _currentTaxiPoint;
 
         private string _previousId;
-        private static List<State> _holdShortReasons = new List<State>() {State.Base, State.Final, State.ShortFinal};
+        private static readonly List<State> _holdShortReasons = new List<State>() {State.Base, State.Final, State.ShortFinal};
 
         public AtcProgressChecker(Player sender, Airfield airfield, string voice, List<NavigationPoint> wayPoints,
             ConcurrentQueue<byte[]> responseQueue)
@@ -105,7 +104,7 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
             ConfigureStateMachine();
 
             _atcState.FireAsync(Trigger.StartInbound);
-            
+            _lastInstruction = _startTime;
             _airfield.ControlledAircraft[_sender.Id] = this;
             AtcChecks[_sender.Id] = this;
         }
@@ -487,7 +486,10 @@ namespace RurouniJones.DCS.OverlordBot.Controllers
 
         private async Task UpdatePlayersHoldingShort()
         {
-            Logger.Debug($"{_sender.Id} - {_sender.Callsign}: Looking for players holding short");
+            await Task.Run(() =>
+            {
+                Logger.Debug($"{_sender.Id} - {_sender.Callsign}: Looking for players holding short");
+            });
         }
 
         #endregion

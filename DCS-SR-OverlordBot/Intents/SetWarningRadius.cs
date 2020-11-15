@@ -23,19 +23,22 @@ namespace RurouniJones.DCS.OverlordBot.Intents
 
         public static async Task<string> Process(BaseRadioCall baseRadioCall, string voice, ConcurrentQueue<byte[]> responseQueue)
         {
-
-            var radioCall = new SetWarningRadiusRadioCall(baseRadioCall);
-
-            Logger.Debug($"Setting up Warning Radius for {radioCall.Sender.Id} - {radioCall.Sender}");
-
-            if (radioCall.WarningRadius == -1)
+            return await Task.Run(() =>
             {
-                return "I did not catch the warning distance.";
-            }
+                var radioCall = new SetWarningRadiusRadioCall(baseRadioCall);
 
-            var _ = new WarningRadiusChecker(radioCall.Sender, radioCall.ReceiverName, voice, radioCall.WarningRadius, responseQueue);
+                Logger.Debug($"Setting up Warning Radius for {radioCall.Sender.Id} - {radioCall.Sender}");
 
-            return string.Format(Responses[Random.Next(Responses.Count)], radioCall.WarningRadius);
+                if (radioCall.WarningRadius == -1)
+                {
+                    return "I did not catch the warning distance.";
+                }
+
+                var _ = new WarningRadiusChecker(radioCall.Sender, radioCall.ReceiverName, voice,
+                    radioCall.WarningRadius, responseQueue);
+
+                return string.Format(Responses[Random.Next(Responses.Count)], radioCall.WarningRadius);
+            });
         }
     }
 }

@@ -58,6 +58,7 @@ namespace RurouniJones.DCS.OverlordBot.Discord
 
         private static async Task ProcessMessage(SocketMessage message)
         {
+            await Task.Run(() => { });
             /*
             if (message.Channel.GetType() == typeof(SocketDMChannel)
                 && message.Author.Id == 278154654347427840 // DOLT 1-2 RurouniJones's Discord ID

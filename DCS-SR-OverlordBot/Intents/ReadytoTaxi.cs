@@ -28,39 +28,45 @@ namespace RurouniJones.DCS.OverlordBot.Intents
 
         public static async Task<string> Process(IRadioCall radioCall, string voice, ConcurrentQueue<byte[]> responseQueue)
         {
-            var taxiInstructions = DummyInstructions;
-            Airfield airfield;
-            try
+            return await Task.Run(() =>
             {
-                airfield = Constants.Airfields.First(x => x.Name == radioCall.ReceiverName);
-            }
-            catch (InvalidOperationException)
-            {
-                return "There are no ATC services currently available at this airfield.";
-            }
-            try
-            {
-                if (airfield.Runways.Count == 0 || airfield.NavigationGraph.EdgeCount == 0)
+                var taxiInstructions = DummyInstructions;
+                Airfield airfield;
+                try
+                {
+                    airfield = Constants.Airfields.First(x => x.Name == radioCall.ReceiverName);
+                }
+                catch (InvalidOperationException)
+                {
                     return "There are no ATC services currently available at this airfield.";
+                }
 
-                taxiInstructions = new GroundController(airfield).GetTaxiInstructions(radioCall.Sender.Position);
+                try
+                {
+                    if (airfield.Runways.Count == 0 || airfield.NavigationGraph.EdgeCount == 0)
+                        return "There are no ATC services currently available at this airfield.";
 
-                Logger.Debug($"{radioCall.Sender.Id} route is {string.Join(", ", taxiInstructions.TaxiPoints.Select(t => t.Name))}");
+                    taxiInstructions = new GroundController(airfield).GetTaxiInstructions(radioCall.Sender.Position);
 
-                var spokenInstructions = ConvertTaxiInstructionsToSsml(taxiInstructions);
-                new AtcProgressChecker(radioCall.Sender, airfield, voice, taxiInstructions.TaxiPoints, responseQueue).CalledTaxi();
-                return spokenInstructions;
-            }
-            catch (NoActiveRunwaysFoundException ex)
-            {
-                Logger.Error(ex, "No Active Runways found");
-                return "We could not find any active runways.";
-            }
-            catch (TaxiPathNotFoundException ex)
-            {
-                Logger.Error(ex, "No Path found");
-                return $"We could not find a path from your position to {taxiInstructions.DestinationName}.";
-            }
+                    Logger.Debug(
+                        $"{radioCall.Sender.Id} route is {string.Join(", ", taxiInstructions.TaxiPoints.Select(t => t.Name))}");
+
+                    var spokenInstructions = ConvertTaxiInstructionsToSsml(taxiInstructions);
+                    new AtcProgressChecker(radioCall.Sender, airfield, voice, taxiInstructions.TaxiPoints,
+                        responseQueue).CalledTaxi();
+                    return spokenInstructions;
+                }
+                catch (NoActiveRunwaysFoundException ex)
+                {
+                    Logger.Error(ex, "No Active Runways found");
+                    return "We could not find any active runways.";
+                }
+                catch (TaxiPathNotFoundException ex)
+                {
+                    Logger.Error(ex, "No Path found");
+                    return $"We could not find a path from your position to {taxiInstructions.DestinationName}.";
+                }
+            });
         }
 
         private static string ConvertTaxiInstructionsToSsml(TaxiInstructions taxiInstructions)

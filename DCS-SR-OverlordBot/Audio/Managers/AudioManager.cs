@@ -181,7 +181,7 @@ namespace RurouniJones.DCS.OverlordBot.Audio.Managers
                     }
                     catch (Exception e)
                     {
-                        Logger.Error($"{LogClientId}| Error encoding Audio Bytes");
+                        Logger.Error(e, $"{LogClientId}| Error encoding Audio Bytes");
                     }
 
                     if (Client?.SrsAudioClient != null && buff != null && len > 0)

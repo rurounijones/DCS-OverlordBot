@@ -163,9 +163,12 @@ namespace RurouniJones.DCS.OverlordBot.SpeechRecognition
 
         public async Task StopRecognition()
         {
-            Logger.Debug($"{_logClientId}| Stopping Continuous Recognition");
-            _stop = true;
-            _stopRecognition.TrySetResult(0);
+            await Task.Run(() =>
+            {
+                Logger.Debug($"{_logClientId}| Stopping Continuous Recognition");
+                _stop = true;
+                _stopRecognition.TrySetResult(0);
+            });
         }
 
         private async Task ProcessRadioCall(SpeechRecognitionEventArgs e)
