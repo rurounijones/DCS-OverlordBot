@@ -1,0 +1,21 @@
+﻿<Window x:Class="TaxiViewer.MarkerImportWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TaxiViewer"
+        mc:Ignorable="d"
+        Title="Marker Import" Height="450" Width="367.386" WindowStyle="ToolWindow">
+    <Grid x:Name="MarkerImportButtonGrid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="162*"/>
+            <ColumnDefinition Width="197*"/>
+        </Grid.ColumnDefinitions>
+        <Button x:Name="MarkerImportButton" Content="Import from Temp" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="109" Click="MarkerImportButton_Click" />
+        <ListBox x:Name="MarkerListBox" HorizontalAlignment="Left" Height="339" Margin="10,35,0,0" VerticalAlignment="Top" Width="339" SelectionChanged="MarkerListBox_SelectionChanged" Grid.ColumnSpan="2"/>
+        <Button x:Name="RunwayEndButton" Content="Runway End" HorizontalAlignment="Left" Margin="10,379,0,0" VerticalAlignment="Top" Width="75" Click="RunwayEndButton_Click"/>
+        <Button x:Name="IntersectionButton" Content="Intersection" HorizontalAlignment="Left" Margin="90,379,0,0" VerticalAlignment="Top" Width="75" Click="IntersectionButton_Click" Grid.ColumnSpan="2"/>
+        <Button x:Name="ParkingButton" Content="Parking Area" HorizontalAlignment="Left" Margin="8.318,379,0,0" VerticalAlignment="Top" Width="75" Click="ParkingButton_Click" Grid.Column="1"/>
+
+    </Grid>
+</Window>
