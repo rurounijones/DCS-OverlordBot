@@ -43,6 +43,14 @@ namespace TaxiViewer
 
         private EdgeEditorWindow edgeList = null;
 
+        //Phonetic alphabet, alternate spellings, and double-letter taxiways. Will add Letter+Number taxiways in the event that they show up in numbers.
+        //Doubles first so they take priority.
+        private const string LikelyTaxiwayString = "Alpha Alpha|Alfa Alfa|Beta Beta|Charlie Charlie|Delta Delta|Golf Golf|Echo Echo|Foxtrot Foxtrot|Hotel Hotel|Juliett Juliett|Juliet Juliet|Kilo Kilo|Lima Lima|Mike Mike|November November|Oscar Oscar|Papa Papa|Quebec Quebec|Sierra Sierra|Tango Tango|Uniform Uniform|Victor Victor|Whiskey Whiskey|Yankee Yankee|Zulu Zulu|Alpha|Alfa|Beta|Charlie|Delta|Golf|Echo|Foxtrot|Hotel|Juliett|Juliet|Kilo|Lima|Mike|November|Oscar|Papa|Quebec|Sierra|Tango|Uniform|Victor|Whiskey|Yankee|Zulu";
+        private IEnumerable<string> LikelyTaxiwayNames 
+        {
+            get { return LikelyTaxiwayString.Split('|'); }
+        }
+           
         public MainWindow()
         {
             InitializeComponent();
@@ -339,7 +347,7 @@ namespace TaxiViewer
                 {
                     taxiName = SourceNode.Node.Id.Replace('-', ' ')
                     .Split()
-                    .Intersect("Alpha Bravo Charlie Delta Golf Echo Foxtrot Hotel India Juliett Juliet Kilo Lima Mike November Oscar Papa Quebec Romeo Sierra Tango Uniform Victor Whiskey Yankee Zulu".Split())
+                    .Intersect(LikelyTaxiwayNames)
                     .FirstOrDefault();
                 }
 
@@ -347,7 +355,7 @@ namespace TaxiViewer
                 {
                     taxiName = TargetNode.Node.Id.Replace('-', ' ')
                     .Split()
-                    .Intersect("Alpha Bravo Charlie Delta Golf Echo Foxtrot Hotel India Juliett Juliet Kilo Lima Mike November Oscar Papa Quebec Romeo Sierra Tango Uniform Victor Whiskey Yankee Zulu".Split())
+                    .Intersect(LikelyTaxiwayNames)
                     .FirstOrDefault();
                 }
 
