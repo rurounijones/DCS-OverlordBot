@@ -13,6 +13,7 @@ using Microsoft.Msagl.Core.Layout;
 using Microsoft.Msagl.Layout.MDS;
 using Microsoft.Msagl.Miscellaneous;
 using Label = Microsoft.Msagl.Drawing.Label;
+using System.Collections.Generic;
 
 namespace TaxiViewer
 {
@@ -32,6 +33,16 @@ namespace TaxiViewer
 
         LayoutAlgorithmSettings settings = new MdsLayoutSettings();
 
+        internal NavigationPoint highlightPoint = null;
+
+        private MarkerImportWindow markerImport = null;
+
+        private NodeListWindow nodeList = null;
+
+        private AirfieldInformationWindow airfieldinfo = null;
+
+        private EdgeEditorWindow edgeList = null;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -43,7 +54,7 @@ namespace TaxiViewer
             {
                 Filter = "JSON files (*.json)|*.json",
                 InitialDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\Airfields")
-        };
+            };
             if (openFileDialog.ShowDialog() == true)
             {
                 try
@@ -54,9 +65,15 @@ namespace TaxiViewer
                     SaveAirfieldButton.IsEnabled = true;
                     AddTaxiPathButton.IsEnabled = true;
                     DisplayRealGraphButton.IsEnabled = true;
+                    ShowMarkerImport.IsEnabled = true;
+                    NewButton.IsEnabled = false;
+                    AirfieldInfoButton.IsEnabled = true;
+                    ShowNodeList.IsEnabled = true;
+                    ShowEdgeList.IsEnabled = true;
 
                     DisplayGraph();
-                } catch(Exception _)
+                }
+                catch (Exception _)
                 {
                     MessageBox.Show("Error reading Airfield JSON", "Deserialization Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
@@ -65,9 +82,10 @@ namespace TaxiViewer
 
         private void Reload_Airfield(object sender, RoutedEventArgs e)
         {
-            try { 
-              airfield = JsonConvert.DeserializeObject<Airfield>(File.ReadAllText(FileName));
-              DisplayGraph();
+            try
+            {
+                airfield = JsonConvert.DeserializeObject<Airfield>(File.ReadAllText(FileName));
+                DisplayGraph();
             }
             catch (Exception _)
             {
@@ -81,6 +99,9 @@ namespace TaxiViewer
             {
                 var json = JsonConvert.SerializeObject(airfield, Formatting.Indented);
                 File.WriteAllText(FileName, json);
+
+                //Also write to temp dir file.
+                File.WriteAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "temp", "markers.json"), json);
             }
             catch (Exception _)
             {
@@ -114,6 +135,11 @@ namespace TaxiViewer
                     case WayPoint _:
                         node.Attr.Shape = Shape.Box;
                         node.Attr.Color = Color.Purple;
+                        break;
+                    case NavigationPoint _:
+                        node.Attr.Shape = Shape.Circle;
+                        if (navigationPoint == highlightPoint) node.Attr.Color = Color.Red;
+                        else node.Attr.Color = Color.Black;
                         break;
                 }
             }
@@ -151,13 +177,13 @@ namespace TaxiViewer
             }
         }
 
-        private void DisplayGraph()
+        internal void DisplayGraph()
         {
             GraphPanel.Children.Clear();
 
             BuildGraph();
 
-            if(DisplayRealGraphButton.IsChecked != null && (bool) DisplayRealGraphButton.IsChecked)
+            if (DisplayRealGraphButton.IsChecked != null && (bool)DisplayRealGraphButton.IsChecked)
             {
                 DisplayRealGraph();
             }
@@ -195,7 +221,6 @@ namespace TaxiViewer
                 else
                 {
                     MessageBox.Show($"Error Displaying {navigationPoint.Name}", "Display Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
                 }
             }
 
@@ -213,7 +238,7 @@ namespace TaxiViewer
             _graphViewer.Graph = _graph;
         }
 
-        private static ICurve CreateLabelAndBoundary(NavigationPoint navigationPoint, Microsoft.Msagl.Drawing.Node node)
+        private ICurve CreateLabelAndBoundary(NavigationPoint navigationPoint, Microsoft.Msagl.Drawing.Node node)
         {
             node.Attr.LabelMargin *= 2;
             node.Label.IsVisible = false;
@@ -237,6 +262,10 @@ namespace TaxiViewer
                 case WayPoint _:
                     node.Attr.Color = Color.Purple;
                     return CurveFactory.CreateRectangle(100, 30, positionalPoint);
+                case NavigationPoint _:
+                    if (navigationPoint == highlightPoint) node.Attr.Color = Color.Red;
+                    else node.Attr.Color = Color.Black;
+                    return CurveFactory.CreateCircle(100, positionalPoint);
             }
 
             return CurveFactory.CreateCircle(5, positionalPoint);
@@ -244,7 +273,7 @@ namespace TaxiViewer
 
         private void MouseDownHandler(object s, MsaglMouseEventArgs ev)
         {
-            if (!ev.RightButtonIsPressed || !(bool) AddTaxiPathButton.IsChecked)
+            if (!ev.RightButtonIsPressed || !(bool)AddTaxiPathButton.IsChecked)
                 return;
 
             if (_graphViewer.ObjectUnderMouseCursor is VNode node)
@@ -253,7 +282,7 @@ namespace TaxiViewer
             }
             else if (_graphViewer.ObjectUnderMouseCursor?.DrawingObject is Label label)
             {
-                var taggedEdge = (TaggedEdge<NavigationPoint, string>) label.Owner.UserData;
+                var taggedEdge = (TaggedEdge<NavigationPoint, string>)label.Owner.UserData;
 
                 if (taggedEdge == null)
                     return;
@@ -306,26 +335,47 @@ namespace TaxiViewer
                     .Intersect(TargetNode.Node.Id.Replace('-', ' ').Split())
                     .FirstOrDefault();
 
+                if(taxiName == null || Int32.TryParse(taxiName, out _))
+                {
+                    taxiName = SourceNode.Node.Id.Replace('-', ' ')
+                    .Split()
+                    .Intersect("Alpha Bravo Charlie Delta Golf Echo Foxtrot Hotel India Juliett Juliet Kilo Lima Mike November Oscar Papa Quebec Romeo Sierra Tango Uniform Victor Whiskey Yankee Zulu".Split())
+                    .FirstOrDefault();
+                }
+
+                if (taxiName == null || Int32.TryParse(taxiName, out _))
+                {
+                    taxiName = TargetNode.Node.Id.Replace('-', ' ')
+                    .Split()
+                    .Intersect("Alpha Bravo Charlie Delta Golf Echo Foxtrot Hotel India Juliett Juliet Kilo Lima Mike November Oscar Papa Quebec Romeo Sierra Tango Uniform Victor Whiskey Yankee Zulu".Split())
+                    .FirstOrDefault();
+                }
+
+                if (taxiName == null || Int32.TryParse(taxiName, out _))
+                {
+                    taxiName = $"{SourceNode.Node.Id} to {TargetNode.Node.Id}";
+                }
+
                 var mainCost = 1;
                 var reverseCost = 1;
 
-                if(SourceNode.Node.Id.Contains("Apron") || SourceNode.Node.Id.Contains("Ramp"))
+                if (SourceNode.Node.Id.Contains("Apron") || SourceNode.Node.Id.Contains("Ramp"))
                 {
                     reverseCost = 100;
                 }
-                if(TargetNode.Node.Id.Contains("Apron") || TargetNode.Node.Id.Contains("Ramp"))
+                if (TargetNode.Node.Id.Contains("Apron") || TargetNode.Node.Id.Contains("Ramp"))
                 {
                     mainCost = 100;
                 }
-                if(SourceNode.Node.Id.Contains("Spot") || SourceNode.Node.Id.Contains("Maintenance"))
+                if (SourceNode.Node.Id.Contains("Spot") || SourceNode.Node.Id.Contains("Maintenance") || SourceNode.Node.Id.Contains("Bunker") || SourceNode.Node.Id.Contains("Shelter") || SourceNode.Node.Id.Contains("Parking") || SourceNode.Node.Id.Contains("Cargo") || SourceNode.Node.Id.Contains("Revetment"))
                 {
                     reverseCost = 999;
                 }
-                if(TargetNode.Node.Id.Contains("Spot") || TargetNode.Node.Id.Contains("Maintenance"))
+                if (TargetNode.Node.Id.Contains("Spot") || TargetNode.Node.Id.Contains("Maintenance") || TargetNode.Node.Id.Contains("Bunker") || TargetNode.Node.Id.Contains("Shelter") || TargetNode.Node.Id.Contains("Parking") || TargetNode.Node.Id.Contains("Cargo") || TargetNode.Node.Id.Contains("Revetment"))
                 {
                     mainCost = 999;
                 }
-                if(SourceNode.Node.Id.Contains("Runway") && TargetNode.Node.Id.Contains("Runway"))
+                if (SourceNode.Node.Id.Contains("Runway") && TargetNode.Node.Id.Contains("Runway"))
                 {
                     mainCost = 999;
                     reverseCost = 999;
@@ -349,13 +399,14 @@ namespace TaxiViewer
                 });
 
                 // Add to the underlying graph for data for refreshing UI
-                var mainEdge = new TaggedEdge<NavigationPoint, string>((NavigationPoint) SourceNode.Node.UserData,
-                    (NavigationPoint) TargetNode.Node.UserData, taxiName);
+                var mainEdge = new TaggedEdge<NavigationPoint, string>((NavigationPoint)SourceNode.Node.UserData,
+                    (NavigationPoint)TargetNode.Node.UserData, taxiName);
                 airfield.NavigationGraph.AddEdge(mainEdge);
+                if (airfield.NavigationCost == null) airfield.NavigationCost = new Dictionary<TaggedEdge<NavigationPoint, string>, double>();
                 airfield.NavigationCost[mainEdge] = mainCost;
 
-                var reverseEdge = new TaggedEdge<NavigationPoint, string>((NavigationPoint) TargetNode.Node.UserData,
-                    (NavigationPoint) SourceNode.Node.UserData, taxiName);
+                var reverseEdge = new TaggedEdge<NavigationPoint, string>((NavigationPoint)TargetNode.Node.UserData,
+                    (NavigationPoint)SourceNode.Node.UserData, taxiName);
                 airfield.NavigationGraph.AddEdge(reverseEdge);
                 airfield.NavigationCost[reverseEdge] = reverseCost;
 
@@ -367,6 +418,91 @@ namespace TaxiViewer
         private void DisplayRealGraphButton_Clicked(object sender, RoutedEventArgs e)
         {
             DisplayGraph();
+        }
+
+        private void ShowMarkerImport_Checked(object sender, RoutedEventArgs e)
+        {
+            if (markerImport == null) markerImport = new MarkerImportWindow(airfield, this);
+            markerImport.Closed += MarkerImport_Closed;
+            markerImport.Show();
+        }
+
+        private void MarkerImport_Closed(object sender, EventArgs e)
+        {
+            markerImport = null;
+        }
+
+        private void ShowNodeList_Checked(object sender, RoutedEventArgs e)
+        {
+            if (nodeList == null) nodeList = new NodeListWindow(this, airfield);
+            nodeList.Closed += NodeList_Closed;
+            nodeList.Show();
+        }
+
+        private void NodeList_Closed(object sender, EventArgs e)
+        {
+            nodeList = null;
+        }
+
+        private void NewButton_Click(object sender, RoutedEventArgs e)
+        {
+            var saveFileDialog = new SaveFileDialog()
+            {
+                Filter = "JSON files (*.json)|*.json",
+                InitialDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\Airfields")
+            };
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                try
+                {
+                    FileName = saveFileDialog.FileName;
+                    airfield = new Airfield();
+                    Save_Airfield(sender, e);
+                }
+                catch
+                {
+                    MessageBox.Show("Failure creating new airfield");
+                    return;
+                }
+
+                DisplayGraph();
+
+                ReloadAirfieldButton.IsEnabled = true;
+                SaveAirfieldButton.IsEnabled = true;
+                AddTaxiPathButton.IsEnabled = true;
+                DisplayRealGraphButton.IsEnabled = true;
+                ShowMarkerImport.IsEnabled = true;
+                NewButton.IsEnabled = false;
+                AirfieldInfoButton.IsEnabled = true;
+                ShowNodeList.IsEnabled = true;
+                ShowEdgeList.IsEnabled = true;
+            }
+        }
+
+        private void AirfieldInfoButton_Checked(object sender, RoutedEventArgs e)
+        {
+            if (airfieldinfo == null) airfieldinfo = new AirfieldInformationWindow(airfield, this);
+            airfieldinfo.Closed += Airfieldinfo_Closed;
+            airfieldinfo.Show();
+
+        }
+
+        private void Airfieldinfo_Closed(object sender, EventArgs e)
+        {
+            airfieldinfo = null;
+        }
+
+        private void ShowEdgeList_Click(object sender, RoutedEventArgs e)
+        {
+            if (edgeList == null) edgeList = new EdgeEditorWindow(this, airfield);
+            edgeList.Closed += EdgeList_Closed;
+            edgeList.Show();
+        }
+
+        private void EdgeList_Closed(object sender, EventArgs e)
+        {
+            edgeList = null;
         }
     }
 }

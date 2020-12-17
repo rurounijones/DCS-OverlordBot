@@ -10,13 +10,18 @@
     <DockPanel>
         <ToolBarTray DockPanel.Dock="Top">
             <ToolBar>
-                <Button x:Name="LoadAirfieldButton" Content="Load" Click="Load_Airfield" />
+                <Button x:Name="NewButton" Content="New" Height="22" VerticalAlignment="Top" Width="37" Click="NewButton_Click"/>
+                <Button x:Name="LoadAirfieldButton" Content="Load" Click="Load_Airfield" VerticalAlignment="Top" />
                 <Button x:Name="ReloadAirfieldButton" Content="Reload" Click="Reload_Airfield" IsEnabled="False"/>
                 <Button x:Name="SaveAirfieldButton" Content="Save" Click="Save_Airfield" IsEnabled="False"/>
             </ToolBar>
             <ToolBar>
                 <ToggleButton x:Name="AddTaxiPathButton" Content="Add/Edit Taxi Paths" IsEnabled="False"/>
                 <ToggleButton x:Name="DisplayRealGraphButton" Content="Display Real Layout" Checked="DisplayRealGraphButton_Clicked" Unchecked="DisplayRealGraphButton_Clicked" IsEnabled="False"/>
+                <Button x:Name="AirfieldInfoButton" Content="Airport Info" IsEnabled="False" Click="AirfieldInfoButton_Checked" />
+                <Button x:Name="ShowMarkerImport" Content="Show Marker Import" IsEnabled="False" Click="ShowMarkerImport_Checked" />
+                <Button x:Name="ShowNodeList" Content="Show Node List" IsEnabled="False" Click="ShowNodeList_Checked" />
+                <Button x:Name="ShowEdgeList" Content="Show Edge List" Height="22" VerticalAlignment="Top" Width="99" IsEnabled="False" Click="ShowEdgeList_Click"/>
             </ToolBar>
         </ToolBarTray>
         <DockPanel x:Name="GraphPanel" ClipToBounds="True"/>
