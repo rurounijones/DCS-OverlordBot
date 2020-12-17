@@ -345,18 +345,23 @@ namespace TaxiViewer
 
                 if(taxiName == null || Int32.TryParse(taxiName, out _))
                 {
-                    taxiName = SourceNode.Node.Id.Replace('-', ' ')
-                    .Split()
-                    .Intersect(LikelyTaxiwayNames)
-                    .FirstOrDefault();
+                    var tempName = SourceNode.Node.Id.Replace('-', ' ');
+
+                    foreach(var ln in LikelyTaxiwayNames)
+                    {
+                        tempName.Contains(ln);
+                        taxiName = ln;
+                    }
                 }
 
                 if (taxiName == null || Int32.TryParse(taxiName, out _))
                 {
-                    taxiName = TargetNode.Node.Id.Replace('-', ' ')
-                    .Split()
-                    .Intersect(LikelyTaxiwayNames)
-                    .FirstOrDefault();
+                    var tempName = TargetNode.Node.Id.Replace('-', ' ');
+                    foreach (var ln in LikelyTaxiwayNames)
+                    {
+                        tempName.Contains(ln);
+                        taxiName = ln;
+                    }
                 }
 
                 if (taxiName == null || Int32.TryParse(taxiName, out _))
