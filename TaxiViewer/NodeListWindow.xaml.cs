@@ -198,7 +198,6 @@ namespace TaxiViewer
 
             var jct = ((ParkingSpot)(e.AddedItems[0]));
 
-            var jct = ((Junction)(e.AddedItems[0]));
 
             ParkingSpotName.Text = jct.Name;
             ParkingSpotLat.Text = jct.Latitude.ToString();
