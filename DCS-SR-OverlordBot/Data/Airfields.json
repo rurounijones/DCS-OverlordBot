@@ -1,24 +1,24 @@
 [
   {
-    "name": "Aba Musa Island Airport",
+    "name": "Aba Musa Island",
     "lat": 25.875,
     "lon": 55.02111111,
     "alt": 4.8768
   },
   {
-    "name": "Abu Dhabi Intl Airport",
+    "name": "Abu Dhabi Intl",
     "lat": 24.46472222,
     "lon": 54.63916667,
     "alt": 28.0416
   },
   {
-    "name": "Al Ain Intl Airport",
+    "name": "Al Ain Intl",
     "lat": 24.27666667,
     "lon": 55.61166667,
     "alt": 248.1072
   },
   {
-    "name": "Al Dhafra AB",
+    "name": "Al Dhafra AFB",
     "lat": 24.25777778,
     "lon": 54.53416667,
     "alt": 15.8496
@@ -30,13 +30,13 @@
     "alt": 37.4904
   },
   {
-    "name": "Al Minhad AB",
+    "name": "Al Minhad AFB",
     "lat": 25.02666667,
     "lon": 55.38361111,
     "alt": 52.4256
   },
   {
-    "name": "Al-Bateen Airport",
+    "name": "Al-Bateen",
     "lat": 24.43388889,
     "lon": 54.45055556,
     "alt": 3.6576
@@ -60,7 +60,7 @@
     "alt": 23.1648
   },
   {
-    "name": "Bander-e-Jask Airfield",
+    "name": "Bander-e-Jask",
     "lat": 25.65027778,
     "lon": 57.79194444,
     "alt": 7.9248
@@ -150,13 +150,13 @@
     "alt": 860.7552
   },
   {
-    "name": "Jiroft Airport",
+    "name": "Jiroft",
     "lat": 28.73138889,
     "lon": 57.66388889,
     "alt": 811.9872
   },
   {
-    "name": "Kerman Airport",
+    "name": "Kerman",
     "lat": 30.2575,
     "lon": 56.95805556,
     "alt": 1751.3808
@@ -168,7 +168,7 @@
     "alt": 22.5552
   },
   {
-    "name": "Kish Intl Airport",
+    "name": "Kish Intl",
     "lat": 26.52944444,
     "lon": 53.96472222,
     "alt": 35.052
@@ -204,7 +204,7 @@
     "alt": 54.90569664
   },
   {
-    "name": "Lar Airbase",
+    "name": "Lar",
     "lat": 27.67472222,
     "lon": 54.36805556,
     "alt": 803.4528
@@ -216,7 +216,7 @@
     "alt": 199.9488
   },
   {
-    "name": "Lavan Island Airport",
+    "name": "Lavan Island",
     "lat": 26.81527778,
     "lon": 53.34138889,
     "alt": 22.86
@@ -228,7 +228,7 @@
     "alt": 1467.612
   },
   {
-    "name": "Liwa Airbase",
+    "name": "Liwa AFB",
     "lat": 23.66055556,
     "lon": 53.81222222,
     "alt": 121.92
@@ -306,13 +306,13 @@
     "alt": 5.1816
   },
   {
-    "name": "Ras Al Khaimah",
+    "name": "Ras Al Khaimah Intl",
     "lat": 25.60222222,
     "lon": 55.94166667,
     "alt": 21.6408
   },
   {
-    "name": "Sas Al Nakheel Airport",
+    "name": "Sas Al Nakheel",
     "lat": 24.44805556,
     "lon": 54.51444444,
     "alt": 3.048
@@ -330,7 +330,7 @@
     "alt": 29.8704
   },
   {
-    "name": "Shiraz Intl Airport",
+    "name": "Shiraz Intl",
     "lat": 29.53305556,
     "lon": 52.60972222,
     "alt": 1487.1192

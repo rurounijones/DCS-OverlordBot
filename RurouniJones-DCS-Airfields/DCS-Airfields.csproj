@@ -118,7 +118,7 @@
     <None Include="Data\Airfields\Novorossiysk.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\Airfields\Ramat David AB.json">
+    <None Include="Data\Airfields\Ramat David.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Data\Airfields\Ras Al Khaimah.json">

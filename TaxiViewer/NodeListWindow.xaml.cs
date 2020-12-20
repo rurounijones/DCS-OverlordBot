@@ -49,6 +49,7 @@ namespace TaxiViewer
         {
             var rwy = ((Runway)(RunwayList.SelectedItem));
             if (rwy == null) return;
+
             var oldName = rwy.Name;
             rwy.Name = RunwayNameBox.Text;
             try
@@ -94,6 +95,7 @@ namespace TaxiViewer
         private void RunwayDelete_Click(object sender, RoutedEventArgs e)
         {
             var rwy = ((Runway)(RunwayList.SelectedItem));
+
             if (rwy == null) return;
             var edgesToRemove = new List<NavigationPath>();
 
@@ -119,6 +121,8 @@ namespace TaxiViewer
                 Airfield.Runways.Remove(rwy);
                 RunwayList.Items.Remove(rwy);
             }
+            Airfield.Runways.Remove(rwy);
+            RunwayList.Items.Remove(rwy);
 
             ParentWindow.DisplayGraph();
 
@@ -127,7 +131,9 @@ namespace TaxiViewer
         private void JunctionSave_Click(object sender, RoutedEventArgs e)
         {
             var jct = ((Junction)(JunctionList.SelectedItem));
+
             if (jct == null) return;
+
             var oldName = jct.Name;
             jct.Name = JunctionNameBox.Text;
             try
@@ -152,6 +158,7 @@ namespace TaxiViewer
         private void JunctionDelete_Click(object sender, RoutedEventArgs e)
         {
             var jct = ((Junction)(JunctionList.SelectedItem));
+
             if (jct == null) return;
             var edgesToRemove = new List<NavigationPath>();
 
@@ -178,13 +185,21 @@ namespace TaxiViewer
                 JunctionList.Items.Remove(jct);
             }
 
+            Airfield.Junctions.Remove(jct);
+            JunctionList.Items.Remove(jct);
+
+
             ParentWindow.DisplayGraph();
         }
 
         private void ParkingSpotBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (e.AddedItems.Count == 0) return;
+
             var jct = ((ParkingSpot)(e.AddedItems[0]));
+
+            var jct = ((Junction)(e.AddedItems[0]));
+
             ParkingSpotName.Text = jct.Name;
             ParkingSpotLat.Text = jct.Latitude.ToString();
             ParkingSpotLong.Text = jct.Longitude.ToString();
@@ -246,5 +261,6 @@ namespace TaxiViewer
             }
             ParentWindow.DisplayGraph();
         }
+
     }
 }
