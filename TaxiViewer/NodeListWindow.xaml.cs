@@ -48,6 +48,8 @@ namespace TaxiViewer
         private void RunwaySave_Click(object sender, RoutedEventArgs e)
         {
             var rwy = ((Runway)(RunwayList.SelectedItem));
+            if (rwy == null) return;
+
             var oldName = rwy.Name;
             rwy.Name = RunwayNameBox.Text;
             try
@@ -93,6 +95,32 @@ namespace TaxiViewer
         private void RunwayDelete_Click(object sender, RoutedEventArgs e)
         {
             var rwy = ((Runway)(RunwayList.SelectedItem));
+
+            if (rwy == null) return;
+            var edgesToRemove = new List<NavigationPath>();
+
+            foreach (var f in Airfield.Taxiways)
+            {
+                if (f.Source == rwy.Name) edgesToRemove.Add(f);
+                else if (f.Target == rwy.Name) edgesToRemove.Add(f);
+            }
+            MessageBoxResult approval;
+            if (edgesToRemove.Count != 0)
+            {
+                approval = MessageBox.Show($"Node {rwy.Name} has {edgesToRemove.Count} connections. Continuing will remove them as well. Continue to remove node?", "Node has connections", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            }
+            else approval = MessageBoxResult.Yes;
+
+
+            if (approval == MessageBoxResult.Yes)
+            {
+                foreach (var f in edgesToRemove)
+                {
+                    Airfield.Taxiways.Remove(f);
+                }
+                Airfield.Runways.Remove(rwy);
+                RunwayList.Items.Remove(rwy);
+            }
             Airfield.Runways.Remove(rwy);
             RunwayList.Items.Remove(rwy);
 
@@ -103,6 +131,9 @@ namespace TaxiViewer
         private void JunctionSave_Click(object sender, RoutedEventArgs e)
         {
             var jct = ((Junction)(JunctionList.SelectedItem));
+
+            if (jct == null) return;
+
             var oldName = jct.Name;
             jct.Name = JunctionNameBox.Text;
             try
@@ -127,8 +158,36 @@ namespace TaxiViewer
         private void JunctionDelete_Click(object sender, RoutedEventArgs e)
         {
             var jct = ((Junction)(JunctionList.SelectedItem));
+
+            if (jct == null) return;
+            var edgesToRemove = new List<NavigationPath>();
+
+            foreach (var f in Airfield.Taxiways)
+            {
+                if (f.Source == jct.Name) edgesToRemove.Add(f);
+                else if (f.Target == jct.Name) edgesToRemove.Add(f);
+            }
+            MessageBoxResult approval;
+            if (edgesToRemove.Count != 0)
+            {
+                approval = MessageBox.Show($"Node {jct.Name} has {edgesToRemove.Count} connections. Continuing will remove them as well. Continue to remove node?", "Node has connections", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            }
+            else approval = MessageBoxResult.Yes;
+
+
+            if (approval == MessageBoxResult.Yes)
+            {
+                foreach (var f in edgesToRemove)
+                {
+                    Airfield.Taxiways.Remove(f);
+                }
+                Airfield.Junctions.Remove(jct);
+                JunctionList.Items.Remove(jct);
+            }
+
             Airfield.Junctions.Remove(jct);
             JunctionList.Items.Remove(jct);
+
 
             ParentWindow.DisplayGraph();
         }
@@ -136,7 +195,10 @@ namespace TaxiViewer
         private void ParkingSpotBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (e.AddedItems.Count == 0) return;
-            var jct = ((Junction)(e.AddedItems[0]));
+
+            var jct = ((ParkingSpot)(e.AddedItems[0]));
+
+
             ParkingSpotName.Text = jct.Name;
             ParkingSpotLat.Text = jct.Latitude.ToString();
             ParkingSpotLong.Text = jct.Longitude.ToString();
@@ -148,6 +210,7 @@ namespace TaxiViewer
         private void ParkingSpotSave_Click(object sender, RoutedEventArgs e)
         {
             var ps = ((ParkingSpot)(ParkingSpotBox.SelectedItem));
+            if (ps == null) return;
             var oldName = ps.Name;
             ps.Name = ParkingSpotName.Text;
             try
@@ -166,5 +229,37 @@ namespace TaxiViewer
             }
             ParentWindow.DisplayGraph();
         }
+
+        private void ParkingSpotDelete_Click(object sender, RoutedEventArgs e)
+        {
+            var jct = ((ParkingSpot)(ParkingSpotBox.SelectedItem));
+            if (jct == null) return;
+            var edgesToRemove = new List<NavigationPath>();
+
+            foreach (var f in Airfield.Taxiways)
+            {
+                if (f.Source == jct.Name) edgesToRemove.Add(f);
+                else if (f.Target == jct.Name) edgesToRemove.Add(f);
+            }
+            MessageBoxResult approval;
+            if (edgesToRemove.Count != 0)
+            {
+                approval = MessageBox.Show($"Node {jct.Name} has {edgesToRemove.Count} connections. Continuing will remove them as well. Continue to remove node?", "Node has connections", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            }
+            else approval = MessageBoxResult.Yes;
+
+            
+            if (approval == MessageBoxResult.Yes)
+            {
+                foreach(var f in edgesToRemove)
+                {
+                    Airfield.Taxiways.Remove(f);
+                }
+                Airfield.ParkingSpots.Remove(jct);
+                ParkingSpotBox.Items.Remove(jct);
+            }
+            ParentWindow.DisplayGraph();
+        }
+
     }
 }
