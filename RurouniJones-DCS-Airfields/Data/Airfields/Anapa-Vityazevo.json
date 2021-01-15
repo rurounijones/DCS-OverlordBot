@@ -104,6 +104,16 @@
       "name": "Charlie Runway",
       "lat": 45.0038921,
       "lon": 37.3462753
+    },
+    {
+      "name": "Runway Intermediate B",
+      "lat": 45.006792333239,
+      "lon": 37.350438598252
+    },
+    {
+      "name": "Runway Intermediate A",
+      "lat": 45.01094601189,
+      "lon": 37.356096860936
     }
   ],
   "taxipaths": [
@@ -165,18 +175,6 @@
       "name": "Runway",
       "source": "Charlie Runway",
       "target": "Bravo Runway",
-      "cost": 999
-    },
-    {
-      "name": "Runway",
-      "source": "Runway-2 2",
-      "target": "Charlie Runway",
-      "cost": 999
-    },
-    {
-      "name": "Runway",
-      "source": "Charlie Runway",
-      "target": "Runway-2 2",
       "cost": 999
     },
     {
@@ -460,6 +458,42 @@
       "source": "Runway-2 2",
       "target": "Entry-Exit East",
       "cost": 0
+    },
+    {
+      "name": "Runway",
+      "source": "Charlie Runway",
+      "target": "Runway Intermediate B",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway Intermediate B",
+      "target": "Charlie Runway",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway Intermediate B",
+      "target": "Runway Intermediate A",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway Intermediate A",
+      "target": "Runway Intermediate B",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway Intermediate A",
+      "target": "Runway-2 2",
+      "cost": 999
+    },
+    {
+      "name": "Runway",
+      "source": "Runway-2 2",
+      "target": "Runway Intermediate A",
+      "cost": 999
     }
   ],
   "waypoints": [
@@ -480,7 +514,7 @@
     },
     {
       "name": "Entry-Exit East",
-      "lat": 45.0409450,
+      "lat": 45.040945,
       "lon": 37.4930833
     },
     {
@@ -496,7 +530,7 @@
     {
       "name": "Exit South",
       "lat": 44.9139833,
-      "lon": 37.4015000
+      "lon": 37.4015
     }
   ]
 }
