@@ -63,6 +63,11 @@
       "name": "Maintenance Area",
       "lat": 44.675911173832,
       "lon": 40.042729078208
+    },
+    {
+      "name": "Alfa Rearm",
+      "lat": 44.66943289485,
+      "lon": 40.022267581813
     }
   ],
   "runways": [
@@ -385,6 +390,67 @@
       "source": "Delta Echo Victor",
       "target": "Victor Spots 4",
       "cost": 999
+    },
+    {
+      "name": "Alfa",
+      "source": "Alfa Rearm",
+      "target": "Runway-0 4",
+      "cost": 1
+    },
+    {
+      "name": "Alfa",
+      "source": "Runway-0 4",
+      "target": "Alfa Rearm",
+      "cost": 1
+    },
+    {
+      "name": "Alfa",
+      "source": "Alfa Rearm",
+      "target": "Alfa Victor",
+      "cost": 1
+    },
+    {
+      "name": "Alfa",
+      "source": "Alfa Victor",
+      "target": "Alfa Rearm",
+      "cost": 1
+    },
+    {
+      "name": "Delta",
+      "source": "Delta Runway",
+      "target": "Delta Echo Victor",
+      "cost": 1
+    },
+    {
+      "name": "Delta",
+      "source": "Delta Echo Victor",
+      "target": "Delta Runway",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Charlie Victor",
+      "target": "Charlie Runway",
+      "cost": 1
+    },
+    {
+      "name": "Charlie",
+      "source": "Charlie Runway",
+      "target": "Charlie Victor",
+      "cost": 1
+    },
+    {
+      "name": "Bravo",
+      "source": "Bravo Victor",
+      "target": "Bravo Runway",
+      "cost": 1
+    },
+    {
+      "name": "Bravo",
+      "source": "Bravo Runway",
+      "target": "Bravo Victor",
+      "cost": 1
     }
-  ]
+  ],
+  "waypoints": []
 }
