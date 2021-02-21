@@ -1,5 +1,5 @@
 # OverlordBot
 
-An AWACS Voice bot for Digital Combat Simulator based on SRS (SimpleRadio Standalone) by Ciribob.
+An AWACS Voice bot for Digital Combat Simulator. Uses SRS (SimpleRadio Standalone) by Ciribob.
 
-See https://gitlab.com/overlord-bot for the main project page.
+This repository is deprecated and contains a legacy version of the bot. See https://gitlab.com/overlord-bot for continuing development
